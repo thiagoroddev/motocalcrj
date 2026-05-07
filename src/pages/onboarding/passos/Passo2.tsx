@@ -1,0 +1,72 @@
+import { useState, useEffect } from 'react';
+import { usePerfil } from '../../../hooks/usePerfil';
+import { useOnboarding } from '../FluxoOnboarding';
+import { PassoLayout } from '../PassoLayout';
+import { getModelosPorMarca } from '../../../data/catalogoModelos';
+import type { DadosModeloCatalogo } from '../../../data/catalogoModelos';
+
+export function Passo2() {
+  const { perfil, dispatch } = usePerfil();
+  const { irParaProximo } = useOnboarding();
+
+  const modelos = getModelosPorMarca(perfil.moto.marca);
+  const modeloAtualValido = modelos.find((m) => m.id === perfil.moto.modelo);
+
+  const [selecionado, setSelecionado] = useState<DadosModeloCatalogo | null>(
+    modeloAtualValido ?? (modelos.length === 1 ? modelos[0] : null),
+  );
+
+  // Auto-seleciona se só há um modelo disponível
+  useEffect(() => {
+    if (modelos.length === 1 && !selecionado) {
+      setSelecionado(modelos[0]);
+    }
+  }, [modelos, selecionado]);
+
+  function salvarEAvancar() {
+    if (!selecionado) {
+      return;
+    }
+    dispatch({
+      type: 'SET_ONBOARDING_CAMPO',
+      campo: 'moto',
+      valor: { ...perfil.moto, modelo: selecionado.id },
+    });
+    irParaProximo();
+  }
+
+  return (
+    <PassoLayout
+      titulo="Qual o modelo?"
+      subtitulo={perfil.moto.marca}
+      aoProximo={salvarEAvancar}
+      podeContinuar={selecionado !== null}
+    >
+      <div className="flex flex-col gap-sm">
+        {modelos.map((modelo) => (
+          <button
+            key={modelo.id}
+            type="button"
+            onClick={() => setSelecionado(modelo)}
+            className={`p-md rounded-card border text-left transition-colors ${
+              selecionado?.id === modelo.id
+                ? 'border-primary bg-primary/20'
+                : 'border-surface-bright bg-surface-cont'
+            }`}
+          >
+            <p className="text-white font-semibold">{modelo.nome}</p>
+            <p className="text-neutral text-xs mt-xs">
+              {modelo.consumoKmL} km/L · {modelo.consumoKmLComBau} km/L com baú
+            </p>
+          </button>
+        ))}
+      </div>
+
+      {modelos.length === 0 && (
+        <p className="text-neutral text-sm text-center mt-lg">
+          Nenhum modelo disponível para {perfil.moto.marca} ainda.
+        </p>
+      )}
+    </PassoLayout>
+  );
+}
