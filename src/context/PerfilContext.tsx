@@ -664,13 +664,14 @@ export function PerfilProvider({ children, storage }: PerfilProviderProps) {
     criarEstadoInicial(storageRef.current),
   );
 
-  // Persiste sempre que o estado muda (ignora montagem inicial)
+  // Persiste apenas após COMMIT_ONBOARDING (presetAtivoId só existe depois do commit)
   const primeiraMontagem = useRef(true);
   useEffect(() => {
     if (primeiraMontagem.current) {
       primeiraMontagem.current = false;
       return;
     }
+    if (!estado.presetAtivoId) return;
     storageRef.current.salvarPresets(estado.presets);
     storageRef.current.setPresetAtivo(estado.presetAtivoId);
   }, [estado]);

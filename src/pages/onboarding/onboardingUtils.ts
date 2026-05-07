@@ -18,6 +18,7 @@ export const CONFIG_PASSOS: Record<string, ConfigPasso> = {
   '7': { label: 'PASSO 7 DE 9', percentual: 77 },
   '8': { label: 'PASSO 8 DE 9', percentual: 88 },
   '9': { label: 'PASSO FINAL', percentual: 100 },
+  confirmacao: { label: 'PASSO FINAL', percentual: 100 },
 };
 
 type ProximoFn = string | ((s: SituacaoMoto) => string);
@@ -34,7 +35,8 @@ const MAPA_PROXIMO: Record<string, ProximoFn> = {
   '6/responsabilidade': '7',
   '7': '8',
   '8': '9',
-  '9': 'concluir',
+  '9': 'confirmacao',
+  confirmacao: 'concluir',
 };
 
 const MAPA_ANTERIOR: Record<string, ProximoFn | null> = {
@@ -51,6 +53,7 @@ const MAPA_ANTERIOR: Record<string, ProximoFn | null> = {
     s === 'financiada' ? '6/financiamento' : s === 'alugada' ? '6/responsabilidade' : '6',
   '8': '7',
   '9': '8',
+  confirmacao: '9',
 };
 
 function resolver(valor: ProximoFn, situacao: SituacaoMoto): string {

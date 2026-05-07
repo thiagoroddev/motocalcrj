@@ -494,6 +494,8 @@ const custosMock: CustosPorCategoria = {
   internet: { total: 600, ativo: true },
   seguro: { total: 800, ativo: true },
   alimentacao: { total: 2496, ativo: true },
+  financiamento: { total: 0, ativo: false },
+  gastosCustom: { total: 0, ativo: false },
 };
 
 const filtrosTudo: FiltrosCategorias = {
@@ -505,6 +507,8 @@ const filtrosTudo: FiltrosCategorias = {
   internet: true,
   seguro: true,
   alimentacao: true,
+  financiamento: true,
+  gastosCustom: true,
 };
 
 describe('calcularTotalFiltrado', () => {
@@ -587,6 +591,8 @@ describe('calcularBreakdownPercentual', () => {
       internet: { total: 0, ativo: false },
       seguro: { total: 0, ativo: false },
       alimentacao: { total: 0, ativo: false },
+      financiamento: { total: 0, ativo: false },
+      gastosCustom: { total: 0, ativo: false },
     };
     const resultado = calcularBreakdownPercentual(custoVazio, filtrosTudo);
     Object.values(resultado).forEach((v) => expect(v).toBe(0));

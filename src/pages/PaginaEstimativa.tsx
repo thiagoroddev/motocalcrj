@@ -18,6 +18,8 @@ const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   internet: { label: 'Internet', cor: '#0EA5E9' },
   seguro: { label: 'Seguro', cor: '#0078FF' },
   alimentacao: { label: 'Alimentação', cor: '#FBBF24' },
+  financiamento: { label: 'Financiamento', cor: '#F97316' },
+  gastosCustom: { label: 'Gastos extras', cor: '#EC4899' },
 };
 
 // ─── Sub-componentes inline ───────────────────────────────────────
@@ -209,7 +211,7 @@ export function PaginaEstimativa() {
       {/* CTA Detalhamento */}
       <button
         type="button"
-        onClick={() => navigate('/detalhamento')}
+        onClick={() => navigate('/estimativa/detalhamento')}
         className="w-full flex items-center justify-center gap-2 bg-surface-cont border border-surface-bright rounded-card py-3 text-white text-sm font-medium hover:border-primary transition-colors"
       >
         <span className="text-primary text-lg">+</span>

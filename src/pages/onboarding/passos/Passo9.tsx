@@ -1,95 +1,84 @@
-import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
-import { getNomeModelo } from '../../../data/catalogoModelos';
-import type { SituacaoMoto } from '../../../types/perfil';
-
-const SITUACAO_LABEL: Record<SituacaoMoto, string> = {
-  quitada: 'Quitada',
-  financiada: 'Financiada',
-  alugada: 'Alugada',
-};
 
 export function Passo9() {
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
-  const { moto, trabalho, financeiro } = perfil;
 
-  function concluir() {
-    dispatch({ type: 'COMMIT_ONBOARDING' });
+  const [comeNaRua, setComeNaRua] = useState(perfil.financeiro.alimentacaoDia > 0);
+  const [gastoDia, setGastoDia] = useState(
+    perfil.financeiro.alimentacaoDia > 0 ? String(perfil.financeiro.alimentacaoDia) : '20',
+  );
+
+  function salvarEAvancar() {
+    dispatch({
+      type: 'SET_ONBOARDING_CAMPO',
+      campo: 'financeiro',
+      valor: {
+        ...perfil.financeiro,
+        alimentacaoDia: comeNaRua ? (parseFloat(gastoDia) || 0) : 0,
+      },
+    });
     irParaProximo();
   }
 
   return (
     <PassoLayout
-      titulo="Tudo certo!"
-      subtitulo="Revise seus dados antes de concluir"
-      aoProximo={concluir}
-      textoBotao="Concluir configuração"
+      titulo="Alimentação no trabalho"
+      subtitulo="Você costuma comer fora durante o expediente?"
+      aoProximo={salvarEAvancar}
+      textoBotao="Próximo →"
     >
-      <div className="flex flex-col gap-sm">
-        <SessaoResumo titulo="Moto">
-          <LinhaResumo
-            label="Marca / Modelo"
-            valor={`${moto.marca} ${getNomeModelo(moto.modelo)} ${moto.ano}`}
-          />
-          <LinhaResumo
-            label="Uso"
-            valor={moto.perfilUso === 'entrega' ? 'Entregas' : 'Passageiro'}
-          />
-        </SessaoResumo>
+      <div className="flex flex-col gap-md">
+        <div className="grid grid-cols-2 gap-sm">
+          <button
+            type="button"
+            onClick={() => setComeNaRua(true)}
+            className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
+              comeNaRua
+                ? 'border-primary bg-primary/10 text-white'
+                : 'border-surface-bright bg-surface-cont text-neutral'
+            }`}
+          >
+            <span className="text-2xl">🍴</span>
+            <span className="text-sm font-medium text-center">Sim, como na rua</span>
+          </button>
 
-        <SessaoResumo titulo="Rodagem">
-          <LinhaResumo label="Km por dia" valor={`${trabalho.kmPorDia} km`} />
-          <LinhaResumo label="Dias por semana" valor={`${trabalho.diasPorSemana} dias`} />
-        </SessaoResumo>
+          <button
+            type="button"
+            onClick={() => setComeNaRua(false)}
+            className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
+              !comeNaRua
+                ? 'border-primary bg-primary/10 text-white'
+                : 'border-surface-bright bg-surface-cont text-neutral'
+            }`}
+          >
+            <span className="text-2xl">🥡</span>
+            <span className="text-sm font-medium text-center">Não, levo de casa</span>
+          </button>
+        </div>
 
-        <SessaoResumo titulo="Financeiro">
-          <LinhaResumo label="Situação" valor={SITUACAO_LABEL[financeiro.situacaoMoto]} />
-          {financeiro.situacaoMoto === 'financiada' && financeiro.parcelaMensal != null && (
-            <LinhaResumo
-              label="Parcela mensal"
-              valor={`R$ ${financeiro.parcelaMensal.toFixed(2)}`}
+        {comeNaRua && (
+          <label className="flex flex-col gap-xs">
+            <span className="text-neutral text-sm font-medium">Gasto médio por dia (R$)</span>
+            <input
+              type="number"
+              value={gastoDia}
+              onChange={(e) => setGastoDia(e.target.value)}
+              min={0}
+              step={0.01}
+              placeholder="20,00"
+              className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
             />
-          )}
-          {financeiro.situacaoMoto === 'alugada' && financeiro.aluguelMensal != null && (
-            <LinhaResumo
-              label="Aluguel"
-              valor={`R$ ${financeiro.aluguelMensal.toFixed(2)}/${financeiro.aluguelPeriodicidade ?? 'mês'}`}
-            />
-          )}
-          <LinhaResumo label="Seguro" valor={financeiro.seguro.tem ? 'Sim' : 'Não'} />
-          <LinhaResumo
-            label="Internet"
-            valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '—'}
-          />
-          <LinhaResumo
-            label="Alimentação"
-            valor={
-              financeiro.alimentacaoDia > 0 ? `R$ ${financeiro.alimentacaoDia.toFixed(2)}/dia` : '—'
-            }
-          />
-        </SessaoResumo>
+          </label>
+        )}
+
+        <p className="text-neutral/50 text-xs text-center">
+          Fique tranquilo! Estes valores podem ser atualizados a qualquer momento em Configurações.
+        </p>
       </div>
     </PassoLayout>
-  );
-}
-
-function SessaoResumo({ titulo, children }: { titulo: string; children: ReactNode }) {
-  return (
-    <div className="bg-surface-cont rounded-card p-md">
-      <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-sm">{titulo}</p>
-      {children}
-    </div>
-  );
-}
-
-function LinhaResumo({ label, valor }: { label: string; valor: string }) {
-  return (
-    <div className="flex justify-between items-center py-xs border-b border-surface-bright last:border-0">
-      <span className="text-neutral text-sm">{label}</span>
-      <span className="text-white text-sm font-medium">{valor}</span>
-    </div>
   );
 }

@@ -20,6 +20,7 @@ import { Passo6Responsabilidade } from './passos/Passo6Responsabilidade';
 import { Passo7 } from './passos/Passo7';
 import { Passo8 } from './passos/Passo8';
 import { Passo9 } from './passos/Passo9';
+import { PassoConfirmacao } from './passos/PassoConfirmacao';
 
 interface OnboardingCtxValue {
   passo: string;
@@ -83,6 +84,7 @@ export function FluxoOnboarding() {
         <Route path="7" element={<Passo7 />} />
         <Route path="8" element={<Passo8 />} />
         <Route path="9" element={<Passo9 />} />
+        <Route path="confirmacao" element={<PassoConfirmacao />} />
         <Route path="*" element={<Navigate to="/onboarding/1" replace />} />
       </Routes>
     </OnboardingCtx.Provider>

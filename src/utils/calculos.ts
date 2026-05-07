@@ -6,6 +6,10 @@ import type {
   PerfilUso,
   PerfilPecas,
   ModoRevisao,
+  PecaOverride,
+  GastoCustom,
+  ResponsabilidadeCusto,
+  CategoriaDisplay,
 } from '../types/perfil';
 import type {
   PresetMoto,
@@ -127,11 +131,13 @@ export function resolverIntervaloPeca(
   tipoUso: PerfilUso,
   registros: RegistroManutencao[],
   modoExibicao: ModoExibicao,
+  pecasOverrides: PecaOverride[] = [],
 ): number {
-  const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
-
-  if (modoExibicao === 'personalizado' && registrosPeca.length >= 1) {
-    return media(registrosPeca.map((r) => r.kmDesdeAnterior));
+  if (modoExibicao === 'personalizado') {
+    const override = pecasOverrides.find((o) => o.id === pecaId);
+    if (override?.intervaloKmEditado != null) return override.intervaloKmEditado;
+    const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
+    if (registrosPeca.length >= 1) return media(registrosPeca.map((r) => r.kmDesdeAnterior));
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -153,21 +159,30 @@ export function resolverPrecoPeca(
   perfilPecas: PerfilPecas,
   registros: RegistroManutencao[],
   modoExibicao: ModoExibicao,
+  pecasOverrides: PecaOverride[] = [],
 ): number {
-  const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
+  const override = pecasOverrides.find((o) => o.id === pecaId);
 
-  if (modoExibicao === 'personalizado' && registrosPeca.length >= 1) {
-    return media(registrosPeca.map((r) => r.preco));
+  if (modoExibicao === 'personalizado') {
+    if (override?.precoEditado != null) return override.precoEditado;
+    const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
+    if (registrosPeca.length >= 1) return media(registrosPeca.map((r) => r.preco));
   }
+
+  // perfilPecasOverride por peça sobrescreve o global (ignorado em modo predefinidos per RN-04)
+  const perfilEfetivo: PerfilPecas =
+    modoExibicao === 'personalizado'
+      ? (override?.perfilPecasOverride ?? perfilPecas)
+      : perfilPecas;
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
   if (peca) {
-    return perfilPecas === 'original' ? peca.precoOriginal : peca.precoParalela;
+    return perfilEfetivo === 'original' ? peca.precoOriginal : peca.precoParalela;
   }
 
   const pneu = preset.pneus.find((p) => p.id === pecaId);
   if (pneu) {
-    return perfilPecas === 'original' ? pneu.precoOriginal : pneu.precoParalela;
+    return perfilEfetivo === 'original' ? pneu.precoOriginal : pneu.precoParalela;
   }
 
   return 0;
@@ -181,6 +196,7 @@ export function calcularCpkPorPeca(
   modoExibicao: ModoExibicao,
   kmAtual: number,
   kmAnual: number,
+  pecasOverrides: PecaOverride[] = [],
 ): Map<string, CustoPeca> {
   const resultado = new Map<string, CustoPeca>();
 
@@ -193,12 +209,18 @@ export function calcularCpkPorPeca(
   ];
 
   for (const { id, label } of todasPecas) {
-    const intervalo = resolverIntervaloPeca(id, preset, tipoUso, registros, modoExibicao);
-    const preco = resolverPrecoPeca(id, preset, perfilPecas, registros, modoExibicao);
+    const intervalo = resolverIntervaloPeca(id, preset, tipoUso, registros, modoExibicao, pecasOverrides);
+    const preco = resolverPrecoPeca(id, preset, perfilPecas, registros, modoExibicao, pecasOverrides);
     const cpk = calcularCpkPeca(preco, intervalo);
+
+    const override = pecasOverrides.find((o) => o.id === id);
     const registrosPeca = registros.filter((r) => r.pecaId === id);
-    const fonte: 'preset' | 'registro' =
-      modoExibicao === 'personalizado' && registrosPeca.length >= 1 ? 'registro' : 'preset';
+    const usouOverride =
+      modoExibicao === 'personalizado' &&
+      (override?.intervaloKmEditado != null ||
+        override?.precoEditado != null ||
+        registrosPeca.length >= 1);
+    const fonte: 'preset' | 'registro' = usouOverride ? 'registro' : 'preset';
 
     const proximaTrocaKm = kmAtual > 0 ? Math.ceil(kmAtual / intervalo) * intervalo : intervalo;
 
@@ -310,6 +332,31 @@ export function calcularCustoAlimentacaoAnual(precoAlimentacao: number, diasAno:
   return precoAlimentacao * diasAno;
 }
 
+export function fatorResponsabilidade(resp: ResponsabilidadeCusto): number {
+  if (resp === 'locador') return 0;
+  if (resp === 'dividido') return 0.5;
+  return 1;
+}
+
+export function calcularCustoFinanciamentoAnual(
+  situacaoMoto: string,
+  parcelaMensal: number | null,
+  aluguelMensal: number | null,
+  aluguelPeriodicidade: string | null,
+): number {
+  if (situacaoMoto === 'financiada' && parcelaMensal != null) {
+    return parcelaMensal * 12;
+  }
+  if (situacaoMoto === 'alugada' && aluguelMensal != null) {
+    return aluguelPeriodicidade === 'semanal' ? aluguelMensal * 52 : aluguelMensal * 12;
+  }
+  return 0;
+}
+
+export function calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): number {
+  return gastosCustom.filter((g) => g.ativo).reduce((soma, g) => soma + g.valorMensal * 12, 0);
+}
+
 // ─── VII. Agregação e Granularidades ─────────────────────────────
 
 export function calcularCustosPorCategoria(
@@ -351,6 +398,7 @@ export function calcularCustosPorCategoria(
     modoExibicao,
     perfil.moto.kmAtual,
     kmAnual,
+    perfil.pecasOverrides,
   );
   const cpkPecasTotal = calcularCpkPecasTotal(detalhePecas);
 
@@ -363,18 +411,41 @@ export function calcularCustosPorCategoria(
   const internet = perfil.financeiro.internet;
   const seguro = perfil.financeiro.seguro;
   const alimentacaoDia = perfil.financeiro.alimentacaoDia;
+  const { situacaoMoto, responsabilidadeAluguel, gastosCustom } = perfil.financeiro;
+
+  // Fatores de responsabilidade para moto alugada (locador pode cobrir parte dos custos)
+  const fatorDoc =
+    situacaoMoto === 'alugada'
+      ? fatorResponsabilidade(responsabilidadeAluguel.documentos)
+      : 1;
+  const fatorMan =
+    situacaoMoto === 'alugada'
+      ? fatorResponsabilidade(responsabilidadeAluguel.manutencao)
+      : 1;
+  const fatorSeg =
+    situacaoMoto === 'alugada'
+      ? fatorResponsabilidade(responsabilidadeAluguel.seguro)
+      : 1;
+
+  const totalFinanciamento = calcularCustoFinanciamentoAnual(
+    situacaoMoto,
+    perfil.financeiro.parcelaMensal,
+    perfil.financeiro.aluguelMensal,
+    perfil.financeiro.aluguelPeriodicidade,
+  );
+  const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);
 
   return {
     documentos: {
-      total: calcularCustoDocumentosAnual(ipva, licenciamento),
-      detalhes: { ipva, licenciamento },
+      total: calcularCustoDocumentosAnual(ipva, licenciamento) * fatorDoc,
+      detalhes: { ipva: ipva * fatorDoc, licenciamento: licenciamento * fatorDoc },
     },
     revisao: {
-      total: revisaoAnual,
+      total: revisaoAnual * fatorMan,
       detalhes: { modo: perfil.perfilManutencao.modoRevisao },
     },
     manutencao: {
-      total: calcularCustoManutencaoAnual(cpkPecasTotal, kmAnual),
+      total: calcularCustoManutencaoAnual(cpkPecasTotal, kmAnual) * fatorMan,
       detalhes: detalhePecas,
     },
     combustivel: {
@@ -386,12 +457,20 @@ export function calcularCustosPorCategoria(
       ativo: internet > 0,
     },
     seguro: {
-      total: calcularCustoSeguroAnual(seguro.tem, seguro.valorAnual),
+      total: calcularCustoSeguroAnual(seguro.tem, seguro.valorAnual) * fatorSeg,
       ativo: seguro.tem,
     },
     alimentacao: {
       total: calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno),
       ativo: alimentacaoDia > 0,
+    },
+    financiamento: {
+      total: totalFinanciamento,
+      ativo: totalFinanciamento > 0,
+    },
+    gastosCustom: {
+      total: totalGastosCustom,
+      ativo: totalGastosCustom > 0,
     },
   };
 }
@@ -419,6 +498,12 @@ export function calcularTotalFiltrado(
   }
   if (filtros.alimentacao) {
     total += custos.alimentacao.total;
+  }
+  if (filtros.financiamento) {
+    total += custos.financiamento.total;
+  }
+  if (filtros.gastosCustom) {
+    total += custos.gastosCustom.total;
   }
 
   if (filtros.manutencao) {
@@ -461,6 +546,8 @@ export function calcularBreakdownPercentual(
       internet: 0,
       seguro: 0,
       alimentacao: 0,
+      financiamento: 0,
+      gastosCustom: 0,
     };
   }
   return {
@@ -471,6 +558,8 @@ export function calcularBreakdownPercentual(
     internet: (custos.internet.total / total) * 100,
     seguro: (custos.seguro.total / total) * 100,
     alimentacao: (custos.alimentacao.total / total) * 100,
+    financiamento: (custos.financiamento.total / total) * 100,
+    gastosCustom: (custos.gastosCustom.total / total) * 100,
   };
 }
 
@@ -560,6 +649,23 @@ export function adaptarHistoricoParaRegistros(
   return registros;
 }
 
+// ─── Mapeamento categoriasAtivas → FiltrosCategorias ────────────
+
+export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias {
+  return {
+    documentos: cat.documentacao,
+    revisao: cat.manutencao,       // revisao é sub-item de manutencao
+    manutencao: cat.manutencao,
+    manutencaoPorPeca: {},
+    combustivel: cat.combustivel,
+    internet: cat.internet,
+    seguro: cat.seguro,
+    alimentacao: cat.alimentacao,
+    financiamento: cat.financiamento,
+    gastosCustom: cat.financiamento, // gastosCustom não tem toggle separado
+  };
+}
+
 // ─── Orquestrador principal ──────────────────────────────────────
 
 export function calcularResultado(
@@ -583,18 +689,9 @@ export function calcularResultado(
     modoExibicao,
   );
 
-  const filtrosTudo: FiltrosCategorias = {
-    documentos: true,
-    revisao: true,
-    manutencao: true,
-    manutencaoPorPeca: {},
-    combustivel: true,
-    internet: true,
-    seguro: true,
-    alimentacao: true,
-  };
+  const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
 
-  const total = calcularTotalFiltrado(custos, filtrosTudo);
+  const total = calcularTotalFiltrado(custos, filtrosAtivos);
   const totalMoto = calcularCustoMotoAnual(total, custos.alimentacao.total);
 
   return {

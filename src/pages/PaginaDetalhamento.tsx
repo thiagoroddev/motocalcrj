@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
-import { calcularTotalFiltrado, calcularGranularidades } from '../utils/calculos';
-import { filtrosPadrao } from '../types/calculos';
+import { calcularTotalFiltrado, calcularGranularidades, categoriasParaFiltros } from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
+import type { CategoriaDisplay } from '../types/perfil';
 import { moeda, cpkFormatado } from '../utils/formatters';
 
 type Periodo = 'ano' | 'mes' | 'sem' | 'dia' | 'hora';
@@ -37,6 +37,18 @@ function converterParaPeriodo(
   }
   return anual;
 }
+
+const FILTRO_PARA_CATEGORIA: Partial<
+  Record<keyof Omit<FiltrosCategorias, 'manutencaoPorPeca'>, keyof CategoriaDisplay>
+> = {
+  documentos: 'documentacao',
+  manutencao: 'manutencao',
+  combustivel: 'combustivel',
+  internet: 'internet',
+  seguro: 'seguro',
+  alimentacao: 'alimentacao',
+  financiamento: 'financiamento',
+};
 
 // ─── Sub-componentes ──────────────────────────────────────────────
 
@@ -156,7 +168,9 @@ export function PaginaDetalhamento() {
   const { perfil, dispatch } = usePerfil();
   const resultado = useCustos();
 
-  const [filtros, setFiltros] = useState<FiltrosCategorias>(filtrosPadrao);
+  const [filtros, setFiltros] = useState<FiltrosCategorias>(
+    () => categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas),
+  );
   const [expandido, setExpandido] = useState<Record<string, boolean>>({});
   const [periodo, setPeriodo] = useState<Periodo>('ano');
 
@@ -171,27 +185,13 @@ export function PaginaDetalhamento() {
   const { custos, kmAnual, diasAno } = resultado;
   const horasDia = perfil.trabalho.horasPorDia;
 
-  const totalCustomAtivo = perfil.financeiro.gastosCustom
-    .filter((g) => g.ativo)
-    .reduce((acc, g) => acc + g.valorMensal * 12, 0);
-
   const totalFiltrado = calcularTotalFiltrado(custos, filtros);
-  const totalGeral = totalFiltrado + totalCustomAtivo;
-  const gran = calcularGranularidades(totalGeral, diasAno, kmAnual);
+  const gran = calcularGranularidades(totalFiltrado, diasAno, kmAnual);
 
   const totalManutencaoComRevisao = custos.manutencao.total + custos.revisao.total;
 
-  const totalBase =
-    custos.documentos.total +
-    totalManutencaoComRevisao +
-    custos.combustivel.total +
-    custos.internet.total +
-    custos.seguro.total +
-    custos.alimentacao.total +
-    totalCustomAtivo;
-
   function pct(valor: number): string {
-    return totalBase > 0 ? `${Math.round((valor / totalBase) * 100)}%` : '0%';
+    return totalFiltrado > 0 ? `${Math.round((valor / totalFiltrado) * 100)}%` : '0%';
   }
 
   function pp(anual: number): string {
@@ -210,6 +210,10 @@ export function PaginaDetalhamento() {
       }
       return novo;
     });
+    const categoriaCd = FILTRO_PARA_CATEGORIA[cat];
+    if (categoriaCd) {
+      dispatch({ type: 'TOGGLE_CATEGORIA', categoria: categoriaCd });
+    }
   }
 
   function togglePeca(id: string) {
@@ -255,7 +259,7 @@ export function PaginaDetalhamento() {
         <p className="text-neutral/60 text-[10px] uppercase tracking-wider mb-1">
           Total anual estimado
         </p>
-        <p className="text-white font-bold text-3xl">{moeda(totalGeral)}</p>
+        <p className="text-white font-bold text-3xl">{moeda(totalFiltrado)}</p>
         <div className="flex gap-md mt-2 text-xs text-neutral/60">
           <span>{moeda(gran.mensal)}/mês</span>
           <span>{cpkFormatado(gran.porKm)}/km</span>
@@ -416,6 +420,21 @@ export function PaginaDetalhamento() {
         />
       )}
 
+      {/* Financiamento */}
+      {custos.financiamento.ativo && (
+        <CategoriaAccordion
+          label="Financiamento"
+          corClasse="bg-orange-500"
+          valorExibido={pp(custos.financiamento.total)}
+          porcentagem={pct(custos.financiamento.total)}
+          ativo={filtros.financiamento}
+          expandido={false}
+          onToggleAtivo={() => toggleFiltro('financiamento')}
+          onToggleExpandido={() => {}}
+          semExpansao
+        />
+      )}
+
       {/* Imprevistos */}
       <div className="bg-surface-cont rounded-card overflow-hidden">
         <div
@@ -426,11 +445,11 @@ export function PaginaDetalhamento() {
           <span className="flex-1 text-white text-sm font-medium">
             Imprevistos
             <span className="ml-1.5 text-[10px] font-normal text-neutral/40">
-              {pct(totalCustomAtivo)}
+              {pct(custos.gastosCustom.total)}
             </span>
           </span>
           <span className="text-sm font-semibold tabular-nums text-white">
-            {pp(totalCustomAtivo)}
+            {pp(custos.gastosCustom.total)}
           </span>
           <svg
             viewBox="0 0 24 24"

@@ -104,6 +104,8 @@ export interface CustosPorCategoria {
   internet: { total: number; ativo: boolean };
   seguro: { total: number; ativo: boolean };
   alimentacao: { total: number; ativo: boolean };
+  financiamento: { total: number; ativo: boolean };
+  gastosCustom: { total: number; ativo: boolean };
 }
 
 export interface FiltrosCategorias {
@@ -115,6 +117,8 @@ export interface FiltrosCategorias {
   internet: boolean;
   seguro: boolean;
   alimentacao: boolean;
+  financiamento: boolean;
+  gastosCustom: boolean;
 }
 
 export const filtrosPadrao: FiltrosCategorias = {
@@ -126,6 +130,8 @@ export const filtrosPadrao: FiltrosCategorias = {
   internet: true,
   seguro: true,
   alimentacao: true,
+  financiamento: true,
+  gastosCustom: true,
 };
 
 export interface ResultadoCalculo {

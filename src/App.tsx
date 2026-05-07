@@ -32,7 +32,7 @@ function App() {
                 <Route path="/ajustes" element={<PaginaAjustes />} />
               </Route>
               {/* Rotas sem NavBar (sub-telas de detalhe) */}
-              <Route path="/detalhamento" element={<PaginaDetalhamento />} />
+              <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
             </Route>
 
             {/* Raiz redireciona para estimativa (RotaProtegida redireciona p/ onboarding se necessario) */}

@@ -6,60 +6,71 @@ import { PassoLayout } from '../PassoLayout';
 export function Passo5() {
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
-  const [kmPorDia, setKmPorDia] = useState(String(perfil.trabalho.kmPorDia));
-  const [diasPorSemana, setDiasPorSemana] = useState(perfil.trabalho.diasPorSemana);
+  const [kmAtual, setKmAtual] = useState(
+    perfil.moto.kmAtual > 0 ? String(perfil.moto.kmAtual) : '',
+  );
+  const [kmUltimaRevisao, setKmUltimaRevisao] = useState(
+    perfil.moto.kmUltimaRevisao != null ? String(perfil.moto.kmUltimaRevisao) : '',
+  );
 
-  const kmNum = parseInt(kmPorDia, 10);
-  const valido = !isNaN(kmNum) && kmNum > 0;
+  const kmAtualNum = parseInt(kmAtual, 10);
+  const valido = !isNaN(kmAtualNum) && kmAtualNum > 0;
 
   function salvarEAvancar() {
+    const kmRevisaoNum = parseInt(kmUltimaRevisao, 10);
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
-      campo: 'trabalho',
-      valor: { ...perfil.trabalho, kmPorDia: kmNum, diasPorSemana },
+      campo: 'moto',
+      valor: {
+        ...perfil.moto,
+        kmAtual: kmAtualNum,
+        kmUltimaRevisao: !isNaN(kmRevisaoNum) && kmRevisaoNum > 0 ? kmRevisaoNum : null,
+      },
     });
     irParaProximo();
   }
 
   return (
     <PassoLayout
-      titulo="Quanto você roda?"
-      subtitulo="Informe a distância média e os dias trabalhados"
+      titulo="Quilometragem"
+      subtitulo="Informe o hodômetro atual da sua moto"
       aoProximo={salvarEAvancar}
       podeContinuar={valido}
     >
       <div className="flex flex-col gap-lg">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Km por dia</span>
-          <input
-            type="number"
-            value={kmPorDia}
-            onChange={(e) => setKmPorDia(e.target.value)}
-            min={1}
-            placeholder="70"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
-          />
+          <span className="text-neutral text-sm font-medium">
+            KM atual do hodômetro <span className="text-danger">*</span>
+          </span>
+          <span className="text-neutral/60 text-xs">Essencial para prever as próximas manutenções</span>
+          <div className="flex items-center gap-xs">
+            <input
+              type="number"
+              value={kmAtual}
+              onChange={(e) => setKmAtual(e.target.value)}
+              min={1}
+              placeholder="Ex: 12500"
+              className="flex-1 min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            />
+            <span className="text-neutral/60 text-sm font-medium w-8">KM</span>
+          </div>
         </label>
 
-        <div className="flex flex-col gap-sm">
-          <span className="text-neutral text-sm font-medium">Dias por semana</span>
-          <div className="flex gap-xs">
-            {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setDiasPorSemana(d)}
-                className={`flex-1 h-11 rounded-btn text-sm font-semibold transition-colors ${
-                  diasPorSemana === d
-                    ? 'bg-primary text-white'
-                    : 'bg-surface-cont border border-surface-bright text-neutral'
-                }`}
-              >
-                {d}
-              </button>
-            ))}
+        <label className="flex flex-col gap-xs">
+          <span className="text-neutral text-sm font-medium">KM na última revisão</span>
+          <span className="text-neutral/60 text-xs">Ajuda a calcular o desgaste acumulado (opcional)</span>
+          <div className="flex items-center gap-xs">
+            <input
+              type="number"
+              value={kmUltimaRevisao}
+              onChange={(e) => setKmUltimaRevisao(e.target.value)}
+              min={0}
+              placeholder="Opcional"
+              className="flex-1 min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            />
+            <span className="text-neutral/60 text-sm font-medium w-8">KM</span>
           </div>
-        </div>
+        </label>
       </div>
     </PassoLayout>
   );

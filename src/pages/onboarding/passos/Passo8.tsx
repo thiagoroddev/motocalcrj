@@ -7,10 +7,8 @@ export function Passo8() {
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
 
-  const fin = perfil.financeiro;
-  const [internet, setInternet] = useState(fin.internet > 0 ? String(fin.internet) : '');
-  const [alimentacao, setAlimentacao] = useState(
-    fin.alimentacaoDia > 0 ? String(fin.alimentacaoDia) : '',
+  const [internet, setInternet] = useState(
+    perfil.financeiro.internet > 0 ? String(perfil.financeiro.internet) : '',
   );
 
   function salvarEAvancar() {
@@ -18,9 +16,8 @@ export function Passo8() {
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'financeiro',
       valor: {
-        ...fin,
+        ...perfil.financeiro,
         internet: parseFloat(internet) || 0,
-        alimentacaoDia: parseFloat(alimentacao) || 0,
       },
     });
     irParaProximo();
@@ -28,14 +25,13 @@ export function Passo8() {
 
   return (
     <PassoLayout
-      titulo="Gastos operacionais"
-      subtitulo="Plano de dados e alimentação no dia a dia"
+      titulo="Plano de Internet"
+      subtitulo="Plano de dados para os apps de entrega"
       aoProximo={salvarEAvancar}
     >
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Internet (R$/mês)</span>
-          <span className="text-neutral/60 text-xs">Plano de dados para apps de entrega</span>
+          <span className="text-neutral text-sm font-medium">Valor mensal (R$)</span>
           <input
             type="number"
             value={internet}
@@ -47,19 +43,14 @@ export function Passo8() {
           />
         </label>
 
-        <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Alimentação (R$/dia)</span>
-          <span className="text-neutral/60 text-xs">Valor médio por dia trabalhado</span>
-          <input
-            type="number"
-            value={alimentacao}
-            onChange={(e) => setAlimentacao(e.target.value)}
-            min={0}
-            step={0.01}
-            placeholder="0,00"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
-          />
-        </label>
+        <div className="bg-primary/10 border border-primary/30 rounded-card p-md">
+          <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-xs">
+            Dica
+          </p>
+          <p className="text-neutral text-sm">
+            Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro.
+          </p>
+        </div>
       </div>
     </PassoLayout>
   );
