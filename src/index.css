@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* ── Tema escuro (padrão) ──────────────────── */
+  :root {
+    --color-primary: 0 123 255;
+    --color-secondary: 173 199 255;
+    --color-tertiary: 0 40 91;
+    --color-surface: 13 19 33;
+    --color-surface-dim: 13 19 33;
+    --color-surface-bright: 51 57 72;
+    --color-surface-cont: 25 31 46;
+    --color-neutral: 193 198 215;
+    --color-warning: 255 182 149;
+    --color-danger: 147 0 10;
+    --color-success: 34 197 94;
+    --color-cyan: 0 192 232;
+    --color-white: 255 255 255;
+    color-scheme: dark;
+  }
+
+  /* ── Tema claro (pendente refinamento de paleta) ── */
+  .light {
+    --color-surface: 245 247 252;
+    --color-surface-dim: 235 240 250;
+    --color-surface-bright: 200 210 230;
+    --color-surface-cont: 255 255 255;
+    --color-neutral: 55 65 90;
+    --color-white: 20 25 45;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-surface text-white font-sans;
+  }
+}

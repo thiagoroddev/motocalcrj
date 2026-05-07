@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PerfilProvider } from './context/PerfilContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { RotaProtegida } from './routes/RotaProtegida';
 import { LayoutApp } from './components/layout/LayoutApp';
 import { FluxoOnboarding } from './pages/onboarding/FluxoOnboarding';
@@ -12,7 +13,8 @@ import { PaginaAjustes } from './pages/PaginaAjustes';
 
 function App() {
   return (
-    <PerfilProvider>
+    <ThemeProvider>
+      <PerfilProvider>
       <BrowserRouter>
         <div className="min-h-screen bg-surface text-white">
           <Routes>
@@ -39,7 +41,8 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
-    </PerfilProvider>
+      </PerfilProvider>
+    </ThemeProvider>
   );
 }
 

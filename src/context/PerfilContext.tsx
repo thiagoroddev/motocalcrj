@@ -416,6 +416,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.historicoManutencao,
           trocasOleo: [...state.perfil.historicoManutencao.trocasOleo, novo],
         },
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
@@ -437,6 +438,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.historicoManutencao,
           revisoes: [...state.perfil.historicoManutencao.revisoes, novo],
         },
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
@@ -458,6 +460,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.historicoManutencao,
           trocasPneu: [...state.perfil.historicoManutencao.trocasPneu, novo],
         },
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
@@ -479,6 +482,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.historicoManutencao,
           trocasKitRelacao: [...state.perfil.historicoManutencao.trocasKitRelacao, novo],
         },
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
@@ -502,6 +506,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.historicoManutencao,
           abastecimentos: [...state.perfil.historicoManutencao.abastecimentos, novo],
         },
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
@@ -525,6 +530,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           kmAtual: Math.max(state.perfil.moto.kmAtual, novo.kmFinal),
         },
         diarioTrabalho: [...state.perfil.diarioTrabalho, novo],
+        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
       });
     }
 
