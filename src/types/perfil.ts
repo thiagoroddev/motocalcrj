@@ -76,6 +76,8 @@ export interface FipeCache {
   dataConsulta: string;
   codigoFipe: string;
   anoModelo: number;
+  marca: string;
+  modelo: string;
 }
 
 // ──────────────────────────────────────────────

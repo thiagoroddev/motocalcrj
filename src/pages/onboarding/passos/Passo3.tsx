@@ -10,8 +10,8 @@ const ANO_MIN = 2000;
 const ANO_MAX = new Date().getFullYear() + 1;
 const CACHE_DIAS = 30;
 
-function cacheValida(cache: FipeCache | null, ano: number): boolean {
-  if (!cache || cache.anoModelo !== ano) {
+function cacheValida(cache: FipeCache | null, marca: string, modelo: string, ano: number): boolean {
+  if (!cache || cache.anoModelo !== ano || cache.marca !== marca || cache.modelo !== modelo) {
     return false;
   }
   const diffDias = (Date.now() - new Date(cache.dataConsulta).getTime()) / 86_400_000;
@@ -32,8 +32,10 @@ export function Passo3() {
 
   type FipeEstado = 'inativo' | 'buscando' | 'ok' | 'erro';
   const [fipeEstado, setFipeEstado] = useState<FipeEstado>('inativo');
+  const { marca, modelo } = perfil.moto;
+
   const [fipeInfo, setFipeInfo] = useState<{ valor: number; mesReferencia: string } | null>(
-    cacheValida(perfil.fipeCache, anoNum)
+    cacheValida(perfil.fipeCache, marca, modelo, anoNum)
       ? { valor: perfil.fipeCache!.valor, mesReferencia: '' }
       : null,
   );
@@ -45,13 +47,13 @@ export function Passo3() {
       return;
     }
 
-    if (cacheValida(perfil.fipeCache, anoNum)) {
+    if (cacheValida(perfil.fipeCache, marca, modelo, anoNum)) {
       setFipeInfo({ valor: perfil.fipeCache!.valor, mesReferencia: '' });
       setFipeEstado('ok');
       return;
     }
 
-    const modeloDados = CATALOGO[perfil.moto.modelo];
+    const modeloDados = CATALOGO[modelo];
     if (!modeloDados) {
       return;
     }
@@ -61,7 +63,7 @@ export function Passo3() {
     setFipeInfo(null);
 
     const timerId = setTimeout(() => {
-      buscarPrecoFipe(perfil.moto.marca, modeloDados.nomeFipe, anoNum).then((resultado) => {
+      buscarPrecoFipe(marca, modeloDados.nomeFipe, anoNum).then((resultado) => {
         if (cancelado) {
           return;
         }
@@ -75,6 +77,8 @@ export function Passo3() {
               codigoFipe: resultado.codigoFipe,
               dataConsulta: new Date().toISOString().slice(0, 10),
               anoModelo: resultado.anoModelo,
+              marca,
+              modelo,
             },
           });
         } else {
@@ -87,8 +91,7 @@ export function Passo3() {
       cancelado = true;
       clearTimeout(timerId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [anoNum, valido]);
+  }, [anoNum, valido, marca, modelo]);
 
   function salvarEAvancar() {
     dispatch({

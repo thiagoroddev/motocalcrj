@@ -22,7 +22,7 @@ export function Passo7() {
       type: 'SET_SEGURO',
       config: {
         tem,
-        valorAnual: tem ? valorNum : seg.valorAnual,
+        valorAnual: tem ? (periodicidade === 'mensal' ? valorNum * 12 : valorNum) : seg.valorAnual,
         empresa: tem && empresa.trim() ? empresa.trim() : null,
         periodicidade,
       },
@@ -58,7 +58,9 @@ export function Passo7() {
         {tem && (
           <div className="flex flex-col gap-md">
             <label className="flex flex-col gap-xs">
-              <span className="text-neutral text-sm font-medium">Valor (R$)</span>
+              <span className="text-neutral text-sm font-medium">
+                {periodicidade === 'mensal' ? 'Valor mensal (R$)' : 'Valor anual (R$)'}
+              </span>
               <input
                 type="number"
                 value={valorAnual}

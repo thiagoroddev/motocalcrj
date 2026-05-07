@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import type { PerfilUsuario, PresetEntry, PerfilAction, PecaOverride } from '../types/perfil';
+import { LocalStoragePerfilStorage } from '../services/perfilStorage';
+import type { IPerfilStorage } from '../services/perfilStorage';
 import { CATALOGO } from '../data/catalogoModelos';
 
 // ──────────────────────────────────────────────
@@ -158,7 +160,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ? modeloDados.consumoKmLComBau
           : modeloDados.consumoKmL
         : state.perfil.financeiro.combustiveis.comum.autonomia;
-      const autonomiaEtanol = Math.round(autonomiaGas * 0.79);
+      const autonomiaEtanol = Math.round(autonomiaGas * 0.78);
 
       const combustiveisComBase = modeloDados
         ? {
@@ -607,43 +609,6 @@ interface PerfilProviderProps {
   storage?: IPerfilStorage;
 }
 
-// Interface definida aqui para uso interno do provider
-interface IPerfilStorage {
-  carregarPresets(): PresetEntry[];
-  salvarPresets(presets: PresetEntry[]): void;
-  getPresetAtivo(): string | null;
-  setPresetAtivo(presetId: string | null): void;
-}
-
-class LocalStoragePerfilStorage implements IPerfilStorage {
-  private readonly CHAVE_PRESETS = 'motocalc:v5:presets';
-  private readonly CHAVE_ATIVO = 'motocalc:v5:presetAtivo';
-
-  carregarPresets(): PresetEntry[] {
-    try {
-      const raw = localStorage.getItem(this.CHAVE_PRESETS);
-      return raw ? (JSON.parse(raw) as PresetEntry[]) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  salvarPresets(presets: PresetEntry[]): void {
-    localStorage.setItem(this.CHAVE_PRESETS, JSON.stringify(presets));
-  }
-
-  getPresetAtivo(): string | null {
-    return localStorage.getItem(this.CHAVE_ATIVO);
-  }
-
-  setPresetAtivo(presetId: string | null): void {
-    if (presetId) {
-      localStorage.setItem(this.CHAVE_ATIVO, presetId);
-    } else {
-      localStorage.removeItem(this.CHAVE_ATIVO);
-    }
-  }
-}
 
 function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
   const presets = storage.carregarPresets();

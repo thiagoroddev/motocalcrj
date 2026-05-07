@@ -7,16 +7,18 @@ interface ThemeContextValue {
   toggleTema: () => void;
 }
 
+const CHAVE_TEMA = 'motocalc:tema';
+
 const ThemeContext = createContext<ThemeContextValue>({ tema: 'dark', toggleTema: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [tema, setTema] = useState<Tema>(
-    () => (localStorage.getItem('motocalc:tema') as Tema | null) ?? 'dark',
+    () => (localStorage.getItem(CHAVE_TEMA) as Tema | null) ?? 'dark',
   );
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', tema === 'light');
-    localStorage.setItem('motocalc:tema', tema);
+    localStorage.setItem(CHAVE_TEMA, tema);
   }, [tema]);
 
   return (

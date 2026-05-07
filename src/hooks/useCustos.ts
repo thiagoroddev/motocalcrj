@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 import { usePerfil } from './usePerfil';
-import pop110iJson from '../presets/pop110i.json';
 import dadosRJJson from '../data/dados_rj.json';
 import { calcularResultado } from '../utils/calculos';
 import type { PresetMoto, DadosRJ, ResultadoCalculo } from '../types/calculos';
 
-const PRESETS: Record<string, PresetMoto> = {
-  pop110i: pop110iJson as unknown as PresetMoto,
-};
+const _rawPresets = import.meta.glob('../presets/*.json', { eager: true });
+
+const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
+  Object.entries(_rawPresets).map(([path, mod]) => [
+    path.split('/').pop()!.replace('.json', ''),
+    (mod as { default: PresetMoto }).default,
+  ]),
+);
 
 const dadosRJ = dadosRJJson as unknown as DadosRJ;
 
