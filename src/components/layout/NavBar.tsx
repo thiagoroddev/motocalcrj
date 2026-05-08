@@ -95,7 +95,7 @@ export function NavBar() {
             to={tab.to}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center justify-center gap-0.5 text-[9px] font-medium tracking-wider transition-colors ${
-                isActive ? 'text-primary' : 'text-neutral/50'
+                isActive ? 'bg-primary text-white' : 'text-neutral/50 hover:text-neutral'
               }`
             }
           >

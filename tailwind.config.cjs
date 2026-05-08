@@ -12,6 +12,7 @@ module.exports = {
         'surface-bright':'rgb(var(--color-surface-bright)  / <alpha-value>)',
         'surface-cont':  'rgb(var(--color-surface-cont)    / <alpha-value>)',
         neutral:         'rgb(var(--color-neutral)         / <alpha-value>)',
+        label:           'rgb(var(--color-label)           / <alpha-value>)',
         warning:         'rgb(var(--color-warning)         / <alpha-value>)',
         danger:          'rgb(var(--color-danger)          / <alpha-value>)',
         success:         'rgb(var(--color-success)         / <alpha-value>)',

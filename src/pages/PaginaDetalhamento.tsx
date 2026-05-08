@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
-import { calcularTotalFiltrado, calcularGranularidades, categoriasParaFiltros } from '../utils/calculos';
+import {
+  calcularTotalFiltrado,
+  calcularGranularidades,
+  categoriasParaFiltros,
+} from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
 import type { CategoriaDisplay } from '../types/perfil';
 import { moeda, cpkFormatado } from '../utils/formatters';
@@ -168,8 +172,8 @@ export function PaginaDetalhamento() {
   const { perfil, dispatch } = usePerfil();
   const resultado = useCustos();
 
-  const [filtros, setFiltros] = useState<FiltrosCategorias>(
-    () => categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas),
+  const [filtros, setFiltros] = useState<FiltrosCategorias>(() =>
+    categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas),
   );
   const [expandido, setExpandido] = useState<Record<string, boolean>>({});
   const [periodo, setPeriodo] = useState<Periodo>('ano');
@@ -254,7 +258,7 @@ export function PaginaDetalhamento() {
         <p className="text-white font-semibold text-base flex-1">Detalhamento</p>
       </div>
 
-      {/* Total card — sempre anual */}
+      {/* Total card sempre anual */}
       <div className="bg-primary/10 border border-primary/20 rounded-card p-md">
         <p className="text-neutral/60 text-[10px] uppercase tracking-wider mb-1">
           Total anual estimado
@@ -297,7 +301,7 @@ export function PaginaDetalhamento() {
         <LinhaDetalhe label="Licenciamento" valor={cvt(custos.documentos.detalhes.licenciamento)} />
       </CategoriaAccordion>
 
-      {/* Manutenção — inclui Revisão Geral como primeiro item */}
+      {/* Manutenção - inclui Revisão Geral como primeiro item */}
       <CategoriaAccordion
         label="Manutenção"
         corClasse="bg-amber-400"
@@ -517,7 +521,7 @@ export function PaginaDetalhamento() {
                   Para adicionar despesas vá à aba{' '}
                   <span className="text-neutral/60 font-medium">Registros</span> e registre um
                   gasto. Ele aparecerá aqui quando o modo{' '}
-                  <span className="text-neutral/60 font-medium">Personalizado</span> estiver ativo —
+                  <span className="text-neutral/60 font-medium">Personalizado</span> estiver ativo
                   ativado automaticamente com o primeiro registro.
                 </p>
               </div>

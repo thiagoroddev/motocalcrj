@@ -5,7 +5,7 @@
 @layer base {
   /* ── Tema escuro (padrão) ──────────────────── */
   :root {
-    --color-primary: 0 123 255;
+    --color-primary: 0 120 255;
     --color-secondary: 173 199 255;
     --color-tertiary: 0 40 91;
     --color-surface: 13 19 33;
@@ -13,6 +13,7 @@
     --color-surface-bright: 51 57 72;
     --color-surface-cont: 25 31 46;
     --color-neutral: 193 198 215;
+    --color-label: 139 144 160;
     --color-warning: 255 182 149;
     --color-danger: 147 0 10;
     --color-success: 34 197 94;
@@ -34,5 +35,16 @@
 
   body {
     @apply bg-surface text-white font-sans;
+  }
+}
+
+@layer components {
+  /* Label neutro — texto secundário, cinza (#8B90A0) */
+  .label-neutro {
+    @apply text-label text-[10px] uppercase tracking-wider font-medium;
+  }
+  /* Label destaque — azul desbotado (#ADC7FF), para métricas e valores-chave */
+  .label-destaque {
+    @apply text-secondary text-[10px] uppercase tracking-wider font-medium;
   }
 }

@@ -4,15 +4,13 @@ import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
 import { DonutChart } from '../components/estimativa/DonutChart';
 import type { SegmentoDonut } from '../components/estimativa/DonutChart';
-import { calcularBreakdownPercentual } from '../utils/calculos';
-import { filtrosPadrao } from '../types/calculos';
+import { calcularBreakdownPercentual, categoriasParaFiltros } from '../utils/calculos';
 import { moeda, kmFormatado, cpkFormatado } from '../utils/formatters';
 
 // ─── Configuração visual das categorias ──────────────────────────
 
 const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   documentos: { label: 'Documentos', cor: '#60A5FA' },
-  revisao: { label: 'Revisão', cor: '#A78BFA' },
   manutencao: { label: 'Manutenção', cor: '#F59E0B' },
   combustivel: { label: 'Combustível', cor: '#22C55E' },
   internet: { label: 'Internet', cor: '#0EA5E9' },
@@ -24,16 +22,16 @@ const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
 
 // ─── Sub-componentes inline ───────────────────────────────────────
 
-function LabelCampo({ children }: { children: React.ReactNode }) {
-  return <p className="text-neutral/60 text-[10px] uppercase tracking-wider mb-1">{children}</p>;
+function LabelCampo({ children, destaque }: { children: React.ReactNode; destaque?: boolean }) {
+  return <p className={`${destaque ? 'label-destaque' : 'label-neutro'} mb-1`}>{children}</p>;
 }
 
 function CardPeriodo({ label, valor, km }: { label: string; valor: number; km?: number }) {
   return (
     <div className="bg-surface-cont rounded-card p-md flex flex-col gap-1">
-      <p className="text-neutral/50 text-[10px] uppercase tracking-wider">{label}</p>
+      <p className="label-neutro">{label}</p>
       {km !== undefined && (
-        <div className="flex items-center gap-1 text-neutral/60 text-xs">
+        <div className="flex items-center gap-1 text-secondary text-xs">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -80,14 +78,21 @@ export function PaginaEstimativa() {
   const horas = perfil.trabalho.horasPorDia;
   const porHora = diasAno > 0 && horas > 0 ? granularidades.anual / (diasAno * horas) : 0;
 
-  // Donut
-  const breakdown = calcularBreakdownPercentual(custos, filtrosPadrao);
-  const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG).map(([id, cfg]) => ({
-    id,
-    label: cfg.label,
-    porcentagem: breakdown[id] ?? 0,
-    cor: cfg.cor,
-  }));
+  // Donut — reflete as categorias ativas do perfil (sincronizado com detalhamento)
+  const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
+  const breakdown = calcularBreakdownPercentual(custos, filtrosAtivos);
+  const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG)
+    .map(([id, cfg]) => ({
+      id,
+      label: cfg.label,
+      // revisao é sub-item de manutencao — soma aqui para o visual
+      porcentagem:
+        id === 'manutencao'
+          ? (breakdown.manutencao ?? 0) + (breakdown.revisao ?? 0)
+          : (breakdown[id] ?? 0),
+      cor: cfg.cor,
+    }))
+    .filter((s) => s.porcentagem > 0);
 
   function handleKmBlur() {
     const v = parseInt(kmDiaInput, 10);
@@ -150,7 +155,7 @@ export function PaginaEstimativa() {
 
       {/* Custo por km */}
       <div className="bg-primary/10 border border-primary/20 rounded-card p-md">
-        <LabelCampo>Custo de operação por km</LabelCampo>
+        <LabelCampo destaque>Custo de operação por km</LabelCampo>
         <p className="text-white font-bold text-3xl">{cpkFormatado(granularidades.porKm)}</p>
         {granularidadesMoto.porKm !== granularidades.porKm && (
           <p className="text-neutral/50 text-xs mt-1">
