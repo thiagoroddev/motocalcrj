@@ -6,7 +6,7 @@ export type { IPerfilStorage } from '../services/perfilStorage';
 export { LocalStoragePerfilStorage } from '../services/perfilStorage';
 
 // ──────────────────────────────────────────────
-// Hook principal — usado pelos componentes
+// Hook principal usado pelos componentes
 // ──────────────────────────────────────────────
 
 interface UsePerfil {

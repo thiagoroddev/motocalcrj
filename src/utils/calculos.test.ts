@@ -597,6 +597,58 @@ describe('calcularBreakdownPercentual', () => {
     const resultado = calcularBreakdownPercentual(custoVazio, filtrosTudo);
     Object.values(resultado).forEach((v) => expect(v).toBe(0));
   });
+
+  it('categorias ativas somam ~100% do total filtrado', () => {
+    const resultado = calcularBreakdownPercentual(custosMock, filtrosTudo);
+    const soma = Object.values(resultado).reduce((a, b) => a + b, 0);
+    expect(soma).toBeCloseTo(100, 1);
+  });
+
+  it('categoria desativada retorna 0% mesmo com custo > 0', () => {
+    // Regressão: bug anterior dividia pelo total filtrado sem checar o filtro
+    // resultado: categorias desativadas apareciam com > 100%
+    const resultado = calcularBreakdownPercentual(custosMock, {
+      ...filtrosTudo,
+      combustivel: false,
+      alimentacao: false,
+    });
+    expect(resultado.combustivel).toBe(0);
+    expect(resultado.alimentacao).toBe(0);
+    expect(resultado.documentos).toBeGreaterThan(0);
+  });
+
+  it('única categoria ativa aparece com ~100%', () => {
+    const filtroSoManu: FiltrosCategorias = {
+      ...filtrosTudo,
+      documentos: false,
+      revisao: false,
+      combustivel: false,
+      internet: false,
+      seguro: false,
+      alimentacao: false,
+    };
+    const resultado = calcularBreakdownPercentual(custosMock, filtroSoManu);
+    expect(resultado.manutencao).toBeCloseTo(100, 1);
+    expect(resultado.documentos).toBe(0);
+    expect(resultado.combustivel).toBe(0);
+    expect(resultado.alimentacao).toBe(0);
+  });
+
+  it('percentuais são relativos ao total filtrado, não ao total geral', () => {
+    // Com só documentos ativo, deve retornar 100% não 600/8409*100 ≈ 7%
+    const filtroSoDoc: FiltrosCategorias = {
+      ...filtrosTudo,
+      revisao: false,
+      manutencao: false,
+      combustivel: false,
+      internet: false,
+      seguro: false,
+      alimentacao: false,
+    };
+    const resultado = calcularBreakdownPercentual(custosMock, filtroSoDoc);
+    expect(resultado.documentos).toBeCloseTo(100, 1);
+    expect(resultado.manutencao).toBe(0);
+  });
 });
 
 describe('calcularCustoMotoAnual', () => {

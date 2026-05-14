@@ -550,16 +550,17 @@ export function calcularBreakdownPercentual(
       gastosCustom: 0,
     };
   }
+  const pct = (valor: number) => (valor / total) * 100;
   return {
-    documentos: (custos.documentos.total / total) * 100,
-    revisao: (custos.revisao.total / total) * 100,
-    manutencao: (custos.manutencao.total / total) * 100,
-    combustivel: (custos.combustivel.total / total) * 100,
-    internet: (custos.internet.total / total) * 100,
-    seguro: (custos.seguro.total / total) * 100,
-    alimentacao: (custos.alimentacao.total / total) * 100,
-    financiamento: (custos.financiamento.total / total) * 100,
-    gastosCustom: (custos.gastosCustom.total / total) * 100,
+    documentos: filtros.documentos ? pct(custos.documentos.total) : 0,
+    revisao: filtros.revisao ? pct(custos.revisao.total) : 0,
+    manutencao: filtros.manutencao ? pct(custos.manutencao.total) : 0,
+    combustivel: filtros.combustivel ? pct(custos.combustivel.total) : 0,
+    internet: filtros.internet ? pct(custos.internet.total) : 0,
+    seguro: filtros.seguro ? pct(custos.seguro.total) : 0,
+    alimentacao: filtros.alimentacao ? pct(custos.alimentacao.total) : 0,
+    financiamento: filtros.financiamento ? pct(custos.financiamento.total) : 0,
+    gastosCustom: filtros.gastosCustom ? pct(custos.gastosCustom.total) : 0,
   };
 }
 
