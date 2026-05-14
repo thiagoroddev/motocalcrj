@@ -48,7 +48,11 @@ export function PassoConfirmacao() {
           <LinhaResumo label="KM atual" valor={`${moto.kmAtual.toLocaleString('pt-BR')} km`} />
           <LinhaResumo
             label="KM última revisão"
-            valor={moto.kmUltimaRevisao != null ? `${moto.kmUltimaRevisao.toLocaleString('pt-BR')} km` : '—'}
+            valor={
+              moto.kmUltimaRevisao != null
+                ? `${moto.kmUltimaRevisao.toLocaleString('pt-BR')} km`
+                : '—'
+            }
           />
         </SessaoResumo>
 

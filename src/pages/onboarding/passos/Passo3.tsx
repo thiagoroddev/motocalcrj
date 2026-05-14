@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -33,6 +33,11 @@ export function Passo3() {
   type FipeEstado = 'inativo' | 'buscando' | 'ok' | 'erro';
   const [fipeEstado, setFipeEstado] = useState<FipeEstado>('inativo');
   const { marca, modelo } = perfil.moto;
+  const fipeCacheRef = useRef(perfil.fipeCache);
+
+  useEffect(() => {
+    fipeCacheRef.current = perfil.fipeCache;
+  }, [perfil.fipeCache]);
 
   const [fipeInfo, setFipeInfo] = useState<{ valor: number; mesReferencia: string } | null>(
     cacheValida(perfil.fipeCache, marca, modelo, anoNum)
@@ -47,8 +52,9 @@ export function Passo3() {
       return;
     }
 
-    if (cacheValida(perfil.fipeCache, marca, modelo, anoNum)) {
-      setFipeInfo({ valor: perfil.fipeCache!.valor, mesReferencia: '' });
+    const fipeCache = fipeCacheRef.current;
+    if (cacheValida(fipeCache, marca, modelo, anoNum)) {
+      setFipeInfo({ valor: fipeCache!.valor, mesReferencia: '' });
       setFipeEstado('ok');
       return;
     }
@@ -91,7 +97,7 @@ export function Passo3() {
       cancelado = true;
       clearTimeout(timerId);
     };
-  }, [anoNum, valido, marca, modelo]);
+  }, [anoNum, valido, marca, modelo, dispatch]);
 
   function salvarEAvancar() {
     dispatch({

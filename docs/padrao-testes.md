@@ -151,7 +151,7 @@ typescript
 it('multiplica kmDia × diasSemana × 52', () => {
   expect(calcularKmAnual(70, 5)).toBe(18200);
 });
-2. Invariantes documentadas em docs/dominios/invariantes.md
+2. Invariantes documentadas em docs/dominio/invariantes.md
 Para cada invariante que toca a unidade sendo testada, escreva um teste que tenta violá-la e verifica que o sistema impede (ou que a invariante se mantém).
 
 Exemplo: ao implementar SET_KM_ATUAL no reducer, INV-MOTO-2 (kmAtual monotônico crescente) está em jogo.
@@ -189,7 +189,7 @@ Testa o código (a regra realmente está protegida)
 
 Valida a documentação (a invariante documentada é de fato implementada)
 
-Se ao escrever o teste você descobrir que a invariante não está protegida no código, você encontrou uma dívida técnica real registre em docs/dominios/divida-tecnica.md.
+Se ao escrever o teste você descobrir que a invariante não está protegida no código, você encontrou uma dívida técnica real registre em docs/dominio/divida-tecnica.md.
 
 O que NÃO é exigido na cobertura mínima
 Não exigimos cobertura de 100% de branches/linhas. Métricas de cobertura são úteis mas viram fim em si mesmas se forem exigência.

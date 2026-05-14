@@ -135,9 +135,13 @@ export function resolverIntervaloPeca(
 ): number {
   if (modoExibicao === 'personalizado') {
     const override = pecasOverrides.find((o) => o.id === pecaId);
-    if (override?.intervaloKmEditado != null) return override.intervaloKmEditado;
+    if (override?.intervaloKmEditado != null) {
+      return override.intervaloKmEditado;
+    }
     const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
-    if (registrosPeca.length >= 1) return media(registrosPeca.map((r) => r.kmDesdeAnterior));
+    if (registrosPeca.length >= 1) {
+      return media(registrosPeca.map((r) => r.kmDesdeAnterior));
+    }
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -164,16 +168,18 @@ export function resolverPrecoPeca(
   const override = pecasOverrides.find((o) => o.id === pecaId);
 
   if (modoExibicao === 'personalizado') {
-    if (override?.precoEditado != null) return override.precoEditado;
+    if (override?.precoEditado != null) {
+      return override.precoEditado;
+    }
     const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
-    if (registrosPeca.length >= 1) return media(registrosPeca.map((r) => r.preco));
+    if (registrosPeca.length >= 1) {
+      return media(registrosPeca.map((r) => r.preco));
+    }
   }
 
   // perfilPecasOverride por peça sobrescreve o global (ignorado em modo predefinidos per RN-04)
   const perfilEfetivo: PerfilPecas =
-    modoExibicao === 'personalizado'
-      ? (override?.perfilPecasOverride ?? perfilPecas)
-      : perfilPecas;
+    modoExibicao === 'personalizado' ? (override?.perfilPecasOverride ?? perfilPecas) : perfilPecas;
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
   if (peca) {
@@ -209,8 +215,22 @@ export function calcularCpkPorPeca(
   ];
 
   for (const { id, label } of todasPecas) {
-    const intervalo = resolverIntervaloPeca(id, preset, tipoUso, registros, modoExibicao, pecasOverrides);
-    const preco = resolverPrecoPeca(id, preset, perfilPecas, registros, modoExibicao, pecasOverrides);
+    const intervalo = resolverIntervaloPeca(
+      id,
+      preset,
+      tipoUso,
+      registros,
+      modoExibicao,
+      pecasOverrides,
+    );
+    const preco = resolverPrecoPeca(
+      id,
+      preset,
+      perfilPecas,
+      registros,
+      modoExibicao,
+      pecasOverrides,
+    );
     const cpk = calcularCpkPeca(preco, intervalo);
 
     const override = pecasOverrides.find((o) => o.id === id);
@@ -333,8 +353,12 @@ export function calcularCustoAlimentacaoAnual(precoAlimentacao: number, diasAno:
 }
 
 export function fatorResponsabilidade(resp: ResponsabilidadeCusto): number {
-  if (resp === 'locador') return 0;
-  if (resp === 'dividido') return 0.5;
+  if (resp === 'locador') {
+    return 0;
+  }
+  if (resp === 'dividido') {
+    return 0.5;
+  }
   return 1;
 }
 
@@ -415,17 +439,11 @@ export function calcularCustosPorCategoria(
 
   // Fatores de responsabilidade para moto alugada (locador pode cobrir parte dos custos)
   const fatorDoc =
-    situacaoMoto === 'alugada'
-      ? fatorResponsabilidade(responsabilidadeAluguel.documentos)
-      : 1;
+    situacaoMoto === 'alugada' ? fatorResponsabilidade(responsabilidadeAluguel.documentos) : 1;
   const fatorMan =
-    situacaoMoto === 'alugada'
-      ? fatorResponsabilidade(responsabilidadeAluguel.manutencao)
-      : 1;
+    situacaoMoto === 'alugada' ? fatorResponsabilidade(responsabilidadeAluguel.manutencao) : 1;
   const fatorSeg =
-    situacaoMoto === 'alugada'
-      ? fatorResponsabilidade(responsabilidadeAluguel.seguro)
-      : 1;
+    situacaoMoto === 'alugada' ? fatorResponsabilidade(responsabilidadeAluguel.seguro) : 1;
 
   const totalFinanciamento = calcularCustoFinanciamentoAnual(
     situacaoMoto,
@@ -655,7 +673,7 @@ export function adaptarHistoricoParaRegistros(
 export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias {
   return {
     documentos: cat.documentacao,
-    revisao: cat.manutencao,       // revisao é sub-item de manutencao
+    revisao: cat.manutencao, // revisao é sub-item de manutencao
     manutencao: cat.manutencao,
     manutencaoPorPeca: {},
     combustivel: cat.combustivel,

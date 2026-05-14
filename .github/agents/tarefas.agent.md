@@ -8,6 +8,8 @@ applyTo: "docs/tarefas/**/*.md"
 > Este arquivo define **como tarefas são criadas, executadas, bloqueadas e concluídas**.
 > Ele não define padrões de código, documentação geral, revisão ou segurança.
 
+---
+
 ## Como este padrão se relaciona com os outros
 
 | Arquivo | Relação |
@@ -35,12 +37,32 @@ Uma tarefa não é só uma linha de backlog. Ela é uma unidade rastreável de t
 
 ---
 
-## 2. Ciclo de vida
+## 2. Labels obrigatórios da task
+
+Toda task deve usar os labels abaixo como padrão.
+
+| Campo | Valores aceitos |
+|---|---|
+| **TASK-ID** | `TASK-` + prefixo + número.<br><br>Prefixos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`BG` = bug<br>`REF` = refactor<br>`DOC` = documentação<br>`CHORE` = manutenção<br>`TEST` = testes<br><br>Exemplo: `TASK-RF-5.1` |
+| **Título** | Frase curta e descritiva, sem ponto final.<br><br>Exemplo: `Criar sistema de autenticação` |
+| **Modo** | Define o nível de cerimônia da task.<br><br>Valores aceitos:<br>`Light` / `Standard` / `Strict` |
+| **Valor** | Importância da task para o produto/projeto.<br><br>Valores aceitos:<br>`Crítico` / `Importante` / `Desejável` |
+| **Urgência** | Prioridade temporal da execução.<br><br>Valores aceitos:<br>`Imediata` / `Normal` |
+| **Esforço-H/IA** | Duas medidas separadas por `/`, representando esforço humano e esforço para IA.<br><br>Formato: `H/IA`<br><br>Valores aceitos:<br>`P` / `M` / `G` / `XG`<br><br>Exemplo: `M/G` = médio para humano, grande para IA |
+| **Dependências** | IDs de outras tarefas que precisam ser concluídas antes desta.<br><br>Use `-` se não houver dependências.<br><br>Exemplo: `TASK-RF-1.1, TASK-RN-2.1` |
+| **REQ/ADR/DT** | Referências relacionadas a requisitos, decisões arquiteturais e dívidas técnicas.<br><br>Tipos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`ADR` = Architecture Decision Record<br>`DT` = dívida técnica<br><br>Use `-` se não houver referência.<br><br>Exemplo: `RF-2, ADR-3, DT-14` |
+| **Status** | Estado atual da task.<br><br>Valores aceitos:<br>`[ ]` pendente<br>`[x]` concluída<br><br>Observação: tarefas concluídas normalmente saem do arquivo de tasks pendentes. |
+| **Data origem** | Data e hora em que a task foi criada.<br><br>Formato:<br>`DD/MM/AA HH:MM`<br><br>Exemplo: `14/05/26 08:45` |
+| **Observações** | Campo usado apenas quando a urgência for `Imediata`.<br><br>Serve para explicar o contexto ou motivo da urgência.<br><br>Use `-` se não houver observação. |
+
+---
+
+## 3. Ciclo de vida
 
 Toda tarefa passa por três estados principais:
 
 ```txt
-Pendente → Em andamento → Concluída
+Pendente -> Em andamento -> Concluída
 ```
 
 Arquivos correspondentes:
@@ -50,7 +72,7 @@ docs/tarefas/
 ├── pendentes.md
 ├── em-andamento.md
 └── concluidas/
-    └── PREFIXO-XXX-YYYY-MM-DD-HHhMM.md
+    └── TASK-PREFIXO-XXX-YYYY-MM-DD-HHhMM.md
 ```
 
 ### Regra
@@ -68,34 +90,97 @@ Nada deve viver no lugar errado.
 
 ---
 
-## 3. Prefixos de tarefa
+## 4. Prefixos de tarefa
 
 Use prefixos para indicar a natureza da tarefa.
 
 | Prefixo | Significado | Quando usar |
 |---|---|---|
-| `RF` | Requisito Funcional | Implementa comportamento visível ao usuário. |
-| `RN` | Regra de Negócio | Implementa ou corrige regra do domínio. |
-| `RNF` | Requisito Não-Funcional | Performance, acessibilidade, segurança, PWA, etc. |
-| `BG` | Bug | Corrige comportamento errado. |
-| `REF` | Refatoração | Melhora estrutura sem mudar comportamento. |
-| `DOC` | Documentação | Cria ou ajusta documentação. |
-| `CHORE` | Manutenção | Ajuste técnico sem impacto direto no produto. |
+| `TASK-RF` | Requisito funcional | Implementa comportamento visível ao usuário. |
+| `TASK-RN` | Regra de negócio | Implementa ou corrige regra do domínio. |
+| `TASK-RNF` | Requisito não-funcional | Performance, acessibilidade, segurança, PWA, etc. |
+| `TASK-BG` | Bug | Corrige comportamento errado. |
+| `TASK-REF` | Refatoração | Melhora estrutura sem mudar comportamento. |
+| `TASK-DOC` | Documentação | Cria ou ajusta documentação. |
+| `TASK-CHORE` | Manutenção | Ajuste técnico sem impacto direto no produto. |
+| `TASK-TEST` | Testes | Cria, corrige ou amplia testes. |
 
 Exemplos:
 
 ```txt
-RF-001
-RF-001.1
-BG-003
-REF-002
-DOC-004
-RNF-005
+TASK-RF-001
+TASK-RF-001.1
+TASK-BG-003
+TASK-REF-002
+TASK-DOC-004
+TASK-RNF-005
 ```
 
 ---
 
-## 4. Tarefa pendente
+## 5. Esforço para IA
+
+O esforço de uma tarefa para IA **não deve ser medido por tempo humano**, mas por:
+
+- carga de contexto;
+- quantidade de arquivos afetados;
+- risco de erro;
+- necessidade de validação;
+- chance de estourar o contexto da conversa;
+- impacto arquitetural.
+
+Por isso, o campo de esforço da task é duplo:
+
+```txt
+H/IA
+```
+
+Onde:
+
+- **H** = esforço estimado para humano;
+- **IA** = esforço estimado para inteligência artificial.
+
+Exemplo:
+
+```txt
+M/G
+```
+
+Significa:
+
+- **M** = esforço médio para humano;
+- **G** = esforço grande para IA.
+
+| Esforço | Nome | Definição | Critérios típicos |
+|---|---|---|---|
+| **P-IA** | Pequena | Pequena e local | Afeta 1-2 arquivos, exige baixo contexto, possui baixo risco e não altera arquitetura |
+| **M-IA** | Média | Média e controlada | Afeta 2-5 arquivos, exige contexto moderado, possui testes simples e impacto local |
+| **G-IA** | Grande | Grande e sensível | Afeta 5-12 arquivos, exige alto contexto, possui risco relevante e precisa de testes e revisão cuidadosa |
+| **XG-IA** | Extra grande | Grande demais para uma única execução segura | Afeta 12+ arquivos, envolve muitas decisões, possui alto risco ou grande chance de estourar o contexto |
+
+### Regra para XG
+
+Tarefa com `XG` em qualquer lado do campo `Esforço-H/IA` deve ser quebrada antes de ser executada.
+
+Exemplo:
+
+```txt
+TASK-RF-010 Criar sistema completo de autenticação
+```
+
+Deve virar algo como:
+
+```txt
+TASK-RF-010.1 Criar tela de login
+TASK-RF-010.2 Criar validação de formulário
+TASK-RF-010.3 Criar serviço de autenticação
+TASK-RF-010.4 Criar proteção de rotas
+TASK-RF-010.5 Criar logout
+```
+
+---
+
+## 6. Tarefa pendente
 
 Arquivo:
 
@@ -105,106 +190,84 @@ docs/tarefas/pendentes.md
 
 Tarefa pendente deve ser curta. Ela representa intenção, não plano completo.
 
-Modelo:
+### Template de task pendente normal
+
+Use este formato para tasks com urgência `Normal`.
 
 ```md
 # Tarefas Pendentes
 
-## Legenda de Prefixos
+> Backlog priorizado. Revisado no início de cada ciclo.
 
-| Prefixo | Significado |
-|---|---|
-| RF | Requisito Funcional |
-| RN | Regra de Negócio |
-| RNF | Requisito Não-Funcional |
-| BG | Bug |
-| REF | Refatoração |
-| DOC | Documentação |
-| CHORE | Manutenção |
+| TASK-ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
+|---|---|:---:|:---:|:---:|:---:|---|---|:---:|---|
+| TASK-RF-5.1 | Registros - lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 09:39 |
+```
 
-## Priorização
+### Template de task pendente imediata
 
-| Campo | Valores |
-|---|---|
-| Valor | Crítico / Importante / Desejável |
-| Urgência | Imediata / Esta Semana / Este Mês / Quando Der |
-| Esforço | P / M / G / XG |
+Use este formato para tasks com urgência `Imediata`.
 
-## Backlog
+```md
+## TASK-ID - Título
 
-| ID | Título | Valor | Urgência | Esforço | Dependências | Status | Data de Origem |
-|---|---|---|---|---|---|---|---|
-| RF-001 | Criar tela de login | Crítico | Imediata | M | - | [ ] | 2026-05-13 |
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** Imediata
+- **Esforço-H/IA:** G/G
+- **Data origem:** 10/05/26 09:39
+- **Dependências:** TASK-RF-21
+- **REQ/ADR/DT:** RNF-04, RNF-11, ADR-2, DT-14
+- **Observações:** Deu problema nisso e naquilo, agora precisa disso primeiro
 ```
 
 ### Regras
 
-- Uma tarefa pendente deve ocupar uma linha.
+- Uma tarefa pendente normal deve ocupar uma linha.
+- Tarefa imediata pode usar bloco detalhado com `Observações`.
 - Não coloque planejamento longo no backlog.
 - Não misture dívida técnica com tarefa pendente.
-- Não coloque tarefa sem ID.
+- Não coloque tarefa sem `TASK-ID`.
 - Não crie tarefa para algo trivial corrigido dentro da própria tarefa atual.
 
 ---
 
-## 5. Priorização
+## 7. Priorização
 
-Use três campos simples.
+Use os campos `Valor`, `Urgência` e `Esforço-H/IA`.
 
 ### Valor
 
 | Valor | Significado |
 |---|---|
-| Crítico | Sem isso, o produto quebra ou não entrega o mínimo. |
-| Importante | Melhora relevante ou desbloqueia outras partes. |
-| Desejável | Bom ter, mas pode esperar. |
+| `Crítico` | Sem isso, o produto quebra ou não entrega o mínimo. |
+| `Importante` | Melhora relevante ou desbloqueia outras partes. |
+| `Desejável` | Bom ter, mas pode esperar. |
 
 ### Urgência
 
 | Urgência | Significado |
 |---|---|
-| Imediata | Deve ser atacada antes de quase tudo. |
-| Esta Semana | Importante no ciclo atual. |
-| Este Mês | Entra no planejamento próximo. |
-| Quando Der | Sem pressão. |
+| `Imediata` | Deve ser atacada antes de quase tudo. Exige `Observações`. |
+| `Normal` | Entra no backlog priorizado regular. |
 
-### Esforço
+### Modo
 
-| Esforço | Significado |
+| Modo | Significado |
 |---|---|
-| P | Até 2 horas. |
-| M | 2 a 8 horas. |
-| G | 1 a 3 dias. |
-| XG | Mais de 3 dias ou precisa quebrar em subtarefas. |
-
-### Regra para XG
-
-Tarefa `XG` deve ser quebrada antes de ser executada.
-
-Exemplo:
-
-```txt
-RF-010 Criar sistema completo de autenticação
-```
-
-Deve virar algo como:
-
-```txt
-RF-010.1 Criar tela de login
-RF-010.2 Criar validação de formulário
-RF-010.3 Criar serviço de autenticação
-RF-010.4 Criar proteção de rotas
-RF-010.5 Criar logout
-```
+| `Light` | Pouca cerimônia. Útil para tarefas pequenas e de baixo risco. |
+| `Standard` | Cerimônia padrão. Útil para tarefas médias ou comuns. |
+| `Strict` | Cerimônia alta. Útil para tarefas críticas, arriscadas ou arquiteturais. |
 
 ---
 
-## 6. Iniciando uma tarefa
+## 8. Iniciando uma tarefa
 
 Antes de iniciar:
 
 1. Ler a tarefa em `pendentes.md`.
-2. Ler requisitos relacionados.
+2. Ler requisitos relacionados em `REQ/ADR/DT`.
 3. Ler ADRs relacionadas, se houver.
 4. Ler padrões técnicos relacionados.
 5. Fazer análise de impacto quando necessário.
@@ -229,7 +292,7 @@ Em resumo, peça aprovação antes de:
 
 ---
 
-## 7. Tarefa em andamento
+## 9. Tarefa em andamento
 
 Arquivo:
 
@@ -248,14 +311,19 @@ Modelo:
 ```md
 # Tarefas em Andamento
 
-## RF-001 - Criar tela de login
+## TASK-RF-001 - Criar tela de login
 
-**Status:** EM DESENVOLVIMENTO
-**Data de Origem:** 2026-05-13
-**Início:** 2026-05-13 14:00
-**Requisitos:** RF-001, RNF-002
-**ADR Relacionada:** -
-**Responsável:** IA + Humano
+- **Status:** Em desenvolvimento
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** Normal
+- **Esforço-H/IA:** M/M
+- **Data origem:** 13/05/26 09:00
+- **Início:** 13/05/26 14:00
+- **Dependências:** -
+- **REQ/ADR/DT:** RF-001, RNF-002
+- **Responsável:** IA + Humano
+- **Observações:** -
 
 ## Planejamento Aprovado
 
@@ -290,12 +358,21 @@ Nenhum.
 
 ---
 
-## 8. Planejamento da tarefa
+## 10. Planejamento da tarefa
 
-Para tarefa média ou grande, use este formato antes de executar:
+Para tarefa média, grande, crítica ou com modo `Strict`, use este formato antes de executar:
 
 ```md
-## Plano: [ID] - [Título]
+## Plano: TASK-ID - Título
+
+### Labels
+
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** Normal
+- **Esforço-H/IA:** M/G
+- **Dependências:** -
+- **REQ/ADR/DT:** RF-001, RNF-002
 
 ### Objetivo
 
@@ -307,11 +384,6 @@ Para tarefa média ou grande, use este formato antes de executar:
 |---|---|
 | `src/pages/Login.tsx` | Criar página de login. |
 | `src/hooks/useLogin.ts` | Encapsular estado e handlers. |
-
-### Requisitos relacionados
-
-- RF-001
-- RNF-002
 
 ### Impactos possíveis
 
@@ -335,7 +407,7 @@ Nenhuma.
 
 ---
 
-## 9. Execução
+## 11. Execução
 
 Durante a execução:
 
@@ -354,39 +426,46 @@ Se encontrar algo errado fora do escopo:
 | Situação | Ação |
 |---|---|
 | Trivial e diretamente relacionado | Corrigir e registrar. |
-| Bug real | Criar tarefa `BG`. |
-| Código ruim, mas funcional | Criar tarefa `REF` ou dívida técnica. |
+| Bug real | Criar tarefa `TASK-BG`. |
+| Código ruim, mas funcional | Criar tarefa `TASK-REF` ou dívida técnica. |
 | Decisão arquitetural necessária | Criar ou propor ADR. |
 | Regra não documentada | Propor requisito ou invariante. |
 
 ---
 
-## 10. Bloqueios
+## 12. Bloqueios
 
 Após duas tentativas sem sucesso no mesmo problema, pare e peça orientação.
 
 Modelo:
 
 ```md
-## Bloqueio em YYYY-MM-DD HH:MM
+## Bloqueio em DD/MM/AA HH:MM
+
+**TASK-ID:** TASK-RF-001
 
 **Contexto:** [o que estava tentando fazer]
 
 **O que tentei:**
+
 1. [tentativa 1]
 2. [tentativa 2]
 
 **Por que não funcionou:**
+
 [causa provável]
 
 **Opções:**
+
 1. [opção A]
 2. [opção B]
 
 **Minha recomendação:**
+
 [opção recomendada e motivo]
 
 **O que preciso do humano:**
+
 [decisão, arquivo, credencial, confirmação, contexto etc.]
 ```
 
@@ -399,7 +478,7 @@ Modelo:
 
 ---
 
-## 11. Concluindo uma tarefa
+## 13. Concluindo uma tarefa
 
 Antes de concluir:
 
@@ -415,32 +494,37 @@ Antes de concluir:
 
 ---
 
-## 12. Arquivo de tarefa concluída
+## 14. Arquivo de tarefa concluída
 
 Local:
 
 ```txt
-docs/tarefas/concluidas/PREFIXO-XXX-YYYY-MM-DD-HHhMM.md
+docs/tarefas/concluidas/TASK-PREFIXO-XXX-YYYY-MM-DD-HHhMM.md
 ```
 
 Exemplo:
 
 ```txt
-docs/tarefas/concluidas/RF-001-2026-05-13-17h30.md
+docs/tarefas/concluidas/TASK-RF-001-2026-05-13-17h30.md
 ```
 
 Modelo:
 
 ```md
-# RF-001 - Criar tela de login
+# TASK-RF-001 - Criar tela de login
 
-**Status:** CONCLUÍDO
-**Data de Origem:** 2026-05-13
-**Início:** 2026-05-13 14:00
-**Conclusão:** 2026-05-13 17:30
-**Requisitos:** RF-001, RNF-002
-**ADR Relacionada:** -
-**Responsável:** IA + Humano
+- **Status:** Concluída
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** Normal
+- **Esforço-H/IA:** M/M
+- **Data origem:** 13/05/26 09:00
+- **Início:** 13/05/26 14:00
+- **Conclusão:** 13/05/26 17:30
+- **Dependências:** -
+- **REQ/ADR/DT:** RF-001, RNF-002
+- **Responsável:** IA + Humano
+- **Observações:** -
 
 ## Objetivo
 
@@ -476,9 +560,7 @@ Modelo:
 
 Consultar `revisao.agent.md`.
 
-Resultado:
-
-**Veredito:** APROVADO / APROVADO COM RESSALVAS / REPROVADO / N/A
+**Veredito:** Aprovado / Aprovado com ressalvas / Reprovado / N/A
 
 ## Testes
 
@@ -502,7 +584,7 @@ Resultado:
 
 ## Tarefas Geradas
 
-- BG-002: Corrigir feedback visual de erro no formulário.
+- TASK-BG-002: Corrigir feedback visual de erro no formulário.
 
 ## Aprendizados para o Projeto
 
@@ -511,7 +593,7 @@ Resultado:
 
 ---
 
-## 13. Testes e checks
+## 15. Testes e checks
 
 O tipo de teste depende da tarefa.
 
@@ -559,7 +641,7 @@ Use:
 
 ---
 
-## 14. Tarefas geradas por revisão
+## 16. Tarefas geradas por revisão
 
 Quando uma revisão encontra problema, registre tarefa gerada.
 
@@ -568,9 +650,9 @@ Use a árvore de decisão:
 ```txt
 Problema encontrado
 ├── Viola requisito existente?
-│   └── Criar BG ou REF referenciando requisito.
+│   └── Criar TASK-BG ou TASK-REF referenciando requisito.
 ├── É qualidade interna?
-│   └── Criar REF.
+│   └── Criar TASK-REF.
 ├── É comportamento novo não coberto?
 │   └── Propor requisito + tarefa.
 └── É trivial?
@@ -582,20 +664,22 @@ Exemplo:
 ```md
 ## Tarefas Geradas
 
-- BG-003: Corrigir validação de data final menor que data inicial. Viola RN-002.
-- REF-004: Extrair lógica de cálculo de `PaginaResumo.tsx`.
+- TASK-BG-003: Corrigir validação de data final menor que data inicial. Viola RN-002.
+- TASK-REF-004: Extrair lógica de cálculo de `PaginaResumo.tsx`.
 ```
 
 ---
 
-## 15. Relação entre tarefa, requisito, ADR e dívida
+## 17. Relação entre tarefa, requisito, ADR e dívida
+
+Use sempre o label `REQ/ADR/DT` para registrar vínculos.
 
 ### Tarefa ligada a requisito
 
 Use quando a tarefa implementa ou corrige algo previsto.
 
 ```md
-**Requisitos:** RF-001, RN-002
+- **REQ/ADR/DT:** RF-001, RN-002
 ```
 
 ### Tarefa ligada a ADR
@@ -603,7 +687,7 @@ Use quando a tarefa implementa ou corrige algo previsto.
 Use quando a tarefa implementa decisão arquitetural.
 
 ```md
-**ADR Relacionada:** ADR-003
+- **REQ/ADR/DT:** ADR-003
 ```
 
 ### Tarefa gerada por dívida técnica
@@ -611,18 +695,18 @@ Use quando a tarefa implementa decisão arquitetural.
 Use quando uma dívida virou ação.
 
 ```md
-**Origem:** DT-004
+- **REQ/ADR/DT:** DT-004
 ```
 
 Ao concluir, atualize a dívida:
 
 ```md
-DT-004: Resolvida pela tarefa REF-006 em 2026-05-13.
+DT-004: Resolvida pela tarefa TASK-REF-006 em 13/05/26.
 ```
 
 ---
 
-## 16. Quando criar nova tarefa
+## 18. Quando criar nova tarefa
 
 Crie nova tarefa quando:
 
@@ -644,7 +728,7 @@ Não crie nova tarefa para:
 
 ---
 
-## 17. Quando criar dívida técnica em vez de tarefa
+## 19. Quando criar dívida técnica em vez de tarefa
 
 Crie dívida técnica quando:
 
@@ -663,27 +747,31 @@ Não use dívida técnica como lixeira de coisas esquecidas.
 
 ---
 
-## 18. Relatório final para o humano
+## 20. Relatório final para o humano
 
 Ao concluir uma tarefa, responda com:
 
 ```md
-## Concluído: [ID] - [Título]
+## Concluído: TASK-ID - Título
 
 **Resumo:** [o que foi feito]
 
 **Arquivos alterados:**
+
 - `arquivo`: [mudança]
 
 **Testes/checks:**
+
 - `npm run test`: passou
 - `npm run lint`: passou
 
 **Registros atualizados:**
+
 - `docs/tarefas/concluidas/...`
 - `docs/requisitos/...`
 
 **Pendências:**
+
 - [se houver]
 ```
 
@@ -691,7 +779,7 @@ Para tarefas pequenas, pode ser mais curto.
 
 ---
 
-## 19. Anti-padrões em tarefas
+## 21. Anti-padrões em tarefas
 
 Evite:
 
@@ -699,22 +787,22 @@ Evite:
 - deixar tarefa em andamento sem log;
 - concluir sem rodar checks aplicáveis;
 - misturar várias tarefas em uma;
-- criar tarefa sem ID;
+- criar tarefa sem `TASK-ID`;
 - criar requisito escondido dentro de tarefa;
 - transformar dívida técnica em backlog automaticamente;
 - apagar documentação antiga sem autorização;
-- registrar “feito” quando só foi parcialmente feito;
+- registrar "feito" quando só foi parcialmente feito;
 - gerar dezenas de tarefas pequenas sem prioridade.
 
 ---
 
-## 20. Checklist rápido
+## 22. Checklist rápido
 
 Antes de iniciar:
 
 ```md
 - [ ] Li a tarefa.
-- [ ] Li requisitos relacionados.
+- [ ] Li requisitos relacionados em REQ/ADR/DT.
 - [ ] Li ADRs relacionadas, se houver.
 - [ ] Entendi o escopo.
 - [ ] Sei se preciso de aprovação.
@@ -735,7 +823,7 @@ Antes de concluir:
 
 ---
 
-## 21. Regra final
+## 23. Regra final
 
 Tarefa boa deixa rastro suficiente para alguém entender depois:
 

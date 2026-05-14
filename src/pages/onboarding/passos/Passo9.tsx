@@ -18,7 +18,7 @@ export function Passo9() {
       campo: 'financeiro',
       valor: {
         ...perfil.financeiro,
-        alimentacaoDia: comeNaRua ? (parseFloat(gastoDia) || 0) : 0,
+        alimentacaoDia: comeNaRua ? parseFloat(gastoDia) || 0 : 0,
       },
     });
     irParaProximo();

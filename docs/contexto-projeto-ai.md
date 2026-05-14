@@ -17,25 +17,25 @@
 | Requisitos funcionais | `docs/requisitos/funcionais.md` |
 | Regras de negócio | `docs/requisitos/regras-negocio.md` |
 | Requisitos não funcionais | `docs/requisitos/nao-funcionais.md` |
-| Glossário do domínio | `docs/dominios/glossario.md` |
-| Invariantes | `docs/dominios/invariantes.md` |
-| Dívida técnica | `docs/dominios/divida-tecnica.md` |
-| Modelagem detalhada do domínio | `docs/dominios/modelagem/` |
+| Glossário do domínio | `docs/dominio/_glossario.md` |
+| Invariantes | `docs/dominio/invariantes.md` |
+| Dívida técnica | `docs/dominio/divida-tecnica.md` |
+| Modelagem detalhada do domínio | `docs/dominio/modelagem/` |
 | Design de telas e navegação | `docs/design/` |
-| Fluxo de onboarding | `docs/design/fluxo-onboarding.md` |
-| Arquitetura visão geral e pastas | `docs/arquitetura/visao-geral.md` |
-| Estado inicial e persistência | `docs/arquitetura/estado-inicial.md` |
-| Componentes shadcn instalados | `docs/arquitetura/componentes-ui.md` |
-| Rotas da aplicação | `docs/arquitetura/rotas.md` |
+| Fluxo de onboarding | `docs/design/indices-links-tela-figma.md` |
+| Arquitetura visão geral e pastas | `docs/contexto-projeto-ai.md` |
+| Estado inicial e persistência | `docs/arquitetura/estado_inicial.md` |
+| Componentes de UI existentes | `src/components/` |
+| Rotas da aplicação | `src/App.tsx` |
 | Convenções de código | `docs/arquitetura/convencoes.md` |
-| Padrão de testes | `docs/arquitetura/padrao-testes.md` |
-| Tema e tokens Tailwind | `docs/arquitetura/tema-tailwind.md` |
+| Padrão de testes | `docs/padrao-testes.md` |
+| Tema e tokens Tailwind | `docs/design/tema-tailwind.md` |
 | Setup inicial | `docs/arquitetura/setup-inicial.md` |
 | ADRs | `docs/arquitetura/ADR/` |
 | Tarefas pendentes | `docs/tarefas/pendentes.md` |
 | Tarefa em andamento | `docs/tarefas/em-andamento.md` |
 | Tarefas concluídas | `docs/tarefas/concluidas/` |
-| protocole de testes | `docs/padrao-teste.md/` |
+| Protocolo de testes | `docs/padrao-testes.md` |
 
 
 
@@ -50,14 +50,14 @@
 
 ## Instruções Específicas para a IA
 
-- **Antes de alterar qualquer cálculo:** leia `docs/dominios/invariantes.md`.
-- **Antes de criar/editar componentes:** verifique se já existe algo similar em `src/components/ui/` e siga `docs/arquitetura/tema-tailwind.md`.
+- **Antes de alterar qualquer cálculo:** leia `docs/dominio/invariantes.md`.
+- **Antes de criar/editar componentes:** verifique se já existe algo similar em `src/components/` e siga `docs/design/tema-tailwind.md`.
 - **Nunca modifique `src/utils/calculos.ts` sem aprovação explícita.**
 - **Nunca acesse `localStorage` diretamente** use `src/services/perfilStorage.ts`.
 - **Ao concluir uma task que altera estado/cálculos/persistência:** rode `npm run test` e confirme que todos os testes estão verdes.
 - **Registre cada ação no arquivo da tarefa** (`docs/tarefas/em-andamento.md` ou o arquivo em `concluidas/`) usando o formato padronizado (prefixo, data, revisão, testes).
 - **Se gerar novas tarefas a partir de uma revisão ou ADR, use os prefixos corretos** (RF, RN, RNF, BG, REF, DOC) e adicione em `docs/tarefas/pendentes.md`.
-- Toda leitura/escrita em `localStorage` usa as chaves e o fluxo definidos em `docs/arquitetura/estado-inicial.md`. Nunca acesse diretamente.
+- Toda leitura/escrita em `localStorage` usa as chaves e o fluxo definidos em `docs/arquitetura/estado_inicial.md`. Nunca acesse diretamente.
 
 
 # Arquitetura Visão Geral do MotoCalc RJ
@@ -144,11 +144,11 @@ text
 
 | Documento | Conteúdo |
 |---|---|
-| `estado-inicial.md` | Fluxo de leitura no arranque, chaves do localStorage, `perfilPadrao` |
-| `componentes-ui.md` | Componentes shadcn instalados e wrappers em `components/ui/` |
-| `rotas.md` | Lista completa de rotas e parâmetros |
+| `estado_inicial.md` | Fluxo de leitura no arranque, chaves do localStorage, `perfilPadrao` |
+| `src/components/` | Componentes existentes de interface e layout |
+| `src/App.tsx` | Lista real de rotas e proteção de acesso |
 | `convencoes.md` | Convenções de nomenclatura, idioma, exemplos de código correto/incorreto |
-| `padrao-testes.md` | Padrão de testes (Vitest, AAA, cobertura mínima, nomes em PT) |
-| `tema-tailwind.md` | Tokens de cor Shadcn, tipografia, classes customizadas |
+| `docs/padrao-testes.md` | Padrão de testes (Vitest, AAA, cobertura mínima, nomes em PT) |
+| `docs/design/tema-tailwind.md` | Tokens de cor Shadcn, tipografia, classes customizadas |
 | `setup-inicial.md` | Passo a passo para setup do projeto |
 | `ADR/` | Decisões arquiteturais registradas (ADR-001, ADR-002, ...) |

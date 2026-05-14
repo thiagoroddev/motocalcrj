@@ -609,7 +609,6 @@ interface PerfilProviderProps {
   storage?: IPerfilStorage;
 }
 
-
 function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
   const presets = storage.carregarPresets();
   const ativoId = storage.getPresetAtivo();
@@ -636,7 +635,9 @@ export function PerfilProvider({ children, storage }: PerfilProviderProps) {
       primeiraMontagem.current = false;
       return;
     }
-    if (!estado.presetAtivoId) return;
+    if (!estado.presetAtivoId) {
+      return;
+    }
     storageRef.current.salvarPresets(estado.presets);
     storageRef.current.setPresetAtivo(estado.presetAtivoId);
   }, [estado]);

@@ -42,7 +42,9 @@ export function Passo5() {
           <span className="text-neutral text-sm font-medium">
             KM atual do hodômetro <span className="text-danger">*</span>
           </span>
-          <span className="text-neutral/60 text-xs">Essencial para prever as próximas manutenções</span>
+          <span className="text-neutral/60 text-xs">
+            Essencial para prever as próximas manutenções
+          </span>
           <div className="flex items-center gap-xs">
             <input
               type="number"
@@ -58,7 +60,9 @@ export function Passo5() {
 
         <label className="flex flex-col gap-xs">
           <span className="text-neutral text-sm font-medium">KM na última revisão</span>
-          <span className="text-neutral/60 text-xs">Ajuda a calcular o desgaste acumulado (opcional)</span>
+          <span className="text-neutral/60 text-xs">
+            Ajuda a calcular o desgaste acumulado (opcional)
+          </span>
           <div className="flex items-center gap-xs">
             <input
               type="number"

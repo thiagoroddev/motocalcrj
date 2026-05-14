@@ -15,32 +15,32 @@ function App() {
   return (
     <ThemeProvider>
       <PerfilProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-surface text-white">
-          <Routes>
-            {/* Onboarding — nao protegido */}
-            <Route path="/onboarding/*" element={<FluxoOnboarding />} />
+        <BrowserRouter>
+          <div className="min-h-screen bg-surface text-white">
+            <Routes>
+              {/* Onboarding — nao protegido */}
+              <Route path="/onboarding/*" element={<FluxoOnboarding />} />
 
-            {/* App principal — protegido */}
-            <Route element={<RotaProtegida />}>
-              {/* Rotas com header + NavBar */}
-              <Route element={<LayoutApp />}>
-                <Route path="/estimativa" element={<PaginaEstimativa />} />
-                <Route path="/registros" element={<PaginaRegistros />} />
-                <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
-                <Route path="/vida-util" element={<PaginaVidaUtil />} />
-                <Route path="/ajustes" element={<PaginaAjustes />} />
+              {/* App principal — protegido */}
+              <Route element={<RotaProtegida />}>
+                {/* Rotas com header + NavBar */}
+                <Route element={<LayoutApp />}>
+                  <Route path="/estimativa" element={<PaginaEstimativa />} />
+                  <Route path="/registros" element={<PaginaRegistros />} />
+                  <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
+                  <Route path="/vida-util" element={<PaginaVidaUtil />} />
+                  <Route path="/ajustes" element={<PaginaAjustes />} />
+                </Route>
+                {/* Rotas sem NavBar (sub-telas de detalhe) */}
+                <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
               </Route>
-              {/* Rotas sem NavBar (sub-telas de detalhe) */}
-              <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
-            </Route>
 
-            {/* Raiz redireciona para estimativa (RotaProtegida redireciona p/ onboarding se necessario) */}
-            <Route path="/" element={<Navigate to="/estimativa" replace />} />
-            <Route path="*" element={<Navigate to="/estimativa" replace />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+              {/* Raiz redireciona para estimativa (RotaProtegida redireciona p/ onboarding se necessario) */}
+              <Route path="/" element={<Navigate to="/estimativa" replace />} />
+              <Route path="*" element={<Navigate to="/estimativa" replace />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
       </PerfilProvider>
     </ThemeProvider>
   );

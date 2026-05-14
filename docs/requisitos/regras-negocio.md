@@ -90,7 +90,7 @@
 
 ## Invariantes do Domínio (RN com status de invariante)
 
-As regras abaixo são também listadas em `docs/dominios/invariantes.md` por serem protegidas no código e nunca poderem ser violadas:
+As regras abaixo são também listadas em `docs/dominio/invariantes.md` por serem protegidas no código e nunca poderem ser violadas:
 
 | ID | Invariante |
 |---|---|
@@ -103,4 +103,4 @@ As regras abaixo são também listadas em `docs/dominios/invariantes.md` por ser
 
 ---
 
-> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-25 e RN-26 têm divergências registradas em `docs/dominios/divida-tecnica.md` (DT-7 e relacionadas).
+> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-25 e RN-26 têm divergências registradas em `docs/dominio/divida-tecnica.md` (DT-7 e relacionadas).
