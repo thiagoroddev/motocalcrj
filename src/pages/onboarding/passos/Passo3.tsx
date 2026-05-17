@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -127,21 +127,23 @@ export function Passo3() {
         max={ANO_MAX}
         placeholder={String(new Date().getFullYear())}
         autoFocus
-        className="w-full min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+        className="w-full min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
       />
 
       {valido && ano.length >= 4 && (
         <div className="mt-md">
           {fipeEstado === 'buscando' && (
-            <p className="text-neutral/60 text-sm">Consultando FIPE…</p>
+            <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
           )}
           {fipeEstado === 'ok' && fipeInfo && (
-            <div className="bg-surface-cont rounded-card px-md py-sm flex justify-between items-center">
-              <span className="text-neutral text-sm">Valor FIPE</span>
+            <div className="bg-card rounded-card px-md py-sm flex justify-between items-center">
+              <span className="text-muted-foreground text-sm">Valor FIPE</span>
               <div className="text-right">
-                <span className="text-white font-semibold">{formatarMoeda(fipeInfo.valor)}</span>
+                <span className="text-foreground font-semibold">
+                  {formatarMoeda(fipeInfo.valor)}
+                </span>
                 {fipeInfo.mesReferencia && (
-                  <p className="text-neutral/50 text-xs">{fipeInfo.mesReferencia}</p>
+                  <p className="text-muted-foreground/50 text-xs">{fipeInfo.mesReferencia}</p>
                 )}
               </div>
             </div>

@@ -1,6 +1,6 @@
 ---
-description: "Padrões de documentação para projetos com agentes de IA: contexto do projeto, requisitos, domínio, arquitetura, ADRs, dívida técnica e organização da pasta docs."
-applyTo: "**/*.md"
+description: 'Padrões de documentação para projetos com agentes de IA: contexto do projeto, requisitos, domínio, arquitetura, ADRs, dívida técnica e organização da pasta docs.'
+applyTo: '**/*.md'
 ---
 
 # Padrões de Documentação para Agentes de IA
@@ -10,13 +10,13 @@ applyTo: "**/*.md"
 
 ## Como este padrão se relaciona com os outros
 
-| Arquivo | Relação |
-|---|---|
-| `Geral.agent.md` | Define prioridades, processo geral e quando pedir aprovação. |
-| `codigo-react-typescript.agent.md` | Define padrões técnicos de código. A documentação não deve duplicar o que o código já expressa. |
-| `tarefas.agent.md` | Define como tarefas entram, andam e são concluídas. |
-| `revisao.agent.md` | Define como registrar achados de revisão e tarefas geradas. |
-| `seguranca.agent.md` | Define regras de privacidade e segurança que também devem aparecer nos requisitos quando afetarem produto. |
+| Arquivo                            | Relação                                                                                                    |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `Geral.agent.md`                   | Define prioridades, processo geral e quando pedir aprovação.                                               |
+| `codigo-react-typescript.agent.md` | Define padrões técnicos de código. A documentação não deve duplicar o que o código já expressa.            |
+| `tarefas.agent.md`                 | Define como tarefas entram, andam e são concluídas.                                                        |
+| `revisao.agent.md`                 | Define como registrar achados de revisão e tarefas geradas.                                                |
+| `seguranca.agent.md`               | Define regras de privacidade e segurança que também devem aparecer nos requisitos quando afetarem produto. |
 
 ---
 
@@ -99,17 +99,17 @@ Não crie variações paralelas para o mesmo tipo de documento.
 
 Use sempre:
 
-| Conteúdo | Caminho correto |
-|---|---|
-| Contexto de entrada para IA | `docs/contexto-projeto-ai.md` |
-| Requisitos funcionais | `docs/requisitos/funcionais.md` |
-| Regras de negócio | `docs/requisitos/regras-negocio.md` |
-| Requisitos não-funcionais | `docs/requisitos/nao-funcionais.md` |
-| Glossário | `docs/dominios/glossario.md` |
-| Invariantes | `docs/dominios/invariantes.md` |
-| Dívida técnica | `docs/dominios/divida-tecnica.md` |
-| ADRs | `docs/arquitetura/ADR/` |
-| Tarefas | `docs/tarefas/` |
+| Conteúdo                    | Caminho correto                     |
+| --------------------------- | ----------------------------------- |
+| Contexto de entrada para IA | `docs/contexto-projeto-ai.md`       |
+| Requisitos funcionais       | `docs/requisitos/funcionais.md`     |
+| Regras de negócio           | `docs/requisitos/regras-negocio.md` |
+| Requisitos não-funcionais   | `docs/requisitos/nao-funcionais.md` |
+| Glossário                   | `docs/dominios/glossario.md`        |
+| Invariantes                 | `docs/dominios/invariantes.md`      |
+| Dívida técnica              | `docs/dominios/divida-tecnica.md`   |
+| ADRs                        | `docs/arquitetura/ADR/`             |
+| Tarefas                     | `docs/tarefas/`                     |
 
 ---
 
@@ -136,12 +136,12 @@ Modelo:
 
 ## Stack
 
-| Tecnologia | Uso |
-|---|---|
-| React | Interface |
-| TypeScript | Tipagem |
-| Tailwind CSS | Estilização |
-| Node.js | Backend ou scripts |
+| Tecnologia   | Uso                |
+| ------------ | ------------------ |
+| React        | Interface          |
+| TypeScript   | Tipagem            |
+| Tailwind CSS | Estilização        |
+| Node.js      | Backend ou scripts |
 
 ## Como rodar
 
@@ -188,11 +188,11 @@ Modelo:
 
 ## Stack Exata
 
-| Tecnologia | Versão | Observação |
-|---|---|---|
-| React | [versão] | |
-| TypeScript | [versão] | |
-| Tailwind | [versão] | |
+| Tecnologia | Versão   | Observação |
+| ---------- | -------- | ---------- |
+| React      | [versão] |            |
+| TypeScript | [versão] |            |
+| Tailwind   | [versão] |            |
 
 ## Estrutura Real do Projeto
 
@@ -207,16 +207,16 @@ src/
 
 ## Documentos Principais
 
-| Tema | Arquivo |
-|---|---|
-| Requisitos funcionais | `docs/requisitos/funcionais.md` |
-| Regras de negócio | `docs/requisitos/regras-negocio.md` |
-| Não-funcionais | `docs/requisitos/nao-funcionais.md` |
-| Glossário | `docs/dominios/glossario.md` |
-| Invariantes | `docs/dominios/invariantes.md` |
-| Arquitetura | `docs/arquitetura/visao-geral.md` |
-| ADRs | `docs/arquitetura/ADR/` |
-| Tarefas | `docs/tarefas/` |
+| Tema                  | Arquivo                             |
+| --------------------- | ----------------------------------- |
+| Requisitos funcionais | `docs/requisitos/funcionais.md`     |
+| Regras de negócio     | `docs/requisitos/regras-negocio.md` |
+| Não-funcionais        | `docs/requisitos/nao-funcionais.md` |
+| Glossário             | `docs/dominios/glossario.md`        |
+| Invariantes           | `docs/dominios/invariantes.md`      |
+| Arquitetura           | `docs/arquitetura/visao-geral.md`   |
+| ADRs                  | `docs/arquitetura/ADR/`             |
+| Tarefas               | `docs/tarefas/`                     |
 
 ## Decisões Imutáveis Atuais
 
@@ -255,12 +255,34 @@ Modelo:
 ```md
 # Requisitos Funcionais
 
-| ID | Descrição | Prioridade | Status | Regras Relacionadas | Tasks | Data de Origem |
-|---|---|---|---|---|---|---|
-| RF-001 | O usuário pode criar uma conta. | MUST | [ ] | RN-001 | RF-001.1 | 2026-05-13 |
+| ID     | Descrição                       | Prioridade | Status | Regras Relacionadas | Tasks         | Data de Origem |
+| ------ | ------------------------------- | ---------- | ------ | ------------------- | ------------- | -------------- |
+| RF-001 | O usuário pode criar uma conta. | MUST       | [ ]    | RN-001              | TASK-RF-001.1 | 2026-05-13     |
 ```
 
 Use requisitos funcionais para comportamentos visíveis ao usuário.
+
+### Relação entre requisitos e tarefas
+
+Quando um requisito, regra ou RNF estiver ligado a uma tarefa, use sempre o `TASK-ID` completo definido em `tarefas.agent.md`.
+
+Use:
+
+```md
+TASK-RF-001
+TASK-RF-001.1
+TASK-RN-002
+TASK-RNF-003
+TASK-BG-004
+```
+
+Não use IDs soltos como `RF-001.1` para representar tarefa.
+
+O vínculo inverso deve aparecer na task pelo campo `REQ/ADR/DT`:
+
+```md
+- **REQ/ADR/DT:** RF-001, RN-002, RNF-003
+```
 
 ### 5.2 Regras de negócio
 
@@ -275,9 +297,9 @@ Modelo:
 ```md
 # Regras de Negócio
 
-| ID | Regra | Entidade/Domínio | Origem | ADR | Data de Origem |
-|---|---|---|---|---|---|
-| RN-001 | Todo pedido deve ter pelo menos um item. | Pedido | Stakeholder | - | 2026-05-13 |
+| ID     | Regra                                    | Entidade/Domínio | Origem      | ADR | Data de Origem |
+| ------ | ---------------------------------------- | ---------------- | ----------- | --- | -------------- |
+| RN-001 | Todo pedido deve ter pelo menos um item. | Pedido           | Stakeholder | -   | 2026-05-13     |
 ```
 
 Use regras de negócio para verdades do domínio.
@@ -295,9 +317,9 @@ Modelo:
 ```md
 # Requisitos Não-Funcionais
 
-| ID | Descrição | Métrica | Status | RF Relacionado | ADR |
-|---|---|---|---|---|---|
-| RNF-001 | A interface deve ter acessibilidade mínima. | Lighthouse A11y >= 95 | [ ] | - | - |
+| ID      | Descrição                                   | Métrica               | Status | RF Relacionado | ADR |
+| ------- | ------------------------------------------- | --------------------- | ------ | -------------- | --- |
+| RNF-001 | A interface deve ter acessibilidade mínima. | Lighthouse A11y >= 95 | [ ]    | -              | -   |
 ```
 
 Use RNF para performance, acessibilidade, segurança, privacidade, compatibilidade, PWA, responsividade e limites técnicos.
@@ -317,9 +339,9 @@ Modelo:
 ```md
 # Glossário
 
-| Termo | Definição | Sinônimos Proibidos | ADR Relacionada |
-|---|---|---|---|
-| Pedido | Solicitação de compra feita por um cliente. | Order, compra | - |
+| Termo  | Definição                                   | Sinônimos Proibidos | ADR Relacionada |
+| ------ | ------------------------------------------- | ------------------- | --------------- |
+| Pedido | Solicitação de compra feita por um cliente. | Order, compra       | -               |
 ```
 
 ### Regras
@@ -346,9 +368,9 @@ Modelo:
 ```md
 # Invariantes
 
-| ID | Invariante | Entidade | Protegida Por | Testes |
-|---|---|---|---|---|
-| INV-001 | `dataFim >= dataInicio` | Periodo | `validarPeriodo()` | `periodo.test.ts` |
+| ID      | Invariante              | Entidade | Protegida Por      | Testes            |
+| ------- | ----------------------- | -------- | ------------------ | ----------------- |
+| INV-001 | `dataFim >= dataInicio` | Periodo  | `validarPeriodo()` | `periodo.test.ts` |
 ```
 
 Crie uma invariante quando a regra precisa ser verdadeira em qualquer ponto do sistema.
@@ -380,9 +402,9 @@ Modelo de entidade:
 
 ## Atributos
 
-| Atributo | Tipo | Obrigatório | Descrição |
-|---|---|---|---|
-| id | string | Sim | Identificador único. |
+| Atributo | Tipo   | Obrigatório | Descrição            |
+| -------- | ------ | ----------- | -------------------- |
+| id       | string | Sim         | Identificador único. |
 
 ## Invariantes
 
@@ -416,23 +438,35 @@ Modelo:
 ```md
 # Dívida Técnica
 
-| ID | Descrição | Impacto | Gatilho | ADR | Status |
-|---|---|---|---|---|---|
-| DT-001 | Serviço X mistura validação e persistência. | Dificulta testes. | Quando nova regra for adicionada ao serviço X. | - | Aberta |
+| ID     | Descrição                                   | Impacto           | Gatilho                                        | ADR | Task relacionada | Status |
+| ------ | ------------------------------------------- | ----------------- | ---------------------------------------------- | --- | ---------------- | ------ |
+| DT-001 | Serviço X mistura validação e persistência. | Dificulta testes. | Quando nova regra for adicionada ao serviço X. | -   | -                | Aberta |
 ```
 
 ### Diferença entre dívida e tarefa
 
-| Tipo | Significado |
-|---|---|
-| Dívida técnica | Problema conhecido adiado conscientemente. |
-| Tarefa pendente | Ação que já decidimos executar. |
+| Tipo            | Significado                                |
+| --------------- | ------------------------------------------ |
+| Dívida técnica  | Problema conhecido adiado conscientemente. |
+| Tarefa pendente | Ação que já decidimos executar.            |
 
 ### Regra prática
 
 - Já decidimos fazer? Vai para `docs/tarefas/pendentes.md`.
 - Decidimos não fazer agora, mas não queremos esquecer? Vai para `docs/dominios/divida-tecnica.md`.
 - O gatilho da dívida aconteceu? A dívida vira tarefa e sai da lista de dívidas abertas.
+
+Quando a dívida virar tarefa, registre o vínculo nos dois lados:
+
+```md
+DT-001: Resolvida pela tarefa TASK-REF-006 em 13/05/26.
+```
+
+Na tarefa:
+
+```md
+- **REQ/ADR/DT:** DT-001
+```
 
 ---
 
@@ -446,17 +480,17 @@ docs/arquitetura/
 
 Use para documentar estrutura técnica que não deve ficar espalhada.
 
-| Arquivo | Conteúdo |
-|---|---|
-| `visao-geral.md` | Estrutura técnica principal e decisões estáveis. |
+| Arquivo             | Conteúdo                                          |
+| ------------------- | ------------------------------------------------- |
+| `visao-geral.md`    | Estrutura técnica principal e decisões estáveis.  |
 | `estado-inicial.md` | Inicialização, persistência, hidratação, storage. |
-| `componentes-ui.md` | Componentes base, wrappers e design system. |
-| `rotas.md` | Rotas, páginas e proteção de acesso. |
-| `convencoes.md` | Convenções específicas do projeto. |
-| `padrao-testes.md` | Como testar neste projeto. |
-| `tema-tailwind.md` | Tokens, cores, fontes, classes utilitárias. |
-| `setup-inicial.md` | Como configurar o projeto do zero. |
-| `ADR/` | Decisões arquiteturais importantes. |
+| `componentes-ui.md` | Componentes base, wrappers e design system.       |
+| `rotas.md`          | Rotas, páginas e proteção de acesso.              |
+| `convencoes.md`     | Convenções específicas do projeto.                |
+| `padrao-testes.md`  | Como testar neste projeto.                        |
+| `tema-tailwind.md`  | Tokens, cores, fontes, classes utilitárias.       |
+| `setup-inicial.md`  | Como configurar o projeto do zero.                |
+| `ADR/`              | Decisões arquiteturais importantes.               |
 
 ---
 
@@ -500,9 +534,9 @@ Modelo:
 
 ## Alternativas descartadas
 
-| Alternativa | Motivo |
-|---|---|
-| [opção] | [motivo] |
+| Alternativa | Motivo   |
+| ----------- | -------- |
+| [opção]     | [motivo] |
 
 ## Requisitos relacionados
 
@@ -511,12 +545,12 @@ Modelo:
 
 ## Tarefas geradas
 
-- [ID]: [descrição]
+- TASK-RF-001: [descrição]
 
 ## Histórico
 
-| Data | Mudança |
-|---|---|
+| Data       | Mudança         |
+| ---------- | --------------- |
 | YYYY-MM-DD | Criação da ADR. |
 ```
 
@@ -570,18 +604,18 @@ Modelo de tela:
 
 ## Estados
 
-| Estado | Condição | Renderização |
-|---|---|---|
-| Carregando | `isLoading === true` | Skeleton |
-| Vazio | sem dados | Estado vazio |
-| Erro | erro de fetch | Alerta com retry |
-| Pronto | dados carregados | Conteúdo principal |
+| Estado     | Condição             | Renderização       |
+| ---------- | -------------------- | ------------------ |
+| Carregando | `isLoading === true` | Skeleton           |
+| Vazio      | sem dados            | Estado vazio       |
+| Erro       | erro de fetch        | Alerta com retry   |
+| Pronto     | dados carregados     | Conteúdo principal |
 
 ## Componentes
 
-| Elemento visual | Componente | Observação |
-|---|---|---|
-| Botão salvar | `Botao` | Variante primária |
+| Elemento visual | Componente | Observação        |
+| --------------- | ---------- | ----------------- |
+| Botão salvar    | `Botao`    | Variante primária |
 ```
 
 ---
@@ -629,8 +663,8 @@ Modelo de registro:
 ```md
 ## Documentos arquivados
 
-| Origem | Destino | Motivo |
-|---|---|---|
+| Origem     | Destino            | Motivo                          |
+| ---------- | ------------------ | ------------------------------- |
 | `docs/ux/` | `docs/arquivo/ux/` | Fora da estrutura padrão atual. |
 ```
 
@@ -653,8 +687,8 @@ Modelo:
 ```md
 ## Histórico
 
-| Data | Mudança | Motivo |
-|---|---|---|
+| Data       | Mudança                   | Motivo                        |
+| ---------- | ------------------------- | ----------------------------- |
 | 2026-05-13 | Criado documento inicial. | Padronização da documentação. |
 ```
 

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+﻿import { NavLink } from 'react-router-dom';
 
 const TABS = [
   {
@@ -87,7 +87,7 @@ const TABS = [
 
 export function NavBar() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-surface-cont border-t border-surface-bright z-50 safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-muted z-50 safe-bottom">
       <div className="flex h-16">
         {TABS.map((tab) => (
           <NavLink
@@ -95,7 +95,9 @@ export function NavBar() {
             to={tab.to}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center justify-center gap-0.5 text-[9px] font-medium tracking-wider transition-colors ${
-                isActive ? 'bg-primary text-white' : 'text-neutral/50 hover:text-neutral'
+                isActive
+                  ? 'bg-primary text-foreground'
+                  : 'text-muted-foreground/50 hover:text-muted-foreground'
               }`
             }
           >

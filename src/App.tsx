@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PerfilProvider } from './context/PerfilContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { RotaProtegida } from './routes/RotaProtegida';
@@ -16,7 +16,7 @@ function App() {
     <ThemeProvider>
       <PerfilProvider>
         <BrowserRouter>
-          <div className="min-h-screen bg-surface text-white">
+          <div className="min-h-screen bg-background text-foreground">
             <Routes>
               {/* Onboarding — nao protegido */}
               <Route path="/onboarding/*" element={<FluxoOnboarding />} />

@@ -138,31 +138,31 @@
       "intervaloKm": 12000,
       "intervaloMeses": 18,
       "precoTotal": 568.29,
-      "_fonte": { "pecas": 352.29, "maoDeObra": 216.00 }
+      "_fonte": { "pecas": 352.29, "maoDeObra": 216.0 }
     },
     {
       "intervaloKm": 18000,
       "intervaloMeses": 24,
-      "precoTotal": 506.70,
-      "_fonte": { "pecas": 402.70, "maoDeObra": 104.00 }
+      "precoTotal": 506.7,
+      "_fonte": { "pecas": 402.7, "maoDeObra": 104.0 }
     },
     {
       "intervaloKm": 24000,
       "intervaloMeses": 30,
       "precoTotal": 737.76,
-      "_fonte": { "pecas": 449.76, "maoDeObra": 288.00 }
+      "_fonte": { "pecas": 449.76, "maoDeObra": 288.0 }
     },
     {
       "intervaloKm": 30000,
       "intervaloMeses": 36,
       "precoTotal": 287.67,
-      "_fonte": { "pecas": 247.67, "maoDeObra": 40.00 }
+      "_fonte": { "pecas": 247.67, "maoDeObra": 40.0 }
     },
     {
       "intervaloKm": 36000,
       "intervaloMeses": 42,
-      "precoTotal": 880.20,
-      "_fonte": { "pecas": 600.20, "maoDeObra": 280.00 }
+      "precoTotal": 880.2,
+      "_fonte": { "pecas": 600.2, "maoDeObra": 280.0 }
     }
   ],
 

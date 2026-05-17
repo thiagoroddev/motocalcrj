@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -36,15 +36,15 @@ export function Passo1() {
             type="button"
             onClick={() => setMarca(m)}
             className={`p-md rounded-card border text-left transition-colors ${
-              marca === m ? 'border-primary bg-primary/20' : 'border-surface-bright bg-surface-cont'
+              marca === m ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
-            <p className="text-white font-semibold">{m}</p>
+            <p className="text-foreground font-semibold">{m}</p>
           </button>
         ))}
       </div>
 
-      <p className="text-neutral/50 text-xs mt-lg text-center">
+      <p className="text-muted-foreground/50 text-xs mt-lg text-center">
         Mais modelos serão adicionados em breve
       </p>
     </PassoLayout>

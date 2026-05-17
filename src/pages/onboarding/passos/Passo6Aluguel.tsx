@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -37,7 +37,7 @@ export function Passo6Aluguel() {
     >
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Valor do aluguel (R$)</span>
+          <span className="text-muted-foreground text-sm font-medium">Valor do aluguel (R$)</span>
           <input
             type="number"
             value={aluguel}
@@ -45,12 +45,12 @@ export function Passo6Aluguel() {
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
           />
         </label>
 
         <div className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Periodicidade</span>
+          <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
           <div className="flex gap-sm">
             {(['mensal', 'semanal'] as PeriodicidadeAluguel[]).map((p) => (
               <button
@@ -59,8 +59,8 @@ export function Passo6Aluguel() {
                 onClick={() => setPeriodicidade(p)}
                 className={`flex-1 h-11 rounded-btn text-sm font-semibold transition-colors ${
                   periodicidade === p
-                    ? 'bg-primary text-white'
-                    : 'bg-surface-cont border border-surface-bright text-neutral'
+                    ? 'bg-primary text-foreground'
+                    : 'bg-card border border-muted text-muted-foreground'
                 }`}
               >
                 {p === 'mensal' ? 'Mensal' : 'Semanal'}

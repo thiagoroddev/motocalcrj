@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+﻿import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
@@ -119,7 +119,7 @@ function SessaoResumo({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-surface-cont rounded-card p-md">
+    <div className="bg-card rounded-card p-md">
       <div className="flex items-center justify-between mb-sm">
         <p className="text-primary text-xs font-semibold uppercase tracking-wider">{titulo}</p>
         {aoEditar && (
@@ -139,9 +139,9 @@ function SessaoResumo({
 
 function LinhaResumo({ label, valor }: { label: string; valor: string }) {
   return (
-    <div className="flex justify-between items-center py-xs border-b border-surface-bright last:border-0">
-      <span className="text-neutral text-sm">{label}</span>
-      <span className="text-white text-sm font-medium">{valor}</span>
+    <div className="flex justify-between items-center py-xs border-b border-muted last:border-0">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className="text-foreground text-sm font-medium">{valor}</span>
     </div>
   );
 }

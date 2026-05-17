@@ -9,7 +9,7 @@
 | **Urgência** | Prioridade temporal da execução.<br><br>Valores aceitos:<br>`Imediata` / `Normal` |
 | **Esforço-H/IA** | Duas medidas separadas por `/`, representando esforço humano e esforço para IA.<br><br>Formato:<br>`H/IA`<br><br>Valores aceitos:<br>`P` / `M` / `G` / `XG`<br><br>Exemplo:<br>`M/G` = médio para humano, grande para IA |
 | **Dependências** | IDs de outras tarefas que precisam ser concluídas antes desta.<br><br>Use `-` se não houver dependências.<br><br>Exemplo:<br>`TASK-RF-1.1, TASK-RN-2.1` |
-| **REQ/ADR/DT** | Referências relacionadas a requisitos, decisões arquiteturais e dívidas técnicas.<br><br>Tipos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`ADR` = Architecture Decision Record<br>`DT` = dívida técnica<br><br>Use `-` se não houver referência.<br><br>Exemplo:<br>`RF-2, ADR-3, DT-14` |
+| **REQ/ADR/DT** | Referências relacionadas a requisitos, decisões arquiteturais e dívidas técnicas.<br><br>Tipos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`ADR` = Architecture Decision Record<br>`DT` = dívida técnica<br><br>Use `-` se não houver referência.<br><br>Exemplo:<br>`RF-002, ADR-003, DT-014` |
 | **Status** | Estado atual da task.<br><br>Valores aceitos:<br>`[ ]` pendente<br>`[x]` concluída<br><br>Observação: tarefas concluídas normalmente saem do arquivo de tasks pendentes. |
 | **Data origem** | Data e hora em que a task foi criada.<br><br>Formato:<br>`DD/MM/AA HH:MM`<br><br>Exemplo:<br>`14/05/26 08:45` |
 | **Observações** | Campo usado apenas quando a urgência for `Imediata`.<br><br>Serve para explicar o contexto ou motivo da urgência.<br><br>Use `-` se não houver observação. |
@@ -48,14 +48,25 @@ G = esforço grande para IA.
 | **XG-IA** | Extra grande | Grande demais para uma única execução segura | Afeta 12+ arquivos, envolve muitas decisões, possui alto risco ou grande chance de estourar o contexto   |
 
 
+
 ## Legenda de Prefixos
 
-| TASK-RN  | Regra de Negócio             |
-| TASK-RF  | Requisito Funcional          |
-| TAS-RNF  | Requisito Não-Funcional      |
-| TASK-FBG | Bug                          |
-| TASK-REF | Refatoração                  |
-| TASK-DOC | Documentação                 |
-| TASK-DT  | Dívida Técnica               |
-| TASK-REV | Revisão                      |
-| TASK-ADR | Architecture Decision Record |
+| Prefixo | Significado |
+|---|---|
+| `TASK-RF` | Requisito funcional |
+| `TASK-RN` | Regra de negócio |
+| `TASK-RNF` | Requisito não-funcional |
+| `TASK-BG` | Bug |
+| `TASK-REF` | Refatoração |
+| `TASK-DOC` | Documentação |
+| `TASK-CHORE` | Manutenção |
+| `TASK-TEST` | Testes |
+
+
+## O que não é prefixo de tarefa
+
+| Tipo | Como registrar |
+|---|---|
+| Dívida técnica | `DT-001` no campo `REQ/ADR/DT` |
+| ADR | `ADR-001` no campo `REQ/ADR/DT` |
+| Revisão | Registrar em `## Revisão`; tarefas geradas usam prefixos `TASK-*` aceitos |

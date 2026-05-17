@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -51,11 +51,11 @@ export function Passo2() {
             className={`p-md rounded-card border text-left transition-colors ${
               selecionado?.id === modelo.id
                 ? 'border-primary bg-primary/20'
-                : 'border-surface-bright bg-surface-cont'
+                : 'border-muted bg-card'
             }`}
           >
-            <p className="text-white font-semibold">{modelo.nome}</p>
-            <p className="text-neutral text-xs mt-xs">
+            <p className="text-foreground font-semibold">{modelo.nome}</p>
+            <p className="text-muted-foreground text-xs mt-xs">
               {modelo.consumoKmL} km/L · {modelo.consumoKmLComBau} km/L com baú
             </p>
           </button>
@@ -63,7 +63,7 @@ export function Passo2() {
       </div>
 
       {modelos.length === 0 && (
-        <p className="text-neutral text-sm text-center mt-lg">
+        <p className="text-muted-foreground text-sm text-center mt-lg">
           Nenhum modelo disponível para {perfil.moto.marca} ainda.
         </p>
       )}

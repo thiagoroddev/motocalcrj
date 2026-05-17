@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -40,13 +40,11 @@ export function Passo4() {
             type="button"
             onClick={() => setPerfilUso(op.valor)}
             className={`p-md rounded-card border text-left transition-colors ${
-              perfilUso === op.valor
-                ? 'border-primary bg-primary/20'
-                : 'border-surface-bright bg-surface-cont'
+              perfilUso === op.valor ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
-            <p className="text-white font-semibold">{op.titulo}</p>
-            <p className="text-neutral text-sm mt-xs">{op.descricao}</p>
+            <p className="text-foreground font-semibold">{op.titulo}</p>
+            <p className="text-muted-foreground text-sm mt-xs">{op.descricao}</p>
           </button>
         ))}
       </div>

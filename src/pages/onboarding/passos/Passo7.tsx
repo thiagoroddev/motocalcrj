@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -46,8 +46,8 @@ export function Passo7() {
               onClick={() => setTem(v)}
               className={`flex-1 min-h-touch rounded-btn font-semibold transition-colors ${
                 tem === v
-                  ? 'bg-primary text-white'
-                  : 'bg-surface-cont border border-surface-bright text-neutral'
+                  ? 'bg-primary text-foreground'
+                  : 'bg-card border border-muted text-muted-foreground'
               }`}
             >
               {v ? 'Sim' : 'Não'}
@@ -58,7 +58,7 @@ export function Passo7() {
         {tem && (
           <div className="flex flex-col gap-md">
             <label className="flex flex-col gap-xs">
-              <span className="text-neutral text-sm font-medium">
+              <span className="text-muted-foreground text-sm font-medium">
                 {periodicidade === 'mensal' ? 'Valor mensal (R$)' : 'Valor anual (R$)'}
               </span>
               <input
@@ -68,12 +68,12 @@ export function Passo7() {
                 min={0}
                 step={0.01}
                 placeholder="0,00"
-                className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+                className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
               />
             </label>
 
             <div className="flex flex-col gap-xs">
-              <span className="text-neutral text-sm font-medium">Periodicidade</span>
+              <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
               <div className="flex gap-sm">
                 {(['anual', 'mensal'] as PeriodicidadeSeguro[]).map((p) => (
                   <button
@@ -82,8 +82,8 @@ export function Passo7() {
                     onClick={() => setPeriodicidade(p)}
                     className={`flex-1 h-11 rounded-btn text-sm font-semibold transition-colors ${
                       periodicidade === p
-                        ? 'bg-primary text-white'
-                        : 'bg-surface-cont border border-surface-bright text-neutral'
+                        ? 'bg-primary text-foreground'
+                        : 'bg-card border border-muted text-muted-foreground'
                     }`}
                   >
                     {p === 'anual' ? 'Anual' : 'Mensal'}
@@ -93,13 +93,15 @@ export function Passo7() {
             </div>
 
             <label className="flex flex-col gap-xs">
-              <span className="text-neutral text-sm font-medium">Seguradora (opcional)</span>
+              <span className="text-muted-foreground text-sm font-medium">
+                Seguradora (opcional)
+              </span>
               <input
                 type="text"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
                 placeholder="Ex: Porto Seguro, HDI…"
-                className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+                className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
               />
             </label>
           </div>

@@ -233,7 +233,7 @@ APROVADO / APROVADO COM RESSALVAS / REPROVADO / N/A
 
 ## Tarefas Geradas pela Revisão
 
-- [ID]: [descrição]
+- TASK-BG-001: [descrição]
 ```
 
 Se uma seção não tiver itens, use:
@@ -267,32 +267,48 @@ Não use `N/A` para mudança que altera comportamento, requisito, arquitetura, s
 
 Toda revisão que encontra problema acionável deve registrar uma ação.
 
+Tarefas geradas pela revisão devem seguir o padrão de `tarefas.agent.md`: use sempre `TASK-ID` completo (`TASK-BG`, `TASK-REF`, `TASK-RNF`, `TASK-DOC`, etc.) e registre vínculos relacionados em `REQ/ADR/DT`.
+
 Use esta árvore:
 
 ```txt
 Problema encontrado
 ├── Viola requisito existente?
-│   └── Criar BG ou REF referenciando o requisito.
+│   └── Criar TASK-BG ou TASK-REF referenciando o requisito em REQ/ADR/DT.
 ├── Viola regra técnica já documentada?
-│   └── Criar REF, BG ou CHORE.
+│   └── Criar TASK-REF, TASK-BG ou TASK-CHORE.
 ├── É comportamento novo não coberto?
-│   └── Propor requisito + tarefa.
+│   └── Propor requisito + TASK-RF ou TASK-RNF.
 ├── É decisão arquitetural?
-│   └── Propor ou criar ADR + tarefa.
+│   └── Propor ou criar ADR + TASK relacionada com REQ/ADR/DT apontando para a ADR.
 ├── É problema conhecido que não será resolvido agora?
 │   └── Registrar dívida técnica com gatilho.
 └── É trivial e dentro do escopo?
     └── Corrigir na própria tarefa.
 ```
 
+### Quando uma revisão deve incentivar ADR
+
+Incentive ADR quando a revisão revelar uma decisão arquitetural relevante, estrutural ou difícil de reverter.
+
+Exemplos:
+
+- mudança de padrão de estado global;
+- nova dependência com impacto recorrente;
+- reorganização de pastas/camadas;
+- estratégia de persistência, autenticação, autorização ou integração externa;
+- regra estrutural que afeta muitos arquivos.
+
+Não incentive ADR para typo, ajuste visual isolado, refatoração pequena ou decisão já coberta por requisito/convenção existente.
+
 ### Exemplos
 
 ```md
 ## Tarefas Geradas pela Revisão
 
-- BG-007: Corrigir status com dois estados quando RF-REG-05 exige três.
-- REF-003: Extrair lógica de cálculo de `PaginaResumo.tsx`.
-- RNF-004: Adicionar requisito de `aria-label` em gráficos interativos.
+- TASK-BG-007: Corrigir status com dois estados quando RF-REG-05 exige três. REQ/ADR/DT: RF-REG-05.
+- TASK-REF-003: Extrair lógica de cálculo de `PaginaResumo.tsx`. REQ/ADR/DT: DT-002.
+- TASK-RNF-004: Adicionar requisito de `aria-label` em gráficos interativos. REQ/ADR/DT: RNF-004.
 ```
 
 ---
@@ -305,7 +321,7 @@ Problema encontrado
 | Problema bloqueante dentro do escopo | Corrigir antes de aprovar. |
 | Problema fora do escopo | Gerar tarefa. |
 | Problema grande demais para a tarefa atual | Gerar tarefa ou dívida técnica. |
-| Problema arquitetural | Propor ADR e tarefa. |
+| Problema arquitetural relevante | Propor ADR e tarefa `TASK-*` vinculada em `REQ/ADR/DT`. |
 | Problema de segurança | Corrigir agora ou reprovar. |
 
 ---
@@ -446,7 +462,7 @@ Nenhum.
 
 ## Tarefas Geradas pela Revisão
 
-- TEST-002: Adicionar teste para erro da API.
+- TASK-TEST-002: Adicionar teste para erro da API.
 ```
 
 Exemplo sem revisão formal:

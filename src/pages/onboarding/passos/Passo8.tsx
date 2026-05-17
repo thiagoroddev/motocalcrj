@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -31,7 +31,7 @@ export function Passo8() {
     >
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Valor mensal (R$)</span>
+          <span className="text-muted-foreground text-sm font-medium">Valor mensal (R$)</span>
           <input
             type="number"
             value={internet}
@@ -39,13 +39,13 @@ export function Passo8() {
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
           />
         </label>
 
         <div className="bg-primary/10 border border-primary/30 rounded-card p-md">
           <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-xs">Dica</p>
-          <p className="text-neutral text-sm">
+          <p className="text-muted-foreground text-sm">
             Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro.
           </p>
         </div>

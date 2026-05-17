@@ -1,4 +1,4 @@
-export interface SegmentoDonut {
+﻿export interface SegmentoDonut {
   id: string;
   label: string;
   porcentagem: number;
@@ -64,10 +64,10 @@ export function DonutChart({ segmentos, tamanho = 160 }: Props) {
 
       {maior && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-          <span className="text-white font-bold text-2xl leading-tight">
+          <span className="text-foreground font-bold text-2xl leading-tight">
             {Math.round(maior.porcentagem)}%
           </span>
-          <span className="text-neutral/60 text-[10px] uppercase tracking-wide leading-tight max-w-[70px] text-center">
+          <span className="text-muted-foreground/60 text-[10px] uppercase tracking-wide leading-tight max-w-[70px] text-center">
             {maior.label}
           </span>
         </div>
@@ -75,7 +75,7 @@ export function DonutChart({ segmentos, tamanho = 160 }: Props) {
 
       {!maior && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-neutral/40 text-xs">Sem dados</span>
+          <span className="text-muted-foreground/40 text-xs">Sem dados</span>
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
@@ -28,7 +28,7 @@ function LabelCampo({ children, destaque }: { children: React.ReactNode; destaqu
 
 function CardPeriodo({ label, valor, km }: { label: string; valor: number; km?: number }) {
   return (
-    <div className="bg-surface-cont rounded-card p-md flex flex-col gap-1">
+    <div className="bg-card rounded-card p-md flex flex-col gap-1">
       <p className="label-neutro">{label}</p>
       {km !== undefined && (
         <div className="flex items-center gap-1 text-secondary text-xs">
@@ -45,7 +45,7 @@ function CardPeriodo({ label, valor, km }: { label: string; valor: number; km?: 
           {kmFormatado(km)}
         </div>
       )}
-      <p className="text-white font-bold text-lg">{moeda(valor)}</p>
+      <p className="text-foreground font-bold text-lg">{moeda(valor)}</p>
     </div>
   );
 }
@@ -66,7 +66,7 @@ export function PaginaEstimativa() {
   if (!resultado) {
     return (
       <div className="flex items-center justify-center h-64 px-md">
-        <p className="text-neutral/60 text-sm text-center">
+        <p className="text-muted-foreground/60 text-sm text-center">
           Modelo não encontrado. Refaça o onboarding.
         </p>
       </div>
@@ -111,7 +111,7 @@ export function PaginaEstimativa() {
   return (
     <div className="px-md py-md space-y-md">
       {/* Seção rodagem */}
-      <section className="bg-surface-cont rounded-card p-md space-y-md">
+      <section className="bg-card rounded-card p-md space-y-md">
         <div>
           <LabelCampo>Média de KM rodados por dia</LabelCampo>
           <div className="flex items-center gap-2">
@@ -121,11 +121,11 @@ export function PaginaEstimativa() {
               value={kmDiaInput}
               onChange={(e) => setKmDiaInput(e.target.value)}
               onBlur={handleKmBlur}
-              className="flex-1 bg-surface-bright border border-surface-bright rounded-input text-white px-md h-10 focus:outline-none focus:border-primary"
+              className="flex-1 bg-muted border border-muted rounded-input text-foreground px-md h-10 focus:outline-none focus:border-primary"
               min={1}
               max={999}
             />
-            <span className="text-neutral/60 text-sm font-medium">KM</span>
+            <span className="text-muted-foreground/60 text-sm font-medium">KM</span>
           </div>
         </div>
 
@@ -136,16 +136,16 @@ export function PaginaEstimativa() {
               type="button"
               onClick={() => stepDias(-1)}
               disabled={dias <= 1}
-              className="w-9 h-9 rounded-full border border-surface-bright text-white flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
+              className="w-9 h-9 rounded-full border border-muted text-foreground flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
             >
               −
             </button>
-            <span className="text-white font-bold text-xl w-6 text-center">{dias}</span>
+            <span className="text-foreground font-bold text-xl w-6 text-center">{dias}</span>
             <button
               type="button"
               onClick={() => stepDias(1)}
               disabled={dias >= 7}
-              className="w-9 h-9 rounded-full border border-surface-bright text-white flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
+              className="w-9 h-9 rounded-full border border-muted text-foreground flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
             >
               +
             </button>
@@ -156,9 +156,9 @@ export function PaginaEstimativa() {
       {/* Custo por km */}
       <div className="bg-primary/10 border border-primary/20 rounded-card p-md">
         <LabelCampo destaque>Custo de operação por km</LabelCampo>
-        <p className="text-white font-bold text-3xl">{cpkFormatado(granularidades.porKm)}</p>
+        <p className="text-foreground font-bold text-3xl">{cpkFormatado(granularidades.porKm)}</p>
         {granularidadesMoto.porKm !== granularidades.porKm && (
-          <p className="text-neutral/50 text-xs mt-1">
+          <p className="text-muted-foreground/50 text-xs mt-1">
             Sem alimentação: {cpkFormatado(granularidadesMoto.porKm)}
           </p>
         )}
@@ -187,8 +187,8 @@ export function PaginaEstimativa() {
       )}
 
       {/* Distribuição de custos */}
-      <section className="bg-surface-cont rounded-card p-md">
-        <p className="text-white text-sm font-semibold mb-md">Distribuição de custos</p>
+      <section className="bg-card rounded-card p-md">
+        <p className="text-foreground text-sm font-semibold mb-md">Distribuição de custos</p>
 
         <div className="flex items-center gap-md">
           <DonutChart segmentos={segmentos} tamanho={140} />
@@ -203,8 +203,10 @@ export function PaginaEstimativa() {
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                     style={{ backgroundColor: s.cor }}
                   />
-                  <span className="text-neutral/70 text-xs flex-1 truncate">{s.label}</span>
-                  <span className="text-neutral text-xs font-medium">
+                  <span className="text-muted-foreground/70 text-xs flex-1 truncate">
+                    {s.label}
+                  </span>
+                  <span className="text-muted-foreground text-xs font-medium">
                     {Math.round(s.porcentagem)}%
                   </span>
                 </div>
@@ -217,7 +219,7 @@ export function PaginaEstimativa() {
       <button
         type="button"
         onClick={() => navigate('/estimativa/detalhamento')}
-        className="w-full flex items-center justify-center gap-2 bg-surface-cont border border-surface-bright rounded-card py-3 text-white text-sm font-medium hover:border-primary transition-colors"
+        className="w-full flex items-center justify-center gap-2 bg-card border border-muted rounded-card py-3 text-foreground text-sm font-medium hover:border-primary transition-colors"
       >
         <span className="text-primary text-lg">+</span>
         Visualizar / Editar

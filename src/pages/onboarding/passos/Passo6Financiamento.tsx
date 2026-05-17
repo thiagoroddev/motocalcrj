@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -37,7 +37,7 @@ export function Passo6Financiamento() {
     >
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Parcela mensal (R$)</span>
+          <span className="text-muted-foreground text-sm font-medium">Parcela mensal (R$)</span>
           <input
             type="number"
             value={parcela}
@@ -45,18 +45,18 @@ export function Passo6Financiamento() {
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
           />
         </label>
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">Parcelas restantes</span>
+          <span className="text-muted-foreground text-sm font-medium">Parcelas restantes</span>
           <input
             type="number"
             value={restantes}
             onChange={(e) => setRestantes(e.target.value)}
             min={1}
             placeholder="12"
-            className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
           />
         </label>
       </div>

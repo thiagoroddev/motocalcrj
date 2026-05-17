@@ -490,25 +490,43 @@ Antes de concluir:
 6. Registrar dívida técnica, se algo foi conscientemente adiado.
 7. Registrar tarefas geradas.
 8. Mover conteúdo de `em-andamento.md` para arquivo em `concluidas/`.
+9.**Registrar** a conclusão da tarefa no índice de tarefas concluídas em dosc/tarefas/concluidas/indice-concluidas.md
 9. Remover a tarefa de `em-andamento.md`.
 
 ---
 
+
 ## 14. Arquivo de tarefa concluída
+
+Para garantir ordem cronológica quando o explorador/listagem ordena por nome, coloque a data no começo do nome do arquivo.
+Formato do título do arquivo: `[YYYY-MM-DD]-[HHhMM]-[TASK-PREFIXO]-[NUMERO]-[TITULO_CURTO].md`
 
 Local:
 
 ```txt
-docs/tarefas/concluidas/TASK-PREFIXO-XXX-YYYY-MM-DD-HHhMM.md
+docs/tarefas/concluidas/YYYY-MM-DD-HHhMM--TASK-PREFIXO-XXX.md
 ```
 
 Exemplo:
 
 ```txt
-docs/tarefas/concluidas/TASK-RF-001-2026-05-13-17h30.md
-```
+docs/tarefas/concluidas/2026-05-13-17h30--TASK-RF-001.md
 
-Modelo:
+```
+## Template do docs/tarefas/concluidas/indice-concluidas.md
+
+Lista cronológica das tarefas concluídas. Cada linha aponta para o arquivo completo da tarefa.
+
+[TASK-PREFIXO-NUMERO] | [TITULO DESCRITIVO] | [][LINK COM CAMINHO CLICÁVEL] |
+
+Exemplos preenchidos ilustrativos:
+
+TASK-DOM-1 | Atualização da modelagem de domínio | [](./2026-05-10-TASK-DOM-1.md)
+TASK-DOM-2 | Ajustes referências v6 e refistro de DT-14 | [](./2026-05-11-TASK-DOM-2.md)
+TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [](./2026-05-16--20h21--TASK-REF-03.md)
+
+
+## Template mmodelo do conteúdo interno dos arquivos únicos de cada tarefa:
 
 ```md
 # TASK-RF-001 - Criar tela de login

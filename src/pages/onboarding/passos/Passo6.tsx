@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
@@ -38,13 +38,11 @@ export function Passo6() {
             type="button"
             onClick={() => setSituacao(op.valor)}
             className={`p-md rounded-card border text-left transition-colors ${
-              situacao === op.valor
-                ? 'border-primary bg-primary/20'
-                : 'border-surface-bright bg-surface-cont'
+              situacao === op.valor ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
-            <p className="text-white font-semibold">{op.titulo}</p>
-            <p className="text-neutral text-sm mt-xs">{op.descricao}</p>
+            <p className="text-foreground font-semibold">{op.titulo}</p>
+            <p className="text-muted-foreground text-sm mt-xs">{op.descricao}</p>
           </button>
         ))}
       </div>

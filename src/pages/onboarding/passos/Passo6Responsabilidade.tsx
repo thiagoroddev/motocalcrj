@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -41,7 +41,7 @@ export function Passo6Responsabilidade() {
       <div className="flex flex-col gap-lg">
         {CAMPOS.map(({ id, titulo }) => (
           <div key={id}>
-            <p className="text-white text-sm font-medium mb-sm">{titulo}</p>
+            <p className="text-foreground text-sm font-medium mb-sm">{titulo}</p>
             <div className="flex gap-xs">
               {OPCOES.map(({ valor, label }) => (
                 <button
@@ -50,8 +50,8 @@ export function Passo6Responsabilidade() {
                   onClick={() => setResp((prev) => ({ ...prev, [id]: valor }))}
                   className={`flex-1 h-10 rounded-btn text-xs font-semibold transition-colors ${
                     resp[id] === valor
-                      ? 'bg-primary text-white'
-                      : 'bg-surface-cont border border-surface-bright text-neutral'
+                      ? 'bg-primary text-foreground'
+                      : 'bg-card border border-muted text-muted-foreground'
                   }`}
                 >
                   {label}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -39,10 +39,10 @@ export function Passo5() {
     >
       <div className="flex flex-col gap-lg">
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">
-            KM atual do hodômetro <span className="text-danger">*</span>
+          <span className="text-muted-foreground text-sm font-medium">
+            KM atual do hodômetro <span className="text-destructive">*</span>
           </span>
-          <span className="text-neutral/60 text-xs">
+          <span className="text-muted-foreground/60 text-xs">
             Essencial para prever as próximas manutenções
           </span>
           <div className="flex items-center gap-xs">
@@ -52,15 +52,15 @@ export function Passo5() {
               onChange={(e) => setKmAtual(e.target.value)}
               min={1}
               placeholder="Ex: 12500"
-              className="flex-1 min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+              className="flex-1 min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
             />
-            <span className="text-neutral/60 text-sm font-medium w-8">KM</span>
+            <span className="text-muted-foreground/60 text-sm font-medium w-8">KM</span>
           </div>
         </label>
 
         <label className="flex flex-col gap-xs">
-          <span className="text-neutral text-sm font-medium">KM na última revisão</span>
-          <span className="text-neutral/60 text-xs">
+          <span className="text-muted-foreground text-sm font-medium">KM na última revisão</span>
+          <span className="text-muted-foreground/60 text-xs">
             Ajuda a calcular o desgaste acumulado (opcional)
           </span>
           <div className="flex items-center gap-xs">
@@ -70,9 +70,9 @@ export function Passo5() {
               onChange={(e) => setKmUltimaRevisao(e.target.value)}
               min={0}
               placeholder="Opcional"
-              className="flex-1 min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+              className="flex-1 min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
             />
-            <span className="text-neutral/60 text-sm font-medium w-8">KM</span>
+            <span className="text-muted-foreground/60 text-sm font-medium w-8">KM</span>
           </div>
         </label>
       </div>

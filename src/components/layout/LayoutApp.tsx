@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+﻿import { Outlet } from 'react-router-dom';
 import { usePerfil } from '../../hooks/usePerfil';
 import { getNomeModelo } from '../../data/catalogoModelos';
 import { NavBar } from './NavBar';
@@ -10,23 +10,23 @@ export function LayoutApp() {
   const consumo = perfil.financeiro.combustiveis[tipoComb].autonomia;
 
   return (
-    <div className="flex flex-col min-h-screen bg-surface">
-      <header className="flex items-center gap-3 px-md py-3 bg-surface-cont border-b border-surface-bright flex-shrink-0">
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="flex items-center gap-3 px-md py-3 bg-card border-b border-muted flex-shrink-0">
         <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-base font-bold">
           {perfil.moto.marca.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-semibold truncate">
+          <p className="text-foreground text-sm font-semibold truncate">
             {perfil.moto.marca}: {nomeModelo}
           </p>
-          <p className="text-neutral/50 text-xs">
+          <p className="text-muted-foreground/50 text-xs">
             {perfil.moto.ano} — {consumo} km/L
           </p>
         </div>
         <button
           type="button"
           aria-label="Exportar dados"
-          className="p-1 text-neutral/50 hover:text-white transition-colors"
+          className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors"
         >
           <svg
             viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ export function LayoutApp() {
         <button
           type="button"
           aria-label="Notificações"
-          className="p-1 text-neutral/50 hover:text-white transition-colors"
+          className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors"
         >
           <svg
             viewBox="0 0 24 24"

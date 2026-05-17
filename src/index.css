@@ -1,49 +1,125 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  /* ── Cores — referenciam variáveis CSS para suporte a temas dinâmicos ── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  /* tokens customizados */
+  --color-surface-dim: var(--surface-dim);
+  --color-tertiary: var(--tertiary);
+  --color-label: var(--label);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-cyan: var(--cyan);
+
+  /* ── Tipografia ── */
+  --font-sans: Inter, system-ui, sans-serif;
+  --text-label-sm: 0.75rem;
+  --text-label-sm--line-height: 1rem;
+  --text-label-sm--letter-spacing: 0.05em;
+  --text-label-sm--font-weight: 500;
+
+  /* ── Espaçamento customizado ── */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* ── Border radius ── */
+  --radius-btn: 4px;
+  --radius-input: 4px;
+  --radius-card: 8px;
+
+  /* ── Touch target ── */
+  --size-touch: 48px;
+
+  /* ── Animações dos componentes shadcn ── */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+/* ── Tema escuro (padrão) ─────────────────────────────────────────────────── */
+:root {
+  /* shadcn/ui standard tokens */
+  --background: rgb(13 19 33);
+  --foreground: rgb(255 255 255);
+  --card: rgb(25 31 46);
+  --card-foreground: rgb(255 255 255);
+  --primary: rgb(0 120 255);
+  --primary-foreground: rgb(13 19 33);
+  --secondary: rgb(173 199 255);
+  --secondary-foreground: rgb(13 19 33);
+  --muted: rgb(51 57 72);
+  --muted-foreground: rgb(193 198 215);
+  --destructive: rgb(147 0 10);
+  --destructive-foreground: rgb(255 255 255);
+  --border: rgb(51 57 72);
+  --input: rgb(51 57 72);
+  --ring: rgb(0 120 255);
+  --accent: rgb(51 57 72);
+  --accent-foreground: rgb(255 255 255);
+  /* tokens customizados */
+  --surface-dim: rgb(13 19 33);
+  --tertiary: rgb(0 40 91);
+  --label: rgb(139 144 160);
+  --warning: rgb(255 182 149);
+  --success: rgb(34 197 94);
+  --cyan: rgb(0 192 232);
+  color-scheme: dark;
+}
+
+/* ── Tema claro (pendente refinamento de paleta) ──────────────────────────── */
+.light {
+  --background: rgb(245 247 252);
+  --surface-dim: rgb(235 240 250);
+  --muted: rgb(200 210 230);
+  --card: rgb(255 255 255);
+  --muted-foreground: rgb(55 65 90);
+  --foreground: rgb(20 25 45);
+  --accent: rgb(200 210 230);
+  --accent-foreground: rgb(20 25 45);
+  color-scheme: light;
+}
+
+/* ── Keyframes dos componentes shadcn ───────────────────────────────────────*/
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
 
 @layer base {
-  /* ── Tema escuro (padrão) ──────────────────── */
-  :root {
-    --color-primary: 0 120 255;
-    --color-secondary: 173 199 255;
-    --color-tertiary: 0 40 91;
-    --color-surface: 13 19 33;
-    --color-surface-dim: 13 19 33;
-    --color-surface-bright: 51 57 72;
-    --color-surface-cont: 25 31 46;
-    --color-neutral: 193 198 215;
-    --color-label: 139 144 160;
-    --color-warning: 255 182 149;
-    --color-danger: 147 0 10;
-    --color-success: 34 197 94;
-    --color-cyan: 0 192 232;
-    --color-white: 255 255 255;
-    color-scheme: dark;
-  }
-
-  /* ── Tema claro (pendente refinamento de paleta) ── */
-  .light {
-    --color-surface: 245 247 252;
-    --color-surface-dim: 235 240 250;
-    --color-surface-bright: 200 210 230;
-    --color-surface-cont: 255 255 255;
-    --color-neutral: 55 65 90;
-    --color-white: 20 25 45;
-    color-scheme: light;
-  }
-
   body {
-    @apply bg-surface text-white font-sans;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
 @layer components {
-  /* Label neutro — texto secundário, cinza (#8B90A0) */
   .label-neutro {
     @apply text-label text-[10px] uppercase tracking-wider font-medium;
   }
-  /* Label destaque — azul desbotado (#ADC7FF), para métricas e valores-chave */
   .label-destaque {
     @apply text-secondary text-[10px] uppercase tracking-wider font-medium;
   }

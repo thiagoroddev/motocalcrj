@@ -3,11 +3,11 @@ description: "Padrões de código para projetos TypeScript, React, Tailwind e No
 applyTo: "**/*.{ts,tsx,js,jsx,json,css,md}"
 ---
 
-# Padrões de Código — TypeScript, React, Tailwind e Node.js
+# Padrões de Código TypeScript, React, Tailwind e Node.js
 
 > Este arquivo define padrões técnicos de implementação.
 > Para comportamento geral do agente, leia `Geral.agent.md`.
-> Para documentação, tarefas, revisão e segurança, siga os arquivos específicos indicados em [Relações com outros padrões](#relações-com-outros-padrões).
+> Para documentação, tarefas, revisão e segurança, siga os arquivos específicos indicados em [Relações com outros padrões].
 
 ---
 

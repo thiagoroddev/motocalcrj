@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
@@ -38,8 +38,8 @@ export function Passo9() {
             onClick={() => setComeNaRua(true)}
             className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
               comeNaRua
-                ? 'border-primary bg-primary/10 text-white'
-                : 'border-surface-bright bg-surface-cont text-neutral'
+                ? 'border-primary bg-primary/10 text-foreground'
+                : 'border-muted bg-card text-muted-foreground'
             }`}
           >
             <span className="text-2xl">🍴</span>
@@ -51,8 +51,8 @@ export function Passo9() {
             onClick={() => setComeNaRua(false)}
             className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
               !comeNaRua
-                ? 'border-primary bg-primary/10 text-white'
-                : 'border-surface-bright bg-surface-cont text-neutral'
+                ? 'border-primary bg-primary/10 text-foreground'
+                : 'border-muted bg-card text-muted-foreground'
             }`}
           >
             <span className="text-2xl">🥡</span>
@@ -62,7 +62,9 @@ export function Passo9() {
 
         {comeNaRua && (
           <label className="flex flex-col gap-xs">
-            <span className="text-neutral text-sm font-medium">Gasto médio por dia (R$)</span>
+            <span className="text-muted-foreground text-sm font-medium">
+              Gasto médio por dia (R$)
+            </span>
             <input
               type="number"
               value={gastoDia}
@@ -70,12 +72,12 @@ export function Passo9() {
               min={0}
               step={0.01}
               placeholder="20,00"
-              className="min-h-touch bg-surface-cont rounded-input border border-surface-bright text-white px-md placeholder:text-neutral/50 focus:outline-none focus:border-primary"
+              className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
             />
           </label>
         )}
 
-        <p className="text-neutral/50 text-xs text-center">
+        <p className="text-muted-foreground/50 text-xs text-center">
           Fique tranquilo! Estes valores podem ser atualizados a qualquer momento em Configurações.
         </p>
       </div>

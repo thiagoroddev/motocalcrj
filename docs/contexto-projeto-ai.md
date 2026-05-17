@@ -8,7 +8,8 @@
 1. Ler este documento por completo
 2. Ler '/docs/tarefas/em-andamento.md,depois pergute se pode iniciar o planejamento da tarefa, se sim, leia o arquivo '/.github/agents/Geral.agent.md ,esse é o documento que vai lhe dar padrões de como agir em cada situação, procure no índice deste documento o comportamento que mais adequado de incorporar em cada tarefa que for executar, escolha o mesmo ou outro comportamento padrão para cada ação que for executar, nunca agir sem seguir um desses padrões e sem contexto específico do projeto atual, você pode mudar entre os comportamentos como quiser conforme achar mais adequado sem pedir permissão, mas se precisar fazer algo que contrarie algum deles, peça permissão(logo, se for ler apenas as partes que importa, toda vez que for agir vair ter ler novamente para áreas diferentes). 
 3. Obtenha contexto específico desse projeto necessário antes de agir, leia o que for preciso em docs/ ou arquivos do projeto, você já sabe onde fica cada coisa pois aqui está tudo documentado onde encotrar cada coisa. 
-3. Só então agir
+4. Leia os documentos principais da raiz do projeto.
+5. Só então agir
 
 ## Documentos do Projeto
 

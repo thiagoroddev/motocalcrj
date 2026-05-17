@@ -1,5 +1,9 @@
 
-Histórico de tarefas pendentes em template antigo, manter para consulta, aplicar template padrão na criação de novas tarefas e ao passá-las para `docs/tarefas/em-andamento.md`.
+Histórico de tarefas pendentes, manter para consulta, aplicar template padrão na criação de novas tarefas e ao passá-las para `docs/tarefas/em-andamento.md`.
+
+Obedeça essa ordem:
+ * Prioritárias (Imediada)
+ * Normais 
 
 
 ### Tarefas Prioritárias 
@@ -28,8 +32,22 @@ Histórico de tarefas pendentes em template antigo, manter para consulta, aplica
 - **REQ/ADR/DT:** RNF-COMP-01, RNF-COMP-02, RNF-COMP-04, RNF-COMP-06, RNF-04, RNF-12, RN-27
 - **Observações:** Formalizada a partir do backlog antigo. `src/pages/PaginaDetalhamento.tsx` tem 536 linhas e concentra componentes, estado local, filtros e renderização; refatorar em etapas preservando toggles, total filtrado, revisão como subitem de manutenção e comportamento atual.
 
-### Tarefas Normais 
 
+
+
+## TASK-RNF-008 - Avaliar migração para React 19 e React Router v7
+
+- **Status:** Pendente
+- **Modo:** Strict
+- **Valor:** Importante
+- **Urgência:** Imediata
+- **Esforço-H/IA:** M/G
+- **Data origem:** 16/05/26 22:00
+- **Dependências:** TASK-CHORE-005, TASK-RNF-006
+- **REQ/ADR/DT:** ADR-001
+
+
+### Tarefas Normais 
 
 ## Registros e Formulários (Fase 6 do roadmap original)
 
@@ -90,11 +108,7 @@ Histórico de tarefas pendentes em template antigo, manter para consulta, aplica
 | TASK-RNF-9.1 | Performance e acessibilidade (Lighthouse, WCAG, toque 48px) | Importante | Normal | G | - | [ ] |
 | TASK-RNF-9.2 | Revisão final e QA (testes manuais, fluxo completo) | Crítico | Normal | G | Todas as anteriores | [ ] |
 
----
-
-
-
----
+-----
 
 ## Documentação
 
@@ -104,6 +118,3 @@ Histórico de tarefas pendentes em template antigo, manter para consulta, aplica
 | TASK-DOC-02 | Migrar backlog antigo para o novo padrão de tarefas | Importante | Normal | M | - | [ ] |
 
 
---------------------------------------------
-
-# Novas tarefas com template novo ficam abaixo dessa linha
