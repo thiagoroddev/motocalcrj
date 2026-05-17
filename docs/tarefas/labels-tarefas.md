@@ -2,7 +2,7 @@
 
 | Campo | Valores aceitos |
 |---|---|
-| **TASK-ID** | `TASK-` + prefixo + número. Prefixos aceitos:<br><br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`BG` = bug<br>`REF` = refactor<br>`DOC` = documentação<br>`CHORE` = manutenção<br>`TEST` = testes<br><br>Exemplo: `TASK-RF-5.1` |
+| **TASK-ID(TASK + prefixo + número)** | `TASK-` + prefixo + número. Prefixos aceitos:<br><br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`BG` = bug<br>`REF` = refactor<br>`DOC` = documentação<br>`CHORE` = manutenção<br>`TEST` = testes<br><br>Exemplo: `TASK-RF-5.1` |
 | **Título** | Frase curta e descritiva, sem ponto final.<br><br>Exemplo: `Criar sistema de autenticação` |
 | **Modo** | Define o nível de cerimônia da task.<br><br>Valores aceitos:<br>`Light` / `Standard` / `Strict` |
 | **Valor** | Importância da task para o produto/projeto.<br><br>Valores aceitos:<br>`Crítico` / `Importante` / `Desejável` |
@@ -62,6 +62,9 @@ G = esforço grande para IA.
 | `TASK-CHORE` | Manutenção |
 | `TASK-TEST` | Testes |
 
+Exemplos: 
+Independentes:  TASK-RF-005
+Derivadas: TASK-RF-005.1` 
 
 ## O que não é prefixo de tarefa
 

@@ -43,7 +43,7 @@ Toda task deve usar os labels abaixo como padrão.
 
 | Campo | Valores aceitos |
 |---|---|
-| **TASK-ID** | `TASK-` + prefixo + número.<br><br>Prefixos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`BG` = bug<br>`REF` = refactor<br>`DOC` = documentação<br>`CHORE` = manutenção<br>`TEST` = testes<br><br>Exemplo: `TASK-RF-5.1` |
+| **TASK-ID** | `TASK-` + prefixo + número.<br><br>Prefixos aceitos:<br>`RF` = requisito funcional<br>`RN` = regra de negócio<br>`RNF` = requisito não-funcional<br>`BG` = bug<br>`REF` = refactor<br>`DOC` = documentação<br>`CHORE` = manutenção<br>`TEST` = testes<br><br>Exemplo: `TASK-RF-005.1` |
 | **Título** | Frase curta e descritiva, sem ponto final.<br><br>Exemplo: `Criar sistema de autenticação` |
 | **Modo** | Define o nível de cerimônia da task.<br><br>Valores aceitos:<br>`Light` / `Standard` / `Strict` |
 | **Valor** | Importância da task para o produto/projeto.<br><br>Valores aceitos:<br>`Crítico` / `Importante` / `Desejável` |
@@ -201,7 +201,7 @@ Use este formato para tasks com urgência `Normal`.
 
 | TASK-ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 |---|---|:---:|:---:|:---:|:---:|---|---|:---:|---|
-| TASK-RF-5.1 | Registros - lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 09:39 |
+| TASK-RF-005.1 | Registros - lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 09:39 |
 ```
 
 ### Template de task pendente imediata
@@ -490,16 +490,27 @@ Antes de concluir:
 6. Registrar dívida técnica, se algo foi conscientemente adiado.
 7. Registrar tarefas geradas.
 8. Mover conteúdo de `em-andamento.md` para arquivo em `concluidas/`.
-9.**Registrar** a conclusão da tarefa no índice de tarefas concluídas em dosc/tarefas/concluidas/indice-concluidas.md
-9. Remover a tarefa de `em-andamento.md`.
+9.**Registrar** a conclusão da tarefa no índice de tarefas concluídas em dosc/tarefas/concluidas/0-indice-concluidas.md em ordem cronológica
+10. Remover a tarefa de `em-andamento.md`.
 
 ---
 
+## Template do docs/tarefas/concluidas/indice-concluidas.md
 
-## 14. Arquivo de tarefa concluída
+Lista cronológica das tarefas concluídas. Cada linha aponta para o arquivo completo da tarefa.
+
+[TASK-PREFIXO-NUMERO] | [TITULO DESCRITIVO] | [](LINK CLICÁVEL PARA O ARQUIVO ÚNICO) |
+
+Exemplos preenchidos ilustrativos:
+
+TASK-DOM-1 | Atualização da modelagem de domínio | [](./2026-05-10-TASK-DOM-1.md)
+TASK-DOM-2 | Ajustes referências v6 e refistro de DT-14 | [](./2026-05-11-TASK-DOM-2.md)
+TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [](./2026-05-16--20h21--TASK-REF-03.md)
+
+## 14. Arquivo único de tarefa concluída
 
 Para garantir ordem cronológica quando o explorador/listagem ordena por nome, coloque a data no começo do nome do arquivo.
-Formato do título do arquivo: `[YYYY-MM-DD]-[HHhMM]-[TASK-PREFIXO]-[NUMERO]-[TITULO_CURTO].md`
+Formato do título do arquivo: `[YYYY-MM-DD]-[HHhMM]-[TASK-PREFIXO-NUMERO].md`
 
 Local:
 
@@ -513,18 +524,6 @@ Exemplo:
 docs/tarefas/concluidas/2026-05-13-17h30--TASK-RF-001.md
 
 ```
-## Template do docs/tarefas/concluidas/indice-concluidas.md
-
-Lista cronológica das tarefas concluídas. Cada linha aponta para o arquivo completo da tarefa.
-
-[TASK-PREFIXO-NUMERO] | [TITULO DESCRITIVO] | [][LINK COM CAMINHO CLICÁVEL] |
-
-Exemplos preenchidos ilustrativos:
-
-TASK-DOM-1 | Atualização da modelagem de domínio | [](./2026-05-10-TASK-DOM-1.md)
-TASK-DOM-2 | Ajustes referências v6 e refistro de DT-14 | [](./2026-05-11-TASK-DOM-2.md)
-TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [](./2026-05-16--20h21--TASK-REF-03.md)
-
 
 ## Template mmodelo do conteúdo interno dos arquivos únicos de cada tarefa:
 

@@ -35,30 +35,18 @@ Obedeça essa ordem:
 
 
 
-## TASK-RNF-008 - Avaliar migração para React 19 e React Router v7
-
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** Imediata
-- **Esforço-H/IA:** M/G
-- **Data origem:** 16/05/26 22:00
-- **Dependências:** TASK-CHORE-005, TASK-RNF-006
-- **REQ/ADR/DT:** ADR-001
-
-
 ### Tarefas Normais 
 
 ## Registros e Formulários (Fase 6 do roadmap original)
 
 | ID | Título | Valor | Urgência | Esforço | Dependências | Status |
 |---|---|---|---|---|---|---|
-| TASK-RF-5.1 | Registros - lista e sub-abas (Geral, Rodagem, Combustível, Manutenção) | Importante | Normal | G | - | [ ] |
-| TASK-RF-5.2 | Registro de Rodagem (formulário com odômetro inicial/final) | Importante | Normal | M | TASK-RF-5.1 | [ ] |
-| TASK-RF-5.3 | Registro de Abastecimento (formulário com total pago, preço/L, fotos) | Importante | Normal | M | TASK-RF-5.1 | [ ] |
-| TASK-RF-5.4 | Registro de Óleo, Pneu, Revisão e Kit Relação (4 formulários) | Importante | Normal | G | TASK-RF-5.1 | [ ] |
-| TASK-RF-5.5 | Edição, exclusão (swipe/long-press) e cálculo de médias reais | Importante | Normal | M | TASK-RF-5.4 | [ ] |
-| TASK-RF-5.6 | Histórico por categoria - telas "Ver" (design pendente no Figma) | Desejável | Normal | G | TASK-RF-5.1 | [ ] |
+| TASK-RF-005.1 | Registros - lista e sub-abas (Geral, Rodagem, Combustível, Manutenção) | Importante | Normal | G | - | [ ] |
+| TASK-RF-5.2 | Registro de Rodagem (formulário com odômetro inicial/final) | Importante | Normal | M | TASK-RF-005.1 | [ ] |
+| TASK-RF-5.3 | Registro de Abastecimento (formulário com total pago, preço/L, fotos) | Importante | Normal | M | TASK-RF-005.1 | [ ] |
+| TASK-RF-5.4 | Registro de Óleo, Pneu, Revisão e Kit Relação (4 formulários) | Importante | Normal | G | TASK-RF-005.1 | [ ] |
+| TASK-RF-5.5 | Edição, exclusão (swipe/long-press) e cálculo de médias reais | Importante | Normal | M | TASK-RF-005.4 | [ ] |
+| TASK-RF-5.6 | Histórico por categoria - telas "Ver" (design pendente no Figma) | Desejável | Normal | G | TASK-RF-005.1 | [ ] |
 
 ---
 

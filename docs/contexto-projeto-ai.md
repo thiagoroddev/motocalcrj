@@ -34,8 +34,10 @@
 | Setup inicial | `docs/arquitetura/setup-inicial.md` |
 | ADRs | `docs/arquitetura/ADR/` |
 | Tarefas pendentes | `docs/tarefas/pendentes.md` |
+| Labels das Tarefas| `docs/tarefas/labels-tarefas.md` |
 | Tarefa em andamento | `docs/tarefas/em-andamento.md` |
 | Tarefas concluídas | `docs/tarefas/concluidas/` |
+| Índice de tarefas concluídas | `docs/tarefas/concluidas/0-indice-concluidas.md` |
 | Protocolo de testes | `docs/padrao-testes.md` |
 
 
