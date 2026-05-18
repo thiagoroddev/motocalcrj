@@ -119,7 +119,7 @@ function SessaoResumo({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-card rounded-card p-md">
+    <div className="bg-card rounded-lg p-md">
       <div className="flex items-center justify-between mb-sm">
         <p className="text-primary text-xs font-semibold uppercase tracking-wider">{titulo}</p>
         {aoEditar && (

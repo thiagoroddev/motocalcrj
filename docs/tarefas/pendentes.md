@@ -6,34 +6,7 @@ Obedeça essa ordem:
  * Normais 
 
 
-### Tarefas Prioritárias 
-
-## TASK-REF-01 - Refatorar PaginaEstimativa.tsx
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** Imediata
-- **Esforço-H/IA:** M/M
-- **Data origem:** 14/05/26 20:18
-- **Dependências:** TASK-REF-03
-- **REQ/ADR/DT:** RNF-COMP-01, RNF-COMP-02, RNF-COMP-04, RNF-COMP-06, RNF-04, RNF-12
-- **Observações:** Formalizada a partir do backlog antigo. `src/pages/PaginaEstimativa.tsx` tem 229 linhas e viola RNF-COMP-01; refatorar sem alterar comportamento de estimativa, filtros, custos ou cálculos.
-
-## TASK-REF-02 - Refatorar PaginaDetalhamento.tsx
-
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** Imediata
-- **Esforço-H/IA:** G/G
-- **Data origem:** 14/05/26 20:18
-- **Dependências:** TASK-REF-03, TASK-REF-01
-- **REQ/ADR/DT:** RNF-COMP-01, RNF-COMP-02, RNF-COMP-04, RNF-COMP-06, RNF-04, RNF-12, RN-27
-- **Observações:** Formalizada a partir do backlog antigo. `src/pages/PaginaDetalhamento.tsx` tem 536 linhas e concentra componentes, estado local, filtros e renderização; refatorar em etapas preservando toggles, total filtrado, revisão como subitem de manutenção e comportamento atual.
-
-
-
+### Tarefas Prioritárias
 
 ### Tarefas Normais 
 

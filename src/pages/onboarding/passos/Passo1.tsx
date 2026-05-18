@@ -35,7 +35,7 @@ export function Passo1() {
             key={m}
             type="button"
             onClick={() => setMarca(m)}
-            className={`p-md rounded-card border text-left transition-colors ${
+            className={`p-md rounded-lg border text-left transition-colors ${
               marca === m ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >

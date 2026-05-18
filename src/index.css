@@ -46,7 +46,7 @@
   /* ── Border radius ── */
   --radius-btn: 4px;
   --radius-input: 4px;
-  --radius-card: 8px;
+  --radius-lg: var(--radius);
 
   /* ── Touch target ── */
   --size-touch: 48px;
@@ -59,6 +59,7 @@
 /* ── Tema escuro (padrão) ─────────────────────────────────────────────────── */
 :root {
   /* shadcn/ui standard tokens */
+  --radius: 0.5rem;
   --background: rgb(13 19 33);
   --foreground: rgb(255 255 255);
   --card: rgb(25 31 46);

@@ -136,7 +136,7 @@ export function Passo3() {
             <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
           )}
           {fipeEstado === 'ok' && fipeInfo && (
-            <div className="bg-card rounded-card px-md py-sm flex justify-between items-center">
+            <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
               <span className="text-muted-foreground text-sm">Valor FIPE</span>
               <div className="text-right">
                 <span className="text-foreground font-semibold">

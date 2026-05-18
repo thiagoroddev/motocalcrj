@@ -37,7 +37,7 @@ export function Passo6() {
             key={op.valor}
             type="button"
             onClick={() => setSituacao(op.valor)}
-            className={`p-md rounded-card border text-left transition-colors ${
+            className={`p-md rounded-lg border text-left transition-colors ${
               situacao === op.valor ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >

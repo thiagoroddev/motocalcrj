@@ -48,7 +48,7 @@ export function Passo2() {
             key={modelo.id}
             type="button"
             onClick={() => setSelecionado(modelo)}
-            className={`p-md rounded-card border text-left transition-colors ${
+            className={`p-md rounded-lg border text-left transition-colors ${
               selecionado?.id === modelo.id
                 ? 'border-primary bg-primary/20'
                 : 'border-muted bg-card'

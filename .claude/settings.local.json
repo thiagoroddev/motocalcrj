@@ -7,7 +7,8 @@
       "Bash(npx eslint *)",
       "Bash(npx vitest *)",
       "PowerShell(npm config get omit)",
-      "PowerShell(npm config get userconfig)"
+      "PowerShell(npm config get userconfig)",
+      "Bash(xargs sed -i 's/rounded-card/rounded-lg/g')"
     ]
   }
 }

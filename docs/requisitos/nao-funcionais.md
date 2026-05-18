@@ -32,10 +32,10 @@
 
 | ID | Descrição | Meta / Critério | Status |
 |---|---|---|---|
-| RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 150 linhas. | ❌ VIOLADO (PaginaDetalhamento: 537 linhas) |
+| RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** (meta revisada para ≤ 200 em TASK-REF-02 — Prettier expande JSX) e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 200 linhas. | ✅ CONCLUÍDO (PaginaEstimativa: 127, PaginaDetalhamento: 199 linhas — TASK-REF-01/02) |
 | RNF-COMP-02 | **Tudo que se repete vira componente.** Qualquer JSX de card, input, label, badge, toggle, stepper, accordion, botão ou separador que aparece ≥ 2 vezes no app deve estar em `src/components/ui/`. | Revisão de código: nenhuma duplicação de estrutura JSX entre arquivos. | [ ] PENDENTE |
-| RNF-COMP-03 | **`src/components/ui/` é a camada Shadcn.** Componentes customizados seguem o mesmo padrão de arquivo (export nomeado, props tipadas, sem lógica de negócio). | `ls src/components/ui/` lista tanto componentes Shadcn quanto os custom do projeto, no mesmo estilo. | [ ] PENDENTE (shadcn a instalar) |
-| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/estimativa/detalhamento/`. Formulário de registro → `src/components/registros/formularios/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente. | [ ] PENDENTE |
+| RNF-COMP-03 | **`src/components/ui/` é a camada Shadcn.** Componentes customizados seguem o mesmo padrão de arquivo (export nomeado, props tipadas, sem lógica de negócio). | `ls src/components/ui/` lista tanto componentes Shadcn quanto os custom do projeto, no mesmo estilo. | ✅ CONCLUÍDO (shadcn instalado em TASK-REF-03; Card, Button, Input, Badge, Label, Accordion em uso) |
+| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/detalhamento/`. Formulário de registro → `src/components/registros/formularios/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente. | ✅ CONCLUÍDO (subpastas estimativa/ com 5 componentes e detalhamento/ com 7 componentes — TASK-REF-01/02) |
 | RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict — zero erros de tipo. | ✅ CONCLUÍDO |
 | RNF-COMP-06 | **Lógica de negócio fora do JSX.** Cálculos, formatação e filtragem ficam em hooks ou utils. | Revisão de código: ausência de cálculos dentro de `return (...)`. | [ ] PENDENTE |
 
@@ -120,7 +120,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | RNF-STACK-01 | TypeScript com `strict: true`. `any` proibido. | ✅ CONCLUÍDO |
 | RNF-STACK-02 | Acesso a `localStorage` apenas via `services/perfilStorage.ts`. | ✅ CONCLUÍDO |
 | RNF-STACK-03 | ESLint + `@typescript-eslint` com regras estritas. | ✅ CONCLUÍDO |
-| RNF-STACK-04 | Testes unitários com Vitest. | ✅ CONCLUÍDO (76 testes em calculos.ts) |
+| RNF-STACK-04 | Testes unitários com Vitest. | ✅ CONCLUÍDO (92 testes: 76 em calculos.ts + 16 em PerfilContext.test.ts) |
 
 ---
 
@@ -162,5 +162,5 @@ text
 ---
 
 > **Status geral:**
-> - ✅ CONCLUÍDO: Cálculos (RNF-04, RNF-10, RNF-11, RNF-12), Login-ready (RNF-LR-01 a 04), Stack obrigatória (RNF-STACK-01 a 04).
-> - [ ] PENDENTE: Performance mobile (RNF-01, RNF-02), PWA/TWA (RNF-PWA, RNF-TWA), Acessibilidade (RNF-05 a 08), Componentização (RNF-COMP-01 a 06), Analytics (RNF-ANA), Export/Import (RNF-LR-05, 06).
+> - ✅ CONCLUÍDO: Cálculos (RNF-04, RNF-10, RNF-11, RNF-12), Login-ready (RNF-LR-01 a 04), Stack obrigatória (RNF-STACK-01 a 04), Componentização parcial (RNF-COMP-01, 03, 04, 05).
+> - [ ] PENDENTE: Performance mobile (RNF-01, RNF-02), PWA/TWA (RNF-PWA, RNF-TWA), Acessibilidade (RNF-05 a 08), Componentização restante (RNF-COMP-02, 06), Analytics (RNF-ANA), Export/Import (RNF-LR-05, 06).

@@ -1,13 +1,15 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
-import { DonutChart } from '../components/estimativa/DonutChart';
-import type { SegmentoDonut } from '../components/estimativa/DonutChart';
 import { calcularBreakdownPercentual, categoriasParaFiltros } from '../utils/calculos';
-import { moeda, kmFormatado, cpkFormatado } from '../utils/formatters';
-
-// ─── Configuração visual das categorias ──────────────────────────
+import { Badge } from '../components/ui/badge';
+import { Button } from '../components/ui/button';
+import { CardCpk } from '../components/estimativa/CardCpk';
+import { CardPeriodo } from '../components/estimativa/CardPeriodo';
+import { SecaoRodagem } from '../components/estimativa/SecaoRodagem';
+import { DistribuicaoCustos } from '../components/estimativa/DistribuicaoCustos';
+import type { SegmentoDonut } from '../components/estimativa/DonutChart';
 
 const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   documentos: { label: 'Documentos', cor: '#60A5FA' },
@@ -19,38 +21,6 @@ const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   financiamento: { label: 'Financiamento', cor: '#F97316' },
   gastosCustom: { label: 'Gastos extras', cor: '#EC4899' },
 };
-
-// ─── Sub-componentes inline ───────────────────────────────────────
-
-function LabelCampo({ children, destaque }: { children: React.ReactNode; destaque?: boolean }) {
-  return <p className={`${destaque ? 'label-destaque' : 'label-neutro'} mb-1`}>{children}</p>;
-}
-
-function CardPeriodo({ label, valor, km }: { label: string; valor: number; km?: number }) {
-  return (
-    <div className="bg-card rounded-card p-md flex flex-col gap-1">
-      <p className="label-neutro">{label}</p>
-      {km !== undefined && (
-        <div className="flex items-center gap-1 text-secondary text-xs">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            className="w-3.5 h-3.5"
-          >
-            <circle cx={12} cy={12} r={9} />
-            <path d="M12 7v5l3 3" strokeLinecap="round" />
-          </svg>
-          {kmFormatado(km)}
-        </div>
-      )}
-      <p className="text-foreground font-bold text-lg">{moeda(valor)}</p>
-    </div>
-  );
-}
-
-// ─── Componente principal ─────────────────────────────────────────
 
 export function PaginaEstimativa() {
   const navigate = useNavigate();
@@ -78,7 +48,6 @@ export function PaginaEstimativa() {
   const horas = perfil.trabalho.horasPorDia;
   const porHora = diasAno > 0 && horas > 0 ? granularidades.anual / (diasAno * horas) : 0;
 
-  // Donut — reflete as categorias ativas do perfil (sincronizado com detalhamento)
   const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
   const breakdown = calcularBreakdownPercentual(custos, filtrosAtivos);
   const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG)
@@ -110,120 +79,51 @@ export function PaginaEstimativa() {
 
   return (
     <div className="px-md py-md space-y-md">
-      {/* Seção rodagem */}
-      <section className="bg-card rounded-card p-md space-y-md">
-        <div>
-          <LabelCampo>Média de KM rodados por dia</LabelCampo>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              aria-label="Quilômetros por dia"
-              value={kmDiaInput}
-              onChange={(e) => setKmDiaInput(e.target.value)}
-              onBlur={handleKmBlur}
-              className="flex-1 bg-muted border border-muted rounded-input text-foreground px-md h-10 focus:outline-none focus:border-primary"
-              min={1}
-              max={999}
-            />
-            <span className="text-muted-foreground/60 text-sm font-medium">KM</span>
-          </div>
-        </div>
+      <SecaoRodagem
+        kmDiaInput={kmDiaInput}
+        onKmDiaChange={setKmDiaInput}
+        onKmDiaBlur={handleKmBlur}
+        dias={dias}
+        onStepDias={stepDias}
+      />
 
-        <div>
-          <LabelCampo>Dias trabalhados / semana</LabelCampo>
-          <div className="flex items-center gap-md">
-            <button
-              type="button"
-              onClick={() => stepDias(-1)}
-              disabled={dias <= 1}
-              className="w-9 h-9 rounded-full border border-muted text-foreground flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
-            >
-              −
-            </button>
-            <span className="text-foreground font-bold text-xl w-6 text-center">{dias}</span>
-            <button
-              type="button"
-              onClick={() => stepDias(1)}
-              disabled={dias >= 7}
-              className="w-9 h-9 rounded-full border border-muted text-foreground flex items-center justify-center text-lg disabled:opacity-30 hover:border-primary transition-colors"
-            >
-              +
-            </button>
-          </div>
-        </div>
-      </section>
+      <CardCpk
+        porKm={granularidades.porKm}
+        porKmSemAlimentacao={
+          granularidadesMoto.porKm !== granularidades.porKm ? granularidadesMoto.porKm : undefined
+        }
+      />
 
-      {/* Custo por km */}
-      <div className="bg-primary/10 border border-primary/20 rounded-card p-md">
-        <LabelCampo destaque>Custo de operação por km</LabelCampo>
-        <p className="text-foreground font-bold text-3xl">{cpkFormatado(granularidades.porKm)}</p>
-        {granularidadesMoto.porKm !== granularidades.porKm && (
-          <p className="text-muted-foreground/50 text-xs mt-1">
-            Sem alimentação: {cpkFormatado(granularidadesMoto.porKm)}
-          </p>
-        )}
-      </div>
-
-      {/* Cards hora/dia */}
       <div className="grid grid-cols-2 gap-sm">
         <CardPeriodo label="Por Hora" valor={porHora} />
         <CardPeriodo label="Por Dia" valor={granularidades.diario} />
       </div>
 
-      {/* Cards semana/mês/ano */}
       <div className="space-y-sm">
         <CardPeriodo label="Estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
         <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
         <CardPeriodo label="Estimado por ano" valor={granularidades.anual} km={kmAnual} />
       </div>
 
-      {/* Modo exibição badge */}
       {resultado.modoAtivo === 'personalizado' && (
         <div className="flex items-center gap-2">
-          <span className="bg-primary/20 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
+          <Badge variant="outline" className="text-primary border-primary/30 bg-primary/20">
             Modo personalizado ativo
-          </span>
+          </Badge>
         </div>
       )}
 
-      {/* Distribuição de custos */}
-      <section className="bg-card rounded-card p-md">
-        <p className="text-foreground text-sm font-semibold mb-md">Distribuição de custos</p>
+      <DistribuicaoCustos segmentos={segmentos} />
 
-        <div className="flex items-center gap-md">
-          <DonutChart segmentos={segmentos} tamanho={140} />
-
-          <div className="flex-1 space-y-1.5">
-            {segmentos
-              .filter((s) => s.porcentagem >= 0.5)
-              .sort((a, b) => b.porcentagem - a.porcentagem)
-              .map((s) => (
-                <div key={s.id} className="flex items-center gap-2">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: s.cor }}
-                  />
-                  <span className="text-muted-foreground/70 text-xs flex-1 truncate">
-                    {s.label}
-                  </span>
-                  <span className="text-muted-foreground text-xs font-medium">
-                    {Math.round(s.porcentagem)}%
-                  </span>
-                </div>
-              ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Detalhamento */}
-      <button
+      <Button
         type="button"
+        variant="outline"
+        className="w-full gap-2 bg-card border-muted rounded-lg py-3 text-sm font-medium hover:bg-card hover:border-primary"
         onClick={() => navigate('/estimativa/detalhamento')}
-        className="w-full flex items-center justify-center gap-2 bg-card border border-muted rounded-card py-3 text-foreground text-sm font-medium hover:border-primary transition-colors"
       >
         <span className="text-primary text-lg">+</span>
         Visualizar / Editar
-      </button>
+      </Button>
 
       <div className="h-2" />
     </div>

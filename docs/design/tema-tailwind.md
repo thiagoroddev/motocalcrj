@@ -4,83 +4,69 @@ Este documento define a configuracao global de CSS para o tema do MotoCalc RJ e 
 
 ## Arquivo global (src/index.css)
 
-Use o arquivo global do Tailwind para carregar as camadas base e aplicar o tema padrao:
+Tailwind v4 — a configuração de tema vai no próprio CSS, não em `tailwind.config.cjs` (removido):
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    color-scheme: dark;
-  }
+@custom-variant dark (&:where(.dark, .dark *));
 
-  body {
-    @apply bg-surface text-white font-sans;
-  }
+@theme inline {
+  /* Tokens mapeados para variáveis CSS */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  /* ... demais tokens ... */
+
+  /* Tipografia */
+  --font-sans: Inter, system-ui, sans-serif;
+
+  /* Espaçamento */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border radius */
+  --radius-btn: 4px;
+  --radius-input: 4px;
+  --radius-lg: var(--radius);   /* card radius — depende de --radius em :root */
+
+  /* Touch target */
+  --size-touch: 48px;
+}
+
+:root {
+  --radius: 0.5rem;  /* ADR-002: alinhado ao padrão shadcn */
+  /* ... cores em rgb() ... */
 }
 ```
 
-- `color-scheme: dark` ajuda navegadores a renderizar componentes nativos com tema escuro.
-- `bg-surface` e `text-white` alinham com o tema definido no design.
-
-## Tema e cores do projeto (tailwind.config.cjs)
-
-As cores do tema estao configuradas em `theme.extend.colors`:
-
-```js
-colors: {
-  primary: '#0078FF',
-  surface: '#0D1321',
-  'surface-dim': '#0D1321',
-  'surface-bright': '#333948',
-  'surface-cont': '#19192E',
-  neutral: '#C1C6D7',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  success: '#22C55E',
-}
-```
-
-Uso recomendado:
-
-- Fundo principal: `bg-surface`
-- Superficie de cards/inputs: `bg-surface-bright`
-- Containers secundarios: `bg-surface-cont`
-- Texto principal: `text-white`
-- Texto secundario: `text-neutral`
-- CTA e selecao ativa: `bg-primary` / `text-primary`
-- Alertas informativos: `text-warning` / `border-warning`
-- Alertas criticos: `text-danger` / `border-danger`
-- Status positivo: `text-success`
+- `@import "tailwindcss"` substitui `@tailwind base/components/utilities` (sintaxe v3).
+- Não há `tailwind.config.cjs` — tudo em CSS.
+- `color-scheme: dark` definido no `:root` via `color-scheme: dark`.
+- Body: `@apply bg-background text-foreground font-sans` (tokens shadcn, não `bg-surface`).
 
 ## Tipografia
 
-O tema define `font-sans` como Inter:
+Inter via `--font-sans` no `@theme inline`. Carregamento no `index.html` via Google Fonts.
 
-```js
-fontFamily: {
-  sans: ['Inter', 'system-ui', 'sans-serif'],
-}
-```
+## Tokens de espaçamento e tamanho
 
-Garanta o carregamento da fonte Inter no `index.html` (Google Fonts) quando necessario.
-
-## Tokens de espacamento e tamanho
-
-Tokens customizados:
-
-- `xs: 4px`
-- `sm: 8px`
-- `md: 16px`
-- `lg: 24px`
-- `xl: 32px`
-
-Outros tokens:
-
-- `borderRadius.card: 12px`
-- `minHeight.touch: 48px`
+| Token | Valor | Classe Tailwind |
+|---|---|---|
+| `--spacing-xs` | 4px | `p-xs`, `m-xs`, etc. |
+| `--spacing-sm` | 8px | `p-sm`, `m-sm` |
+| `--spacing-md` | 16px | `p-md`, `m-md` |
+| `--spacing-lg` | 24px | `p-lg`, `m-lg` |
+| `--spacing-xl` | 32px | `p-xl`, `m-xl` |
+| `--size-touch` | 48px | `min-h-touch` |
+| `--radius` | 0.5rem | base do sistema de radius |
+| `--radius-lg` | = `--radius` | `rounded-lg` (cards) |
+| `--radius-btn` | 4px | `rounded-btn` (botões) |
+| `--radius-input` | 4px | `rounded-input` (inputs) |
 
 ## Observacoes
 
@@ -91,29 +77,36 @@ Outros tokens:
 ## Tokens de Cor (Shadcn/ui — CSS vars)
 
 O projeto usa a **convenção CSS vars do Shadcn** — não `--color-*` customizado.
-Qualquer IA ou dev que ver shadcn instalado vai encontrar os padrões esperados.
+Valores em formato `rgb()` (padrão pós-TASK-RNF-006 / Tailwind v4):
 
 ```css
-/* index.css — valores em canal RGB sem vírgula (padrão shadcn) */
+/* index.css — :root (tema escuro padrão) */
 :root {
-  --background: 13 19 33; /* #0D1321 */
-  --foreground: 193 198 215; /* #C1C6D7 */
-  --card: 18 26 44;
-  --card-foreground: 255 255 255;
-  --primary: 0 120 255; /* #0078FF */
-  --primary-foreground: 255 255 255;
-  --secondary: 0 192 232; /* #00C0E8 */
-  --secondary-foreground: 13 19 33;
-  --muted: 30 38 58; /* #1E263A */
-  --muted-foreground: 139 144 160; /* #8B90A0 label neutro */
-  --accent: 0 40 91; /* #00285B */
-  --accent-foreground: 173 199 255; /* #ADC7FF */
-  --destructive: 239 68 68; /* #EF4444 */
-  --destructive-foreground: 255 255 255;
-  --border: 30 38 58;
-  --input: 30 38 58;
-  --ring: 0 120 255;
-  --radius: 0.75rem;
+  --radius: 0.5rem;                  /* ADR-002: alinhado ao shadcn */
+  --background: rgb(13 19 33);       /* #0D1321 */
+  --foreground: rgb(255 255 255);
+  --card: rgb(25 31 46);
+  --card-foreground: rgb(255 255 255);
+  --primary: rgb(0 120 255);         /* #0078FF */
+  --primary-foreground: rgb(13 19 33);
+  --secondary: rgb(173 199 255);     /* #ADC7FF */
+  --secondary-foreground: rgb(13 19 33);
+  --muted: rgb(51 57 72);
+  --muted-foreground: rgb(193 198 215);
+  --destructive: rgb(147 0 10);
+  --destructive-foreground: rgb(255 255 255);
+  --border: rgb(51 57 72);
+  --input: rgb(51 57 72);
+  --ring: rgb(0 120 255);
+  --accent: rgb(51 57 72);
+  --accent-foreground: rgb(255 255 255);
+  /* tokens customizados */
+  --label: rgb(139 144 160);         /* #8B90A0 — label-neutro */
+  --warning: rgb(255 182 149);
+  --success: rgb(34 197 94);
+  --cyan: rgb(0 192 232);
+  --tertiary: rgb(0 40 91);
+  --surface-dim: rgb(13 19 33);
 }
 ```
 
@@ -140,28 +133,30 @@ Utilitários customizados (em `index.css`):
 ```
 
 ```
-// Radios: var(--radius) = 0.75rem (cards, dialogs) | 0.5rem (btn/input)
+// Radius: --radius = 0.5rem (ADR-002) → rounded-lg = card radius
+//         --radius-btn = 4px → rounded-btn | --radius-input = 4px → rounded-input
 // Fonte: Inter | Grid: 8pt | Toque mínimo: 48px (min-h-touch)
 // ❌ PROIBIDO: usar bg-surface-*, bg-surface-cont, text-neutral, border-surface-*
-//    Esses tokens foram substituídos pelos CSS vars do Shadcn acima.
+//    Esses tokens foram removidos em TASK-RNF-006. Usar os CSS vars do Shadcn acima.
 ```
 
-## Componentes shadcn Mapeados (a instalar)
+## Componentes shadcn Instalados
 
-| Componente | Uso                                           |
-| ---------- | --------------------------------------------- |
-| Card       | Cards de custo, cards informativos            |
-| Accordion  | Categorias no Detalhamento                    |
-| Switch     | Toggles de categoria                          |
-| Dialog     | Modal de gasto, confirmação "Apagar Tudo"     |
-| Badge      | Status de revisão, "Modo personalizado ativo" |
-| Select     | Dropdown ano, tipo de óleo, marca             |
-| Tabs       | Sub-abas da tela Registros                    |
-| Input      | Todos os inputs                               |
-| Button     | Todos os botões                               |
-| Separator  | Divisores entre seções                        |
-| Toggle     | MENSAL/ANUAL, AUTORIZADAS/INDEPENDENTES       |
-| Sheet      | Painel hamburguer                             |
+| Componente | Uso | Status |
+| ---------- | --- | ------ |
+| Card       | Cards de custo, cards informativos | ✅ Em uso |
+| Accordion  | Categorias no Detalhamento | ✅ Em uso |
+| Switch     | Toggles de categoria (atenção: Toggle custom é diferente do Switch) | ✅ Instalado |
+| Dialog     | Modal de gasto, confirmação "Apagar Tudo" | ✅ Instalado |
+| Badge      | Status de revisão, "Modo personalizado ativo" | ✅ Em uso |
+| Select     | Dropdown ano, tipo de óleo, marca | [ ] Pendente uso |
+| Tabs       | Sub-abas da tela Registros | ✅ Instalado |
+| Input      | Todos os inputs | ✅ Em uso |
+| Button     | Todos os botões | ✅ Em uso |
+| Separator  | Divisores entre seções | ✅ Instalado |
+| Toggle     | MENSAL/ANUAL, AUTORIZADAS/INDEPENDENTES | ✅ Instalado |
+| Sheet      | Painel hamburguer | ✅ Instalado |
+| Label      | Labels de input | ✅ Em uso |
 
 ---
 

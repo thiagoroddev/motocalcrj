@@ -36,7 +36,7 @@ export function Passo9() {
           <button
             type="button"
             onClick={() => setComeNaRua(true)}
-            className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
+            className={`flex flex-col items-center gap-xs p-md rounded-lg border-2 transition-colors ${
               comeNaRua
                 ? 'border-primary bg-primary/10 text-foreground'
                 : 'border-muted bg-card text-muted-foreground'
@@ -49,7 +49,7 @@ export function Passo9() {
           <button
             type="button"
             onClick={() => setComeNaRua(false)}
-            className={`flex flex-col items-center gap-xs p-md rounded-card border-2 transition-colors ${
+            className={`flex flex-col items-center gap-xs p-md rounded-lg border-2 transition-colors ${
               !comeNaRua
                 ? 'border-primary bg-primary/10 text-foreground'
                 : 'border-muted bg-card text-muted-foreground'

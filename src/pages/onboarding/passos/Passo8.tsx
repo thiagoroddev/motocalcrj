@@ -43,7 +43,7 @@ export function Passo8() {
           />
         </label>
 
-        <div className="bg-primary/10 border border-primary/30 rounded-card p-md">
+        <div className="bg-primary/10 border border-primary/30 rounded-lg p-md">
           <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-xs">Dica</p>
           <p className="text-muted-foreground text-sm">
             Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro.
