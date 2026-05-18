@@ -18,7 +18,7 @@ export function DistribuicaoCustos({ segmentos }: PropsDistribuicaoCustos) {
             .map((s) => (
               <div key={s.id} className="flex items-center gap-2">
                 <span
-                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: s.cor }}
                 />
                 <span className="text-muted-foreground/70 text-xs flex-1 truncate">{s.label}</span>

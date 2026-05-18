@@ -22,7 +22,7 @@ export function PassoLayout({
   const labelBotao = textoBotao ?? (passo === '9' ? 'Concluir' : 'Próximo');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col ">
       <div className="px-md pt-md pb-sm">
         <div className="flex items-center justify-between mb-xs">
           <span className="text-label-sm text-muted-foreground">{config.label}</span>
@@ -42,7 +42,7 @@ export function PassoLayout({
         {children}
       </div>
 
-      <div className="px-md pb-lg pt-md border-t border-muted flex gap-sm">
+      <div className="p-md pt-md border-t border-muted flex gap-sm">
         {temAnterior && (
           <button
             type="button"

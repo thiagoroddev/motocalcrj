@@ -117,7 +117,7 @@ export function Passo3() {
           : undefined
       }
       aoProximo={salvarEAvancar}
-      podeContinuar={valido}
+      podeContinuar={valido && fipeEstado !== 'buscando'}
     >
       <input
         type="number"
@@ -136,16 +136,30 @@ export function Passo3() {
             <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
           )}
           {fipeEstado === 'ok' && fipeInfo && (
-            <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
-              <span className="text-muted-foreground text-sm">Valor FIPE</span>
-              <div className="text-right">
-                <span className="text-foreground font-semibold">
-                  {formatarMoeda(fipeInfo.valor)}
-                </span>
-                {fipeInfo.mesReferencia && (
-                  <p className="text-muted-foreground/50 text-xs">{fipeInfo.mesReferencia}</p>
-                )}
+            <div className="space-y-xs">
+              <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
+                <span className="text-muted-foreground text-sm">Valor FIPE</span>
+                <div className="text-right">
+                  <span className="text-foreground font-semibold">
+                    {formatarMoeda(fipeInfo.valor)}
+                  </span>
+                  {fipeInfo.mesReferencia && (
+                    <p className="text-muted-foreground/50 text-xs">{fipeInfo.mesReferencia}</p>
+                  )}
+                </div>
               </div>
+              {new Date().getFullYear() - anoNum < 15 ? (
+                <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
+                  <span className="text-muted-foreground text-sm">IPVA estimado (2% a.a.)</span>
+                  <span className="text-foreground font-semibold">
+                    {formatarMoeda(fipeInfo.valor * 0.02)}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-muted-foreground/50 text-xs px-xs">
+                  Moto com mais de 15 anos — isenta de IPVA no RJ.
+                </p>
+              )}
             </div>
           )}
         </div>

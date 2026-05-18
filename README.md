@@ -1,4 +1,4 @@
-# EstimaMoto — MotoCalc RJ
+# EstimaMoto MotoCalc RJ
 
 PWA para motoboys do Rio de Janeiro calcularem o custo operacional real de suas motos. Foco inicial: Honda Pop 110i.
 

@@ -23,7 +23,7 @@ export function DonutChart({ segmentos, tamanho = 160 }: Props) {
 
   return (
     <div
-      className="relative flex items-center justify-center flex-shrink-0"
+      className="relative flex items-center justify-center shrink-0"
       style={{ width: tamanho, height: tamanho }}
     >
       <svg
@@ -67,7 +67,7 @@ export function DonutChart({ segmentos, tamanho = 160 }: Props) {
           <span className="text-foreground font-bold text-2xl leading-tight">
             {Math.round(maior.porcentagem)}%
           </span>
-          <span className="text-muted-foreground/60 text-[10px] uppercase tracking-wide leading-tight max-w-[70px] text-center">
+          <span className="text-muted-foreground/60 text-[10px] uppercase tracking-wide leading-tight max-w-17.5 text-center">
             {maior.label}
           </span>
         </div>

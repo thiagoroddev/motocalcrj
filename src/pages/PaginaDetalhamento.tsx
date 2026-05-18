@@ -112,6 +112,11 @@ export function PaginaDetalhamento() {
 
       <CardTotalAnual totalFiltrado={totalFiltrado} mensal={gran.mensal} porKm={gran.porKm} />
       <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />
+      {perfil.trabalho.diasPorSemana === 1 && (
+        <p className="text-muted-foreground/60 text-xs px-xs">
+          Com 1 dia/semana configurado, os modos Dia e Sem mostram o mesmo valor. Ajuste em Estimativa.
+        </p>
+      )}
 
       <CategoriaAccordion
         label="Documentos"

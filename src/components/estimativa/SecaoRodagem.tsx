@@ -66,6 +66,11 @@ export function SecaoRodagem({
             +
           </Button>
         </div>
+        {dias === 1 && (
+          <p className="text-muted-foreground/60 text-xs mt-xs">
+            Com 1 dia por semana, os valores diário e semanal serão iguais nos cálculos.
+          </p>
+        )}
       </div>
     </section>
   );
