@@ -167,29 +167,9 @@ Motoboy com moto não-listada não consegue usar o app. Em V1 isso é aceitável
 
 ---
 
-## DT-6: Sem Versionamento de Schema do Storage
+## ~~DT-6: Sem Versionamento de Schema do Storage~~ ENDEREÇADA (TASK-REF-11)
 
-### Situação atual
-
-Chaves do `localStorage` (`motocalc:v5:presets` e `motocalc:v5:presetAtivo`) carregam versionamento implícito (`v5`). O campo `schemaVersion` dentro de `PerfilUsuario` permite migrações controladas (RNF-LR-06), mas o **arquivo de migração `src/utils/migrarPerfil.ts` ainda não existe** (Fase 2 do checklist marca como pendente).
-
-### Por que é dívida técnica
-
-Quando uma versão futura do app esperar campos novos, Motoboys com dados antigos terão crashes ou perderão configuração silenciosamente.
-
-### Por que NÃO endereçar agora
-
-- V1 ainda em desenvolvimento schema instável é esperado
-- Mecanismo de migração tem complexidade que não compensa antes do release público
-
-### Gatilho que justificaria endereçar
-
-- Lançamento público (TWA / loja)
-- Primeira mudança de schema entre releases já instalados
-
-### Recomendação
-
-TASK-8.x (PWA / TWA / pré-release) deve incluir criação de `migrarPerfil.ts`.
+> **Resolvida parcialmente em 19/05/26 por TASK-REF-11.** Migração v5→v6 implementada inline em `criarEstadoInicial` (PerfilContext.tsx). `migrarPerfil.ts` ainda não existe como arquivo separado — permanece como recomendação para TASK-8.x.
 
 ---
 
@@ -409,7 +389,9 @@ Override referencia revisão **por índice no array do Preset JSON**. Se o array
 
 ### Recomendação
 
-Refatorar para chave estável (ex: `revisaoNumero: 1, 2, 3...`) na próxima migração.
+Refatorar para chave estável (ex: `intervaloKm` como identificador) em TASK-REF-12, quando o calculador passar a ler os overrides de revisão autorizada.
+
+> **Nota (19/05/26):** A oportunidade de migrar DT-13 junto com a migração v5→v6 (TASK-REF-11) foi avaliada e **descartada** porque: (a) o override ainda não é lido pelo calculador (mesmo orphan que `servicosMaoDeObra`), então corrigir o formato antes do uso não agrega; (b) a migração exigiria ler o preset JSON para resolver o `intervaloKm` de cada índice, adicionando dependência de runtime ao processo de migration. **Endereçar em TASK-REF-12.**
 
 ---
 
@@ -438,6 +420,33 @@ A action `SET_ONBOARDING_CAMPO` aceita `campo: string` e `valor: unknown`. Ela e
 
 Criar actions especificas progressivamente conforme cada bloco for tocado. Lista inicial:
 `SET_SITUACAO_MOTO`, `SET_RESPONSABILIDADE_ALUGUEL`, `SET_PERFIL_PECAS_GLOBAL`, `SET_MODO_REVISAO`.
+
+---
+
+## DT-15: Vínculo Implícito entre ServicoIndependente e Peça (NOVA)
+
+### Situação atual
+
+`ServicoIndependente` possui `intervalKm` que define a frequência de um serviço de mão de obra. A aba **Preço Peças** (TASK-RF-6.2) exibirá `intervalKm` de peça somente leitura espelhado de `ServicoIndependente`. O vínculo entre um serviço e suas peças é **implícito por convenção de IDs** (ex: `id: 'troca-oleo'` em `ServicoIndependente` e `id: 'oleo_motor'` em `PresetMoto.pecas[]`). Não há campo `pecaIds[]` ou tipagem de relacionamento.
+
+### Por que é dívida técnica
+
+- Vínculo implícito: se IDs divergirem (por rename ou novo preset), Preço Peças não encontra a peça correspondente sem erro de tipo
+- Dificulta suporte a múltiplos modelos futuros com IDs de peça distintos
+
+### Por que NÃO endereçar agora
+
+- Há apenas 1 modelo (pop110i) com IDs estáveis
+- Adicionar `pecaIds[]` a `ServicoIndependente` aumentaria complexidade antes de validação em produção
+
+### Gatilho que justificaria endereçar
+
+- Adição de segundo modelo de moto com IDs de peça distintos
+- Bug de inconsistência ID detectado em produção
+
+### Recomendação
+
+Documentar a convenção de mapeamento ID em comentário na tela Preço Peças (TASK-RF-6.2). Adicionar campo `pecaIds[]` opcional quando segundo modelo entrar.
 
 ---
 
@@ -472,3 +481,4 @@ _(vazio na criação)_
 | 2026-05-09 (v1) | Criação inicial DT-1 a DT-6                                                                                                                                                                           |
 | 2026-05-09 (v2) | **Reescrita corrigida.** DT-2 substancialmente revisada (interpretação errada do A12 corrigida). Adicionados DT-7 a DT-13 baseados em divergências reais encontradas na engenharia reversa do código. |
 | 2026-05-11 (v3) | Referencias atualizadas para v6 e DT-12 confirmada sem sincronizacao no reducer.                                                                                                                      |
+| 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |

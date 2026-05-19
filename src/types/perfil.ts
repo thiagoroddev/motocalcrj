@@ -58,12 +58,13 @@ export interface PecaOverride {
   perfilPecasOverride: PerfilPecas | null;
 }
 
-export interface ServicosMaoDeObra {
-  trocaOleo: number;
-  trocaKitTransmissao: number;
-  trocaPneu: number;
-  revisaoGeral: number;
-  avulso: number;
+export interface ServicoIndependente {
+  id: string;
+  nome: string;
+  intervalKm: number;
+  precoMaoDeObra: number;
+  ativo: boolean;
+  ehExcepcional: boolean;
 }
 
 export interface RevisaoAutorizadaOverride {
@@ -211,7 +212,7 @@ export interface PerfilUsuario {
   };
 
   pecasOverrides: PecaOverride[];
-  servicosMaoDeObra: ServicosMaoDeObra;
+  servicosIndependentes: ServicoIndependente[];
   revisaoAutorizadaOverrides: RevisaoAutorizadaOverride[];
 
   fipeCache: FipeCache | null;
@@ -261,8 +262,9 @@ export type PerfilAction =
   | { type: 'RESET_PECA_OVERRIDE'; id: string; campo?: 'preco' | 'intervaloKm' | 'perfilPecas' }
 
   // Mão de obra
-  | { type: 'SET_SERVICO_MAO_DE_OBRA'; servico: keyof ServicosMaoDeObra; valor: number }
-  | { type: 'RESET_SERVICO_MAO_DE_OBRA'; servico: keyof ServicosMaoDeObra }
+  | { type: 'SET_SERVICO_INDEPENDENTE'; payload: ServicoIndependente }
+  | { type: 'TOGGLE_SERVICO_INDEPENDENTE'; payload: { id: string } }
+  | { type: 'RESET_SERVICOS_INDEPENDENTES' }
   | { type: 'SET_REVISAO_AUTORIZADA_OVERRIDE'; index: number; precoTotal: number }
   | { type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE'; index: number }
 

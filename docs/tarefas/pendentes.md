@@ -14,19 +14,22 @@ _(nenhuma)_
 ### Tarefas Normais
 
 
-## ~~Registros e Formulários (Fase 6 do roadmap original)~~ — ADIADO (ADR-003)
+## ~~Registros e Formulários (Fase 6 do roadmap original)~~ ADIADO (ADR-003)
 
 > **ADR-003:** Removido do escopo do MVP. A ser considerado como melhoria futura após o app estar em produção. Ver `docs/arquitetura/ADR/ADR-003.md`.
 
 ---
 
-## Mão de Obra, Autonomia e Perfil (Fases 7, 8 e 10)
+## Mão de Obra, Preço Peças e Perfil (Fases 7, 8 e 10)
 
-| ID          | Título                                                     | Valor      | Urgência | Esforço | Dependências             | Status |
-| ----------- | ---------------------------------------------------------- | ---------- | -------- | ------- | ------------------------ | ------ |
-| TASK-RF-6.1 | Aba Mão de Obra (serviços editáveis + reset)               | Importante | Normal   | G       | -                        | [ ]    |
-| TASK-RF-6.2 | Aba Autonomia / Vida Útil (combustíveis, peças, pneus)     | Importante | Normal   | G       | -                        | [ ]    |
-| TASK-RF-6.3 | Tela Perfil + Ajustes de Predefinição (5 seções com reset) — **sem toggle de modo de cálculo** (ADR-003) | Importante | Normal   | G       | TASK-RF-6.1, TASK-RF-6.2 | [ ]    |
+> **ADR-004:** Modelo de Eventos por Serviço — MO e peças calculadas por CPK separados, unidos pelo `intervalKm` do serviço. TASK-REF-11 e TASK-REF-12 são pré-requisitos das abas UI.
+
+| ID           | Título                                                                                                  | Valor      | Urgência | Esforço | Dependências              | Status |
+| ------------ | ------------------------------------------------------------------------------------------------------- | ---------- | -------- | ------- | ------------------------- | ------ |
+| TASK-REF-12  | Evoluir calculador: Honda km-based + fix overrides + CPK por serviço independente                      | Crítico    | Normal   | M       | TASK-REF-11               | [ ]    |
+| TASK-RF-6.1  | Aba Mão de Obra: Honda (7 revisões), Independente (por serviço), Excepcionais (ADR-004)                 | Importante | Normal   | G       | TASK-REF-11, TASK-REF-12  | [ ]    |
+| TASK-RF-6.2  | Aba Preço Peças (ex-Autonomia): preços editáveis original/paralela, vida útil somente leitura (ADR-004) | Importante | Normal   | M       | TASK-REF-11               | [ ]    |
+| TASK-RF-6.3  | Tela Perfil + Ajustes de Predefinição (5 seções com reset) **sem toggle de modo de cálculo** (ADR-003)  | Importante | Normal   | G       | TASK-RF-6.1, TASK-RF-6.2  | [ ]    |
 
 ---
 
@@ -45,7 +48,7 @@ _(nenhuma)_
 | ID          | Título                                            | Valor      | Urgência | Esforço | Dependências | Status |
 | ----------- | ------------------------------------------------- | ---------- | -------- | ------- | ------------ | ------ |
 | TASK-RF-7.1 | Export/Import de presets (.json)                  | Importante | Normal   | G       | TASK-RF-6.3  | [ ]    |
-| ~~TASK-RF-7.2~~ | ~~Histórico e alertas de manutenção (próxima troca)~~ — **ADIADO** com RF-5.x (ADR-003) | Importante | Normal   | G       | RF-5.x       | [ ]    |
+| ~~TASK-RF-7.2~~ | ~~Histórico e alertas de manutenção (próxima troca)~~ **ADIADO** com RF-5.x (ADR-003) | Importante | Normal   | G       | RF-5.x       | [ ]    |
 
 ---
 
@@ -70,7 +73,3 @@ _(nenhuma)_
 
 ## Documentação
 
-| ID          | Título                                                           | Valor      | Urgência | Esforço | Dependências | Status |
-| ----------- | ---------------------------------------------------------------- | ---------- | -------- | ------- | ------------ | ------ |
-| TASK-DOC-01 | Criar docs/design/telas-navegacao.md a partir dos specs do Figma | Importante | Normal   | M       | -            | [ ]    |
-| TASK-DOC-02 | Migrar backlog antigo para o novo padrão de tarefas              | Importante | Normal   | M       | -            | [ ]    |

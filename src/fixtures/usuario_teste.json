@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 5,
+        "schemaVersion": 6,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -98,13 +98,16 @@
           }
         ],
 
-        "servicosMaoDeObra": {
-          "trocaOleo": 30,
-          "trocaKitTransmissao": 60,
-          "trocaPneu": 35,
-          "revisaoGeral": 150,
-          "avulso": 80
-        },
+        "servicosIndependentes": [
+          { "id": "troca-oleo",            "nome": "Troca de óleo",               "intervalKm": 3000,  "precoMaoDeObra": 25,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",       "intervalKm": 12000, "precoMaoDeObra": 60,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",        "intervalKm": 25000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
+          { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "fazer-motor",           "nome": "Fazer motor",                 "intervalKm": 70000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+        ],
 
         "revisaoAutorizadaOverrides": [],
 
@@ -304,7 +307,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 5,
+        "schemaVersion": 6,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -375,13 +378,16 @@
         },
 
         "pecasOverrides": [],
-        "servicosMaoDeObra": {
-          "trocaOleo": 30,
-          "trocaKitTransmissao": 50,
-          "trocaPneu": 30,
-          "revisaoGeral": 150,
-          "avulso": 80
-        },
+        "servicosIndependentes": [
+          { "id": "troca-oleo",            "nome": "Troca de óleo",               "intervalKm": 3000,  "precoMaoDeObra": 25,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",       "intervalKm": 12000, "precoMaoDeObra": 60,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",        "intervalKm": 25000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
+          { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "fazer-motor",           "nome": "Fazer motor",                 "intervalKm": 70000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+        ],
         "revisaoAutorizadaOverrides": [],
         "fipeCache": {
           "valor": 11000,

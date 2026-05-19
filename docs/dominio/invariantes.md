@@ -112,14 +112,32 @@ if (filtros.manutencaoPorPeca[pecaId] === true) {
 
 ---
 
-#### INV-CALC-2: utils/calculos.ts é Imutável
+#### INV-CALC-2: utils/calculos.ts requer aprovação explícita para modificação
 **Regra:** O arquivo `src/utils/calculos.ts` **nunca pode ser modificado** sem decisão explícita do usuário.
 
 **Por quê:** 92 testes passando. Modificação acidental quebraria comportamento testado e validado.
 
 **Status:** Listada como **Proibição Absoluta** no `contexto-base`.
 
+⚠️ **Autorização registrada:** ADR-004 autoriza explicitamente modificações para TASK-REF-12 (fix fórmula Honda km-based, aplicar `revisaoAutorizadaOverrides`, implementar CPK por serviço independente). Qualquer outra modificação continua exigindo decisão explícita.
+
 ⚠️ **Cuidado:** isso não significa que o arquivo é "perfeito" significa que está **estável e testado**. Refatoração futura pode acontecer com aprovação explícita e plano de migração.
+
+---
+
+### Invariantes de Manutenção
+
+#### INV-MANUT-1: intervalKm de ServicoIndependente sempre positivo
+**Regra:** `ServicoIndependente.intervalKm > 0` sempre.
+
+**Por quê:** `intervalKm` é denominador do CPK por serviço (`precoMaoDeObra / intervalKm`). Zero ou negativo gera divisão por zero ou custo negativo — estado logicamente impossível.
+
+**Onde é protegida:** Case `SET_SERVICO_INDEPENDENTE` no `perfilReducer` (`PerfilContext.tsx`):
+```typescript
+if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
+```
+
+⚠️ **Cuidado:** a action não lança erro — ela silenciosamente ignora a atualização. Componentes de UI devem validar o campo antes de despachar para dar feedback ao usuário.
 
 ---
 
@@ -184,8 +202,8 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 
 - Invariantes de Registros de Gasto (TASK-5.x)
 - Invariantes de Registros de Rodagem (TASK-5.x)
-- Invariantes de Vida Útil de Peças
-- Invariantes de Mão de Obra
+- ~~Invariantes de Vida Útil de Peças~~ — ver INV-MANUT-1 (intervalKm é fonte canônica em ServicoIndependente)
+- ~~Invariantes de Mão de Obra~~ — adicionado INV-MANUT-1 por TASK-REF-11
 - Invariantes específicas das funções de cálculo (granularidade, totalização)
 
 ---
@@ -195,3 +213,5 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | Data | Invariante | Mudança | Motivo |
 |---|---|---|---|
 | 2026-05-09 | (todas as iniciais) | Criação | Engenharia reversa |
+| 2026-05-19 | INV-CALC-2 | Nota de autorização ADR-004 para TASK-REF-12 | Conflito com proibição absoluta resolvido por decisão explícita |
+| 2026-05-19 | INV-MANUT-1 | Nova — `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |

@@ -53,7 +53,7 @@ Arquivo `.json` em `src/presets/` com dados técnico-financeiros pré-cadastrado
 
 ### Override
 
-Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosMaoDeObra`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02).
+Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosIndependentes[]`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02).
 
 ### Modo de Exibição (`ModoExibicao`)
 
@@ -68,8 +68,25 @@ Controla **como os Overrides são aplicados** nos cálculos. Tipo: `'predefinido
 
 Tipo: `'autorizadas' | 'independentes'`. Controla qual cálculo de revisão periódica é usado:
 
-- **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por mês.
-- **`independentes`:** usa preço de mão de obra customizável × frequência de revisão configurável.
+- **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por km anual.
+- **`independentes`:** usa `servicosIndependentes[]` — array de `ServicoIndependente`, onde cada serviço tem `intervalKm` e `precoMaoDeObra` próprios. CPK = `∑ (precoMaoDeObra / intervalKm) × kmAnual` (apenas serviços com `ativo: true`).
+
+### Serviço Independente (`ServicoIndependente`)
+
+Item de manutenção periódica com preço de mão de obra e intervalo de km próprios. Parte de `PerfilUsuario.servicosIndependentes[]`. Substituiu o tipo plano `ServicosMaoDeObra` na versão 6 do schema.
+
+```typescript
+interface ServicoIndependente {
+  id: string;           // ex: 'troca-oleo', 'revisao-geral'
+  nome: string;
+  intervalKm: number;   // sempre > 0 (INV-MANUT-1)
+  precoMaoDeObra: number;
+  ativo: boolean;       // false = excluído do cálculo de CPK
+  ehExcepcional: boolean; // true = alerta ao atingir km (ex: fazer motor)
+}
+```
+
+Defaults de 8 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (valores campo RJ). Serviços com `ehExcepcional: true` têm `ativo: false` por padrão e geram alerta contextual quando `kmAtual >= intervalKm`.
 
 ### Perfil de Peças (`PerfilPecas`)
 
@@ -146,11 +163,15 @@ Tratado separadamente das peças no Preset JSON, em `PresetMoto.pneus[]`. Tem: `
 
 ### Vida Útil
 
-Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. Para Peças: `intervaloKm` ou `intervaloKmEntrega`. Para Pneus: `vidaUtilKm`.
+Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. Para Peças: `intervaloKm` ou `intervaloKmEntrega` (do Preset JSON). Para Pneus: `vidaUtilKm`.
+
+**Fonte canônica do intervalo de km:** no modo `independentes`, o `intervalKm` de cada serviço vive em `ServicoIndependente.intervalKm`. A aba **Preço Peças** exibe esse valor somente leitura; apenas a aba **Mão de Obra** permite editar o intervalo.
 
 ### CPK (Custo Por Quilômetro)
 
 **Métrica central do produto.** Custo total de operação dividido pela quilometragem total. Em R$/km. Calculado em `calcularCpkPeca(preco, intervaloKm) = preco / intervaloKm` (por peça) e `calcularCpkCombustivel(preco, consumo) = preco / consumo` (combustível). Exibido no card "CUSTO DE OPERAÇÃO POR KM" em destaque na Estimativa.
+
+**CPK por Evento de Serviço (ADR-004):** formula unificada que combina mão de obra e peças de um mesmo serviço: `CPK_serviço = (precoMaoDeObra + precoPecas) / intervalKm`. O custo anual do serviço = `CPK_serviço × kmAnual`.
 
 ### Granularidades
 
@@ -269,3 +290,4 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-09 (v1) | (todos)                                           | Criação inicial por inferência                | Engenharia reversa apenas com `contexto-base`                                                            |
 | 2026-05-09 (v2) | (todos)                                           | **Reescrita completa baseada em código real** | Validação contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts` e Requisitos v6 |
 | 2026-05-11 (v3) | Diário de Trabalho, Dados RJ, Catálogo de Modelos | Alinhamento com código real                   | Ajustes e referências v6                                                                                 |
+| 2026-05-19 (v4) | Override, Modo de Revisão, CPK, Vida Útil, Serviço Independente | Adição e atualização por ADR-004 | TASK-REF-11: substituição ServicosMaoDeObra → ServicoIndependente[], fórmula CPK por evento |

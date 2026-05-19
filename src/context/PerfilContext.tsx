@@ -1,15 +1,30 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
-import type { PerfilUsuario, PresetEntry, PerfilAction, PecaOverride } from '../types/perfil';
+import type { PerfilUsuario, PresetEntry, PerfilAction, PecaOverride, ServicoIndependente } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { CATALOGO } from '../data/catalogoModelos';
+
+// ──────────────────────────────────────────────
+// Defaults de serviços independentes (campo RJ)
+// ──────────────────────────────────────────────
+
+export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
+  { id: 'troca-oleo',            nome: 'Troca de óleo',              intervalKm: 3000,  precoMaoDeObra: 25,   ativo: true,  ehExcepcional: false },
+  { id: 'troca-kit-transmissao', nome: 'Troca kit transmissão',      intervalKm: 12000, precoMaoDeObra: 60,   ativo: true,  ehExcepcional: false },
+  { id: 'troca-pneu-dianteiro',  nome: 'Troca pneu dianteiro',       intervalKm: 25000, precoMaoDeObra: 30,   ativo: true,  ehExcepcional: false },
+  { id: 'troca-pneu-traseiro',   nome: 'Troca pneu traseiro',        intervalKm: 15000, precoMaoDeObra: 30,   ativo: true,  ehExcepcional: false },
+  { id: 'revisao-geral',         nome: 'Revisão geral (independente)',intervalKm: 6000,  precoMaoDeObra: 80,   ativo: true,  ehExcepcional: false },
+  { id: 'troca-vela',            nome: 'Troca de vela',              intervalKm: 6000,  precoMaoDeObra: 15,   ativo: true,  ehExcepcional: false },
+  { id: 'troca-filtro-ar',       nome: 'Troca filtro de ar',         intervalKm: 6000,  precoMaoDeObra: 15,   ativo: true,  ehExcepcional: false },
+  { id: 'fazer-motor',           nome: 'Fazer motor',                intervalKm: 70000, precoMaoDeObra: 1500, ativo: false, ehExcepcional: true  },
+];
 
 // ──────────────────────────────────────────────
 // Estado inicial padrão (pre-onboarding)
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 5,
+  schemaVersion: 6,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -80,13 +95,7 @@ export const perfilPadrao: PerfilUsuario = {
   },
 
   pecasOverrides: [],
-  servicosMaoDeObra: {
-    trocaOleo: 30,
-    trocaKitTransmissao: 50,
-    trocaPneu: 30,
-    revisaoGeral: 150,
-    avulso: 80,
-  },
+  servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO,
   revisaoAutorizadaOverrides: [],
 
   fipeCache: null,
@@ -295,20 +304,24 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     }
 
     // ── Mão de obra ─────────────────────────────
-    case 'SET_SERVICO_MAO_DE_OBRA':
+    case 'SET_SERVICO_INDEPENDENTE': {
+      if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
+      const novos = state.perfil.servicosIndependentes.some((s) => s.id === action.payload.id)
+        ? state.perfil.servicosIndependentes.map((s) => s.id === action.payload.id ? action.payload : s)
+        : [...state.perfil.servicosIndependentes, action.payload];
+      return comPerfil({ ...state.perfil, servicosIndependentes: novos });
+    }
+
+    case 'TOGGLE_SERVICO_INDEPENDENTE':
       return comPerfil({
         ...state.perfil,
-        servicosMaoDeObra: { ...state.perfil.servicosMaoDeObra, [action.servico]: action.valor },
+        servicosIndependentes: state.perfil.servicosIndependentes.map((s) =>
+          s.id === action.payload.id ? { ...s, ativo: !s.ativo } : s,
+        ),
       });
 
-    case 'RESET_SERVICO_MAO_DE_OBRA':
-      return comPerfil({
-        ...state.perfil,
-        servicosMaoDeObra: {
-          ...state.perfil.servicosMaoDeObra,
-          [action.servico]: perfilPadrao.servicosMaoDeObra[action.servico],
-        },
-      });
+    case 'RESET_SERVICOS_INDEPENDENTES':
+      return comPerfil({ ...state.perfil, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO });
 
     case 'SET_REVISAO_AUTORIZADA_OVERRIDE': {
       const existente = state.perfil.revisaoAutorizadaOverrides.find(
@@ -609,14 +622,22 @@ interface PerfilProviderProps {
   storage?: IPerfilStorage;
 }
 
+function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
+  if (perfil.schemaVersion >= 6) return perfil;
+  // v5 → v6: descarta servicosMaoDeObra (orphan), inicializa servicosIndependentes
+  const { servicosMaoDeObra: _descartado, ...resto } = perfil as PerfilUsuario & { servicosMaoDeObra?: unknown };
+  return { ...resto, schemaVersion: 6, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO };
+}
+
 function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
-  const presets = storage.carregarPresets();
+  const presetsRaw = storage.carregarPresets();
   const ativoId = storage.getPresetAtivo();
 
-  if (presets.length === 0 || !ativoId) {
+  if (presetsRaw.length === 0 || !ativoId) {
     return estadoPadrao;
   }
 
+  const presets = presetsRaw.map((p) => ({ ...p, perfil: migrarPerfil(p.perfil) }));
   const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
   return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
 }
