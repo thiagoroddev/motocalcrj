@@ -46,3 +46,13 @@ npx tsc --noEmit  # verificar tipos
 | ADRs (decisões arquiteturais) | `docs/arquitetura/ADR/` |
 | Tarefas e backlog | `docs/tarefas/` |
 | Glossário do domínio | `docs/dominio/_glossario.md` |
+
+
+// Reset completo — volta para o onboarding
+localStorage.removeItem('motocalc:v5:presets')
+localStorage.removeItem('motocalc:v5:presetAtivo')
+location.reload()
+Ou num liner só:
+
+
+['motocalc:v5:presets','motocalc:v5:presetAtivo'].forEach(k=>localStorage.removeItem(k));location.reload()

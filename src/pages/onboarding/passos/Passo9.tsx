@@ -1,7 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
 
 export function Passo9() {
   const { perfil, dispatch } = usePerfil();
@@ -24,6 +26,13 @@ export function Passo9() {
     irParaProximo();
   }
 
+  const cardClassName = (ativo: boolean) =>
+    `flex flex-col items-center gap-xs p-md min-h-touch h-auto rounded-lg border-2 transition-colors w-full ${
+      ativo
+        ? 'border-primary bg-primary/10 text-foreground hover:bg-primary/20'
+        : 'border-muted bg-card text-muted-foreground hover:bg-muted/50'
+    }`;
+
   return (
     <PassoLayout
       titulo="Alimentação no trabalho"
@@ -33,31 +42,15 @@ export function Passo9() {
     >
       <div className="flex flex-col gap-md">
         <div className="grid grid-cols-2 gap-sm">
-          <button
-            type="button"
-            onClick={() => setComeNaRua(true)}
-            className={`flex flex-col items-center gap-xs p-md rounded-lg border-2 transition-colors ${
-              comeNaRua
-                ? 'border-primary bg-primary/10 text-foreground'
-                : 'border-muted bg-card text-muted-foreground'
-            }`}
-          >
+          <Button onClick={() => setComeNaRua(true)} className={cardClassName(comeNaRua)}>
             <span className="text-2xl">🍴</span>
             <span className="text-sm font-medium text-center">Sim, como na rua</span>
-          </button>
+          </Button>
 
-          <button
-            type="button"
-            onClick={() => setComeNaRua(false)}
-            className={`flex flex-col items-center gap-xs p-md rounded-lg border-2 transition-colors ${
-              !comeNaRua
-                ? 'border-primary bg-primary/10 text-foreground'
-                : 'border-muted bg-card text-muted-foreground'
-            }`}
-          >
+          <Button onClick={() => setComeNaRua(false)} className={cardClassName(!comeNaRua)}>
             <span className="text-2xl">🥡</span>
             <span className="text-sm font-medium text-center">Não, levo de casa</span>
-          </button>
+          </Button>
         </div>
 
         {comeNaRua && (
@@ -65,14 +58,14 @@ export function Passo9() {
             <span className="text-muted-foreground text-sm font-medium">
               Gasto médio por dia (R$)
             </span>
-            <input
+            <Input
               type="number"
               value={gastoDia}
               onChange={(e) => setGastoDia(e.target.value)}
               min={0}
               step={0.01}
               placeholder="20,00"
-              className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+              className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </label>
         )}

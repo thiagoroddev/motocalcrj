@@ -6,7 +6,6 @@ import { LayoutApp } from './components/layout/LayoutApp';
 import { FluxoOnboarding } from './pages/onboarding/FluxoOnboarding';
 import { PaginaEstimativa } from './pages/PaginaEstimativa';
 import { PaginaDetalhamento } from './pages/PaginaDetalhamento';
-import { PaginaRegistros } from './pages/PaginaRegistros';
 import { PaginaMaoDeObra } from './pages/PaginaMaoDeObra';
 import { PaginaVidaUtil } from './pages/PaginaVidaUtil';
 import { PaginaAjustes } from './pages/PaginaAjustes';
@@ -26,7 +25,6 @@ function App() {
                 {/* Rotas com header + NavBar */}
                 <Route element={<LayoutApp />}>
                   <Route path="/estimativa" element={<PaginaEstimativa />} />
-                  <Route path="/registros" element={<PaginaRegistros />} />
                   <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
                   <Route path="/vida-util" element={<PaginaVidaUtil />} />
                   <Route path="/ajustes" element={<PaginaAjustes />} />

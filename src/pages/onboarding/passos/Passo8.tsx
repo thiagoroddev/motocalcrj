@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Input } from '../../../components/ui/input';
 
 export function Passo8() {
   const { perfil, dispatch } = usePerfil();
@@ -32,14 +33,14 @@ export function Passo8() {
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
           <span className="text-muted-foreground text-sm font-medium">Valor mensal (R$)</span>
-          <input
+          <Input
             type="number"
             value={internet}
             onChange={(e) => setInternet(e.target.value)}
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </label>
 

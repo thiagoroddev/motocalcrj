@@ -1,7 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Input } from '../../../components/ui/input';
+import { Button } from '../../../components/ui/button';
 import type { PeriodicidadeAluguel } from '../../../types/perfil';
 
 export function Passo6Aluguel() {
@@ -38,14 +40,14 @@ export function Passo6Aluguel() {
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
           <span className="text-muted-foreground text-sm font-medium">Valor do aluguel (R$)</span>
-          <input
+          <Input
             type="number"
             value={aluguel}
             onChange={(e) => setAluguel(e.target.value)}
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+            className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </label>
 
@@ -53,18 +55,17 @@ export function Passo6Aluguel() {
           <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
           <div className="flex gap-sm">
             {(['mensal', 'semanal'] as PeriodicidadeAluguel[]).map((p) => (
-              <button
+              <Button
                 key={p}
-                type="button"
                 onClick={() => setPeriodicidade(p)}
-                className={`flex-1 h-11 rounded-btn text-sm font-semibold transition-colors ${
+                className={`flex-1 min-h-touch rounded-btn text-sm font-semibold transition-colors ${
                   periodicidade === p
-                    ? 'bg-primary text-foreground'
-                    : 'bg-card border border-muted text-muted-foreground'
+                    ? 'bg-primary text-foreground hover:bg-primary/90'
+                    : 'bg-card border border-muted text-muted-foreground hover:bg-muted/50'
                 }`}
               >
                 {p === 'mensal' ? 'Mensal' : 'Semanal'}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Input } from '../../../components/ui/input';
 
 export function Passo6Financiamento() {
   const { perfil, dispatch } = usePerfil();
@@ -28,6 +29,9 @@ export function Passo6Financiamento() {
     irParaProximo();
   }
 
+  const inputClassName =
+    'min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+
   return (
     <PassoLayout
       titulo="Detalhes do financiamento"
@@ -38,25 +42,25 @@ export function Passo6Financiamento() {
       <div className="flex flex-col gap-md">
         <label className="flex flex-col gap-xs">
           <span className="text-muted-foreground text-sm font-medium">Parcela mensal (R$)</span>
-          <input
+          <Input
             type="number"
             value={parcela}
             onChange={(e) => setParcela(e.target.value)}
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+            className={inputClassName}
           />
         </label>
         <label className="flex flex-col gap-xs">
           <span className="text-muted-foreground text-sm font-medium">Parcelas restantes</span>
-          <input
+          <Input
             type="number"
             value={restantes}
             onChange={(e) => setRestantes(e.target.value)}
             min={1}
             placeholder="12"
-            className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+            className={inputClassName}
           />
         </label>
       </div>

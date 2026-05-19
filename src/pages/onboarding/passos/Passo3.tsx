@@ -1,9 +1,10 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { getNomeModelo, CATALOGO } from '../../../data/catalogoModelos';
 import { buscarPrecoFipe } from '../../../services/fipeService';
+import { Input } from '../../../components/ui/input';
 import type { FipeCache } from '../../../types/perfil';
 
 const ANO_MIN = 2000;
@@ -30,7 +31,7 @@ export function Passo3() {
   const anoNum = parseInt(ano, 10);
   const valido = !isNaN(anoNum) && anoNum >= ANO_MIN && anoNum <= ANO_MAX;
 
-  type FipeEstado = 'inativo' | 'buscando' | 'ok' | 'erro';
+  type FipeEstado = 'inativo' | 'buscando' | 'ok' | 'fallback' | 'erro';
   const [fipeEstado, setFipeEstado] = useState<FipeEstado>('inativo');
   const { marca, modelo } = perfil.moto;
   const fipeCacheRef = useRef(perfil.fipeCache);
@@ -39,9 +40,13 @@ export function Passo3() {
     fipeCacheRef.current = perfil.fipeCache;
   }, [perfil.fipeCache]);
 
-  const [fipeInfo, setFipeInfo] = useState<{ valor: number; mesReferencia: string } | null>(
+  const [fipeInfo, setFipeInfo] = useState<{
+    valor: number;
+    mesReferencia: string;
+    estimativa: boolean;
+  } | null>(
     cacheValida(perfil.fipeCache, marca, modelo, anoNum)
-      ? { valor: perfil.fipeCache!.valor, mesReferencia: '' }
+      ? { valor: perfil.fipeCache!.valor, mesReferencia: '', estimativa: false }
       : null,
   );
 
@@ -54,7 +59,7 @@ export function Passo3() {
 
     const fipeCache = fipeCacheRef.current;
     if (cacheValida(fipeCache, marca, modelo, anoNum)) {
-      setFipeInfo({ valor: fipeCache!.valor, mesReferencia: '' });
+      setFipeInfo({ valor: fipeCache!.valor, mesReferencia: '', estimativa: false });
       setFipeEstado('ok');
       return;
     }
@@ -69,12 +74,21 @@ export function Passo3() {
     setFipeInfo(null);
 
     const timerId = setTimeout(() => {
-      buscarPrecoFipe(marca, modeloDados.nomeFipe, anoNum).then((resultado) => {
+      buscarPrecoFipe(
+        marca,
+        modeloDados.nomeFipe,
+        anoNum,
+        modeloDados.codigoFipe || undefined,
+      ).then((resultado) => {
         if (cancelado) {
           return;
         }
         if (resultado) {
-          setFipeInfo({ valor: resultado.valor, mesReferencia: resultado.mesReferencia });
+          setFipeInfo({
+            valor: resultado.valor,
+            mesReferencia: resultado.mesReferencia,
+            estimativa: false,
+          });
           setFipeEstado('ok');
           dispatch({
             type: 'SET_FIPE_CACHE',
@@ -88,7 +102,25 @@ export function Passo3() {
             },
           });
         } else {
-          setFipeEstado('erro');
+          // API falhou — tentar fallback da tabelaFipe
+          const valorFallback = modeloDados.tabelaFipe[String(anoNum)];
+          if (valorFallback) {
+            setFipeInfo({ valor: valorFallback, mesReferencia: '', estimativa: true });
+            setFipeEstado('fallback');
+            dispatch({
+              type: 'SET_FIPE_CACHE',
+              cache: {
+                valor: valorFallback,
+                codigoFipe: modeloDados.codigoFipe,
+                dataConsulta: new Date().toISOString().slice(0, 10),
+                anoModelo: anoNum,
+                marca,
+                modelo,
+              },
+            });
+          } else {
+            setFipeEstado('erro');
+          }
         }
       });
     }, 800);
@@ -108,6 +140,8 @@ export function Passo3() {
     irParaProximo();
   }
 
+  const mostraResultado = fipeEstado === 'ok' || fipeEstado === 'fallback';
+
   return (
     <PassoLayout
       titulo="Qual o ano da moto?"
@@ -119,7 +153,7 @@ export function Passo3() {
       aoProximo={salvarEAvancar}
       podeContinuar={valido && fipeEstado !== 'buscando'}
     >
-      <input
+      <Input
         type="number"
         value={ano}
         onChange={(e) => setAno(e.target.value)}
@@ -127,7 +161,7 @@ export function Passo3() {
         max={ANO_MAX}
         placeholder={String(new Date().getFullYear())}
         autoFocus
-        className="w-full min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+        className="min-h-touch rounded-input border-muted text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
       />
 
       {valido && ano.length >= 4 && (
@@ -135,10 +169,15 @@ export function Passo3() {
           {fipeEstado === 'buscando' && (
             <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
           )}
-          {fipeEstado === 'ok' && fipeInfo && (
+          {mostraResultado && fipeInfo && (
             <div className="space-y-xs">
               <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
-                <span className="text-muted-foreground text-sm">Valor FIPE</span>
+                <div>
+                  <span className="text-muted-foreground text-sm">Valor FIPE</span>
+                  {fipeInfo.estimativa && (
+                    <p className="text-muted-foreground/50 text-xs">estimativa (FIPE offline)</p>
+                  )}
+                </div>
                 <div className="text-right">
                   <span className="text-foreground font-semibold">
                     {formatarMoeda(fipeInfo.valor)}
@@ -161,6 +200,11 @@ export function Passo3() {
                 </p>
               )}
             </div>
+          )}
+          {fipeEstado === 'erro' && (
+            <p className="text-muted-foreground/60 text-sm">
+              Não foi possível buscar o valor FIPE. O IPVA será calculado quando disponível.
+            </p>
           )}
         </div>
       )}

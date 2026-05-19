@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Button } from '../../../components/ui/button';
 import type { ResponsabilidadeCusto } from '../../../types/perfil';
 
 type CampoResp = 'documentos' | 'manutencao' | 'seguro';
@@ -44,18 +45,17 @@ export function Passo6Responsabilidade() {
             <p className="text-foreground text-sm font-medium mb-sm">{titulo}</p>
             <div className="flex gap-xs">
               {OPCOES.map(({ valor, label }) => (
-                <button
+                <Button
                   key={valor}
-                  type="button"
                   onClick={() => setResp((prev) => ({ ...prev, [id]: valor }))}
-                  className={`flex-1 h-10 rounded-btn text-xs font-semibold transition-colors ${
+                  className={`flex-1 min-h-touch rounded-btn text-xs font-semibold transition-colors ${
                     resp[id] === valor
-                      ? 'bg-primary text-foreground'
-                      : 'bg-card border border-muted text-muted-foreground'
+                      ? 'bg-primary text-foreground hover:bg-primary/90'
+                      : 'bg-card border border-muted text-muted-foreground hover:bg-muted/50'
                   }`}
                 >
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

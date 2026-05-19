@@ -80,12 +80,50 @@ export interface ResultadoFipe {
   anoModelo: number;
 }
 
+async function buscarPrecoPorCodigo(
+  codigoFipe: string,
+  ano: number,
+): Promise<ResultadoFipe | null> {
+  const lista = await fetchJson<
+    Array<{ valor: string; codigoFipe: string; mesReferencia: string; anoModelo: number }>
+  >(`/preco/v1/${codigoFipe}`);
+
+  const entrada = lista.find((e) => e.anoModelo === ano);
+  if (!entrada) {
+    return null;
+  }
+
+  const valorNum = parseFloat(
+    entrada.valor.replace('R$', '').replace(/\./g, '').replace(',', '.').trim(),
+  );
+  if (isNaN(valorNum)) {
+    return null;
+  }
+
+  return {
+    valor: valorNum,
+    codigoFipe: entrada.codigoFipe,
+    mesReferencia: entrada.mesReferencia,
+    anoModelo: entrada.anoModelo,
+  };
+}
+
 export async function buscarPrecoFipe(
   marcaNome: string,
   nomeFipe: string,
   ano: number,
+  codigoFipe?: string,
 ): Promise<ResultadoFipe | null> {
   try {
+    // Rota rápida: 1 chamada via código FIPE (quando disponível)
+    if (codigoFipe) {
+      const resultado = await buscarPrecoPorCodigo(codigoFipe, ano);
+      if (resultado) {
+        return resultado;
+      }
+    }
+
+    // Rota completa: 4 chamadas (marcas → veículos → anos → preço)
     const codigoMarca = await resolverMarca(marcaNome);
     const codigoModelo = await resolverModelo(codigoMarca, nomeFipe);
     const codigoAno = await resolverAno(codigoMarca, codigoModelo, ano);

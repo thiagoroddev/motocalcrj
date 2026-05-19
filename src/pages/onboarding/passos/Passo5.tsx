@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Input } from '../../../components/ui/input';
 
 export function Passo5() {
   const { perfil, dispatch } = usePerfil();
@@ -30,6 +31,9 @@ export function Passo5() {
     irParaProximo();
   }
 
+  const inputClassName =
+    'flex-1 min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+
   return (
     <PassoLayout
       titulo="Quilometragem"
@@ -46,13 +50,13 @@ export function Passo5() {
             Essencial para prever as próximas manutenções
           </span>
           <div className="flex items-center gap-xs">
-            <input
+            <Input
               type="number"
               value={kmAtual}
               onChange={(e) => setKmAtual(e.target.value)}
               min={1}
               placeholder="Ex: 12500"
-              className="flex-1 min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+              className={inputClassName}
             />
             <span className="text-muted-foreground/60 text-sm font-medium w-8">KM</span>
           </div>
@@ -64,13 +68,13 @@ export function Passo5() {
             Ajuda a calcular o desgaste acumulado (opcional)
           </span>
           <div className="flex items-center gap-xs">
-            <input
+            <Input
               type="number"
               value={kmUltimaRevisao}
               onChange={(e) => setKmUltimaRevisao(e.target.value)}
               min={0}
               placeholder="Opcional"
-              className="flex-1 min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+              className={inputClassName}
             />
             <span className="text-muted-foreground/60 text-sm font-medium w-8">KM</span>
           </div>

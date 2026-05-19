@@ -1,8 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { getMarcasDisponiveis } from '../../../data/catalogoModelos';
+import { Button } from '../../../components/ui/button';
 
 const MARCAS = getMarcasDisponiveis();
 
@@ -31,16 +32,16 @@ export function Passo1() {
     >
       <div className="flex flex-col gap-sm">
         {MARCAS.map((m) => (
-          <button
+          <Button
             key={m}
-            type="button"
+            variant="outline"
             onClick={() => setMarca(m)}
-            className={`p-md rounded-lg border text-left transition-colors ${
+            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start transition-colors ${
               marca === m ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
             <p className="text-foreground font-semibold">{m}</p>
-          </button>
+          </Button>
         ))}
       </div>
 

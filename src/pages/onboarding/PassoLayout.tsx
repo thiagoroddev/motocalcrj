@@ -1,4 +1,5 @@
 ﻿import type { ReactNode } from 'react';
+import { Button } from '../../components/ui/button';
 import { useOnboarding } from './FluxoOnboarding';
 
 interface Props {
@@ -44,22 +45,21 @@ export function PassoLayout({
 
       <div className="p-md pt-md border-t border-muted flex gap-sm">
         {temAnterior && (
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={irParaAnterior}
-            className="flex-1 min-h-touch rounded-btn border border-muted text-muted-foreground font-medium"
+            className="flex-1 min-h-touch rounded-btn border-muted font-medium"
           >
             Voltar
-          </button>
+          </Button>
         )}
-        <button
-          type="button"
+        <Button
           onClick={aoProximo}
           disabled={!podeContinuar}
-          className="flex-1 min-h-touch rounded-btn bg-primary text-foreground font-semibold disabled:opacity-40"
+          className="flex-1 min-h-touch rounded-btn font-semibold text-foreground disabled:opacity-40"
         >
           {labelBotao}
-        </button>
+        </Button>
       </div>
     </div>
   );

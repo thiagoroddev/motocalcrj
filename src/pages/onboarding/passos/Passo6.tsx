@@ -1,8 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
 import { getProximoPasso } from '../onboardingUtils';
+import { Button } from '../../../components/ui/button';
 import type { SituacaoMoto } from '../../../types/perfil';
 
 const OPCOES: { valor: SituacaoMoto; titulo: string; descricao: string }[] = [
@@ -33,17 +34,17 @@ export function Passo6() {
     <PassoLayout titulo="Qual a situação da sua moto?" aoProximo={salvarEAvancar}>
       <div className="flex flex-col gap-sm">
         {OPCOES.map((op) => (
-          <button
+          <Button
             key={op.valor}
-            type="button"
+            variant="outline"
             onClick={() => setSituacao(op.valor)}
-            className={`p-md rounded-lg border text-left transition-colors ${
+            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
               situacao === op.valor ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
             <p className="text-foreground font-semibold">{op.titulo}</p>
             <p className="text-muted-foreground text-sm mt-xs">{op.descricao}</p>
-          </button>
+          </Button>
         ))}
       </div>
     </PassoLayout>

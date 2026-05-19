@@ -1,7 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
 import type { PeriodicidadeSeguro } from '../../../types/perfil';
 
 export function Passo7() {
@@ -30,6 +32,16 @@ export function Passo7() {
     irParaProximo();
   }
 
+  const toggleClassName = (ativo: boolean) =>
+    `flex-1 min-h-touch rounded-btn font-semibold transition-colors ${
+      ativo
+        ? 'bg-primary text-foreground hover:bg-primary/90'
+        : 'bg-card border border-muted text-muted-foreground hover:bg-muted/50'
+    }`;
+
+  const inputClassName =
+    'min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+
   return (
     <PassoLayout
       titulo="Você tem seguro?"
@@ -40,18 +52,13 @@ export function Passo7() {
       <div className="flex flex-col gap-lg">
         <div className="flex gap-sm">
           {([false, true] as const).map((v) => (
-            <button
+            <Button
               key={String(v)}
-              type="button"
               onClick={() => setTem(v)}
-              className={`flex-1 min-h-touch rounded-btn font-semibold transition-colors ${
-                tem === v
-                  ? 'bg-primary text-foreground'
-                  : 'bg-card border border-muted text-muted-foreground'
-              }`}
+              className={toggleClassName(tem === v)}
             >
               {v ? 'Sim' : 'Não'}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -61,14 +68,14 @@ export function Passo7() {
               <span className="text-muted-foreground text-sm font-medium">
                 {periodicidade === 'mensal' ? 'Valor mensal (R$)' : 'Valor anual (R$)'}
               </span>
-              <input
+              <Input
                 type="number"
                 value={valorAnual}
                 onChange={(e) => setValorAnual(e.target.value)}
                 min={0}
                 step={0.01}
                 placeholder="0,00"
-                className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+                className={inputClassName}
               />
             </label>
 
@@ -76,18 +83,13 @@ export function Passo7() {
               <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
               <div className="flex gap-sm">
                 {(['anual', 'mensal'] as PeriodicidadeSeguro[]).map((p) => (
-                  <button
+                  <Button
                     key={p}
-                    type="button"
                     onClick={() => setPeriodicidade(p)}
-                    className={`flex-1 h-11 rounded-btn text-sm font-semibold transition-colors ${
-                      periodicidade === p
-                        ? 'bg-primary text-foreground'
-                        : 'bg-card border border-muted text-muted-foreground'
-                    }`}
+                    className={toggleClassName(periodicidade === p)}
                   >
                     {p === 'anual' ? 'Anual' : 'Mensal'}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -96,12 +98,12 @@ export function Passo7() {
               <span className="text-muted-foreground text-sm font-medium">
                 Seguradora (opcional)
               </span>
-              <input
+              <Input
                 type="text"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
                 placeholder="Ex: Porto Seguro, HDI…"
-                className="min-h-touch bg-card rounded-input border border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary"
+                className={inputClassName}
               />
             </label>
           </div>

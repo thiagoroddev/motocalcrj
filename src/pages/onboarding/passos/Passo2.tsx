@@ -1,9 +1,10 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { getModelosPorMarca } from '../../../data/catalogoModelos';
 import type { DadosModeloCatalogo } from '../../../data/catalogoModelos';
+import { Button } from '../../../components/ui/button';
 
 export function Passo2() {
   const { perfil, dispatch } = usePerfil();
@@ -44,11 +45,11 @@ export function Passo2() {
     >
       <div className="flex flex-col gap-sm">
         {modelos.map((modelo) => (
-          <button
+          <Button
             key={modelo.id}
-            type="button"
+            variant="outline"
             onClick={() => setSelecionado(modelo)}
-            className={`p-md rounded-lg border text-left transition-colors ${
+            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
               selecionado?.id === modelo.id
                 ? 'border-primary bg-primary/20'
                 : 'border-muted bg-card'
@@ -58,7 +59,7 @@ export function Passo2() {
             <p className="text-muted-foreground text-xs mt-xs">
               {modelo.consumoKmL} km/L · {modelo.consumoKmLComBau} km/L com baú
             </p>
-          </button>
+          </Button>
         ))}
       </div>
 

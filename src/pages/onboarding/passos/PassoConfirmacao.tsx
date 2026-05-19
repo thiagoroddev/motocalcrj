@@ -1,8 +1,9 @@
-﻿import type { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
 import { getNomeModelo } from '../../../data/catalogoModelos';
+import { Button } from '../../../components/ui/button';
 import type { SituacaoMoto } from '../../../types/perfil';
 
 const SITUACAO_LABEL: Record<SituacaoMoto, string> = {
@@ -123,13 +124,13 @@ function SessaoResumo({
       <div className="flex items-center justify-between mb-sm">
         <p className="text-primary text-xs font-semibold uppercase tracking-wider">{titulo}</p>
         {aoEditar && (
-          <button
-            type="button"
+          <Button
+            variant="link"
             onClick={aoEditar}
-            className="text-primary text-xs font-medium hover:underline"
+            className="h-auto p-0 text-xs font-medium text-primary"
           >
             Editar
-          </button>
+          </Button>
         )}
       </div>
       {children}

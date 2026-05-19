@@ -5,6 +5,8 @@ export interface DadosModeloCatalogo {
   marca: string;
   nome: string;
   nomeFipe: string;
+  codigoFipe: string;
+  tabelaFipe: Record<string, number>;
   consumoKmL: number;
   consumoKmLComBau: number;
   aceitaEtanol: boolean;
@@ -16,6 +18,8 @@ const LISTA: DadosModeloCatalogo[] = [
     marca: pop110i.marca,
     nome: pop110i.nomeCurto,
     nomeFipe: 'POP 110I',
+    codigoFipe: pop110i.codigoFipe,
+    tabelaFipe: pop110i.tabelaFipe as Record<string, number>,
     consumoKmL: pop110i.consumoKmL,
     consumoKmLComBau: pop110i.consumoKmLComBau,
     aceitaEtanol: false,

@@ -23,3 +23,9 @@
 | TASK-REF-02 | Refatorar PaginaDetalhamento.tsx | [2026-05-17--22h30--TASK-REF-02.md](./2026-05-17--22h30--TASK-REF-02.md) |
 | TASK-REF-04 | Extrair CardCpk e CabecalhoVoltar | [2026-05-17--23h30--TASK-REF-04.md](./2026-05-17--23h30--TASK-REF-04.md) |
 | TASK-REF-05 | Alinhar --radius ao shadcn e adotar shadcn Card | [2026-05-18--00h10--TASK-REF-05.md](./2026-05-18--00h10--TASK-REF-05.md) |
+| TASK-REF-06 | PassoLayout — shadcn Button + padrão de altura (min-h-touch) | [2026-05-18--20h44--TASK-REF-06.md](./2026-05-18--20h44--TASK-REF-06.md) |
+| TASK-REF-07 | Onboarding Passo1-3 — shadcn + correção IPVA + dual-track FIPE | [2026-05-18--21h02--TASK-REF-07.md](./2026-05-18--21h02--TASK-REF-07.md) |
+| TASK-REF-08 | Onboarding Passo4, Passo5 — shadcn + min-h-touch | [2026-05-18--21h11--TASK-REF-08.md](./2026-05-18--21h11--TASK-REF-08.md) |
+| TASK-REF-09 | Onboarding Passo6, 6Financiamento, 6Aluguel, 6Responsabilidade — shadcn + min-h-touch | [2026-05-18--21h24--TASK-REF-09.md](./2026-05-18--21h24--TASK-REF-09.md) |
+| TASK-REF-10 | Onboarding Passo7, 8, 9 e PassoConfirmacao — shadcn + min-h-touch | [2026-05-18--21h31--TASK-REF-10.md](./2026-05-18--21h31--TASK-REF-10.md) |
+| TASK-CHORE-010 | Remover aba Registros do menu inferior e desativar rota | [2026-05-18--22h00--TASK-CHORE-010.md](./2026-05-18--22h00--TASK-CHORE-010.md) |

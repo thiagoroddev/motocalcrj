@@ -5,6 +5,12 @@
   "consumoKmL": 36.0,
   "consumoKmLComBau": 33.0,
   "codigoFipe": "",
+  "tabelaFipe": {
+    "2022": 11800,
+    "2023": 12400,
+    "2024": 13200,
+    "2025": 14500
+  },
 
   "_fonte": {
     "manual": "MP Pop110i (2022~2024) D2203-MAN-1290",
