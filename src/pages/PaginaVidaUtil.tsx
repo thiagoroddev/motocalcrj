@@ -10,7 +10,6 @@ import type { PresetMoto } from '../types/calculos';
 import type {
   PerfilAction,
   PecaOverride,
-  PerfilPecas,
   TipoCombustivel,
   ConfiguracaoCombustivel,
 } from '../types/perfil';
@@ -157,7 +156,6 @@ interface PropsCardItemPreco {
   precoParalela: number;
   intervaloKm: number;
   override: PecaOverride | null;
-  perfilPecasGlobal: PerfilPecas;
   dispatch: Dispatch<PerfilAction>;
 }
 
@@ -168,43 +166,50 @@ function CardItemPreco({
   precoParalela,
   intervaloKm,
   override,
-  perfilPecasGlobal,
   dispatch,
 }: PropsCardItemPreco) {
-  const perfilEfetivo = override?.perfilPecasOverride ?? perfilPecasGlobal;
-  const precoBase = perfilEfetivo === 'original' ? precoOriginal : precoParalela;
-  const precoEfetivo = override?.precoEditado ?? precoBase;
+  const originalEfetivo = override?.precoEditadoOriginal ?? precoOriginal;
+  const paralelaEfetiva = override?.precoEditadaParalela ?? precoParalela;
 
-  const [preco, setPreco] = useState(precoEfetivo.toFixed(2));
+  const [localOriginal, setLocalOriginal] = useState(originalEfetivo.toFixed(2));
+  const [localParalela, setLocalParalela] = useState(paralelaEfetiva.toFixed(2));
 
   useEffect(() => {
-    setPreco(precoEfetivo.toFixed(2));
-  }, [precoEfetivo]);
+    setLocalOriginal(originalEfetivo.toFixed(2));
+  }, [originalEfetivo]);
+  useEffect(() => {
+    setLocalParalela(paralelaEfetiva.toFixed(2));
+  }, [paralelaEfetiva]);
 
-  const temOverride = override?.precoEditado != null || override?.perfilPecasOverride != null;
+  const temOverride =
+    override?.precoEditadoOriginal != null || override?.precoEditadaParalela != null;
 
-  function handleBlur() {
-    const num = parseFloat(preco.replace(',', '.'));
+  function handleBlurOriginal() {
+    const num = parseFloat(localOriginal.replace(',', '.'));
     if (isNaN(num) || num < 0) {
-      setPreco(precoEfetivo.toFixed(2));
+      setLocalOriginal(originalEfetivo.toFixed(2));
       return;
     }
-    if (Math.abs(num - precoBase) < 0.01) {
-      if (override?.precoEditado != null)
-        dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
+    if (Math.abs(num - precoOriginal) < 0.01) {
+      if (override?.precoEditadoOriginal != null)
+        dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'precoOriginal' });
       return;
     }
-    dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'preco', valor: num });
+    dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'precoOriginal', valor: num });
   }
 
-  function trocarPerfil(novoPerfil: PerfilPecas) {
-    if (override?.precoEditado != null)
-      dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
-    if (novoPerfil === perfilPecasGlobal) {
-      dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'perfilPecas' });
-    } else {
-      dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'perfilPecas', valor: novoPerfil });
+  function handleBlurParalela() {
+    const num = parseFloat(localParalela.replace(',', '.'));
+    if (isNaN(num) || num < 0) {
+      setLocalParalela(paralelaEfetiva.toFixed(2));
+      return;
     }
+    if (Math.abs(num - precoParalela) < 0.01) {
+      if (override?.precoEditadaParalela != null)
+        dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'precoParalela' });
+      return;
+    }
+    dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'precoParalela', valor: num });
   }
 
   return (
@@ -217,52 +222,36 @@ function CardItemPreco({
         />
       </div>
 
-      {/* Toggle Original / Paralela */}
-      <div className="flex rounded overflow-hidden border border-muted">
-        {(['original', 'paralela'] as PerfilPecas[]).map((p, i) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => trocarPerfil(p)}
-            className={`flex-1 py-2 transition-colors${i > 0 ? ' border-l border-muted' : ''} ${
-              perfilEfetivo === p
-                ? 'bg-primary/20 text-primary'
-                : 'bg-card text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <span className="block text-[10px] font-medium uppercase tracking-wide">
-              {p === 'original' ? 'Original' : 'Paralela'}
-            </span>
-            <span className="block text-[9px] font-normal opacity-70">
-              R$ {(p === 'original' ? precoOriginal : precoParalela).toFixed(2)}
-            </span>
-          </button>
-        ))}
-      </div>
-
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-1">
-          <span className="label-neutro block">Preço (R$)</span>
+          <span className="label-neutro block">Original (R$)</span>
           <Input
             type="number"
-            className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditado != null ? ' border-primary' : ''}`}
-            value={preco}
-            onChange={(e) => setPreco(e.target.value)}
-            onBlur={handleBlur}
+            className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditadoOriginal != null ? ' border-primary' : ''}`}
+            value={localOriginal}
+            onChange={(e) => setLocalOriginal(e.target.value)}
+            onBlur={handleBlurOriginal}
             min={0}
             step={0.01}
           />
         </div>
         <div className="space-y-1">
-          <span className="label-neutro block">Vida útil (km)</span>
-          <div className="rounded-input border border-muted bg-muted/20 min-h-touch text-sm flex items-center px-3 text-muted-foreground/60 select-none cursor-default">
-            {intervaloKm.toLocaleString('pt-BR')}
-          </div>
-          <p className="text-[10px] text-muted-foreground/40 leading-tight">
-            Alterar na aba M. Obra
-          </p>
+          <span className="label-neutro block">Paralela (R$)</span>
+          <Input
+            type="number"
+            className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditadaParalela != null ? ' border-primary' : ''}`}
+            value={localParalela}
+            onChange={(e) => setLocalParalela(e.target.value)}
+            onBlur={handleBlurParalela}
+            min={0}
+            step={0.01}
+          />
         </div>
       </div>
+
+      <p className="text-[10px] text-muted-foreground/50 leading-tight">
+        Vida útil: {intervaloKm.toLocaleString('pt-BR')} km · Alterar na aba M. Obra
+      </p>
     </div>
   );
 }
@@ -351,7 +340,6 @@ export function PaginaVidaUtil() {
               key={item.id}
               {...item}
               override={perfil.pecasOverrides.find((o) => o.id === item.id) ?? null}
-              perfilPecasGlobal={perfil.perfilManutencao.perfilPecasGlobal}
               dispatch={dispatch}
             />
           ))}

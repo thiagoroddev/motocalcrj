@@ -42,3 +42,4 @@
 | TASK-RF-6.3.3 | Ajustes: seção Histórico de Manutenção (accordion km por componente) | [2026-05-20--13h58--TASK-RF-6.3.3.md](./2026-05-20--13h58--TASK-RF-6.3.3.md) |
 | TASK-RF-6.3.4 | Onboarding: checkpoint "o que foi trocado na última revisão" | [2026-05-20--14h12--TASK-RF-6.3.4.md](./2026-05-20--14h12--TASK-RF-6.3.4.md) |
 | TASK-BG-001 | Polimento UI: PaginaVidaUtil (toggle Original/Paralela) e PaginaAjustes (cards, min-h-touch, widths) | [2026-05-20--15h02--TASK-BG-001.md](./2026-05-20--15h02--TASK-BG-001.md) |
+| TASK-BG-002 | CardItemPreco: dois inputs independentes (Original/Paralela), vida útil como label, altura dos controles | [2026-05-20--18h36--TASK-BG-002.md](./2026-05-20--18h36--TASK-BG-002.md) |

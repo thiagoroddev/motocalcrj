@@ -184,9 +184,9 @@ describe('perfilReducer', () => {
         pecasOverrides: [
           {
             id: 'oleo_motor',
-            precoEditado: 45,
+            precoEditadoOriginal: 45,
+            precoEditadaParalela: null,
             intervaloKmEditado: null,
-            perfilPecasOverride: null,
           },
         ],
       },
@@ -206,9 +206,9 @@ describe('perfilReducer', () => {
         pecasOverrides: [
           {
             id: 'oleo_motor',
-            precoEditado: 45,
+            precoEditadoOriginal: 45,
+            precoEditadaParalela: null,
             intervaloKmEditado: 800,
-            perfilPecasOverride: null,
           },
         ],
       },
@@ -216,9 +216,9 @@ describe('perfilReducer', () => {
     const resultado = perfilReducer(estadoComOverride, {
       type: 'RESET_PECA_OVERRIDE',
       id: 'oleo_motor',
-      campo: 'preco',
+      campo: 'precoOriginal',
     });
-    expect(resultado.perfil.pecasOverrides[0].precoEditado).toBeNull();
+    expect(resultado.perfil.pecasOverrides[0].precoEditadoOriginal).toBeNull();
     expect(resultado.perfil.pecasOverrides[0].intervaloKmEditado).toBe(800);
   });
 

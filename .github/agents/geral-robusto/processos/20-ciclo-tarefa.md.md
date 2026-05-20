@@ -109,7 +109,7 @@ Tarefas com urgência **Imediata** não cabem em uma linha de tabela porque carr
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** G/G
-- **Data origem:** 10/05/26 09:39
+- **Data-hora origem:** 10/05/26 09:39
 - **Dependências:** TASK-RF-21
 - **REQ/ADR/DT:** RNF-04, RNF-11, ADR-2, DT-14
 - **Observações:** Deu problema nisso e naquilo, agora precisa disso primeiro
@@ -197,8 +197,8 @@ Estrutura mínima:
 - **Valor:** Crítico
 - **Urgência:** Imediata
 - **Esforço-H/IA:** G/G
-- **Data origem:** 10/05/26 09:39
-- **Data início:** 10/05/26 12:39
+- **Data-hora origem:** 10/05/26 09:39
+- **Data-hora início:** 10/05/26 12:39
 - **Dependências:** TASK-RF-21
 - **REQ/ADR/DT:** RNF-04, RNF-11, ADR-2, DT-14
 - **Observações:** Deu problema nisso e naquilo, agora precisa disso primeiro
@@ -325,9 +325,9 @@ Estrutura essencial:
 - **Valor:** Crítico
 - **Urgência:** Imediata
 - **Esforço-H/IA:** G/G
-- **Data origem:** 10/05/26 09:39
-- **Data início:** 10/05/26 12:39
-- **Data conclusão:** 10/05/26 13:39
+- **Data-hora origem:** 10/05/26 09:39
+- **Data-hora início:** 10/05/26 12:39
+- **Data-hora conclusão:** 10/05/26 13:39
 - **Dependências:** TASK-RF-21
 - **REQ/ADR/DT:** RNF-04, RNF-11, ADR-2, DT-14
 - **Observações:** Deu problema nisso e naquilo, agora precisa disso primeiro

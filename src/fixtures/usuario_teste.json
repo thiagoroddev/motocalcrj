@@ -92,9 +92,9 @@
         "pecasOverrides": [
           {
             "id": "oleo_motor",
-            "precoEditado": 42,
-            "intervaloKmEditado": null,
-            "perfilPecasOverride": null
+            "precoEditadoOriginal": 42,
+            "precoEditadaParalela": null,
+            "intervaloKmEditado": null
           }
         ],
 

@@ -53,9 +53,9 @@ export type CategoriaDisplay = {
 
 export interface PecaOverride {
   id: string;
-  precoEditado: number | null;
+  precoEditadoOriginal: number | null;
+  precoEditadaParalela: number | null;
   intervaloKmEditado: number | null;
-  perfilPecasOverride: PerfilPecas | null;
 }
 
 export interface ServicoIndependente {
@@ -267,10 +267,10 @@ export type PerfilAction =
   | {
       type: 'SET_PECA_OVERRIDE';
       id: string;
-      campo: 'preco' | 'intervaloKm' | 'perfilPecas';
-      valor: number | PerfilPecas;
+      campo: 'precoOriginal' | 'precoParalela' | 'intervaloKm';
+      valor: number;
     }
-  | { type: 'RESET_PECA_OVERRIDE'; id: string; campo?: 'preco' | 'intervaloKm' | 'perfilPecas' }
+  | { type: 'RESET_PECA_OVERRIDE'; id: string; campo?: 'precoOriginal' | 'precoParalela' | 'intervaloKm' }
 
   // Mão de obra
   | { type: 'SET_SERVICO_INDEPENDENTE'; payload: ServicoIndependente }

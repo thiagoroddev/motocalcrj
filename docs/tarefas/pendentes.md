@@ -7,32 +7,6 @@ Obedeça essa ordem:
 
 ### Tarefas Prioritárias
 
-## TASK-REF-13 — PaginaAjustes: gap excessivo entre label e input no componente Linha
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:** Identificado em revisão de TASK-BG-001. O componente `Linha` usa `flex justify-between` com inputs de `w-28` fixo (112px). Em tela de 375px, o espaço entre o fim do texto do label e o início do input é desproporcional. Destoa das demais telas do app que usam grid ou inputs de largura total/metade. Solução provável: grid de duas colunas ou `flex-1` no label com input de largura fixa menor.
-
----
-
-## TASK-REF-14 — Extrair componentes inline de PaginaVidaUtil e PaginaAjustes para src/components/
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/G
-- **Data origem:** 20/05/26
-- **Dependências:** TASK-BG-002, TASK-REF-13 (evitar retrabalho pós-extração)
-- **REQ/ADR/DT:** —
-- **Observações:** Identificado em revisão de TASK-BG-001. Seis componentes com interface bem definida vivem inline nas pages: `IconeReset`, `CardCombustivel`, `CardItemPreco` (PaginaVidaUtil) e `Segmentado`, `Stepper`, `Linha` (PaginaAjustes). Violam o padrão do projeto — componentes com interface própria pertencem a `src/components/`. Dependência de BG-002 e REF-13 para não reabrir arquivos já modificados.
-
----
-
 ## TASK-REF-15 — Substituir header duplicado de PaginaAjustes por CabecalhoVoltar
 - **Status:** Pendente
 - **Modo:** Standard

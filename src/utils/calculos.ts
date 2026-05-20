@@ -176,8 +176,11 @@ export function resolverPrecoPeca(
   const override = pecasOverrides.find((o) => o.id === pecaId);
 
   if (modoExibicao === 'personalizado') {
-    if (override?.precoEditado != null) {
-      return override.precoEditado;
+    const precoEditadoEfetivo = perfilPecas === 'original'
+      ? override?.precoEditadoOriginal
+      : override?.precoEditadaParalela;
+    if (precoEditadoEfetivo != null) {
+      return precoEditadoEfetivo;
     }
     const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
     if (registrosPeca.length >= 1) {
@@ -185,18 +188,14 @@ export function resolverPrecoPeca(
     }
   }
 
-  // perfilPecasOverride por peça sobrescreve o global (ignorado em modo predefinidos per RN-04)
-  const perfilEfetivo: PerfilPecas =
-    modoExibicao === 'personalizado' ? (override?.perfilPecasOverride ?? perfilPecas) : perfilPecas;
-
   const peca = preset.pecas.find((p) => p.id === pecaId);
   if (peca) {
-    return perfilEfetivo === 'original' ? peca.precoOriginal : peca.precoParalela;
+    return perfilPecas === 'original' ? peca.precoOriginal : peca.precoParalela;
   }
 
   const pneu = preset.pneus.find((p) => p.id === pecaId);
   if (pneu) {
-    return perfilEfetivo === 'original' ? pneu.precoOriginal : pneu.precoParalela;
+    return perfilPecas === 'original' ? pneu.precoOriginal : pneu.precoParalela;
   }
 
   return 0;
@@ -248,7 +247,8 @@ export function calcularCpkPorPeca(
     const usouOverride =
       modoExibicao === 'personalizado' &&
       (override?.intervaloKmEditado != null ||
-        override?.precoEditado != null ||
+        override?.precoEditadoOriginal != null ||
+        override?.precoEditadaParalela != null ||
         registrosPeca.length >= 1);
     const fonte: 'preset' | 'registro' = usouOverride ? 'registro' : 'preset';
 

@@ -134,9 +134,9 @@ const estadoPadrao: EstadoApp = {
 // ──────────────────────────────────────────────
 
 const campoOverrideMap = {
-  preco: 'precoEditado',
+  precoOriginal: 'precoEditadoOriginal',
+  precoParalela: 'precoEditadaParalela',
   intervaloKm: 'intervaloKmEditado',
-  perfilPecas: 'perfilPecasOverride',
 } as const;
 
 type CampoOverrideChave = keyof typeof campoOverrideMap;
@@ -278,9 +278,9 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         ? { ...existente, [campo]: action.valor }
         : {
             id: action.id,
-            precoEditado: null,
+            precoEditadoOriginal: null,
+            precoEditadaParalela: null,
             intervaloKmEditado: null,
-            perfilPecasOverride: null,
             [campo]: action.valor,
           };
       const novosOverrides = existente
