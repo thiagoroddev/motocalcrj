@@ -324,17 +324,12 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       return comPerfil({ ...state.perfil, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO });
 
     case 'SET_REVISAO_AUTORIZADA_OVERRIDE': {
-      const existente = state.perfil.revisaoAutorizadaOverrides.find(
-        (o) => o.index === action.index,
-      );
+      const precoTotal = action.precoPecas + action.precoMaoDeObra;
+      const novoOverride = { index: action.index, precoPecas: action.precoPecas, precoMaoDeObra: action.precoMaoDeObra, precoTotal };
+      const existente = state.perfil.revisaoAutorizadaOverrides.find((o) => o.index === action.index);
       const novosOverrides = existente
-        ? state.perfil.revisaoAutorizadaOverrides.map((o) =>
-            o.index === action.index ? { ...o, precoTotal: action.precoTotal } : o,
-          )
-        : [
-            ...state.perfil.revisaoAutorizadaOverrides,
-            { index: action.index, precoTotal: action.precoTotal },
-          ];
+        ? state.perfil.revisaoAutorizadaOverrides.map((o) => o.index === action.index ? novoOverride : o)
+        : [...state.perfil.revisaoAutorizadaOverrides, novoOverride];
       return comPerfil({ ...state.perfil, revisaoAutorizadaOverrides: novosOverrides });
     }
 

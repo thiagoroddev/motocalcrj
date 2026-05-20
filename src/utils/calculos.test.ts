@@ -25,6 +25,7 @@ import {
   calcularGranularidades,
   calcularBreakdownPercentual,
   calcularCustoMotoAnual,
+  calcularCustosPorCategoria,
   calcularMediaRegistros,
   calcularIntervalMedioReal,
   temDadoSuficiente,
@@ -35,8 +36,10 @@ import type {
   RegistroManutencao,
   CustosPorCategoria,
   FiltrosCategorias,
+  DadosRJ,
 } from '../types/calculos';
-import type { DiarioEntry, HistoricoManutencao } from '../types/perfil';
+import type { DiarioEntry, HistoricoManutencao, ServicoIndependente } from '../types/perfil';
+import { perfilPadrao } from '../context/PerfilContext';
 
 // ─── Fixtures ────────────────────────────────────────────────────
 
@@ -71,13 +74,13 @@ const presetMock: PresetMoto = {
     },
   ],
   revisaoAutorizada: [
-    { intervaloKm: 1000, intervaloMeses: 6, precoTotal: 105.94 },
-    { intervaloKm: 6000, intervaloMeses: 12, precoTotal: 248.06 },
-    { intervaloKm: 12000, intervaloMeses: 18, precoTotal: 568.29 },
-    { intervaloKm: 18000, intervaloMeses: 24, precoTotal: 506.7 },
-    { intervaloKm: 24000, intervaloMeses: 30, precoTotal: 737.76 },
-    { intervaloKm: 30000, intervaloMeses: 36, precoTotal: 287.67 },
-    { intervaloKm: 36000, intervaloMeses: 42, precoTotal: 880.2 },
+    { intervaloKm: 1000, intervaloMeses: 6, precoPecas: 105.94, precoMaoDeObra: 0, precoTotal: 105.94 },
+    { intervaloKm: 6000, intervaloMeses: 12, precoPecas: 248.06, precoMaoDeObra: 0, precoTotal: 248.06 },
+    { intervaloKm: 12000, intervaloMeses: 18, precoPecas: 352.29, precoMaoDeObra: 216.0, precoTotal: 568.29 },
+    { intervaloKm: 18000, intervaloMeses: 24, precoPecas: 402.7, precoMaoDeObra: 104.0, precoTotal: 506.7 },
+    { intervaloKm: 24000, intervaloMeses: 30, precoPecas: 449.76, precoMaoDeObra: 288.0, precoTotal: 737.76 },
+    { intervaloKm: 30000, intervaloMeses: 36, precoPecas: 247.67, precoMaoDeObra: 40.0, precoTotal: 287.67 },
+    { intervaloKm: 36000, intervaloMeses: 42, precoPecas: 600.2, precoMaoDeObra: 280.0, precoTotal: 880.2 },
   ],
 };
 
@@ -228,6 +231,24 @@ describe('resolverIntervaloPeca', () => {
     );
     expect(
       resolverIntervaloPeca('pneu_traseiro', presetMock, 'passageiro', [], 'predefinidos'),
+    ).toBe(16000);
+  });
+
+  it('usa ServicoIndependente.intervalKm quando serviço ativo coincide com pecaId (ADR-004)', () => {
+    const servicos: ServicoIndependente[] = [
+      { id: 'pneu_traseiro', nome: 'Pneu traseiro', intervalKm: 9000, precoMaoDeObra: 125, ativo: true, ehExcepcional: false },
+    ];
+    expect(
+      resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], 'predefinidos', [], servicos),
+    ).toBe(9000);
+  });
+
+  it('ignora ServicoIndependente inativo e cai no preset', () => {
+    const servicos: ServicoIndependente[] = [
+      { id: 'pneu_traseiro', nome: 'Pneu traseiro', intervalKm: 9000, precoMaoDeObra: 125, ativo: false, ehExcepcional: false },
+    ];
+    expect(
+      resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], 'predefinidos', [], servicos),
     ).toBe(16000);
   });
 });
@@ -384,26 +405,43 @@ describe('calcularLicenciamento', () => {
 // ─── V. Revisão ──────────────────────────────────────────────────
 
 describe('calcularCustoRevisaoAnual', () => {
-  it('modo autorizadas: (ciclo / meses) × 12', () => {
-    const resultado = calcularCustoRevisaoAnual('autorizadas', 7280, {
-      custoCicloCompleto: 3334.62,
-      duracaoCicloMeses: 42,
-    });
-    expect(resultado).toBeCloseTo((3334.62 / 42) * 12, 2); // ≈ 952.75
+  const servicosMock: ServicoIndependente[] = [
+    { id: 'troca-oleo', nome: 'Troca de óleo', intervalKm: 3000, precoMaoDeObra: 25, ativo: true, ehExcepcional: false },
+    { id: 'revisao-geral', nome: 'Revisão geral', intervalKm: 6000, precoMaoDeObra: 80, ativo: true, ehExcepcional: false },
+    { id: 'fazer-motor', nome: 'Fazer motor', intervalKm: 70000, precoMaoDeObra: 1500, ativo: false, ehExcepcional: true },
+  ];
+
+  it('modo autorizadas: km-based — (ciclo / 36000) × kmAnual', () => {
+    const ciclo = 3334.62;
+    expect(calcularCustoRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo })).toBeCloseTo(ciclo, 2);
+    expect(calcularCustoRevisaoAnual('autorizadas', 18000, { custoCicloCompleto: ciclo })).toBeCloseTo(ciclo / 2, 2);
   });
 
-  it('modo independentes: (kmAnual / frequencia) × preco', () => {
-    const resultado = calcularCustoRevisaoAnual('independentes', 7280, {
-      precoRevisaoGeral: 150,
-      frequenciaRevisaoKm: 6000,
-    });
-    expect(resultado).toBeCloseTo((7280 / 6000) * 150, 2); // ≈ 182
+  it('modo autorizadas: escala proporcionalmente com kmAnual (rider leve vs pesado)', () => {
+    const leve = calcularCustoRevisaoAnual('autorizadas', 15000, { custoCicloCompleto: 3334.62 });
+    const pesado = calcularCustoRevisaoAnual('autorizadas', 40000, { custoCicloCompleto: 3334.62 });
+    expect(pesado / leve).toBeCloseTo(40000 / 15000, 2);
   });
 
-  it('autorizada é bem mais cara que independente para valores típicos', () => {
-    expect(calcularCustoRevisaoAnual('autorizadas', 7280)).toBeGreaterThan(
-      calcularCustoRevisaoAnual('independentes', 7280),
-    );
+  it('modo independentes: soma CPK × kmAnual de serviços ativos', () => {
+    const kmAnual = 12000;
+    const esperado = (25 / 3000) * kmAnual + (80 / 6000) * kmAnual;
+    expect(
+      calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: servicosMock }),
+    ).toBeCloseTo(esperado, 2);
+  });
+
+  it('modo independentes: serviço inativo é excluído do cálculo', () => {
+    const kmAnual = 12000;
+    const comFazerMotorAtivo = servicosMock.map((s) => (s.id === 'fazer-motor' ? { ...s, ativo: true } : s));
+    const semAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: servicosMock });
+    const comAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: comFazerMotorAtivo });
+    expect(comAtivo).toBeGreaterThan(semAtivo);
+    expect(comAtivo - semAtivo).toBeCloseTo((1500 / 70000) * kmAnual, 2);
+  });
+
+  it('modo independentes: sem serviços retorna 0', () => {
+    expect(calcularCustoRevisaoAnual('independentes', 10000, { servicosIndependentes: [] })).toBe(0);
   });
 });
 
@@ -654,6 +692,42 @@ describe('calcularBreakdownPercentual', () => {
 describe('calcularCustoMotoAnual', () => {
   it('subtrai custo de alimentação do total', () => {
     expect(calcularCustoMotoAnual(10000, 2500)).toBe(7500);
+  });
+});
+
+describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
+  const dadosRJMock: DadosRJ = {
+    ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
+    licenciamento: { tabela: {} },
+  };
+  const perfilAutorizadas = {
+    ...perfilPadrao,
+    perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'autorizadas' as const },
+    revisaoAutorizadaOverrides: [],
+  };
+
+  it('aplica override de precoTotal ao ciclo Honda antes de calcular revisaoAnual', () => {
+    const semOverride = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock, [], 'predefinidos');
+
+    // Índice 0 tem precoTotal = 105.94 → substituir por 500 (diferença: +394.06)
+    const comOverride = calcularCustosPorCategoria(
+      { ...perfilAutorizadas, revisaoAutorizadaOverrides: [{ index: 0, precoPecas: 300, precoMaoDeObra: 200, precoTotal: 500 }] },
+      presetMock,
+      dadosRJMock,
+      [],
+      'predefinidos',
+    );
+
+    expect(comOverride.revisao.total).toBeGreaterThan(semOverride.revisao.total);
+    const kmAnual = calcularKmAnual(perfilPadrao.trabalho.kmPorDia, perfilPadrao.trabalho.diasPorSemana);
+    expect(comOverride.revisao.total - semOverride.revisao.total).toBeCloseTo((394.06 / 36000) * kmAnual, 2);
+  });
+
+  it('sem overrides usa precoTotal original do preset', () => {
+    const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock, [], 'predefinidos');
+    const cicloEsperado = presetMock.revisaoAutorizada.reduce((s, r) => s + r.precoTotal, 0);
+    const kmAnual = calcularKmAnual(perfilPadrao.trabalho.kmPorDia, perfilPadrao.trabalho.diasPorSemana);
+    expect(resultado.revisao.total).toBeCloseTo((cicloEsperado / 36000) * kmAnual, 2);
   });
 });
 

@@ -271,7 +271,7 @@ Tarefa pausada por mais de 24h sem progresso **volta para pendentes**. Não fica
 
 ## 5. Estágio 3 — Concluída
 
-**Local do Arquivo:** `docs/tarefas/concluidas/[YYYY-MM-DD]--[HHhMM]--[TASK-PREFIXO]-[NUMERO]--[TITULO_CURTO].md`
+**Local do Arquivo:** `docs/tarefas/concluidas/[YYYY-MM-DD]--[HHhMM]--[TASK-PREFIXO]-[NUMERO].md`
 
 Quando a tarefa termina, vira um arquivo próprio com todo processo registrado. Devendo também registrar a conclusão da tarefa no índice de tasks concluídas em docs/tarefas/concluidas/indice-concluidas.md com apenas uma linha para cada, exemplo:
 
@@ -290,13 +290,13 @@ Exemplo:
 docs/tarefas/concluidas/2026-05-13-17h30--TASK-RF-001--Criar-tela-login.md
 ````
 
-Formato: `[YYYY-MM-DD]--[HHhMM]--[TASK-PREFIXO]-[NUMERO]--[TITULO_CURTO].md`
+Formato: `[YYYY-MM-DD]--[HHhMM]--[TASK-PREFIXO]-[NUMERO].md`
 
 Exemplos:
 
-- `2026-05-13-17h30--TASK-RF-5.1--CORRIGIR_CONFIG_NPM.md`
-- `2026-05-14-09h15--TASK-BG-2--FIX_ERRO_CALCULO.md`
-- `2026-05-15-11h45--TASK-REF-03--INSTALAR_SHADCN.md`
+- `2026-05-13-17h30--TASK-RF-5.1.md`
+- `2026-05-14-09h15--TASK-BG-2.md`
+- `2026-05-15-11h45--TASK-REF-03.md`
 
 A hora usa `HHhMM` (ex: `17h30`). Sem `:` para evitar problema em alguns sistemas de arquivos.
 

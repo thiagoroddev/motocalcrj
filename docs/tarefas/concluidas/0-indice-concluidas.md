@@ -29,3 +29,7 @@
 | TASK-REF-09 | Onboarding Passo6, 6Financiamento, 6Aluguel, 6Responsabilidade — shadcn + min-h-touch | [2026-05-18--21h24--TASK-REF-09.md](./2026-05-18--21h24--TASK-REF-09.md) |
 | TASK-REF-10 | Onboarding Passo7, 8, 9 e PassoConfirmacao — shadcn + min-h-touch | [2026-05-18--21h31--TASK-REF-10.md](./2026-05-18--21h31--TASK-REF-10.md) |
 | TASK-CHORE-010 | Remover aba Registros do menu inferior e desativar rota | [2026-05-18--22h00--TASK-CHORE-010.md](./2026-05-18--22h00--TASK-CHORE-010.md) |
+| TASK-REF-11 | Reestruturar tipos de MO: ServicoIndependente[], actions, schema migration 5→6 | [2026-05-20--09h00--TASK-REF-11.md](./2026-05-20--09h00--TASK-REF-11.md) |
+| TASK-REF-12 | Fix calculador: Honda km-based + overrides + CPK independente por serviço | [2026-05-20--TASK-REF-12.md](./2026-05-20--TASK-REF-12.md) |
+| TASK-RF-6.1 | Aba Mão de Obra: Honda, Independente e Excepcional | [2026-05-20--03h01--TASK-RF-6.1.md](./2026-05-20--03h01--TASK-RF-6.1.md) |
+| TASK-RF-6.2 | Aba Preço Peças: combustível editável, peças/pneus com preço e vida útil | [2026-05-20--03h45--TASK-RF-6.2.md](./2026-05-20--03h45--TASK-RF-6.2.md) |

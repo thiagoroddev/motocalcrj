@@ -115,11 +115,11 @@ if (filtros.manutencaoPorPeca[pecaId] === true) {
 #### INV-CALC-2: utils/calculos.ts requer aprovação explícita para modificação
 **Regra:** O arquivo `src/utils/calculos.ts` **nunca pode ser modificado** sem decisão explícita do usuário.
 
-**Por quê:** 92 testes passando. Modificação acidental quebraria comportamento testado e validado.
+**Por quê:** 98 testes passando. Modificação acidental quebraria comportamento testado e validado.
 
 **Status:** Listada como **Proibição Absoluta** no `contexto-base`.
 
-⚠️ **Autorização registrada:** ADR-004 autoriza explicitamente modificações para TASK-REF-12 (fix fórmula Honda km-based, aplicar `revisaoAutorizadaOverrides`, implementar CPK por serviço independente). Qualquer outra modificação continua exigindo decisão explícita.
+✅ **ADR-004 executado e concluído (TASK-REF-12):** fix fórmula Honda km-based, aplicação de `revisaoAutorizadaOverrides` e CPK por serviço independente implementados e testados. Qualquer outra modificação continua exigindo decisão explícita.
 
 ⚠️ **Cuidado:** isso não significa que o arquivo é "perfeito" significa que está **estável e testado**. Refatoração futura pode acontecer com aprovação explícita e plano de migração.
 
@@ -215,3 +215,4 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | 2026-05-09 | (todas as iniciais) | Criação | Engenharia reversa |
 | 2026-05-19 | INV-CALC-2 | Nota de autorização ADR-004 para TASK-REF-12 | Conflito com proibição absoluta resolvido por decisão explícita |
 | 2026-05-19 | INV-MANUT-1 | Nova — `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |
+| 2026-05-20 | INV-CALC-2 | ADR-004 concluído — 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |

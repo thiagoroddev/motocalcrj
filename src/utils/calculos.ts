@@ -10,6 +10,7 @@ import type {
   GastoCustom,
   ResponsabilidadeCusto,
   CategoriaDisplay,
+  ServicoIndependente,
 } from '../types/perfil';
 import type {
   PresetMoto,
@@ -132,6 +133,7 @@ export function resolverIntervaloPeca(
   registros: RegistroManutencao[],
   modoExibicao: ModoExibicao,
   pecasOverrides: PecaOverride[] = [],
+  servicosIndependentes: ServicoIndependente[] = [],
 ): number {
   if (modoExibicao === 'personalizado') {
     const override = pecasOverrides.find((o) => o.id === pecaId);
@@ -142,6 +144,12 @@ export function resolverIntervaloPeca(
     if (registrosPeca.length >= 1) {
       return media(registrosPeca.map((r) => r.kmDesdeAnterior));
     }
+  }
+
+  // ServicoIndependente ativo com mesmo id é a fonte canônica do intervalo (ADR-004)
+  const servico = servicosIndependentes.find((s) => s.id === pecaId && s.ativo);
+  if (servico) {
+    return servico.intervalKm;
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -203,6 +211,7 @@ export function calcularCpkPorPeca(
   kmAtual: number,
   kmAnual: number,
   pecasOverrides: PecaOverride[] = [],
+  servicosIndependentes: ServicoIndependente[] = [],
 ): Map<string, CustoPeca> {
   const resultado = new Map<string, CustoPeca>();
 
@@ -222,6 +231,7 @@ export function calcularCpkPorPeca(
       registros,
       modoExibicao,
       pecasOverrides,
+      servicosIndependentes,
     );
     const preco = resolverPrecoPeca(
       id,
@@ -294,20 +304,19 @@ export function calcularCustoRevisaoAnual(
   kmAnual: number,
   opcoes: {
     custoCicloCompleto?: number;
-    duracaoCicloMeses?: number;
-    precoRevisaoGeral?: number;
-    frequenciaRevisaoKm?: number;
+    servicosIndependentes?: ServicoIndependente[];
   } = {},
 ): number {
   if (modoRevisao === 'autorizadas') {
     const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
-    const duracao = opcoes.duracaoCicloMeses ?? 42;
-    return (ciclo / duracao) * 12;
+    // km-based: quanto do ciclo é consumido por ano (36000 km = ciclo completo Honda)
+    return (ciclo / 36000) * kmAnual;
   }
 
-  const preco = opcoes.precoRevisaoGeral ?? 150;
-  const frequencia = opcoes.frequenciaRevisaoKm ?? 6000;
-  return (kmAnual / frequencia) * preco;
+  const servicos = opcoes.servicosIndependentes ?? [];
+  return servicos
+    .filter((s) => s.ativo)
+    .reduce((sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual, 0);
 }
 
 export function calcularKmParaProximaRevisao(
@@ -402,15 +411,14 @@ export function calcularCustosPorCategoria(
   const ipva = calcularIPVA(valorFipe, dadosRJ.ipva.aliquotaMotos, perfil.moto.ano, anoAtual);
   const licenciamento = calcularLicenciamento(anoAtual, dadosRJ.licenciamento.tabela);
 
-  // Revisão — soma o ciclo completo do preset
-  const custoCicloCompleto = preset.revisaoAutorizada.reduce((s, r) => s + r.precoTotal, 0);
-  const duracaoCicloMeses =
-    preset.revisaoAutorizada[preset.revisaoAutorizada.length - 1]?.intervaloMeses ?? 42;
+  // Revisão — aplica overrides individuais ao ciclo Honda antes de calcular
+  const custoCicloCompleto = preset.revisaoAutorizada.reduce((s, r, idx) => {
+    const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
+    return s + (override?.precoTotal ?? r.precoTotal);
+  }, 0);
   const revisaoAnual = calcularCustoRevisaoAnual(perfil.perfilManutencao.modoRevisao, kmAnual, {
     custoCicloCompleto,
-    duracaoCicloMeses,
-    precoRevisaoGeral: perfil.perfilManutencao.precoMaoDeObraIndependente,
-    frequenciaRevisaoKm: perfil.perfilManutencao.frequenciaRevisaoKm,
+    servicosIndependentes: perfil.servicosIndependentes,
   });
 
   // Manutenção por peça
@@ -423,6 +431,7 @@ export function calcularCustosPorCategoria(
     perfil.moto.kmAtual,
     kmAnual,
     perfil.pecasOverrides,
+    perfil.servicosIndependentes,
   );
   const cpkPecasTotal = calcularCpkPecasTotal(detalhePecas);
 

@@ -69,7 +69,9 @@ export interface ServicoIndependente {
 
 export interface RevisaoAutorizadaOverride {
   index: number;
-  precoTotal: number;
+  precoPecas: number;
+  precoMaoDeObra: number;
+  precoTotal: number; // precoPecas + precoMaoDeObra — usado pelo calculador
 }
 
 export interface FipeCache {
@@ -265,7 +267,7 @@ export type PerfilAction =
   | { type: 'SET_SERVICO_INDEPENDENTE'; payload: ServicoIndependente }
   | { type: 'TOGGLE_SERVICO_INDEPENDENTE'; payload: { id: string } }
   | { type: 'RESET_SERVICOS_INDEPENDENTES' }
-  | { type: 'SET_REVISAO_AUTORIZADA_OVERRIDE'; index: number; precoTotal: number }
+  | { type: 'SET_REVISAO_AUTORIZADA_OVERRIDE'; index: number; precoPecas: number; precoMaoDeObra: number }
   | { type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE'; index: number }
 
   // Financeiro

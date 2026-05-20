@@ -26,8 +26,6 @@ _(nenhuma)_
 
 | ID           | Título                                                                                                  | Valor      | Urgência | Esforço | Dependências              | Status |
 | ------------ | ------------------------------------------------------------------------------------------------------- | ---------- | -------- | ------- | ------------------------- | ------ |
-| TASK-REF-12  | Evoluir calculador: Honda km-based + fix overrides + CPK por serviço independente                      | Crítico    | Normal   | M       | TASK-REF-11               | [ ]    |
-| TASK-RF-6.1  | Aba Mão de Obra: Honda (7 revisões), Independente (por serviço), Excepcionais (ADR-004)                 | Importante | Normal   | G       | TASK-REF-11, TASK-REF-12  | [ ]    |
 | TASK-RF-6.2  | Aba Preço Peças (ex-Autonomia): preços editáveis original/paralela, vida útil somente leitura (ADR-004) | Importante | Normal   | M       | TASK-REF-11               | [ ]    |
 | TASK-RF-6.3  | Tela Perfil + Ajustes de Predefinição (5 seções com reset) **sem toggle de modo de cálculo** (ADR-003)  | Importante | Normal   | G       | TASK-RF-6.1, TASK-RF-6.2  | [ ]    |
 

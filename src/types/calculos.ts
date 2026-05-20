@@ -24,7 +24,9 @@ export interface PneuPreset {
 export interface RevisaoAutorizadaPreset {
   intervaloKm: number;
   intervaloMeses: number;
-  precoTotal: number;
+  precoPecas: number;
+  precoMaoDeObra: number;
+  precoTotal: number; // precoPecas + precoMaoDeObra
 }
 
 export interface PresetMoto {

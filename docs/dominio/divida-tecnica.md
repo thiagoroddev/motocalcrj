@@ -29,7 +29,7 @@ Em DDD clássico, comportamento de domínio pertence à entidade. Modelo anêmic
 
 ### Por que NÃO refatorar agora
 
-- O arquivo tem **92 testes passando** está estável e validado
+- O arquivo tem **96 testes passando** está estável e validado
 - Está marcado como **Proibição Absoluta** no `contexto-base`
 - Refatoração teria custo alto e risco de regredir comportamento crítico
 - Modelo anêmico é **idiomático em React** funciona bem na prática
@@ -359,40 +359,6 @@ Motoboy pode registrar abastecimento em dois lugares:
 
 ---
 
-## DT-13: Estrutura por Índice em revisaoAutorizadaOverrides (NOVA)
-
-### Situação atual
-
-```typescript
-interface RevisaoAutorizadaOverride {
-  index: number; // índice no array preset.revisaoAutorizada
-  precoTotal: number;
-}
-```
-
-Override referencia revisão **por índice no array do Preset JSON**. Se o array mudar (ordem ou tamanho), índices ficam errados.
-
-### Por que é dívida técnica
-
-- Frágil a mudanças do Preset JSON
-- Exige migração se array for alterado
-
-### Por que NÃO endereçar agora
-
-- Array de revisões da Honda é estável (definido pelo manual da concessionária)
-- Mudanças só acontecem se Honda mudar a programação de revisões raro
-
-### Gatilho que justificaria endereçar
-
-- Mudança no array de `revisaoAutorizada` no Preset JSON
-- Migração de schema
-
-### Recomendação
-
-Refatorar para chave estável (ex: `intervaloKm` como identificador) em TASK-REF-12, quando o calculador passar a ler os overrides de revisão autorizada.
-
-> **Nota (19/05/26):** A oportunidade de migrar DT-13 junto com a migração v5→v6 (TASK-REF-11) foi avaliada e **descartada** porque: (a) o override ainda não é lido pelo calculador (mesmo orphan que `servicosMaoDeObra`), então corrigir o formato antes do uso não agrega; (b) a migração exigiria ler o preset JSON para resolver o `intervaloKm` de cada índice, adicionando dependência de runtime ao processo de migration. **Endereçar em TASK-REF-12.**
-
 ---
 
 ## DT-14: SET_ONBOARDING_CAMPO fora do Onboarding (PRIORIDADE ALTA)
@@ -470,7 +436,15 @@ Quando uma dívida for endereçada (refatorada, decidida, eliminada), **mover pa
 
 ## Histórico (Dívidas Endereçadas)
 
-_(vazio na criação)_
+### ~~DT-13: Estrutura por Índice em revisaoAutorizadaOverrides~~ — ENDEREÇADA (20/05/26)
+
+Override por índice estava definido no tipo mas **nunca era lido** pelo calculador (orphan). Em TASK-REF-12, `calcularCustosPorCategoria` passou a aplicar `revisaoAutorizadaOverrides` ao `custoCicloCompleto` antes de calcular `revisaoAnual`. O override **funciona agora**.
+
+A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) permanece como risco aceito:
+- O array `preset.revisaoAutorizada` é estável (manual Honda, 7 revisões fixas)
+- Mudanças no array exigiriam migração de schema — gatilho adequado para rever
+
+**Decisão:** fechar como endereçado. A fragilidade remanescente é risco conhecido e aceitável dado a estabilidade do dado.
 
 ---
 
@@ -482,3 +456,4 @@ _(vazio na criação)_
 | 2026-05-09 (v2) | **Reescrita corrigida.** DT-2 substancialmente revisada (interpretação errada do A12 corrigida). Adicionados DT-7 a DT-13 baseados em divergências reais encontradas na engenharia reversa do código. |
 | 2026-05-11 (v3) | Referencias atualizadas para v6 e DT-12 confirmada sem sincronizacao no reducer.                                                                                                                      |
 | 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |
+| 2026-05-20 (v5) | DT-13 endereçada — override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |

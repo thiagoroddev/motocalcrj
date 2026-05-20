@@ -291,3 +291,4 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-09 (v2) | (todos)                                           | **Reescrita completa baseada em código real** | Validação contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts` e Requisitos v6 |
 | 2026-05-11 (v3) | Diário de Trabalho, Dados RJ, Catálogo de Modelos | Alinhamento com código real                   | Ajustes e referências v6                                                                                 |
 | 2026-05-19 (v4) | Override, Modo de Revisão, CPK, Vida Útil, Serviço Independente | Adição e atualização por ADR-004 | TASK-REF-11: substituição ServicosMaoDeObra → ServicoIndependente[], fórmula CPK por evento |
+| 2026-05-20 (v5) | Modo de Revisão | Confirmação de implementação — fórmula km-based e CPK por serviço agora no calculador | TASK-REF-12 concluída |
