@@ -7,7 +7,13 @@ import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import { CATALOGO } from '../data/catalogoModelos';
 import type { PresetMoto } from '../types/calculos';
-import type { PerfilAction, PecaOverride, PerfilPecas, TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
+import type {
+  PerfilAction,
+  PecaOverride,
+  PerfilPecas,
+  TipoCombustivel,
+  ConfiguracaoCombustivel,
+} from '../types/perfil';
 
 // ── Carregamento de presets ──────────────────────────────────
 
@@ -56,8 +62,12 @@ function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }: PropsC
   const [preco, setPreco] = useState(config.preco.toFixed(2));
   const [autonomia, setAutonomia] = useState(config.autonomia.toFixed(1));
 
-  useEffect(() => { setPreco(config.preco.toFixed(2)); }, [config.preco]);
-  useEffect(() => { setAutonomia(config.autonomia.toFixed(1)); }, [config.autonomia]);
+  useEffect(() => {
+    setPreco(config.preco.toFixed(2));
+  }, [config.preco]);
+  useEffect(() => {
+    setAutonomia(config.autonomia.toFixed(1));
+  }, [config.autonomia]);
 
   const temOverridePreco = Math.abs(config.preco - padrao.preco) >= 0.01;
   const temOverrideAutonomia = Math.abs(config.autonomia - padrao.autonomia) >= 0.1;
@@ -65,13 +75,19 @@ function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }: PropsC
 
   function handleBlurPreco() {
     const num = parseFloat(preco.replace(',', '.'));
-    if (isNaN(num) || num <= 0) { setPreco(config.preco.toFixed(2)); return; }
+    if (isNaN(num) || num <= 0) {
+      setPreco(config.preco.toFixed(2));
+      return;
+    }
     dispatch({ type: 'SET_COMBUSTIVEL', tipo, campo: 'preco', valor: num });
   }
 
   function handleBlurAutonomia() {
     const num = parseFloat(autonomia.replace(',', '.'));
-    if (isNaN(num) || num <= 0) { setAutonomia(config.autonomia.toFixed(1)); return; }
+    if (isNaN(num) || num <= 0) {
+      setAutonomia(config.autonomia.toFixed(1));
+      return;
+    }
     dispatch({ type: 'SET_COMBUSTIVEL', tipo, campo: 'autonomia', valor: num });
   }
 
@@ -86,9 +102,7 @@ function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }: PropsC
         <div className="flex items-center gap-sm">
           {ehPreferido && <span className="text-xs text-primary">●</span>}
           <span className="text-sm font-medium">{NOME_COMBUSTIVEL[tipo]}</span>
-          {ehPreferido && (
-            <span className="text-xs text-primary font-medium">Preferido</span>
-          )}
+          {ehPreferido && <span className="text-xs text-primary font-medium">Preferido</span>}
         </div>
         <div className="flex items-center gap-1">
           {!ehPreferido && (
@@ -148,8 +162,14 @@ interface PropsCardItemPreco {
 }
 
 function CardItemPreco({
-  id, nome, precoOriginal, precoParalela, intervaloKm,
-  override, perfilPecasGlobal, dispatch,
+  id,
+  nome,
+  precoOriginal,
+  precoParalela,
+  intervaloKm,
+  override,
+  perfilPecasGlobal,
+  dispatch,
 }: PropsCardItemPreco) {
   const perfilEfetivo = override?.perfilPecasOverride ?? perfilPecasGlobal;
   const precoBase = perfilEfetivo === 'original' ? precoOriginal : precoParalela;
@@ -157,22 +177,29 @@ function CardItemPreco({
 
   const [preco, setPreco] = useState(precoEfetivo.toFixed(2));
 
-  useEffect(() => { setPreco(precoEfetivo.toFixed(2)); }, [precoEfetivo]);
+  useEffect(() => {
+    setPreco(precoEfetivo.toFixed(2));
+  }, [precoEfetivo]);
 
   const temOverride = override?.precoEditado != null || override?.perfilPecasOverride != null;
 
   function handleBlur() {
     const num = parseFloat(preco.replace(',', '.'));
-    if (isNaN(num) || num < 0) { setPreco(precoEfetivo.toFixed(2)); return; }
+    if (isNaN(num) || num < 0) {
+      setPreco(precoEfetivo.toFixed(2));
+      return;
+    }
     if (Math.abs(num - precoBase) < 0.01) {
-      if (override?.precoEditado != null) dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
+      if (override?.precoEditado != null)
+        dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
       return;
     }
     dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'preco', valor: num });
   }
 
   function trocarPerfil(novoPerfil: PerfilPecas) {
-    if (override?.precoEditado != null) dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
+    if (override?.precoEditado != null)
+      dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
     if (novoPerfil === perfilPecasGlobal) {
       dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'perfilPecas' });
     } else {
@@ -184,7 +211,10 @@ function CardItemPreco({
     <div className="bg-card rounded-lg p-md space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{nome}</span>
-        <IconeReset visivel={temOverride} onClick={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })} />
+        <IconeReset
+          visivel={temOverride}
+          onClick={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })}
+        />
       </div>
 
       {/* Toggle Original / Paralela */}
@@ -195,7 +225,9 @@ function CardItemPreco({
             type="button"
             onClick={() => trocarPerfil(p)}
             className={`flex-1 py-2 transition-colors${i > 0 ? ' border-l border-muted' : ''} ${
-              perfilEfetivo === p ? 'bg-primary/20 text-primary' : 'bg-card text-muted-foreground hover:text-foreground'
+              perfilEfetivo === p
+                ? 'bg-primary/20 text-primary'
+                : 'bg-card text-muted-foreground hover:text-foreground'
             }`}
           >
             <span className="block text-[10px] font-medium uppercase tracking-wide">
@@ -226,7 +258,9 @@ function CardItemPreco({
           <div className="rounded-input border border-muted bg-muted/20 min-h-touch text-sm flex items-center px-3 text-muted-foreground/60 select-none cursor-default">
             {intervaloKm.toLocaleString('pt-BR')}
           </div>
-          <p className="text-[10px] text-muted-foreground/40 leading-tight">Alterar na aba M. Obra</p>
+          <p className="text-[10px] text-muted-foreground/40 leading-tight">
+            Alterar na aba M. Obra
+          </p>
         </div>
       </div>
     </div>
@@ -249,13 +283,21 @@ export function PaginaVidaUtil() {
   ];
 
   const autonomiaBase = catalogo
-    ? usaComBau ? catalogo.consumoKmLComBau : catalogo.consumoKmL
+    ? usaComBau
+      ? catalogo.consumoKmLComBau
+      : catalogo.consumoKmL
     : perfilPadrao.financeiro.combustiveis.comum.autonomia;
 
   const padraoCombustiveis: Record<TipoCombustivel, ConfiguracaoCombustivel> = {
-    comum:    { preco: perfilPadrao.financeiro.combustiveis.comum.preco,    autonomia: autonomiaBase },
-    aditivada:{ preco: perfilPadrao.financeiro.combustiveis.aditivada.preco, autonomia: autonomiaBase },
-    etanol:   { preco: perfilPadrao.financeiro.combustiveis.etanol.preco,   autonomia: Math.round(autonomiaBase * 0.78) },
+    comum: { preco: perfilPadrao.financeiro.combustiveis.comum.preco, autonomia: autonomiaBase },
+    aditivada: {
+      preco: perfilPadrao.financeiro.combustiveis.aditivada.preco,
+      autonomia: autonomiaBase,
+    },
+    etanol: {
+      preco: perfilPadrao.financeiro.combustiveis.etanol.preco,
+      autonomia: Math.round(autonomiaBase * 0.78),
+    },
   };
 
   function resolverIntervalo(id: string, fallback: number): number {

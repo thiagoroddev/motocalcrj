@@ -63,8 +63,10 @@ function LinhaRevisaoHonda({ index, revisao, override, dispatch }: PropsLinhaHon
 
   const temOverride = override !== null;
   const totalEfetivo = override?.precoTotal ?? revisao.precoTotal;
-  const temOverridePecas = temOverride && Math.abs((override?.precoPecas ?? 0) - revisao.precoPecas) >= 0.01;
-  const temOverrideMo = temOverride && Math.abs((override?.precoMaoDeObra ?? 0) - revisao.precoMaoDeObra) >= 0.01;
+  const temOverridePecas =
+    temOverride && Math.abs((override?.precoPecas ?? 0) - revisao.precoPecas) >= 0.01;
+  const temOverrideMo =
+    temOverride && Math.abs((override?.precoMaoDeObra ?? 0) - revisao.precoMaoDeObra) >= 0.01;
 
   function commitPecas(numPecas: number) {
     const moAtual = override?.precoMaoDeObra ?? revisao.precoMaoDeObra;
@@ -74,7 +76,12 @@ function LinhaRevisaoHonda({ index, revisao, override, dispatch }: PropsLinhaHon
     if (ambosIguaisAoPreset) {
       if (temOverride) dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index });
     } else {
-      dispatch({ type: 'SET_REVISAO_AUTORIZADA_OVERRIDE', index, precoPecas: numPecas, precoMaoDeObra: moAtual });
+      dispatch({
+        type: 'SET_REVISAO_AUTORIZADA_OVERRIDE',
+        index,
+        precoPecas: numPecas,
+        precoMaoDeObra: moAtual,
+      });
     }
   }
 
@@ -86,19 +93,30 @@ function LinhaRevisaoHonda({ index, revisao, override, dispatch }: PropsLinhaHon
     if (ambosIguaisAoPreset) {
       if (temOverride) dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index });
     } else {
-      dispatch({ type: 'SET_REVISAO_AUTORIZADA_OVERRIDE', index, precoPecas: pecasAtual, precoMaoDeObra: numMo });
+      dispatch({
+        type: 'SET_REVISAO_AUTORIZADA_OVERRIDE',
+        index,
+        precoPecas: pecasAtual,
+        precoMaoDeObra: numMo,
+      });
     }
   }
 
   function handleBlurPecas() {
     const num = parseFloat(pecas.replace(',', '.'));
-    if (isNaN(num) || num < 0) { setPecas(pecasEfetivas.toFixed(2)); return; }
+    if (isNaN(num) || num < 0) {
+      setPecas(pecasEfetivas.toFixed(2));
+      return;
+    }
     commitPecas(num);
   }
 
   function handleBlurMo() {
     const num = parseFloat(mo.replace(',', '.'));
-    if (isNaN(num) || num < 0) { setMo(moEfetiva.toFixed(2)); return; }
+    if (isNaN(num) || num < 0) {
+      setMo(moEfetiva.toFixed(2));
+      return;
+    }
     commitMo(num);
   }
 
@@ -137,7 +155,11 @@ function LinhaRevisaoHonda({ index, revisao, override, dispatch }: PropsLinhaHon
         <span className="text-sm text-muted-foreground">
           Total:{' '}
           <span className={temOverride ? 'text-foreground' : ''}>
-            R$ {totalEfetivo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            R${' '}
+            {totalEfetivo.toLocaleString('pt-BR', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </span>
         </span>
         <IconeReset
@@ -264,7 +286,12 @@ function ListaServicos({ servicos, dispatch, temOverrides, onRestaurarTudo }: Pr
         <CardServico key={s.id} servico={s} dispatch={dispatch} />
       ))}
       {temOverrides && (
-        <Button variant="outline" size="sm" className="w-full text-muted-foreground" onClick={onRestaurarTudo}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-muted-foreground"
+          onClick={onRestaurarTudo}
+        >
           Restaurar tudo
         </Button>
       )}
@@ -287,7 +314,9 @@ export function PaginaMaoDeObra() {
   function servicoDifereDopadrao(s: ServicoIndependente): boolean {
     const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
     if (!p) return false;
-    return s.precoMaoDeObra !== p.precoMaoDeObra || s.intervalKm !== p.intervalKm || s.ativo !== p.ativo;
+    return (
+      s.precoMaoDeObra !== p.precoMaoDeObra || s.intervalKm !== p.intervalKm || s.ativo !== p.ativo
+    );
   }
 
   const temOverridesNormais = servicosNormais.some(servicoDifereDopadrao);
@@ -313,9 +342,7 @@ export function PaginaMaoDeObra() {
         className="flex flex-col flex-1"
       >
         <TabsList className="grid grid-cols-3 mx-md mt-md shrink-0">
-          <TabsTrigger value="honda">
-            {modoAtivo === 'autorizadas' ? '● ' : ''}Honda
-          </TabsTrigger>
+          <TabsTrigger value="honda">{modoAtivo === 'autorizadas' ? '● ' : ''}Honda</TabsTrigger>
           <TabsTrigger value="independente">
             {modoAtivo === 'independentes' ? '● ' : ''}Independente
           </TabsTrigger>

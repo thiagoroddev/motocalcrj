@@ -74,9 +74,9 @@ A tarefa entra como **uma única linha** no backlog priorizado. Sem detalhes, se
 Tarefas com urgência **Normal** entram como linha em tabela no backlog priorizado:
 
 ```markdown
-| TASK-ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR | Status | Data origem |
+| TASK-ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR | Status | Data origem - hora |
 |---|---|:---:|:---:|:---:|:---:|---|---|:---:|---|
-| TASK-RF-5.1 | Registros — lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 09:39 |
+| TASK-RF-5.1 | Registros — lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 - 09:39 |
 ```
 
 

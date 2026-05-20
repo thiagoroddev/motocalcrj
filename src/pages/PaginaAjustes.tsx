@@ -40,7 +40,9 @@ function Segmentado({
   className?: string;
 }) {
   return (
-    <div className={`flex rounded-md overflow-hidden border border-muted${className ? ` ${className}` : ''}`}>
+    <div
+      className={`flex rounded-md overflow-hidden border border-muted${className ? ` ${className}` : ''}`}
+    >
       {opcoes.map((op, i) => (
         <button
           key={op.valor}
@@ -96,10 +98,10 @@ function Stepper({
 }
 
 const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
-  { key: 'oleo',          label: 'Troca de óleo'  },
+  { key: 'oleo', label: 'Troca de óleo' },
   { key: 'pneuDianteiro', label: 'Pneu dianteiro' },
-  { key: 'pneuTraseiro',  label: 'Pneu traseiro'  },
-  { key: 'kitRelacao',    label: 'Kit relação'     },
+  { key: 'pneuTraseiro', label: 'Pneu traseiro' },
+  { key: 'kitRelacao', label: 'Kit relação' },
 ];
 
 function Linha({ label, children }: { label: string; children: ReactNode }) {
@@ -145,11 +147,12 @@ export function PaginaAjustes() {
 
       <main className="flex-1 overflow-y-auto pb-20">
         <div className="p-md space-y-3">
-
           {/* ── Veículo ── */}
           <section className="bg-card rounded-lg p-md space-y-3">
             <p className="label-neutro">Veículo</p>
-            <p className="text-xs text-muted-foreground/60">{moto.marca} · {moto.modelo}</p>
+            <p className="text-xs text-muted-foreground/60">
+              {moto.marca} · {moto.modelo}
+            </p>
             <Linha label="Ano">
               <Input
                 type="number"
@@ -254,7 +257,10 @@ export function PaginaAjustes() {
                         onChange={(e) => {
                           const raw = e.target.value;
                           const v = parseInt(raw, 10);
-                          dispatch({ type: 'SET_MOTOR_REFEITO', km: raw === '' ? null : isNaN(v) ? null : v });
+                          dispatch({
+                            type: 'SET_MOTOR_REFEITO',
+                            km: raw === '' ? null : isNaN(v) ? null : v,
+                          });
                         }}
                         className="w-28 text-right"
                       />
@@ -327,7 +333,10 @@ export function PaginaAjustes() {
                   id="switch-seguro"
                   checked={seguro.tem}
                   onCheckedChange={(v) =>
-                    dispatch({ type: 'SET_SEGURO', config: { tem: v, empresa: v ? seguro.empresa : null } })
+                    dispatch({
+                      type: 'SET_SEGURO',
+                      config: { tem: v, empresa: v ? seguro.empresa : null },
+                    })
                   }
                 />
               </div>
@@ -353,7 +362,10 @@ export function PaginaAjustes() {
                       ]}
                       valor={seguro.periodicidade}
                       onChange={(v) =>
-                        dispatch({ type: 'SET_SEGURO', config: { periodicidade: v as PeriodicidadeSeguro } })
+                        dispatch({
+                          type: 'SET_SEGURO',
+                          config: { periodicidade: v as PeriodicidadeSeguro },
+                        })
                       }
                       className="w-40"
                     />
@@ -371,7 +383,9 @@ export function PaginaAjustes() {
                 <Switch
                   id="switch-alim"
                   checked={cats.alimentacao}
-                  onCheckedChange={() => dispatch({ type: 'TOGGLE_CATEGORIA', categoria: 'alimentacao' })}
+                  onCheckedChange={() =>
+                    dispatch({ type: 'TOGGLE_CATEGORIA', categoria: 'alimentacao' })
+                  }
                 />
               </div>
               <Linha label="Valor por dia (R$)">
@@ -398,7 +412,9 @@ export function PaginaAjustes() {
                 <Switch
                   id="switch-net"
                   checked={cats.internet}
-                  onCheckedChange={() => dispatch({ type: 'TOGGLE_CATEGORIA', categoria: 'internet' })}
+                  onCheckedChange={() =>
+                    dispatch({ type: 'TOGGLE_CATEGORIA', categoria: 'internet' })
+                  }
                 />
               </div>
               <Linha label="Valor por mês (R$)">
@@ -521,7 +537,6 @@ export function PaginaAjustes() {
               Restaurar valores padrões
             </Button>
           </div>
-
         </div>
       </main>
 
