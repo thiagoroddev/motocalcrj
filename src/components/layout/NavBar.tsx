@@ -1,4 +1,4 @@
-﻿import { NavLink } from 'react-router-dom';
+﻿import { NavLink, useLocation } from 'react-router-dom';
 
 const TABS = [
   {
@@ -70,6 +70,8 @@ const TABS = [
 ];
 
 export function NavBar() {
+  const { pathname } = useLocation();
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-muted z-50 safe-bottom">
       <div className="flex h-16">
@@ -77,13 +79,14 @@ export function NavBar() {
           <NavLink
             key={tab.to}
             to={tab.to}
-            className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center gap-0.5 text-[9px] font-medium tracking-wider transition-colors ${
-                isActive
+            className={({ isActive }) => {
+              const ativo = isActive || (tab.to === '/ajustes' && pathname === '/perfil');
+              return `flex-1 flex flex-col items-center justify-center gap-0.5 text-[9px] font-medium tracking-wider transition-colors ${
+                ativo
                   ? 'bg-primary text-foreground'
                   : 'text-muted-foreground/50 hover:text-muted-foreground'
-              }`
-            }
+              }`;
+            }}
           >
             {tab.icon}
             {tab.label}

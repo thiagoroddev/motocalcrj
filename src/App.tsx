@@ -9,6 +9,7 @@ import { PaginaDetalhamento } from './pages/PaginaDetalhamento';
 import { PaginaMaoDeObra } from './pages/PaginaMaoDeObra';
 import { PaginaVidaUtil } from './pages/PaginaVidaUtil';
 import { PaginaAjustes } from './pages/PaginaAjustes';
+import { PaginaPerfil } from './pages/PaginaPerfil';
 
 function App() {
   return (
@@ -27,9 +28,10 @@ function App() {
                   <Route path="/estimativa" element={<PaginaEstimativa />} />
                   <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
                   <Route path="/vida-util" element={<PaginaVidaUtil />} />
-                  <Route path="/ajustes" element={<PaginaAjustes />} />
                 </Route>
-                {/* Rotas sem NavBar (sub-telas de detalhe) */}
+                {/* Rotas sem layout da moto (header próprio) */}
+                <Route path="/perfil" element={<PaginaPerfil />} />
+                <Route path="/ajustes" element={<PaginaAjustes />} />
                 <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
               </Route>
 

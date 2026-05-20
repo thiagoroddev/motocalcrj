@@ -24,9 +24,7 @@ _(nenhuma)_
 
 > **ADR-004:** Modelo de Eventos por Serviço — MO e peças calculadas por CPK separados, unidos pelo `intervalKm` do serviço. TASK-REF-11 e TASK-REF-12 são pré-requisitos das abas UI.
 
-| ID           | Título                                                                                                  | Valor      | Urgência | Esforço | Dependências              | Status |
-| ------------ | ------------------------------------------------------------------------------------------------------- | ---------- | 
-| TASK-RF-6.3  | Tela Perfil + Ajustes de Predefinição (5 seções com reset) **sem toggle de modo de cálculo** (ADR-003)  | Importante | Normal   | G       | TASK-RF-6.1, TASK-RF-6.2  | [ ]    |
+_(TASK-RF-6.3.2, 6.3.3, 6.3.4 concluídas — ver índice)_
 
 ---
 

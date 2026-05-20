@@ -36,3 +36,9 @@
 | TASK-DOC-005 | Criar INV-VIDA-UTIL-1 em invariantes.md | [2026-05-20--08h57--TASK-DOC-005.md](./2026-05-20--08h57--TASK-DOC-005.md) |
 | TASK-DOC-006 | Atualizar ADR-004 com defaults reais de SERVICOS_INDEPENDENTES_PADRAO | [2026-05-20--09h00--TASK-DOC-006.md](./2026-05-20--09h00--TASK-DOC-006.md) |
 | TASK-DOC-007 | Registrar simplificação: excepcionais não distinguidos no calculador (DT-16) | [2026-05-20--09h06--TASK-DOC-007.md](./2026-05-20--09h06--TASK-DOC-007.md) |
+| TASK-RF-6.3 | Tela Perfil — página de perfil com gestão de predefinição | [2026-05-20--10h47--TASK-RF-6.3.md](./2026-05-20--10h47--TASK-RF-6.3.md) |
+| TASK-RF-6.3.1 | Tela Ajustes — 5 seções inline + 8 actions + reset | [2026-05-20--11h51--TASK-RF-6.3.1.md](./2026-05-20--11h51--TASK-RF-6.3.1.md) |
+| TASK-RF-6.3.2 | Modelo de dados: `kmUltimaTrocas` + `kmMotorRefeito` + schema v6→v7 | [2026-05-20--13h47--TASK-RF-6.3.2.md](./2026-05-20--13h47--TASK-RF-6.3.2.md) |
+| TASK-RF-6.3.3 | Ajustes: seção Histórico de Manutenção (accordion km por componente) | [2026-05-20--13h58--TASK-RF-6.3.3.md](./2026-05-20--13h58--TASK-RF-6.3.3.md) |
+| TASK-RF-6.3.4 | Onboarding: checkpoint "o que foi trocado na última revisão" | [2026-05-20--14h12--TASK-RF-6.3.4.md](./2026-05-20--14h12--TASK-RF-6.3.4.md) |
+| TASK-BG-001 | Polimento UI: PaginaVidaUtil (toggle Original/Paralela) e PaginaAjustes (cards, min-h-touch, widths) | [2026-05-20--15h02--TASK-BG-001.md](./2026-05-20--15h02--TASK-BG-001.md) |

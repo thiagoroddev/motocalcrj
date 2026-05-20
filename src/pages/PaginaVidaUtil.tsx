@@ -159,33 +159,61 @@ function CardItemPreco({
 
   useEffect(() => { setPreco(precoEfetivo.toFixed(2)); }, [precoEfetivo]);
 
-  const temOverride = override?.precoEditado != null;
+  const temOverride = override?.precoEditado != null || override?.perfilPecasOverride != null;
 
   function handleBlur() {
     const num = parseFloat(preco.replace(',', '.'));
     if (isNaN(num) || num < 0) { setPreco(precoEfetivo.toFixed(2)); return; }
     if (Math.abs(num - precoBase) < 0.01) {
-      if (temOverride) dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
+      if (override?.precoEditado != null) dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
       return;
     }
     dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'preco', valor: num });
   }
 
+  function trocarPerfil(novoPerfil: PerfilPecas) {
+    if (override?.precoEditado != null) dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' });
+    if (novoPerfil === perfilPecasGlobal) {
+      dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'perfilPecas' });
+    } else {
+      dispatch({ type: 'SET_PECA_OVERRIDE', id, campo: 'perfilPecas', valor: novoPerfil });
+    }
+  }
+
   return (
-    <div className="bg-card rounded-lg p-md space-y-1.5">
+    <div className="bg-card rounded-lg p-md space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{nome}</span>
-        <IconeReset
-          visivel={temOverride}
-          onClick={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id, campo: 'preco' })}
-        />
+        <IconeReset visivel={temOverride} onClick={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })} />
       </div>
+
+      {/* Toggle Original / Paralela */}
+      <div className="flex rounded overflow-hidden border border-muted">
+        {(['original', 'paralela'] as PerfilPecas[]).map((p, i) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => trocarPerfil(p)}
+            className={`flex-1 py-2 transition-colors${i > 0 ? ' border-l border-muted' : ''} ${
+              perfilEfetivo === p ? 'bg-primary/20 text-primary' : 'bg-card text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <span className="block text-[10px] font-medium uppercase tracking-wide">
+              {p === 'original' ? 'Original' : 'Paralela'}
+            </span>
+            <span className="block text-[9px] font-normal opacity-70">
+              R$ {(p === 'original' ? precoOriginal : precoParalela).toFixed(2)}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-1">
           <span className="label-neutro block">Preço (R$)</span>
           <Input
             type="number"
-            className={`rounded-input bg-input min-h-touch text-sm${temOverride ? ' border-primary' : ''}`}
+            className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditado != null ? ' border-primary' : ''}`}
             value={preco}
             onChange={(e) => setPreco(e.target.value)}
             onBlur={handleBlur}
@@ -195,15 +223,11 @@ function CardItemPreco({
         </div>
         <div className="space-y-1">
           <span className="label-neutro block">Vida útil (km)</span>
-          <div className="rounded-input bg-input min-h-touch text-sm flex items-center px-3 text-muted-foreground select-none">
+          <div className="rounded-input border border-muted bg-muted/20 min-h-touch text-sm flex items-center px-3 text-muted-foreground/60 select-none cursor-default">
             {intervaloKm.toLocaleString('pt-BR')}
           </div>
+          <p className="text-[10px] text-muted-foreground/40 leading-tight">Alterar na aba M. Obra</p>
         </div>
-      </div>
-      <div className="flex gap-2 text-xs text-muted-foreground">
-        <span>Original: R$ {precoOriginal.toFixed(2)}</span>
-        <span>·</span>
-        <span>Paralela: R$ {precoParalela.toFixed(2)}</span>
       </div>
     </div>
   );

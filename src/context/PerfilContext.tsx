@@ -24,7 +24,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 6,
+  schemaVersion: 7,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -37,6 +37,8 @@ export const perfilPadrao: PerfilUsuario = {
     perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
+    kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 0, kitRelacao: 0 },
+    kmMotorRefeito: null,
   },
 
   perfilManutencao: {
@@ -554,6 +556,123 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     case 'SET_FIPE_CACHE':
       return comPerfil({ ...state.perfil, fipeCache: action.cache });
 
+    // ── Ajustes de predefinição ─────────────────
+    case 'SET_ANO_MOTO':
+      return comPerfil({
+        ...state.perfil,
+        moto: { ...state.perfil.moto, ano: action.ano },
+      });
+
+    case 'SET_KM_ULTIMA_REVISAO':
+      return comPerfil({
+        ...state.perfil,
+        moto: { ...state.perfil.moto, kmUltimaRevisao: action.km },
+      });
+
+    case 'SET_PERFIL_USO':
+      return comPerfil({
+        ...state.perfil,
+        moto: { ...state.perfil.moto, perfilUso: action.perfilUso },
+      });
+
+    case 'SET_MODO_REVISAO':
+      return comPerfil({
+        ...state.perfil,
+        perfilManutencao: { ...state.perfil.perfilManutencao, modoRevisao: action.modo },
+      });
+
+    case 'SET_SITUACAO_MOTO':
+      return comPerfil({
+        ...state.perfil,
+        financeiro: {
+          ...state.perfil.financeiro,
+          situacaoMoto: action.situacao,
+          parcelaMensal: action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelaMensal,
+          parcelasRestantes: action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelasRestantes,
+          aluguelMensal: action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelMensal,
+          aluguelPeriodicidade: action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelPeriodicidade,
+        },
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          categoriasAtivas: {
+            ...state.perfil.configuracaoDisplay.categoriasAtivas,
+            financiamento: action.situacao !== 'quitada',
+          },
+        },
+      });
+
+    case 'SET_PARCELA':
+      return comPerfil({
+        ...state.perfil,
+        financeiro: {
+          ...state.perfil.financeiro,
+          parcelaMensal: action.parcelaMensal,
+          parcelasRestantes: action.parcelasRestantes,
+        },
+      });
+
+    case 'SET_ALUGUEL':
+      return comPerfil({
+        ...state.perfil,
+        financeiro: {
+          ...state.perfil.financeiro,
+          aluguelMensal: action.aluguelMensal,
+          aluguelPeriodicidade: action.aluguelPeriodicidade,
+        },
+      });
+
+    // ── Histórico de manutenção ─────────────────
+    case 'SET_KM_ULTIMA_TROCA':
+      return comPerfil({
+        ...state.perfil,
+        moto: {
+          ...state.perfil.moto,
+          kmUltimaTrocas: { ...state.perfil.moto.kmUltimaTrocas, [action.componente]: action.km },
+        },
+      });
+
+    case 'SET_MOTOR_REFEITO':
+      return comPerfil({ ...state.perfil, moto: { ...state.perfil.moto, kmMotorRefeito: action.km } });
+
+    case 'MARCAR_TROCAS_REVISAO':
+      return comPerfil({
+        ...state.perfil,
+        moto: {
+          ...state.perfil.moto,
+          kmUltimaTrocas: {
+            ...state.perfil.moto.kmUltimaTrocas,
+            ...Object.fromEntries(action.componentesMarcados.map((c) => [c, action.kmRevisao])),
+          },
+        },
+      });
+
+    case 'RESETAR_AJUSTES_PADRAO':
+      return comPerfil({
+        ...state.perfil,
+        trabalho: { ...state.perfil.trabalho, kmPorDia: 70, diasPorSemana: 5 },
+        perfilManutencao: { ...state.perfil.perfilManutencao, modoRevisao: 'independentes' },
+        financeiro: {
+          ...state.perfil.financeiro,
+          internet: 0,
+          alimentacaoDia: 20,
+          seguro: { tem: false, valorAnual: 929.96, empresa: null, periodicidade: 'anual' },
+          situacaoMoto: 'quitada',
+          parcelaMensal: null,
+          parcelasRestantes: null,
+          aluguelMensal: null,
+          aluguelPeriodicidade: null,
+        },
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          categoriasAtivas: {
+            ...state.perfil.configuracaoDisplay.categoriasAtivas,
+            internet: false,
+            seguro: false,
+            financiamento: false,
+          },
+        },
+      });
+
     // ── Presets ──────────────────────────────────
     case 'CARREGAR_PERFIL':
       return { ...state, perfil: action.perfil, presetAtivoId: action.presetId };
@@ -618,10 +737,34 @@ interface PerfilProviderProps {
 }
 
 function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
-  if (perfil.schemaVersion >= 6) return perfil;
-  // v5 → v6: descarta servicosMaoDeObra (orphan), inicializa servicosIndependentes
-  const { servicosMaoDeObra: _descartado, ...resto } = perfil as PerfilUsuario & { servicosMaoDeObra?: unknown };
-  return { ...resto, schemaVersion: 6, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let dados = perfil as any;
+
+  if (dados.schemaVersion < 6) {
+    // v5 → v6: descarta servicosMaoDeObra (orphan), inicializa servicosIndependentes
+    const { servicosMaoDeObra: _descartado, ...resto } = dados;
+    dados = { ...resto, schemaVersion: 6, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO };
+  }
+
+  if (dados.schemaVersion === 6) {
+    // v6 → v7: adiciona kmUltimaTrocas e kmMotorRefeito em moto
+    dados = {
+      ...dados,
+      schemaVersion: 7,
+      moto: {
+        ...dados.moto,
+        kmUltimaTrocas: {
+          oleo: dados.moto.kmUltimaRevisao ?? 0,
+          pneuDianteiro: 0,
+          pneuTraseiro: 0,
+          kitRelacao: 0,
+        },
+        kmMotorRefeito: null,
+      },
+    };
+  }
+
+  return dados as PerfilUsuario;
 }
 
 function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {

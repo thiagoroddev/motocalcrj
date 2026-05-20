@@ -83,6 +83,13 @@ export interface FipeCache {
   modelo: string;
 }
 
+export interface KmUltimaTrocas {
+  oleo: number;
+  pneuDianteiro: number;
+  pneuTraseiro: number;
+  kitRelacao: number;
+}
+
 // ──────────────────────────────────────────────
 // Registros / histórico
 // ──────────────────────────────────────────────
@@ -177,6 +184,8 @@ export interface PerfilUsuario {
     perfilUso: PerfilUso;
     kmAtual: number;
     kmUltimaRevisao: number | null;
+    kmUltimaTrocas: KmUltimaTrocas;
+    kmMotorRefeito: number | null;
   };
 
   perfilManutencao: {
@@ -296,6 +305,21 @@ export type PerfilAction =
 
   // FIPE
   | { type: 'SET_FIPE_CACHE'; cache: FipeCache }
+
+  // Histórico de manutenção
+  | { type: 'SET_KM_ULTIMA_TROCA'; componente: keyof KmUltimaTrocas; km: number }
+  | { type: 'SET_MOTOR_REFEITO'; km: number | null }
+  | { type: 'MARCAR_TROCAS_REVISAO'; componentesMarcados: (keyof KmUltimaTrocas)[]; kmRevisao: number }
+
+  // Ajustes de predefinição
+  | { type: 'SET_ANO_MOTO'; ano: number }
+  | { type: 'SET_KM_ULTIMA_REVISAO'; km: number | null }
+  | { type: 'SET_PERFIL_USO'; perfilUso: PerfilUso }
+  | { type: 'SET_MODO_REVISAO'; modo: ModoRevisao }
+  | { type: 'SET_SITUACAO_MOTO'; situacao: SituacaoMoto }
+  | { type: 'SET_PARCELA'; parcelaMensal: number | null; parcelasRestantes: number | null }
+  | { type: 'SET_ALUGUEL'; aluguelMensal: number | null; aluguelPeriodicidade: PeriodicidadeAluguel | null }
+  | { type: 'RESETAR_AJUSTES_PADRAO' }
 
   // Presets
   | { type: 'CARREGAR_PERFIL'; perfil: PerfilUsuario; presetId: string }

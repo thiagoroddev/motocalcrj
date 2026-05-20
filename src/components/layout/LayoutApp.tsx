@@ -1,4 +1,4 @@
-﻿import { Outlet } from 'react-router-dom';
+﻿import { Outlet, Link } from 'react-router-dom';
 import { usePerfil } from '../../hooks/usePerfil';
 import { getNomeModelo } from '../../data/catalogoModelos';
 import { NavBar } from './NavBar';
@@ -12,9 +12,13 @@ export function LayoutApp() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="flex items-center gap-3 px-md py-3 bg-card border-b border-muted flex-shrink-0">
-        <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-base font-bold">
+        <Link
+          to="/perfil"
+          className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-base font-bold"
+          aria-label="Abrir perfil"
+        >
           {perfil.moto.marca.charAt(0)}
-        </div>
+        </Link>
         <div className="flex-1 min-w-0">
           <p className="text-foreground text-sm font-semibold truncate">
             {perfil.moto.marca}: {nomeModelo}
