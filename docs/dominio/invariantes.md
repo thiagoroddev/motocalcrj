@@ -141,6 +141,19 @@ if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
 
 ---
 
+#### INV-VIDA-UTIL-1: ServicoIndependente é fonte canônica de intervalKm para peças vinculadas
+**Regra:** Para peças cujo `id` existe em `servicosIndependentes` com `ativo: true`, a fonte canônica de `intervalKm` é `ServicoIndependente.intervalKm`, não o Preset JSON. A aba Preço Peças exibe esse valor como somente leitura — apenas a aba Mão de Obra permite editá-lo.
+
+**Por quê:** Evitar conflito de fonte de verdade. Se a peça e o serviço puderem ter intervalos independentes, o calculador ficará inconsistente: `calcularCpkPorPeca` usaria um valor e `calcularCustoRevisaoAnual` usaria outro.
+
+**Onde é protegida:**
+- `src/utils/calculos.ts` — `resolverIntervaloPeca`: verifica `servicosIndependentes.find(s => s.id === pecaId && s.ativo)` antes do fallback do preset.
+- `src/pages/PaginaVidaUtil.tsx` — `resolverIntervalo`: mesmo lookup; campo exibido como `<div>` read-only, sem `<Input>`.
+
+⚠️ **Limitação atual (DT-15):** Os IDs dos serviços (`troca-oleo`, `troca-pneu-dianteiro`) divergem dos IDs das peças no Preset JSON (`oleo_motor`, `pneu_dianteiro`). Portanto, o lookup nunca casa na versão atual e a Vida Útil exibida sempre cai no fallback do preset. A invariante descreve o comportamento *quando* os IDs casarem — seja via mapeamento explícito futuro ou normalização dos IDs.
+
+---
+
 ### Invariantes de Conventions (Domínio + Arquitetura)
 
 Estas invariantes tecnicamente são convenções de código, mas se violadas comprometem a integridade do domínio (mistura de linguagens, perda da Linguagem Ubíqua):
@@ -202,7 +215,7 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 
 - Invariantes de Registros de Gasto (TASK-5.x)
 - Invariantes de Registros de Rodagem (TASK-5.x)
-- ~~Invariantes de Vida Útil de Peças~~ — ver INV-MANUT-1 (intervalKm é fonte canônica em ServicoIndependente)
+- ~~Invariantes de Vida Útil de Peças~~ — ver INV-VIDA-UTIL-1 (adicionada em 20/05/26 por TASK-DOC-005)
 - ~~Invariantes de Mão de Obra~~ — adicionado INV-MANUT-1 por TASK-REF-11
 - Invariantes específicas das funções de cálculo (granularidade, totalização)
 
@@ -216,3 +229,4 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | 2026-05-19 | INV-CALC-2 | Nota de autorização ADR-004 para TASK-REF-12 | Conflito com proibição absoluta resolvido por decisão explícita |
 | 2026-05-19 | INV-MANUT-1 | Nova — `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |
 | 2026-05-20 | INV-CALC-2 | ADR-004 concluído — 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |
+| 2026-05-20 | INV-VIDA-UTIL-1 | Nova — fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |

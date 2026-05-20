@@ -416,6 +416,33 @@ Documentar a convenção de mapeamento ID em comentário na tela Preço Peças (
 
 ---
 
+## DT-16: Excepcionais e normais somados no mesmo revisao.total
+
+### Situação atual
+
+`calcularCustoRevisaoAnual` filtra apenas `s.ativo`, sem distinguir `s.ehExcepcional`. Se o usuário ativar `fazer-motor`, o custo entra em `CustosPorCategoria.revisao.total` sem separação. A ADR-004 previu saídas `custoMOAnual` (não-excepcionais) e `custoMOExcepcional` distintas — a implementação simplificou para uma.
+
+### Por que é dívida técnica
+
+Quando/se existirem múltiplos excepcionais ativados, a UI não poderá mostrar "custo de overhaul separado" sem mudança de tipo e calculador.
+
+### Por que NÃO endereçar agora
+
+- Apenas 1 excepcional no MVP (`fazer-motor`), com `ativo: false` por padrão
+- `CustosPorCategoria.revisao` não expõe campo `totalExcepcional` — adicionar quebraria a API sem benefício atual
+- INV-CALC-2: mudança em `calculos.ts` requer aprovação explícita
+
+### Gatilho que justificaria endereçar
+
+- Adição de segundo serviço excepcional
+- UI precisar exibir "custo de overhaul" como linha separada na tela de Detalhamento
+
+### Recomendação
+
+Ao adicionar segundo excepcional ou criar card de "custos eventuais" na UI, adicionar `totalExcepcional` em `CustosPorCategoria.revisao` e atualizar `calcularCustoRevisaoAnual` com aprovação (INV-CALC-2).
+
+---
+
 ## Como Esta Lista Evolui
 
 ### Adicionar item
@@ -457,3 +484,4 @@ A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) perm
 | 2026-05-11 (v3) | Referencias atualizadas para v6 e DT-12 confirmada sem sincronizacao no reducer.                                                                                                                      |
 | 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |
 | 2026-05-20 (v5) | DT-13 endereçada — override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
+| 2026-05-20 (v6) | DT-16 adicionada — excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |

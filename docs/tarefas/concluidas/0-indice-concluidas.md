@@ -33,3 +33,6 @@
 | TASK-REF-12 | Fix calculador: Honda km-based + overrides + CPK independente por serviço | [2026-05-20--TASK-REF-12.md](./2026-05-20--TASK-REF-12.md) |
 | TASK-RF-6.1 | Aba Mão de Obra: Honda, Independente e Excepcional | [2026-05-20--03h01--TASK-RF-6.1.md](./2026-05-20--03h01--TASK-RF-6.1.md) |
 | TASK-RF-6.2 | Aba Preço Peças: combustível editável, peças/pneus com preço e vida útil | [2026-05-20--03h45--TASK-RF-6.2.md](./2026-05-20--03h45--TASK-RF-6.2.md) |
+| TASK-DOC-005 | Criar INV-VIDA-UTIL-1 em invariantes.md | [2026-05-20--08h57--TASK-DOC-005.md](./2026-05-20--08h57--TASK-DOC-005.md) |
+| TASK-DOC-006 | Atualizar ADR-004 com defaults reais de SERVICOS_INDEPENDENTES_PADRAO | [2026-05-20--09h00--TASK-DOC-006.md](./2026-05-20--09h00--TASK-DOC-006.md) |
+| TASK-DOC-007 | Registrar simplificação: excepcionais não distinguidos no calculador (DT-16) | [2026-05-20--09h06--TASK-DOC-007.md](./2026-05-20--09h06--TASK-DOC-007.md) |
