@@ -43,3 +43,7 @@
 | TASK-RF-6.3.4 | Onboarding: checkpoint "o que foi trocado na última revisão" | [2026-05-20--14h12--TASK-RF-6.3.4.md](./2026-05-20--14h12--TASK-RF-6.3.4.md) |
 | TASK-BG-001 | Polimento UI: PaginaVidaUtil (toggle Original/Paralela) e PaginaAjustes (cards, min-h-touch, widths) | [2026-05-20--15h02--TASK-BG-001.md](./2026-05-20--15h02--TASK-BG-001.md) |
 | TASK-BG-002 | CardItemPreco: dois inputs independentes (Original/Paralela), vida útil como label, altura dos controles | [2026-05-20--18h36--TASK-BG-002.md](./2026-05-20--18h36--TASK-BG-002.md) |
+| TASK-BG-003 | Modo autorizado: cálculo por peça exclui itens cobertos pela revisão Honda (corrige dupla contagem) | [2026-05-22--22h00--TASK-BG-003.md](./2026-05-22--22h00--TASK-BG-003.md) |
+| TASK-RF-6.7 | km das últimas manutenções alimenta o cálculo do ciclo (custo cíclico ancorado no km; absorve REF-22) | [2026-05-22--23h00--TASK-RF-6.7.md](./2026-05-22--23h00--TASK-RF-6.7.md) |
+| TASK-REF-16 | Remover toggles de ativar/desativar da aba Mão de Obra | [2026-05-22--23h20--TASK-REF-16.md](./2026-05-22--23h20--TASK-REF-16.md) |
+| TASK-REF-17 | Reset por card em M. Obra, Custos & Peças e Ajustes (`BotaoReset` + `DialogConfirmacao` compartilhados; ícone central) | [2026-05-23--00h10--TASK-REF-17.md](./2026-05-23--00h10--TASK-REF-17.md) |

@@ -11,6 +11,7 @@ import type {
   ResponsabilidadeCusto,
   CategoriaDisplay,
   ServicoIndependente,
+  KmUltimaTrocas,
 } from '../types/perfil';
 import type {
   PresetMoto,
@@ -201,21 +202,98 @@ export function resolverPrecoPeca(
   return 0;
 }
 
-export function calcularCpkPorPeca(
-  preset: PresetMoto,
-  tipoUso: PerfilUso,
-  perfilPecas: PerfilPecas,
-  registros: RegistroManutencao[],
-  modoExibicao: ModoExibicao,
+// Liga o id de Peça/Pneu do Preset à chave correspondente em KmUltimaTrocas.
+// Peças sem entrada (vela, filtro, sapata) não têm km de última troca registrável.
+const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
+  oleo_motor: 'oleo',
+  pneu_dianteiro: 'pneuDianteiro',
+  pneu_traseiro: 'pneuTraseiro',
+  kit_relacao: 'kitRelacao',
+};
+
+const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
+  oleo: 0,
+  pneuDianteiro: 0,
+  pneuTraseiro: 0,
+  kitRelacao: 0,
+};
+
+/**
+ * Calcula o ciclo de troca de uma peça para os próximos 12 meses.
+ * Com `kmUltimaTroca > 0`, ancora o ciclo no km informado pelo usuário:
+ * `proximaTrocaKm` é o primeiro evento após `kmAtual` e `trocasNoAno` conta
+ * os eventos na janela `(kmAtual, kmAtual + kmAnual]`.
+ * Com `kmUltimaTroca <= 0` (não informado), usa o fallback amortizado.
+ */
+export function calcularCicloPeca(
+  kmUltimaTroca: number,
+  intervalo: number,
   kmAtual: number,
   kmAnual: number,
-  pecasOverrides: PecaOverride[] = [],
-  servicosIndependentes: ServicoIndependente[] = [],
-): Map<string, CustoPeca> {
+): { proximaTrocaKm: number; trocasNoAno: number } {
+  if (intervalo <= 0) {
+    return { proximaTrocaKm: 0, trocasNoAno: 0 };
+  }
+
+  if (kmUltimaTroca <= 0) {
+    // Sem dado de última troca: ciclo amortizado, próxima troca ancorada no km atual.
+    const proximaTrocaKm = kmAtual > 0 ? Math.ceil(kmAtual / intervalo) * intervalo : intervalo;
+    return { proximaTrocaKm, trocasNoAno: kmAnual / intervalo };
+  }
+
+  // Eventos de troca ocorrem em kmUltimaTroca + n × intervalo (n = 1, 2, ...).
+  const eventosPassados = Math.max(0, Math.floor((kmAtual - kmUltimaTroca) / intervalo));
+  const proximaTrocaKm = kmUltimaTroca + (eventosPassados + 1) * intervalo;
+
+  const fimDaJanela = kmAtual + kmAnual;
+  const trocasNoAno =
+    proximaTrocaKm > fimDaJanela
+      ? 0
+      : Math.floor((fimDaJanela - proximaTrocaKm) / intervalo) + 1;
+
+  return { proximaTrocaKm, trocasNoAno };
+}
+
+export interface OpcoesCpkPorPeca {
+  preset: PresetMoto;
+  tipoUso: PerfilUso;
+  perfilPecas: PerfilPecas;
+  registros: RegistroManutencao[];
+  modoExibicao: ModoExibicao;
+  modoRevisao: ModoRevisao;
+  kmAtual: number;
+  kmAnual: number;
+  kmUltimaTrocas?: KmUltimaTrocas;
+  pecasOverrides?: PecaOverride[];
+  servicosIndependentes?: ServicoIndependente[];
+}
+
+export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca> {
+  const {
+    preset,
+    tipoUso,
+    perfilPecas,
+    registros,
+    modoExibicao,
+    modoRevisao,
+    kmAtual,
+    kmAnual,
+    kmUltimaTrocas = KM_ULTIMA_TROCAS_VAZIO,
+    pecasOverrides = [],
+    servicosIndependentes = [],
+  } = opcoes;
+
   const resultado = new Map<string, CustoPeca>();
 
+  // No modo autorizado, peças cobertas pelo pacote de revisão Honda não entram
+  // no cálculo por peça — seu custo já está em revisaoAutorizada (ADR-006).
+  const pecasConsideradas =
+    modoRevisao === 'autorizadas'
+      ? preset.pecas.filter((p) => !p.incluidoNaRevisaoAutorizada)
+      : preset.pecas;
+
   const todasPecas: Array<{ id: string; label: string }> = [
-    ...preset.pecas.map((p) => ({ id: p.id, label: p.nome })),
+    ...pecasConsideradas.map((p) => ({ id: p.id, label: p.nome })),
     ...preset.pneus.map((p) => ({
       id: p.id,
       label: p.posicao === 'dianteiro' ? 'Pneu dianteiro' : 'Pneu traseiro',
@@ -240,7 +318,19 @@ export function calcularCpkPorPeca(
       modoExibicao,
       pecasOverrides,
     );
-    const cpk = calcularCpkPeca(preco, intervalo);
+
+    // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
+    const chaveKmUltimaTroca = MAPA_PECA_PARA_KM_ULTIMA_TROCA[id];
+    const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+
+    const { proximaTrocaKm, trocasNoAno } = calcularCicloPeca(
+      kmUltimaTroca,
+      intervalo,
+      kmAtual,
+      kmAnual,
+    );
+    const custoAnual = trocasNoAno * preco;
+    const cpk = kmAnual > 0 ? custoAnual / kmAnual : 0;
 
     const override = pecasOverrides.find((o) => o.id === id);
     const registrosPeca = registros.filter((r) => r.pecaId === id);
@@ -252,17 +342,16 @@ export function calcularCpkPorPeca(
         registrosPeca.length >= 1);
     const fonte: 'preset' | 'registro' = usouOverride ? 'registro' : 'preset';
 
-    const proximaTrocaKm = kmAtual > 0 ? Math.ceil(kmAtual / intervalo) * intervalo : intervalo;
-
     resultado.set(id, {
       pecaId: id,
       label,
       cpk,
-      custoAnual: cpk * kmAnual,
+      custoAnual,
       intervaloKm: intervalo,
       preco,
       fonte,
       proximaTrocaKm,
+      trocasNoAno,
     });
   }
 
@@ -422,17 +511,19 @@ export function calcularCustosPorCategoria(
   });
 
   // Manutenção por peça
-  const detalhePecas = calcularCpkPorPeca(
+  const detalhePecas = calcularCpkPorPeca({
     preset,
-    perfil.moto.perfilUso,
-    perfil.perfilManutencao.perfilPecasGlobal,
-    registrosManutencao,
+    tipoUso: perfil.moto.perfilUso,
+    perfilPecas: perfil.perfilManutencao.perfilPecasGlobal,
+    registros: registrosManutencao,
     modoExibicao,
-    perfil.moto.kmAtual,
+    modoRevisao: perfil.perfilManutencao.modoRevisao,
+    kmAtual: perfil.moto.kmAtual,
     kmAnual,
-    perfil.pecasOverrides,
-    perfil.servicosIndependentes,
-  );
+    kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
+    pecasOverrides: perfil.pecasOverrides,
+    servicosIndependentes: perfil.servicosIndependentes,
+  });
   const cpkPecasTotal = calcularCpkPecasTotal(detalhePecas);
 
   // Combustível — usa autonomia já gravada no perfil (commitada no onboarding)

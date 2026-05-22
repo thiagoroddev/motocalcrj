@@ -30,6 +30,7 @@
       "intervaloMeses": 12,
       "precoOriginal": 40,
       "precoParalela": 23,
+      "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
         "intervaloKmNota": "Manual: trocar a cada 6.000 km ou 1× por ano (o que ocorrer primeiro).",
         "intervaloKmEntregaNota": "Telemetria real: motoboy urbano troca entre 1.000–1.500 km. Média adotada: 1.250 km.",
@@ -45,6 +46,7 @@
       "intervaloMeses": 0,
       "precoOriginal": 82,
       "precoParalela": 29,
+      "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
         "intervaloKmNota": "Manual: verificar a cada 12.000 km; trocar se necessário. Em entrega, substituir preventivamente no intervalo.",
         "precoOriginalNota": "NGK CPR6EA-9S genuína Honda (código Honda OEM).",
@@ -59,6 +61,7 @@
       "intervaloMeses": 0,
       "precoOriginal": 47,
       "precoParalela": 19,
+      "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
         "intervaloKmNota": "Manual: trocar a cada 18.000 km. Em uso com poluição urbana: antecipar para 12.000 km.",
         "intervaloKmEntregaNota": "Dado real: trocado na revisão de 12.000 km pelo usuário.",
@@ -74,6 +77,7 @@
       "intervaloMeses": 0,
       "precoOriginal": 230,
       "precoParalela": 82,
+      "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Manual: verificar, ajustar e lubrificar a cada 1.000 km. Troca estimada por pesquisa de campo RJ.",
         "intervaloKmEntregaNota": "Com lubrificação regular a cada 1.000 km o kit dura 15.000–20.000 km. Mock: 18.000 km.",
@@ -89,6 +93,7 @@
       "intervaloMeses": 0,
       "precoOriginal": 91,
       "precoParalela": 47,
+      "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i usa freio a tambor traseiro.",
         "intervaloKmEntregaNota": "No anda-e-para urbano RJ o desgaste é acelerado. Estimativa conservadora: 10.000–15.000 km. Mock: 12.000 km.",

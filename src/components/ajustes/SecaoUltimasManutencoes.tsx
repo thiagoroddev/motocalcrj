@@ -1,6 +1,7 @@
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction, KmUltimaTrocas } from '../../types/perfil';
 import { Input } from '../ui/input';
+import { BotaoReset } from '../BotaoReset';
 
 const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'oleo', label: 'Troca de óleo' },
@@ -15,9 +16,23 @@ interface Props {
 }
 
 export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
+  const temAlteracao =
+    COMPONENTES_TROCA.some(({ key }) => moto.kmUltimaTrocas[key] > 0) ||
+    moto.kmMotorRefeito != null;
+
+  function resetar() {
+    COMPONENTES_TROCA.forEach(({ key }) =>
+      dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: 0 }),
+    );
+    dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
+  }
+
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
-      <p className="label-neutro">Últimas manutenções</p>
+      <div className="flex items-center justify-between">
+        <p className="label-neutro">Últimas manutenções</p>
+        <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
+      </div>
       <div className="grid grid-cols-2 gap-2">
         {COMPONENTES_TROCA.map(({ key, label }) => (
           <div key={key} className="space-y-1">

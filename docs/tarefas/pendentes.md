@@ -20,55 +20,41 @@ Obedeça essa ordem:
 
 ---
 
+## TASK-REF-13 — PaginaAjustes: gap excessivo entre label e input no componente Linha
+- **Status:** Pendente (interrompida)
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data origem:** 20/05/26
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:** Interrompida em 22/05/26 para priorizar as tarefas da revisão geral (ADR-005/006). Estava em "AGUARDANDO VALIDAÇÃO VISUAL" — o código já foi aplicado: na função `Linha` de `PaginaAjustes.tsx`, `gap-4` → `gap-2` e o `<span>` de label recebeu `flex-1 min-w-0`. Falta apenas a validação visual no browser (label não pode dar overflow em 375px; input alinhado à direita). `npm run test` 98 verdes e `tsc --noEmit` limpo no momento da interrupção. Nota: o componente `Linha` foi depois extraído para `src/components/Linha.tsx` pela REF-14.
+
+## TASK-REF-14 — Extrair componentes inline e refatorar PaginaAjustes
+- **Status:** Pendente (interrompida)
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/G
+- **Data origem:** 20/05/26
+- **Dependências:** TASK-REF-13
+- **REQ/ADR/DT:** —
+- **Observações:** Interrompida em 22/05/26 para priorizar as tarefas da revisão geral (ADR-005/006). Estava em "AGUARDANDO VALIDAÇÃO VISUAL" — o código já foi aplicado: `PaginaAjustes.tsx` reescrito de 572 → 88 linhas; criados `Segmentado.tsx`, `Stepper.tsx`, `Linha.tsx` em `src/components/`, `CampoSwitch.tsx` em `src/components/ajustes/` e 6 componentes de seção em `src/components/ajustes/`. Falta a validação visual no browser. **Atenção — pontos afetados pela revisão geral:** (1) `CampoSwitch.tsx` foi criado mas nunca usado (`SecaoFinanceiro` não o integrou) — pela ADR-005 não há switch em Ajustes, então será excluído pela TASK-REF-21, não integrado; (2) `SecaoPreferencias` ganhou o segmentado "Estimativa sobre dados", que viola a ADR-003 e será removido pela TASK-REF-18. Esses dois itens devem ser considerados já resolvidos pelo redirecionamento das ADRs — a validação visual restante cobre só o layout das seções. `npm run test` 98 verdes no momento da interrupção.
+
+---
+
 ## Revisão geral das telas de configuração — ADR-005 e ADR-006 (20/05/26)
 
 > Tarefas geradas pela revisão geral de Mão de Obra, Custos & Peças, Ajustes e Perfil.
 > Decisões formalizadas em `docs/arquitetura/ADR/ADR-005.md` (responsabilidades entre telas) e `ADR-006.md` (cálculo de manutenção).
 > Todas marcadas como IMEDIATA: precisam ser executadas com o contexto da revisão ainda fresco. Cada tarefa inclui testes como critério de conclusão (`docs/padrao-testes.md`).
 
-## TASK-BG-003 — Modo autorizado: cálculo por peça exclui itens cobertos pela revisão Honda
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-006
-- **Observações:** Bug de dupla contagem confirmado na revisão de 20/05/26. Hoje `calcularCpkPorPeca` (`src/utils/calculos.ts`) roda incondicionalmente em `calcularCustosPorCategoria` e o resultado é somado ao total nos dois modos. No modo autorizado o total já inclui o pacote Honda (`revisaoAutorizada[].precoPecas`). O doc oficial `docs/dominio/valores-mao-de-obra-honda-pop110i-2024-RJ.md` confirma a sobreposição: óleo trocado nas 7 revisões, vela em 24k/36k, filtro de ar em 18k/36k — esses consumíveis são contados 2×. **Fix:** adicionar campo booleano `incluidoNaRevisaoAutorizada` em cada peça do Preset JSON (`src/presets/pop110i.json`) e no tipo `PecaPreset` (`src/types/calculos.ts`); `calcularCpkPorPeca` pula peças com `incluidoNaRevisaoAutorizada: true` quando `modoRevisao === 'autorizadas'`. Itens que SEMPRE entram pelo cálculo por peça (fora da revisão): pneu dianteiro, pneu traseiro, kit relação/transmissão, sapata de freio, bateria (futuro), retíficas. Itens cobertos pela revisão (pular no modo autorizado): óleo, vela, filtro de ar. Modo independente fica inalterado (revisão = só MO, sem duplicação). Modifica `calculos.ts` — autorizada pela ADR-006 (INV-CALC-2). Atualizar `docs/dominio/invariantes.md` e `_glossario.md` ao concluir. Inclui testes em `calculos.test.ts`.
+> **TASK-BG-003** e **TASK-RF-6.7** concluídas em 22/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-RF-6.7 — km das últimas manutenções alimenta o cálculo do ciclo
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-006
-- **Observações:** Hoje os campos do card "Últimas manutenções" (`moto.kmUltimaTrocas`: oleo, pneuDianteiro, pneuTraseiro, kitRelacao; e `moto.kmMotorRefeito`) são gravados no perfil mas NENHUMA função de `src/utils/calculos.ts` os lê — confirmado por busca na revisão de 20/05/26. Também `proximaTrocaKm` (em `calcularCpkPorPeca`, ~linha 255) usa `Math.ceil(kmAtual / intervalo) × intervalo`, presumindo troca em múltiplos exatos do intervalo a partir de 0 km. **Fix:** quando `kmUltimaTrocas[item] > 0`, calcular o ciclo a partir do km informado — `proximaTrocaKm = kmUltimaTrocas[item] + intervalo` — e a contagem de trocas/ano usa esse ponto de partida real; quando o km não foi informado (0), manter comportamento atual. **Atenção ao mapeamento de IDs:** as chaves de `kmUltimaTrocas` (oleo, pneuDianteiro, pneuTraseiro, kitRelacao) divergem dos IDs de peça do Preset (`oleo_motor`, `pneu_dianteiro`, `pneu_traseiro`, `kit_relacao`) — ver DT-15; precisa de um mapa explícito. Modifica `calculos.ts` — autorizada pela ADR-006. Inclui testes.
+> **TASK-REF-16** concluída em 22/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-REF-16 — Remover toggles de ativar/desativar da aba Mão de Obra
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-005
-- **Observações:** A aba Mão de Obra (`src/pages/PaginaMaoDeObra.tsx`, componente `CardServico`) tem hoje um `Switch` por serviço ligado a `TOGGLE_SERVICO_INDEPENDENTE` → `ServicoIndependente.ativo`. Pela ADR-005, ativar/desativar é exclusivo do Detalhamento. **Escopo:** (1) remover o `Switch` de `CardServico`; (2) o campo `ativo` PERMANECE no modelo, mas passa a ser controlado pelo Detalhamento (`PaginaDetalhamento`/`SecaoManutencao`), no mesmo padrão de `manutencaoPorPeca` e `TOGGLE_GASTO_CUSTOM` — expor toggle por serviço independente na lista de manutenção do Detalhamento. A action `TOGGLE_SERVICO_INDEPENDENTE` continua existindo, só muda quem a dispara. Decidir como serviços excepcionais (retíficas) se comportam sem o toggle de M. Obra. Inclui testes.
-
-## TASK-REF-17 — Reset sempre visível em todos os cards de config + confirmação
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-005
-- **Observações:** Hoje o `IconeReset` (duplicado idêntico em `PaginaMaoDeObra.tsx` e `PaginaVidaUtil.tsx`) só aparece quando há override (`visivel={temOverride}`); sem override renderiza um `<div>` vazio — por isso "a maioria dos cards está sem botão de reset". Decisão do usuário: todo card tem botão de reset SEMPRE visível (desabilitado/esmaecido quando não há o que resetar), mais um reset geral ao fim de cada tela/seção. **Escopo:** (1) extrair `IconeReset` para `src/components/` (hoje copiado em 2 arquivos); (2) deixá-lo sempre visível, estado desabilitado quando `!temOverride`; (3) garantir reset geral ao fim de cada aba de M. Obra e de cada seção de Custos & Peças; (4) reset individual e geral pedem confirmação — usar `Dialog` do shadcn como já feito em `PaginaAjustes`. Cards afetados: `LinhaRevisaoHonda`, `CardServico` (M. Obra); `CardCombustivel`, `CardItemPreco` (Custos & Peças). Inclui testes.
+> **TASK-REF-17** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
 ## TASK-REF-18 — Remover modoExibicao, toggle "Estimativa sobre dados" e aba Registros
 - **Status:** Pendente
@@ -179,6 +165,8 @@ Obedeça essa ordem:
 - **Dependências:** —
 - **REQ/ADR/DT:** ADR-004
 - **Observações:** A tela tem hoje 4 nomes diferentes: rota `/vida-util` (`App.tsx`), componente `PaginaVidaUtil`, label `AUTONOMIA` na NavBar (`NavBar.tsx`) e "Preço Peças" na ADR-004. Decisão do usuário (20/05/26): padronizar como "Custos & Peças". A autonomia (km/L) PERMANECE nessa tela, junto dos combustíveis (decisão confirmada — autonomia é por tipo de combustível, separá-la duplicaria campos). **Escopo:** alinhar rota, nome do componente/arquivo (`PaginaVidaUtil.tsx` → `PaginaCustosPecas.tsx`), label da NavBar e referências em docs (ADR-004, `contexto-projeto-ai.md`, modelagem). Renomeação de arquivo — confirmar antes. Refactor mecânico/cosmético.
+
+> **TASK-REF-22** (converter `calcularCpkPorPeca` para objeto de opções) foi **absorvida pela TASK-RF-6.7** e concluída junto — 22/05/26.
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 — se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo); adicionar bateria e sapata de freio ao card "Últimas manutenções".
 

@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
-import type { PerfilUsuario, PresetEntry, PerfilAction, PecaOverride, ServicoIndependente } from '../types/perfil';
+import type {
+  PerfilUsuario,
+  PresetEntry,
+  PerfilAction,
+  PecaOverride,
+  ServicoIndependente,
+} from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { CATALOGO } from '../data/catalogoModelos';
@@ -9,14 +15,70 @@ import { CATALOGO } from '../data/catalogoModelos';
 // ──────────────────────────────────────────────
 
 export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
-  { id: 'troca-oleo',            nome: 'Troca de óleo',              intervalKm: 3000,  precoMaoDeObra: 25,   ativo: true,  ehExcepcional: false },
-  { id: 'troca-kit-transmissao', nome: 'Troca kit transmissão',      intervalKm: 12000, precoMaoDeObra: 60,   ativo: true,  ehExcepcional: false },
-  { id: 'troca-pneu-dianteiro',  nome: 'Troca pneu dianteiro',       intervalKm: 25000, precoMaoDeObra: 30,   ativo: true,  ehExcepcional: false },
-  { id: 'troca-pneu-traseiro',   nome: 'Troca pneu traseiro',        intervalKm: 15000, precoMaoDeObra: 30,   ativo: true,  ehExcepcional: false },
-  { id: 'revisao-geral',         nome: 'Revisão geral (independente)',intervalKm: 6000,  precoMaoDeObra: 80,   ativo: true,  ehExcepcional: false },
-  { id: 'troca-vela',            nome: 'Troca de vela',              intervalKm: 6000,  precoMaoDeObra: 15,   ativo: true,  ehExcepcional: false },
-  { id: 'troca-filtro-ar',       nome: 'Troca filtro de ar',         intervalKm: 6000,  precoMaoDeObra: 15,   ativo: true,  ehExcepcional: false },
-  { id: 'fazer-motor',           nome: 'Fazer motor',                intervalKm: 70000, precoMaoDeObra: 1500, ativo: false, ehExcepcional: true  },
+  {
+    id: 'troca-oleo',
+    nome: 'Troca de óleo',
+    intervalKm: 3000,
+    precoMaoDeObra: 25,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-kit-transmissao',
+    nome: 'Troca kit transmissão',
+    intervalKm: 12000,
+    precoMaoDeObra: 60,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-pneu-dianteiro',
+    nome: 'Troca pneu dianteiro',
+    intervalKm: 25000,
+    precoMaoDeObra: 30,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-pneu-traseiro',
+    nome: 'Troca pneu traseiro',
+    intervalKm: 15000,
+    precoMaoDeObra: 30,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'revisao-geral',
+    nome: 'Revisão geral (independente)',
+    intervalKm: 6000,
+    precoMaoDeObra: 80,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-vela',
+    nome: 'Troca de vela',
+    intervalKm: 6000,
+    precoMaoDeObra: 15,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-filtro-ar',
+    nome: 'Troca filtro de ar',
+    intervalKm: 6000,
+    precoMaoDeObra: 15,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'fazer-motor',
+    nome: 'Fazer motor',
+    intervalKm: 70000,
+    precoMaoDeObra: 1500,
+    ativo: false,
+    ehExcepcional: true,
+  },
 ];
 
 // ──────────────────────────────────────────────
@@ -309,7 +371,9 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     case 'SET_SERVICO_INDEPENDENTE': {
       if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
       const novos = state.perfil.servicosIndependentes.some((s) => s.id === action.payload.id)
-        ? state.perfil.servicosIndependentes.map((s) => s.id === action.payload.id ? action.payload : s)
+        ? state.perfil.servicosIndependentes.map((s) =>
+            s.id === action.payload.id ? action.payload : s,
+          )
         : [...state.perfil.servicosIndependentes, action.payload];
       return comPerfil({ ...state.perfil, servicosIndependentes: novos });
     }
@@ -327,10 +391,19 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
     case 'SET_REVISAO_AUTORIZADA_OVERRIDE': {
       const precoTotal = action.precoPecas + action.precoMaoDeObra;
-      const novoOverride = { index: action.index, precoPecas: action.precoPecas, precoMaoDeObra: action.precoMaoDeObra, precoTotal };
-      const existente = state.perfil.revisaoAutorizadaOverrides.find((o) => o.index === action.index);
+      const novoOverride = {
+        index: action.index,
+        precoPecas: action.precoPecas,
+        precoMaoDeObra: action.precoMaoDeObra,
+        precoTotal,
+      };
+      const existente = state.perfil.revisaoAutorizadaOverrides.find(
+        (o) => o.index === action.index,
+      );
       const novosOverrides = existente
-        ? state.perfil.revisaoAutorizadaOverrides.map((o) => o.index === action.index ? novoOverride : o)
+        ? state.perfil.revisaoAutorizadaOverrides.map((o) =>
+            o.index === action.index ? novoOverride : o,
+          )
         : [...state.perfil.revisaoAutorizadaOverrides, novoOverride];
       return comPerfil({ ...state.perfil, revisaoAutorizadaOverrides: novosOverrides });
     }
@@ -587,10 +660,14 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         financeiro: {
           ...state.perfil.financeiro,
           situacaoMoto: action.situacao,
-          parcelaMensal: action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelaMensal,
-          parcelasRestantes: action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelasRestantes,
-          aluguelMensal: action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelMensal,
-          aluguelPeriodicidade: action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelPeriodicidade,
+          parcelaMensal:
+            action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelaMensal,
+          parcelasRestantes:
+            action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelasRestantes,
+          aluguelMensal:
+            action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelMensal,
+          aluguelPeriodicidade:
+            action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelPeriodicidade,
         },
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
@@ -632,7 +709,10 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       });
 
     case 'SET_MOTOR_REFEITO':
-      return comPerfil({ ...state.perfil, moto: { ...state.perfil.moto, kmMotorRefeito: action.km } });
+      return comPerfil({
+        ...state.perfil,
+        moto: { ...state.perfil.moto, kmMotorRefeito: action.km },
+      });
 
     case 'MARCAR_TROCAS_REVISAO':
       return comPerfil({

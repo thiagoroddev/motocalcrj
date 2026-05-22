@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { Dispatch } from 'react';
-import { RotateCcw } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { BotaoReset } from '@/components/BotaoReset';
+import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { usePerfil } from '../hooks/usePerfil';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/PerfilContext';
 import type { PresetMoto, RevisaoAutorizadaPreset } from '../types/calculos';
@@ -21,19 +21,28 @@ const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
   ]),
 );
 
-// ── IconeReset ───────────────────────────────────────────────
+// ── BotaoRestaurarTudo ───────────────────────────────────────
 
-function IconeReset({ visivel, onClick }: { visivel: boolean; onClick: () => void }) {
-  if (!visivel) return <div className="w-8 shrink-0" />;
+function BotaoRestaurarTudo({ onRestaurar }: { onRestaurar: () => void }) {
+  const [aberto, setAberto] = useState(false);
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-8 shrink-0 flex items-center justify-center text-muted-foreground/40 hover:text-primary transition-colors"
-      aria-label="Restaurar valor padrão"
-    >
-      <RotateCcw className="w-4 h-4" />
-    </button>
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full text-muted-foreground"
+        onClick={() => setAberto(true)}
+      >
+        Restaurar tudo
+      </Button>
+      <DialogConfirmacao
+        aberto={aberto}
+        onOpenChange={setAberto}
+        onConfirmar={onRestaurar}
+        titulo="Restaurar tudo?"
+        descricao="Todos os valores desta aba voltam ao padrão."
+      />
+    </>
   );
 }
 
@@ -162,9 +171,9 @@ function LinhaRevisaoHonda({ index, revisao, override, dispatch }: PropsLinhaHon
             })}
           </span>
         </span>
-        <IconeReset
-          visivel={temOverride}
-          onClick={() => dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index })}
+        <BotaoReset
+          desabilitado={!temOverride}
+          onReset={() => dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index })}
         />
       </div>
     </div>
@@ -194,10 +203,7 @@ function CardServico({ servico, dispatch }: PropsCardServico) {
 
   const temOverridePreco = padrao !== undefined && servico.precoMaoDeObra !== padrao.precoMaoDeObra;
   const temOverrideIntervalo = padrao !== undefined && servico.intervalKm !== padrao.intervalKm;
-  const temOverride =
-    temOverridePreco ||
-    temOverrideIntervalo ||
-    (padrao !== undefined && servico.ativo !== padrao.ativo);
+  const temOverride = temOverridePreco || temOverrideIntervalo;
 
   function handleBlurPreco() {
     const num = parseFloat(preco.replace(',', '.'));
@@ -220,22 +226,10 @@ function CardServico({ servico, dispatch }: PropsCardServico) {
   return (
     <div className="bg-card rounded-lg p-md space-y-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-sm min-w-0">
-          <Switch
-            checked={servico.ativo}
-            onCheckedChange={() =>
-              dispatch({ type: 'TOGGLE_SERVICO_INDEPENDENTE', payload: { id: servico.id } })
-            }
-          />
-          <span
-            className={`text-sm font-medium truncate${servico.ativo ? ' text-foreground' : ' text-muted-foreground'}`}
-          >
-            {servico.nome}
-          </span>
-        </div>
-        <IconeReset
-          visivel={temOverride}
-          onClick={() => {
+        <span className="text-sm font-medium truncate min-w-0 text-foreground">{servico.nome}</span>
+        <BotaoReset
+          desabilitado={!temOverride}
+          onReset={() => {
             if (padrao) dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload: { ...padrao } });
           }}
         />
@@ -285,16 +279,7 @@ function ListaServicos({ servicos, dispatch, temOverrides, onRestaurarTudo }: Pr
       {servicos.map((s) => (
         <CardServico key={s.id} servico={s} dispatch={dispatch} />
       ))}
-      {temOverrides && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full text-muted-foreground"
-          onClick={onRestaurarTudo}
-        >
-          Restaurar tudo
-        </Button>
-      )}
+      {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
     </div>
   );
 }
@@ -314,9 +299,7 @@ export function PaginaMaoDeObra() {
   function servicoDifereDopadrao(s: ServicoIndependente): boolean {
     const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
     if (!p) return false;
-    return (
-      s.precoMaoDeObra !== p.precoMaoDeObra || s.intervalKm !== p.intervalKm || s.ativo !== p.ativo
-    );
+    return s.precoMaoDeObra !== p.precoMaoDeObra || s.intervalKm !== p.intervalKm;
   }
 
   const temOverridesNormais = servicosNormais.some(servicoDifereDopadrao);
@@ -369,16 +352,7 @@ export function PaginaMaoDeObra() {
                     />
                   );
                 })}
-                {temOverridesHonda && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-muted-foreground"
-                    onClick={restaurarHonda}
-                  >
-                    Restaurar tudo
-                  </Button>
-                )}
+                {temOverridesHonda && <BotaoRestaurarTudo onRestaurar={restaurarHonda} />}
               </div>
             )}
           </TabsContent>

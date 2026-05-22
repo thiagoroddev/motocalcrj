@@ -1,7 +1,13 @@
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, SituacaoMoto, PeriodicidadeAluguel } from '../../types/perfil';
+import type {
+  PerfilUsuario,
+  PerfilAction,
+  SituacaoMoto,
+  PeriodicidadeAluguel,
+} from '../../types/perfil';
 import { Input } from '../ui/input';
 import { Segmentado } from '../Segmentado';
+import { BotaoReset } from '../BotaoReset';
 
 interface Props {
   financeiro: PerfilUsuario['financeiro'];
@@ -13,7 +19,13 @@ export function SecaoSituacaoLegal({ financeiro, dispatch }: Props) {
 
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
-      <p className="label-neutro">Situação Legal</p>
+      <div className="flex items-center justify-between">
+        <p className="label-neutro">Situação Legal</p>
+        <BotaoReset
+          desabilitado={situacaoMoto === 'quitada'}
+          onReset={() => dispatch({ type: 'SET_SITUACAO_MOTO', situacao: 'quitada' })}
+        />
+      </div>
       <div className="space-y-1">
         <p className="text-xs text-muted-foreground">Tipo de aquisição</p>
         <Segmentado

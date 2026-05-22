@@ -125,6 +125,18 @@ if (filtros.manutencaoPorPeca[pecaId] === true) {
 
 ---
 
+#### INV-CALC-3: Sem dupla contagem de peças no modo autorizado
+**Regra:** No modo de revisão `autorizadas`, peças do Preset JSON com `incluidoNaRevisaoAutorizada === true` **não** entram no cálculo por peça (`calcularCpkPorPeca`). No modo `independentes`, todas as peças entram.
+
+**Por quê:** O orçamento oficial Honda já inclui óleo, vela e filtro de ar nas revisões periódicas (ver `valores-mao-de-obra-honda-pop110i-2024-RJ.md`). Como o custo dessas peças já está no pacote `revisaoAutorizada`, contá-las também pelo CPK por peça inflaria o total. No modo `independentes` não há sobreposição: a revisão conta apenas mão de obra.
+
+**Onde é protegida:**
+- `src/utils/calculos.ts` — `calcularCpkPorPeca` recebe `modoRevisao` e filtra `preset.pecas` por `incluidoNaRevisaoAutorizada` quando `modoRevisao === 'autorizadas'`. Pneus nunca são filtrados (não fazem parte das revisões periódicas).
+
+**Origem:** ADR-006 / TASK-BG-003.
+
+---
+
 ### Invariantes de Manutenção
 
 #### INV-MANUT-1: intervalKm de ServicoIndependente sempre positivo
@@ -230,3 +242,4 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | 2026-05-19 | INV-MANUT-1 | Nova — `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |
 | 2026-05-20 | INV-CALC-2 | ADR-004 concluído — 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |
 | 2026-05-20 | INV-VIDA-UTIL-1 | Nova — fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |
+| 2026-05-22 | INV-CALC-3 | Nova — sem dupla contagem de peças no modo autorizado | TASK-BG-003 (ADR-006) |

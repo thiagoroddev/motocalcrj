@@ -71,6 +71,8 @@ Tipo: `'autorizadas' | 'independentes'`. Controla qual cálculo de revisão peri
 - **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por km anual.
 - **`independentes`:** usa `servicosIndependentes[]` — array de `ServicoIndependente`, onde cada serviço tem `intervalKm` e `precoMaoDeObra` próprios. CPK = `∑ (precoMaoDeObra / intervalKm) × kmAnual` (apenas serviços com `ativo: true`).
 
+⚠️ **Sem dupla contagem (ADR-006 / INV-CALC-3):** no modo `autorizadas`, o cálculo por peça (`calcularCpkPorPeca`) **exclui** as peças com `incluidoNaRevisaoAutorizada: true` — óleo, vela e filtro de ar já estão no pacote de revisão Honda. No modo `independentes`, todas as peças entram pelo cálculo por peça (a revisão conta apenas mão de obra).
+
 ### Serviço Independente (`ServicoIndependente`)
 
 Item de manutenção periódica com preço de mão de obra e intervalo de km próprios. Parte de `PerfilUsuario.servicosIndependentes[]`. Substituiu o tipo plano `ServicosMaoDeObra` na versão 6 do schema.
@@ -155,7 +157,7 @@ Estrutura usada **internamente nos cálculos** para decidir quais categorias ent
 
 ### Peça
 
-Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`, `intervaloKm` (manual da Honda), `intervaloKmEntrega` (real para motoboy, geralmente menor), `precoOriginal`, `precoParalela`. Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
+Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`, `intervaloKm` (manual da Honda), `intervaloKmEntrega` (real para motoboy, geralmente menor), `precoOriginal`, `precoParalela`, `incluidoNaRevisaoAutorizada` (se a peça é trocada nas revisões periódicas Honda — ver Modo de Revisão e INV-CALC-3). Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
 
 ### Pneu
 
@@ -166,6 +168,8 @@ Tratado separadamente das peças no Preset JSON, em `PresetMoto.pneus[]`. Tem: `
 Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. Para Peças: `intervaloKm` ou `intervaloKmEntrega` (do Preset JSON). Para Pneus: `vidaUtilKm`.
 
 **Fonte canônica do intervalo de km:** no modo `independentes`, o `intervalKm` de cada serviço vive em `ServicoIndependente.intervalKm`. A aba **Preço Peças** exibe esse valor somente leitura; apenas a aba **Mão de Obra** permite editar o intervalo.
+
+**Ciclo de troca e km da última troca (RF-6.7):** quando o Motoboy informa o km da última troca de um item no card "Últimas manutenções" (`moto.kmUltimaTrocas`), o cálculo ancora o ciclo nesse km. `CustoPeca.trocasNoAno` passa a contar as trocas dos próximos 12 meses a partir do ponto real do ciclo, e `custoAnual = trocasNoAno × preço`. Sem o km informado, usa o valor amortizado (`trocasNoAno = kmAnual / intervalo`).
 
 ### CPK (Custo Por Quilômetro)
 
@@ -292,3 +296,5 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-11 (v3) | Diário de Trabalho, Dados RJ, Catálogo de Modelos | Alinhamento com código real                   | Ajustes e referências v6                                                                                 |
 | 2026-05-19 (v4) | Override, Modo de Revisão, CPK, Vida Útil, Serviço Independente | Adição e atualização por ADR-004 | TASK-REF-11: substituição ServicosMaoDeObra → ServicoIndependente[], fórmula CPK por evento |
 | 2026-05-20 (v5) | Modo de Revisão | Confirmação de implementação — fórmula km-based e CPK por serviço agora no calculador | TASK-REF-12 concluída |
+| 2026-05-22 (v6) | Modo de Revisão, Peça | Nota de não-duplicação no modo autorizado; campo `incluidoNaRevisaoAutorizada` na Peça | TASK-BG-003 (ADR-006) |
+| 2026-05-22 (v7) | Vida Útil | Ciclo de troca ancorado no km da última troca; `CustoPeca.trocasNoAno` | TASK-RF-6.7 (ADR-006) |

@@ -11,6 +11,10 @@ export interface PecaPreset {
   intervaloKmEntrega: number;
   precoOriginal: number;
   precoParalela: number;
+  // true = peça trocada nas revisões periódicas Honda. No modo de revisão
+  // autorizado não entra no cálculo por peça, para evitar dupla contagem
+  // (o custo já está no pacote de revisaoAutorizada). Ver ADR-006.
+  incluidoNaRevisaoAutorizada: boolean;
 }
 
 export interface PneuPreset {
@@ -84,6 +88,10 @@ export interface CustoPeca {
   preco: number;
   fonte: 'preset' | 'registro';
   proximaTrocaKm: number;
+  // Trocas projetadas para os próximos 12 meses. Com km da última troca
+  // informado, é a contagem cíclica ancorada nele; senão, valor amortizado
+  // (kmAnual / intervalo). Ver ADR-006 / RF-6.7.
+  trocasNoAno: number;
 }
 
 export interface CustosPorCategoria {

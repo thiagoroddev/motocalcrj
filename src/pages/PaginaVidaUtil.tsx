@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { Dispatch } from 'react';
-import { RotateCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { BotaoReset } from '@/components/BotaoReset';
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import { CATALOGO } from '../data/catalogoModelos';
@@ -24,22 +24,6 @@ const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
     (mod as { default: PresetMoto }).default,
   ]),
 );
-
-// ── IconeReset ───────────────────────────────────────────────
-
-function IconeReset({ visivel, onClick }: { visivel: boolean; onClick: () => void }) {
-  if (!visivel) return <div className="w-8 shrink-0" />;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-8 shrink-0 flex items-center justify-center text-muted-foreground/40 hover:text-primary transition-colors"
-      aria-label="Restaurar valor padrão"
-    >
-      <RotateCcw className="w-4 h-4" />
-    </button>
-  );
-}
 
 // ── CardCombustivel ──────────────────────────────────────────
 
@@ -114,7 +98,7 @@ function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }: PropsC
               Usar este
             </Button>
           )}
-          <IconeReset visivel={temOverride} onClick={resetar} />
+          <BotaoReset desabilitado={!temOverride} onReset={resetar} />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-sm">
@@ -216,9 +200,9 @@ function CardItemPreco({
     <div className="bg-card rounded-lg p-md space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{nome}</span>
-        <IconeReset
-          visivel={temOverride}
-          onClick={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })}
+        <BotaoReset
+          desabilitado={!temOverride}
+          onReset={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })}
         />
       </div>
 

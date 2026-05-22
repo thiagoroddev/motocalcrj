@@ -11,7 +11,6 @@ type Props = {
   filtroAtivo: boolean;
   filtroRevisao: boolean;
   filtrosPecas: Record<string, boolean>;
-  kmAnual: number;
   expandido: boolean;
   onToggleAtivo: () => void;
   onToggleExpandido: () => void;
@@ -29,7 +28,6 @@ export function SecaoManutencao({
   filtroAtivo,
   filtroRevisao,
   filtrosPecas,
-  kmAnual,
   expandido,
   onToggleAtivo,
   onToggleExpandido,
@@ -66,7 +64,7 @@ export function SecaoManutencao({
         </div>
         {pecas.map(([id, peca]) => {
           const ativa = filtrosPecas[id] ?? true;
-          const freq = Math.ceil(kmAnual / peca.intervaloKm);
+          const freq = Math.ceil(peca.trocasNoAno);
           return (
             <div key={id} className="flex items-center gap-2">
               <Toggle ativo={ativa} onClick={() => onTogglePeca(id)} />

@@ -4,6 +4,7 @@ import { Input } from '../ui/input';
 import { Segmentado } from '../Segmentado';
 import { Stepper } from '../Stepper';
 import { Linha } from '../Linha';
+import { BotaoReset } from '../BotaoReset';
 
 interface Props {
   moto: PerfilUsuario['moto'];
@@ -12,9 +13,21 @@ interface Props {
 }
 
 export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
+  const temAlteracao =
+    moto.perfilUso !== 'entrega' || trabalho.diasPorSemana !== 5 || trabalho.kmPorDia !== 70;
+
+  function resetar() {
+    dispatch({ type: 'SET_PERFIL_USO', perfilUso: 'entrega' });
+    dispatch({ type: 'SET_DIAS_POR_SEMANA', valor: 5 });
+    dispatch({ type: 'SET_KM_POR_DIA', valor: 70 });
+  }
+
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
-      <p className="label-neutro">Uso Diário</p>
+      <div className="flex items-center justify-between">
+        <p className="label-neutro">Uso Diário</p>
+        <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
+      </div>
       <p className="text-sm text-foreground">Perfil de trabalho</p>
       <Segmentado
         opcoes={[

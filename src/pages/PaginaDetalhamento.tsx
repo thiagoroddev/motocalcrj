@@ -141,7 +141,6 @@ export function PaginaDetalhamento() {
         filtroAtivo={filtros.manutencao}
         filtroRevisao={filtros.revisao}
         filtrosPecas={filtros.manutencaoPorPeca}
-        kmAnual={kmAnual}
         expandido={!!expandido['manutencao']}
         onToggleAtivo={() => toggleFiltro('manutencao')}
         onToggleExpandido={() => toggleAcordeao('manutencao')}
