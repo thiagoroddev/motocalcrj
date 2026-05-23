@@ -79,8 +79,8 @@ export function PassoConfirmacao() {
         </SessaoResumo>
 
         <SessaoResumo titulo="Seguro" aoEditar={() => editarPasso('7')}>
-          <LinhaResumo label="Seguro" valor={financeiro.seguro.tem ? 'Sim' : 'Não'} />
-          {financeiro.seguro.tem && (
+          <LinhaResumo label="Seguro" valor={financeiro.seguro.valorAnual > 0 ? 'Sim' : 'Não'} />
+          {financeiro.seguro.valorAnual > 0 && (
             <LinhaResumo
               label="Valor"
               valor={`R$ ${financeiro.seguro.valorAnual.toFixed(2)}/${financeiro.seguro.periodicidade === 'mensal' ? 'mês' : 'ano'}`}

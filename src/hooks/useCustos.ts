@@ -23,6 +23,6 @@ export function useCustos(): ResultadoCalculo | null {
     if (!preset) {
       return null;
     }
-    return calcularResultado(perfil, preset, dadosRJ, perfil.configuracaoDisplay.modoExibicao);
+    return calcularResultado(perfil, preset, dadosRJ);
   }, [perfil]);
 }

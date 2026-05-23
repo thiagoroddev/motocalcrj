@@ -1,4 +1,4 @@
-import type { ModoExibicao, ModoRevisao } from './perfil';
+import type { ModoRevisao } from './perfil';
 
 // ──────────────────────────────────────────────
 // Tipos do preset (pop110i.json e futuros)
@@ -53,18 +53,6 @@ export interface DadosRJ {
   licenciamento: {
     tabela: Record<string, number>;
   };
-}
-
-// ──────────────────────────────────────────────
-// Registro genérico de manutenção
-// Adaptado dos tipos específicos de HistoricoManutencao
-// ──────────────────────────────────────────────
-
-export interface RegistroManutencao {
-  pecaId: string;
-  kmNaTroca: number;
-  kmDesdeAnterior: number;
-  preco: number;
 }
 
 // ──────────────────────────────────────────────
@@ -150,5 +138,4 @@ export interface ResultadoCalculo {
   granularidadesMoto: GranularidadesCusto;
   kmAnual: number;
   diasAno: number;
-  modoAtivo: ModoExibicao;
 }

@@ -28,10 +28,10 @@ function App() {
                   <Route path="/estimativa" element={<PaginaEstimativa />} />
                   <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
                   <Route path="/vida-util" element={<PaginaVidaUtil />} />
+                  <Route path="/ajustes" element={<PaginaAjustes />} />
                 </Route>
-                {/* Rotas sem layout da moto (header próprio) */}
+                {/* Subpáginas com CabecalhoVoltar (header próprio com botão voltar) */}
                 <Route path="/perfil" element={<PaginaPerfil />} />
-                <Route path="/ajustes" element={<PaginaAjustes />} />
                 <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
               </Route>
 

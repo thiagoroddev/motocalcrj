@@ -1,8 +1,5 @@
 import type {
   PerfilUsuario,
-  DiarioEntry,
-  HistoricoManutencao,
-  ModoExibicao,
   PerfilUso,
   PerfilPecas,
   ModoRevisao,
@@ -16,7 +13,6 @@ import type {
 import type {
   PresetMoto,
   DadosRJ,
-  RegistroManutencao,
   GranularidadesCusto,
   CustoPeca,
   CustosPorCategoria,
@@ -24,39 +20,10 @@ import type {
   ResultadoCalculo,
 } from '../types/calculos';
 
-// ─── Helpers internos ────────────────────────────────────────────
-
-function media(arr: number[]): number {
-  if (arr.length === 0) {
-    return 0;
-  }
-  return arr.reduce((a, b) => a + b, 0) / arr.length;
-}
-
-// Retorna a data da segunda-feira da semana ISO do registro (chave de agrupamento)
-function semanaISODe(dataStr: string): string {
-  const d = new Date(dataStr + 'T12:00:00Z');
-  const diaSemana = d.getUTCDay() || 7; // 1=seg ... 7=dom
-  const seg = new Date(d);
-  seg.setUTCDate(d.getUTCDate() - diaSemana + 1);
-  return seg.toISOString().slice(0, 10);
-}
-
 // ─── I. Rodagem ──────────────────────────────────────────────────
 
-export function resolverKmDia(
-  kmPorDia: number,
-  diarioTrabalho: DiarioEntry[],
-  modoExibicao: ModoExibicao,
-): number {
-  if (modoExibicao === 'personalizado' && diarioTrabalho.length >= 1) {
-    return media(diarioTrabalho.map((r) => r.kmPercorridos));
-  }
+export function resolverKmDia(kmPorDia: number): number {
   return kmPorDia;
-}
-
-export function calcularKmMensal(kmDia: number, diasSemana: number): number {
-  return kmDia * diasSemana * 4.33;
 }
 
 // Canônico: nunca derivar de kmMensal × 12
@@ -67,48 +34,6 @@ export function calcularKmAnual(kmDia: number, diasSemana: number): number {
 // Dias trabalhados no ano — não usar 365
 export function calcularDiasAno(diasSemana: number): number {
   return diasSemana * 52;
-}
-
-/**
- * Calcula kmMensal a partir de semanas completas (≥ 2 dias registrados).
- * Retorna null se houver menos de 2 semanas representativas — fallback para média diária.
- */
-export function calcularKmMensalPorSemanas(diario: DiarioEntry[]): number | null {
-  const porSemana = new Map<string, { dias: number; totalKm: number }>();
-
-  for (const entrada of diario) {
-    const chave = semanaISODe(entrada.data);
-    const atual = porSemana.get(chave) ?? { dias: 0, totalKm: 0 };
-    porSemana.set(chave, { dias: atual.dias + 1, totalKm: atual.totalKm + entrada.kmPercorridos });
-  }
-
-  const semanasCompletas = Array.from(porSemana.values())
-    .filter((s) => s.dias >= 2)
-    .map((s) => s.totalKm);
-
-  if (semanasCompletas.length < 2) {
-    return null;
-  }
-  return media(semanasCompletas) * 4.33;
-}
-
-export function agruparRegistrosPorSemana(
-  diario: DiarioEntry[],
-): Array<{ semanaISO: string; diasRegistrados: number; totalKm: number }> {
-  const porSemana = new Map<string, { diasRegistrados: number; totalKm: number }>();
-
-  for (const entrada of diario) {
-    const chave = semanaISODe(entrada.data);
-    const atual = porSemana.get(chave) ?? { diasRegistrados: 0, totalKm: 0 };
-    porSemana.set(chave, {
-      diasRegistrados: atual.diasRegistrados + 1,
-      totalKm: atual.totalKm + entrada.kmPercorridos,
-    });
-  }
-
-  return Array.from(porSemana.entries())
-    .filter(([, v]) => v.diasRegistrados >= 2)
-    .map(([semanaISO, v]) => ({ semanaISO, ...v }));
 }
 
 // ─── II. Consumo de Combustível ──────────────────────────────────
@@ -123,28 +48,16 @@ export function calcularCpkCombustivel(precoGasolina: number, consumoKmL: number
 
 // ─── III. CPK por Peça ────────────────────────────────────────────
 
-export function calcularCpkPeca(preco: number, intervaloKm: number): number {
-  return preco / intervaloKm;
-}
-
 export function resolverIntervaloPeca(
   pecaId: string,
   preset: PresetMoto,
   tipoUso: PerfilUso,
-  registros: RegistroManutencao[],
-  modoExibicao: ModoExibicao,
   pecasOverrides: PecaOverride[] = [],
   servicosIndependentes: ServicoIndependente[] = [],
 ): number {
-  if (modoExibicao === 'personalizado') {
-    const override = pecasOverrides.find((o) => o.id === pecaId);
-    if (override?.intervaloKmEditado != null) {
-      return override.intervaloKmEditado;
-    }
-    const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
-    if (registrosPeca.length >= 1) {
-      return media(registrosPeca.map((r) => r.kmDesdeAnterior));
-    }
+  const override = pecasOverrides.find((o) => o.id === pecaId);
+  if (override?.intervaloKmEditado != null) {
+    return override.intervaloKmEditado;
   }
 
   // ServicoIndependente ativo com mesmo id é a fonte canônica do intervalo (ADR-004)
@@ -170,23 +83,13 @@ export function resolverPrecoPeca(
   pecaId: string,
   preset: PresetMoto,
   perfilPecas: PerfilPecas,
-  registros: RegistroManutencao[],
-  modoExibicao: ModoExibicao,
   pecasOverrides: PecaOverride[] = [],
 ): number {
   const override = pecasOverrides.find((o) => o.id === pecaId);
-
-  if (modoExibicao === 'personalizado') {
-    const precoEditadoEfetivo = perfilPecas === 'original'
-      ? override?.precoEditadoOriginal
-      : override?.precoEditadaParalela;
-    if (precoEditadoEfetivo != null) {
-      return precoEditadoEfetivo;
-    }
-    const registrosPeca = registros.filter((r) => r.pecaId === pecaId);
-    if (registrosPeca.length >= 1) {
-      return media(registrosPeca.map((r) => r.preco));
-    }
+  const precoEditadoEfetivo =
+    perfilPecas === 'original' ? override?.precoEditadoOriginal : override?.precoEditadaParalela;
+  if (precoEditadoEfetivo != null) {
+    return precoEditadoEfetivo;
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -247,9 +150,7 @@ export function calcularCicloPeca(
 
   const fimDaJanela = kmAtual + kmAnual;
   const trocasNoAno =
-    proximaTrocaKm > fimDaJanela
-      ? 0
-      : Math.floor((fimDaJanela - proximaTrocaKm) / intervalo) + 1;
+    proximaTrocaKm > fimDaJanela ? 0 : Math.floor((fimDaJanela - proximaTrocaKm) / intervalo) + 1;
 
   return { proximaTrocaKm, trocasNoAno };
 }
@@ -258,8 +159,6 @@ export interface OpcoesCpkPorPeca {
   preset: PresetMoto;
   tipoUso: PerfilUso;
   perfilPecas: PerfilPecas;
-  registros: RegistroManutencao[];
-  modoExibicao: ModoExibicao;
   modoRevisao: ModoRevisao;
   kmAtual: number;
   kmAnual: number;
@@ -273,8 +172,6 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     preset,
     tipoUso,
     perfilPecas,
-    registros,
-    modoExibicao,
     modoRevisao,
     kmAtual,
     kmAnual,
@@ -305,19 +202,10 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
       id,
       preset,
       tipoUso,
-      registros,
-      modoExibicao,
       pecasOverrides,
       servicosIndependentes,
     );
-    const preco = resolverPrecoPeca(
-      id,
-      preset,
-      perfilPecas,
-      registros,
-      modoExibicao,
-      pecasOverrides,
-    );
+    const preco = resolverPrecoPeca(id, preset, perfilPecas, pecasOverrides);
 
     // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
     const chaveKmUltimaTroca = MAPA_PECA_PARA_KM_ULTIMA_TROCA[id];
@@ -333,13 +221,10 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     const cpk = kmAnual > 0 ? custoAnual / kmAnual : 0;
 
     const override = pecasOverrides.find((o) => o.id === id);
-    const registrosPeca = registros.filter((r) => r.pecaId === id);
     const usouOverride =
-      modoExibicao === 'personalizado' &&
-      (override?.intervaloKmEditado != null ||
-        override?.precoEditadoOriginal != null ||
-        override?.precoEditadaParalela != null ||
-        registrosPeca.length >= 1);
+      override?.intervaloKmEditado != null ||
+      override?.precoEditadoOriginal != null ||
+      override?.precoEditadaParalela != null;
     const fonte: 'preset' | 'registro' = usouOverride ? 'registro' : 'preset';
 
     resultado.set(id, {
@@ -408,26 +293,6 @@ export function calcularCustoRevisaoAnual(
     .reduce((sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual, 0);
 }
 
-export function calcularKmParaProximaRevisao(
-  kmAtual: number,
-  kmUltimaRevisao: number,
-  frequenciaRevisaoKm: number,
-): number {
-  return frequenciaRevisaoKm - (kmAtual - kmUltimaRevisao);
-}
-
-export function calcularDiasParaProximaRevisao(
-  kmParaProxima: number,
-  kmDia: number,
-  diasSemana: number,
-): number {
-  const kmDiaMedio = (kmDia * diasSemana) / 7;
-  if (kmDiaMedio <= 0) {
-    return 0;
-  }
-  return Math.ceil(kmParaProxima / kmDiaMedio);
-}
-
 // ─── VI. Custos Operacionais ──────────────────────────────────────
 
 export function calcularCustoCombustivelAnual(cpkCombustivel: number, kmAnual: number): number {
@@ -442,8 +307,8 @@ export function calcularCustoInternetAnual(temInternet: boolean, precoInternet: 
   return temInternet ? precoInternet * 12 : 0;
 }
 
-export function calcularCustoSeguroAnual(tem: boolean, valorAnual: number): number {
-  return tem ? valorAnual : 0;
+export function calcularCustoSeguroAnual(valorAnual: number): number {
+  return valorAnual > 0 ? valorAnual : 0;
 }
 
 export function calcularCustoAlimentacaoAnual(precoAlimentacao: number, diasAno: number): number {
@@ -485,12 +350,10 @@ export function calcularCustosPorCategoria(
   perfil: PerfilUsuario,
   preset: PresetMoto,
   dadosRJ: DadosRJ,
-  registrosManutencao: RegistroManutencao[],
-  modoExibicao: ModoExibicao,
 ): CustosPorCategoria {
   const anoAtual = new Date().getFullYear();
 
-  const kmDia = resolverKmDia(perfil.trabalho.kmPorDia, perfil.diarioTrabalho, modoExibicao);
+  const kmDia = resolverKmDia(perfil.trabalho.kmPorDia);
   const diasSemana = perfil.trabalho.diasPorSemana;
   const kmAnual = calcularKmAnual(kmDia, diasSemana);
   const diasAno = calcularDiasAno(diasSemana);
@@ -515,8 +378,6 @@ export function calcularCustosPorCategoria(
     preset,
     tipoUso: perfil.moto.perfilUso,
     perfilPecas: perfil.perfilManutencao.perfilPecasGlobal,
-    registros: registrosManutencao,
-    modoExibicao,
     modoRevisao: perfil.perfilManutencao.modoRevisao,
     kmAtual: perfil.moto.kmAtual,
     kmAnual,
@@ -575,8 +436,8 @@ export function calcularCustosPorCategoria(
       ativo: internet > 0,
     },
     seguro: {
-      total: calcularCustoSeguroAnual(seguro.tem, seguro.valorAnual) * fatorSeg,
-      ativo: seguro.tem,
+      total: calcularCustoSeguroAnual(seguro.valorAnual) * fatorSeg,
+      ativo: seguro.valorAnual > 0,
     },
     alimentacao: {
       total: calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno),
@@ -689,85 +550,6 @@ export function calcularCustoMotoAnual(
   return custoTotalAnual - custoAlimentacaoAnual;
 }
 
-// ─── VIII. Modo Personalizado ────────────────────────────────────
-
-export function calcularMediaRegistros<T extends object>(registros: T[], campo: keyof T): number {
-  if (registros.length === 0) {
-    return 0;
-  }
-  return media(registros.map((r) => Number(r[campo])));
-}
-
-export function calcularIntervalMedioReal(
-  registros: RegistroManutencao[],
-  pecaId: string,
-): number | null {
-  const filtrados = registros.filter((r) => r.pecaId === pecaId);
-  if (filtrados.length === 0) {
-    return null;
-  }
-  return media(filtrados.map((r) => r.kmDesdeAnterior));
-}
-
-export function temDadoSuficiente(
-  tipo: 'rodagem' | 'manutencao',
-  diarioTrabalho: DiarioEntry[],
-  registrosManutencao: RegistroManutencao[],
-  pecaId?: string,
-): boolean {
-  if (tipo === 'rodagem') {
-    return diarioTrabalho.length >= 1;
-  }
-  return registrosManutencao.filter((r) => r.pecaId === pecaId).length >= 1;
-}
-
-// ─── Adapter: HistoricoManutencao → RegistroManutencao[] ─────────
-
-export function adaptarHistoricoParaRegistros(
-  historico: HistoricoManutencao,
-): RegistroManutencao[] {
-  const registros: RegistroManutencao[] = [];
-
-  // Trocas de óleo → oleo_motor
-  const oleos = [...historico.trocasOleo].sort((a, b) => a.km - b.km);
-  oleos.forEach((r, i) => {
-    registros.push({
-      pecaId: 'oleo_motor',
-      kmNaTroca: r.km,
-      kmDesdeAnterior: i === 0 ? r.km : r.km - oleos[i - 1].km,
-      preco: r.valorTotal,
-    });
-  });
-
-  // Trocas de pneu → pneu_dianteiro / pneu_traseiro (por posição separado)
-  const pneus = [...historico.trocasPneu].sort((a, b) => a.km - b.km);
-  const ultimoKmPneu: Record<string, number> = {};
-  pneus.forEach((r) => {
-    const pecaId = r.posicao === 'dianteiro' ? 'pneu_dianteiro' : 'pneu_traseiro';
-    const anterior = ultimoKmPneu[pecaId] ?? 0;
-    registros.push({
-      pecaId,
-      kmNaTroca: r.km,
-      kmDesdeAnterior: anterior === 0 ? r.km : r.km - anterior,
-      preco: r.valorTotal,
-    });
-    ultimoKmPneu[pecaId] = r.km;
-  });
-
-  // Trocas de kit relação → kit_relacao
-  const kits = [...historico.trocasKitRelacao].sort((a, b) => a.km - b.km);
-  kits.forEach((r, i) => {
-    registros.push({
-      pecaId: 'kit_relacao',
-      kmNaTroca: r.km,
-      kmDesdeAnterior: i === 0 ? r.km : r.km - kits[i - 1].km,
-      preco: r.valorTotal,
-    });
-  });
-
-  return registros;
-}
-
 // ─── Mapeamento categoriasAtivas → FiltrosCategorias ────────────
 
 export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias {
@@ -791,22 +573,13 @@ export function calcularResultado(
   perfil: PerfilUsuario,
   preset: PresetMoto,
   dadosRJ: DadosRJ,
-  modoExibicao: ModoExibicao,
 ): ResultadoCalculo {
-  const registrosManutencao = adaptarHistoricoParaRegistros(perfil.historicoManutencao);
-
-  const kmDia = resolverKmDia(perfil.trabalho.kmPorDia, perfil.diarioTrabalho, modoExibicao);
+  const kmDia = resolverKmDia(perfil.trabalho.kmPorDia);
   const diasSemana = perfil.trabalho.diasPorSemana;
   const kmAnual = calcularKmAnual(kmDia, diasSemana);
   const diasAno = calcularDiasAno(diasSemana);
 
-  const custos = calcularCustosPorCategoria(
-    perfil,
-    preset,
-    dadosRJ,
-    registrosManutencao,
-    modoExibicao,
-  );
+  const custos = calcularCustosPorCategoria(perfil, preset, dadosRJ);
 
   const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
 
@@ -819,6 +592,5 @@ export function calcularResultado(
     granularidadesMoto: calcularGranularidades(totalMoto, diasAno, kmAnual),
     kmAnual,
     diasAno,
-    modoAtivo: modoExibicao,
   };
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { usePerfil } from '../hooks/usePerfil';
+import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { NavBar } from '../components/layout/NavBar';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
@@ -39,16 +40,7 @@ export function PaginaPerfil() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center justify-between px-md py-3 bg-card border-b border-muted flex-shrink-0">
-        <h1 className="text-foreground text-base font-semibold">Perfil</h1>
-        <button
-          type="button"
-          aria-label="Ajuda"
-          className="w-7 h-7 rounded-full border border-muted-foreground/30 flex items-center justify-center text-muted-foreground text-sm font-medium"
-        >
-          ?
-        </button>
-      </header>
+      <CabecalhoVoltar titulo="Perfil" />
 
       <main className="flex-1 overflow-y-auto pb-20 p-md flex flex-col gap-md">
         {/* Predefinição Atual */}

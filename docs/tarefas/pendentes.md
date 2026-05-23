@@ -7,16 +7,7 @@ Obedeça essa ordem:
 
 ### Tarefas Prioritárias
 
-## TASK-REF-15 — Substituir header duplicado de PaginaAjustes por CabecalhoVoltar
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:** Identificado em revisão de TASK-BG-001. PaginaAjustes implementa seu próprio header (linhas 125–145) com SVG inline do ícone de voltar, duplicando exatamente o que `CabecalhoVoltar` em `src/components/CabecalhoVoltar.tsx` já oferece. Manutenção dobrada e risco de divergência visual futura quando CabecalhoVoltar for atualizado.
+> **TASK-REF-15** concluída em 23/05/26 — ver `docs/tarefas/concluidas/` (escopo reformulado: PaginaAjustes movida para dentro do LayoutApp; CabecalhoVoltar promovido a barra superior e usado também em PaginaPerfil).
 
 ---
 
@@ -56,49 +47,13 @@ Obedeça essa ordem:
 
 > **TASK-REF-17** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-REF-18 — Remover modoExibicao, toggle "Estimativa sobre dados" e aba Registros
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-003, ADR-006
-- **Observações:** A ADR-003 removeu Registros e o toggle de modo de cálculo, mas o mecanismo permaneceu e a TASK-REF-14 reexpôs o toggle "Estimativa sobre dados" (predefinidos/personalizado) em `SecaoPreferencias.tsx` — violando a ADR-003. Sem Registros, `modoExibicao === 'personalizado'` nunca tem dados (código morto). **Escopo:** (1) remover o 2º `Segmentado` ("Estimativa sobre dados") de `src/components/ajustes/SecaoPreferencias.tsx`; (2) remover `configuracaoDisplay.modoExibicao` + action `SET_MODO_EXIBICAO` + toda a ramificação `modoExibicao` de `calculos.ts` (`resolverKmDia`, `resolverIntervaloPeca`, `resolverPrecoPeca`, `calcularCpkPorPeca` — app passa a ter modo único baseado em preset); (3) excluir `src/pages/PaginaRegistros.tsx` (já sem rota em `App.tsx`); (4) avaliar remoção de `diarioTrabalho`/`historicoManutencao` e do adapter `adaptarHistoricoParaRegistros`, que só serviam ao modo personalizado. **Cuidado:** várias actions do reducer setam `modoExibicao: 'personalizado'` — mapear todas. Ação destrutiva (exclusão de arquivo) — confirmar antes. Modifica `calculos.ts` — autorizada pela ADR-006. Ajustar testes existentes em `calculos.test.ts`.
+> **TASK-REF-18** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-REF-19 — Excluir campos mortos legados do modelo
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:** Campos do modelo não lidos por nenhuma UI nem pelo cálculo (confirmado na revisão de 20/05/26): (1) `configuracaoDisplay.modoOficinDisplay` + action `SET_MODO_OFICINA` — nunca despachada, nunca lida; a modelagem (`docs/dominio/modelagem/bloco-configuracao-display.md`) já marca como "redundância pendente"; (2) `perfilManutencao.precoMaoDeObraIndependente` e `perfilManutencao.frequenciaRevisaoKm` — aposentados pela ADR-004/TASK-REF-12, mantidos "por compat" mas sem uso real (`frequenciaRevisaoKm` só aparece em `calcularKmParaProximaRevisao`, função tampouco usada por UI). **Escopo:** remover os 3 campos de `PerfilUsuario` (`src/types/perfil.ts`), de `perfilPadrao` (`PerfilContext.tsx`), do reducer (case `SET_MODO_OFICINA` + tipo da action), das fixtures (`src/fixtures/usuario_teste.json`) e da função `migrarPerfil`. Bump de `schemaVersion` + migração que remove os campos de perfis salvos. Inclui testes do reducer/migração.
+> **TASK-REF-19** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-BG-004 — RESETAR_AJUSTES_PADRAO deve zerar valores, não assumir custos
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-005
-- **Observações:** Hoje `RESETAR_AJUSTES_PADRAO` (`PerfilContext.tsx`, ~linha 649) volta a valores COM custo embutido: `alimentacaoDia: 20`, `seguro.valorAnual: 929.96`. Pela ADR-005, o reset deve ZERAR — o app nunca presume gastos. **Escopo:** ajustar o case para zerar `internet`, `alimentacaoDia`, `seguro` (valorAnual 0) e esvaziar `gastosCustom`. Decidir o tratamento de `kmPorDia`/`diasPorSemana` (são uso, não custo — provavelmente manter um padrão de uso e não zerar, pois 0 km/dia quebra divisões no cálculo). Revisar o texto do `Dialog` de confirmação em `PaginaAjustes.tsx` para refletir o novo comportamento. Inclui testes do reducer.
+> **TASK-BG-004** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-REF-21 — Unificar booleanos de presença de custo (seguro.tem)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** TASK-REF-18
-- **REQ/ADR/DT:** ADR-005
-- **Observações:** Pela ADR-005, um custo está presente sse `valor > 0`. O booleano `seguro.tem` (em `SeguroConfig`) duplica essa noção e hoje só pode ser ligado no onboarding (`Passo7.tsx`) — `SecaoFinanceiro` não tem como ligá-lo, então editar o valor do seguro em Ajustes não tem efeito se `tem === false` (achado B-1 da revisão de 20/05/26). **Escopo:** remover `seguro.tem`; `calcularCustoSeguroAnual` passa a depender só de `valorAnual > 0`; ajustar `SeguroConfig`, reducer, `Passo7.tsx`, `PassoConfirmacao.tsx`, `calculos.ts` e o `categoriasAtivas.seguro` derivado. Excluir `src/components/ajustes/CampoSwitch.tsx` — criado por REF-14 mas nunca usado (código morto); pela ADR-005 não há switch em Ajustes. Bump de schema + migração. Inclui testes.
+> **TASK-REF-21** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
 ## TASK-RF-6.8 — Cards de revisão Honda exibem peças substituídas e serviços executados
 - **Status:** Pendente

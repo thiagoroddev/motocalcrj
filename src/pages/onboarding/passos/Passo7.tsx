@@ -11,7 +11,7 @@ export function Passo7() {
   const { irParaProximo } = useOnboarding();
 
   const seg = perfil.financeiro.seguro;
-  const [tem, setTem] = useState(seg.tem);
+  const [tem, setTem] = useState(seg.valorAnual > 0);
   const [valorAnual, setValorAnual] = useState(String(seg.valorAnual));
   const [empresa, setEmpresa] = useState(seg.empresa ?? '');
   const [periodicidade, setPeriodicidade] = useState<PeriodicidadeSeguro>(seg.periodicidade);
@@ -23,8 +23,7 @@ export function Passo7() {
     dispatch({
       type: 'SET_SEGURO',
       config: {
-        tem,
-        valorAnual: tem ? (periodicidade === 'mensal' ? valorNum * 12 : valorNum) : seg.valorAnual,
+        valorAnual: tem ? (periodicidade === 'mensal' ? valorNum * 12 : valorNum) : 0,
         empresa: tem && empresa.trim() ? empresa.trim() : null,
         periodicidade,
       },

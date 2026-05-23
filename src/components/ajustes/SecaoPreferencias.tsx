@@ -1,21 +1,18 @@
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, ModoRevisao, ModoExibicao } from '../../types/perfil';
+import type { PerfilUsuario, PerfilAction, ModoRevisao } from '../../types/perfil';
 import { Segmentado } from '../Segmentado';
 import { BotaoReset } from '../BotaoReset';
 
 interface Props {
   perfilManutencao: PerfilUsuario['perfilManutencao'];
-  modoExibicao: ModoExibicao;
   dispatch: Dispatch<PerfilAction>;
 }
 
-export function SecaoPreferencias({ perfilManutencao, modoExibicao, dispatch }: Props) {
-  const temAlteracao =
-    perfilManutencao.modoRevisao !== 'independentes' || modoExibicao !== 'predefinidos';
+export function SecaoPreferencias({ perfilManutencao, dispatch }: Props) {
+  const temAlteracao = perfilManutencao.modoRevisao !== 'independentes';
 
   function resetar() {
     dispatch({ type: 'SET_MODO_REVISAO', modo: 'independentes' });
-    dispatch({ type: 'SET_MODO_EXIBICAO', modo: 'predefinidos' });
   }
 
   return (
@@ -32,17 +29,6 @@ export function SecaoPreferencias({ perfilManutencao, modoExibicao, dispatch }: 
         ]}
         valor={perfilManutencao.modoRevisao}
         onChange={(v) => dispatch({ type: 'SET_MODO_REVISAO', modo: v as ModoRevisao })}
-      />
-      <p className="text-xs text-muted-foreground uppercase tracking-wider">
-        Estimativa sobre dados
-      </p>
-      <Segmentado
-        opcoes={[
-          { label: 'Predefinidos', valor: 'predefinidos' },
-          { label: '+ Registros', valor: 'personalizado' },
-        ]}
-        valor={modoExibicao}
-        onChange={(v) => dispatch({ type: 'SET_MODO_EXIBICAO', modo: v as ModoExibicao })}
       />
     </section>
   );

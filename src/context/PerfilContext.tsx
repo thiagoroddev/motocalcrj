@@ -86,7 +86,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 7,
+  schemaVersion: 10,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -106,8 +106,6 @@ export const perfilPadrao: PerfilUsuario = {
   perfilManutencao: {
     perfilPecasGlobal: 'original',
     modoRevisao: 'independentes',
-    precoMaoDeObraIndependente: 150,
-    frequenciaRevisaoKm: 6000,
   },
 
   trabalho: {
@@ -125,8 +123,7 @@ export const perfilPadrao: PerfilUsuario = {
     },
     internet: 0,
     seguro: {
-      tem: false,
-      valorAnual: 929.96,
+      valorAnual: 0,
       empresa: null,
       periodicidade: 'anual',
     },
@@ -145,8 +142,6 @@ export const perfilPadrao: PerfilUsuario = {
   },
 
   configuracaoDisplay: {
-    modoExibicao: 'predefinidos',
-    modoOficinDisplay: 'independentes',
     categoriasAtivas: {
       combustivel: true,
       alimentacao: true,
@@ -163,16 +158,6 @@ export const perfilPadrao: PerfilUsuario = {
   revisaoAutorizadaOverrides: [],
 
   fipeCache: null,
-
-  historicoManutencao: {
-    trocasOleo: [],
-    revisoes: [],
-    trocasPneu: [],
-    trocasKitRelacao: [],
-    abastecimentos: [],
-  },
-
-  diarioTrabalho: [],
 };
 
 // ──────────────────────────────────────────────
@@ -259,7 +244,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           categoriasAtivas: {
             ...state.perfil.configuracaoDisplay.categoriasAtivas,
             internet: financeiro.internet > 0,
-            seguro: financeiro.seguro.tem,
+            seguro: financeiro.seguro.valorAnual > 0,
             financiamento: financeiro.situacaoMoto !== 'quitada',
             alimentacao: financeiro.alimentacaoDia > 0,
           },
@@ -304,21 +289,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       });
 
     // ── Display ─────────────────────────────────
-    case 'SET_MODO_EXIBICAO':
-      return comPerfil({
-        ...state.perfil,
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: action.modo },
-      });
-
-    case 'SET_MODO_OFICINA':
-      return comPerfil({
-        ...state.perfil,
-        configuracaoDisplay: {
-          ...state.perfil.configuracaoDisplay,
-          modoOficinDisplay: action.modo,
-        },
-      });
-
     case 'TOGGLE_CATEGORIA':
       return comPerfil({
         ...state.perfil,
@@ -377,14 +347,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         : [...state.perfil.servicosIndependentes, action.payload];
       return comPerfil({ ...state.perfil, servicosIndependentes: novos });
     }
-
-    case 'TOGGLE_SERVICO_INDEPENDENTE':
-      return comPerfil({
-        ...state.perfil,
-        servicosIndependentes: state.perfil.servicosIndependentes.map((s) =>
-          s.id === action.payload.id ? { ...s, ativo: !s.ativo } : s,
-        ),
-      });
 
     case 'RESET_SERVICOS_INDEPENDENTES':
       return comPerfil({ ...state.perfil, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO });
@@ -491,140 +453,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
-    // ── Registros ────────────────────────────────
-    case 'ADD_TROCA_OLEO': {
-      const novo = { ...action.registro, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmAtual: Math.max(state.perfil.moto.kmAtual, novo.km) },
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasOleo: [...state.perfil.historicoManutencao.trocasOleo, novo],
-        },
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_TROCA_OLEO':
-      return comPerfil({
-        ...state.perfil,
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasOleo: state.perfil.historicoManutencao.trocasOleo.filter((r) => r.id !== action.id),
-        },
-      });
-
-    case 'ADD_REVISAO': {
-      const novo = { ...action.registro, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmAtual: Math.max(state.perfil.moto.kmAtual, novo.km) },
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          revisoes: [...state.perfil.historicoManutencao.revisoes, novo],
-        },
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_REVISAO':
-      return comPerfil({
-        ...state.perfil,
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          revisoes: state.perfil.historicoManutencao.revisoes.filter((r) => r.id !== action.id),
-        },
-      });
-
-    case 'ADD_TROCA_PNEU': {
-      const novo = { ...action.registro, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmAtual: Math.max(state.perfil.moto.kmAtual, novo.km) },
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasPneu: [...state.perfil.historicoManutencao.trocasPneu, novo],
-        },
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_TROCA_PNEU':
-      return comPerfil({
-        ...state.perfil,
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasPneu: state.perfil.historicoManutencao.trocasPneu.filter((r) => r.id !== action.id),
-        },
-      });
-
-    case 'ADD_TROCA_KIT_RELACAO': {
-      const novo = { ...action.registro, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmAtual: Math.max(state.perfil.moto.kmAtual, novo.km) },
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasKitRelacao: [...state.perfil.historicoManutencao.trocasKitRelacao, novo],
-        },
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_TROCA_KIT_RELACAO':
-      return comPerfil({
-        ...state.perfil,
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          trocasKitRelacao: state.perfil.historicoManutencao.trocasKitRelacao.filter(
-            (r) => r.id !== action.id,
-          ),
-        },
-      });
-
-    case 'ADD_ABASTECIMENTO': {
-      const novo = { ...action.registro, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmAtual: Math.max(state.perfil.moto.kmAtual, novo.km) },
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          abastecimentos: [...state.perfil.historicoManutencao.abastecimentos, novo],
-        },
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_ABASTECIMENTO':
-      return comPerfil({
-        ...state.perfil,
-        historicoManutencao: {
-          ...state.perfil.historicoManutencao,
-          abastecimentos: state.perfil.historicoManutencao.abastecimentos.filter(
-            (r) => r.id !== action.id,
-          ),
-        },
-      });
-
-    case 'ADD_DIA_TRABALHO': {
-      const novo = { ...action.entrada, id: crypto.randomUUID() };
-      return comPerfil({
-        ...state.perfil,
-        moto: {
-          ...state.perfil.moto,
-          kmAtual: Math.max(state.perfil.moto.kmAtual, novo.kmFinal),
-        },
-        diarioTrabalho: [...state.perfil.diarioTrabalho, novo],
-        configuracaoDisplay: { ...state.perfil.configuracaoDisplay, modoExibicao: 'personalizado' },
-      });
-    }
-
-    case 'DELETE_DIA_TRABALHO':
-      return comPerfil({
-        ...state.perfil,
-        diarioTrabalho: state.perfil.diarioTrabalho.filter((d) => d.id !== action.id),
-      });
-
     // ── FIPE ────────────────────────────────────
     case 'SET_FIPE_CACHE':
       return comPerfil({ ...state.perfil, fipeCache: action.cache });
@@ -727,6 +555,9 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       });
 
     case 'RESETAR_AJUSTES_PADRAO':
+      // ADR-005: o reset ZERA os custos; o app não presume gastos.
+      // Uso (kmPorDia, diasPorSemana) e modo de revisão voltam ao padrão por serem
+      // parâmetros de cálculo, não gastos — zerar km/dia quebraria divisões.
       return comPerfil({
         ...state.perfil,
         trabalho: { ...state.perfil.trabalho, kmPorDia: 70, diasPorSemana: 5 },
@@ -734,13 +565,14 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         financeiro: {
           ...state.perfil.financeiro,
           internet: 0,
-          alimentacaoDia: 20,
-          seguro: { tem: false, valorAnual: 929.96, empresa: null, periodicidade: 'anual' },
+          alimentacaoDia: 0,
+          seguro: { valorAnual: 0, empresa: null, periodicidade: 'anual' },
           situacaoMoto: 'quitada',
           parcelaMensal: null,
           parcelasRestantes: null,
           aluguelMensal: null,
           aluguelPeriodicidade: null,
+          gastosCustom: [],
         },
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
@@ -748,6 +580,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
             ...state.perfil.configuracaoDisplay.categoriasAtivas,
             internet: false,
             seguro: false,
+            alimentacao: false,
             financiamento: false,
           },
         },
@@ -816,13 +649,14 @@ interface PerfilProviderProps {
   storage?: IPerfilStorage;
 }
 
-function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
+export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let dados = perfil as any;
 
   if (dados.schemaVersion < 6) {
     // v5 → v6: descarta servicosMaoDeObra (orphan), inicializa servicosIndependentes
-    const { servicosMaoDeObra: _descartado, ...resto } = dados;
+    const resto = { ...dados };
+    delete resto.servicosMaoDeObra;
     dados = { ...resto, schemaVersion: 6, servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO };
   }
 
@@ -841,6 +675,49 @@ function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
         },
         kmMotorRefeito: null,
       },
+    };
+  }
+
+  if (dados.schemaVersion === 7) {
+    // v7 → v8: remove configuracaoDisplay.modoExibicao (ADR-003 / REF-18)
+    const configDisplaySemModo = { ...(dados.configuracaoDisplay ?? {}) };
+    delete configDisplaySemModo.modoExibicao;
+    dados = { ...dados, schemaVersion: 8, configuracaoDisplay: configDisplaySemModo };
+  }
+
+  if (dados.schemaVersion === 8) {
+    // v8 → v9: remove campos mortos consolidados pela REF-19 (ADR-003 / ADR-006)
+    // - configuracaoDisplay.modoOficinDisplay (nunca lido)
+    // - perfilManutencao.precoMaoDeObraIndependente, .frequenciaRevisaoKm (aposentados por ADR-004)
+    // - historicoManutencao, diarioTrabalho (Registros adiados por ADR-003)
+    const novoConfigDisplay = { ...(dados.configuracaoDisplay ?? {}) };
+    delete novoConfigDisplay.modoOficinDisplay;
+    const novoPerfilManutencao = { ...(dados.perfilManutencao ?? {}) };
+    delete novoPerfilManutencao.precoMaoDeObraIndependente;
+    delete novoPerfilManutencao.frequenciaRevisaoKm;
+    const novoPerfil = { ...dados, schemaVersion: 9 };
+    delete novoPerfil.historicoManutencao;
+    delete novoPerfil.diarioTrabalho;
+    novoPerfil.configuracaoDisplay = novoConfigDisplay;
+    novoPerfil.perfilManutencao = novoPerfilManutencao;
+    dados = novoPerfil;
+  }
+
+  if (dados.schemaVersion === 9) {
+    // v9 → v10: remove seguro.tem (ADR-005 / REF-21).
+    // Custo de seguro passa a ser derivado de valorAnual > 0.
+    // Preserva a intenção do usuário: se tem===false, força valorAnual: 0
+    // antes de deletar tem (perfis com tem=false mantinham valorAnual antigo
+    // "esquecido"; pós-migração ingênua passariam a contar seguro).
+    const novoSeguro = { ...(dados.financeiro?.seguro ?? {}) };
+    if (novoSeguro.tem === false) {
+      novoSeguro.valorAnual = 0;
+    }
+    delete novoSeguro.tem;
+    dados = {
+      ...dados,
+      schemaVersion: 10,
+      financeiro: { ...dados.financeiro, seguro: novoSeguro },
     };
   }
 

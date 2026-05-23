@@ -1,14 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
   resolverKmDia,
-  calcularKmMensal,
   calcularKmAnual,
   calcularDiasAno,
-  calcularKmMensalPorSemanas,
-  agruparRegistrosPorSemana,
   resolverConsumoEfetivo,
   calcularCpkCombustivel,
-  calcularCpkPeca,
   resolverIntervaloPeca,
   resolverPrecoPeca,
   calcularCpkPorPeca,
@@ -17,8 +13,6 @@ import {
   calcularIPVA,
   calcularLicenciamento,
   calcularCustoRevisaoAnual,
-  calcularKmParaProximaRevisao,
-  calcularDiasParaProximaRevisao,
   calcularCustoInternetAnual,
   calcularCustoSeguroAnual,
   calcularCustoAlimentacaoAnual,
@@ -27,19 +21,9 @@ import {
   calcularBreakdownPercentual,
   calcularCustoMotoAnual,
   calcularCustosPorCategoria,
-  calcularMediaRegistros,
-  calcularIntervalMedioReal,
-  temDadoSuficiente,
-  adaptarHistoricoParaRegistros,
 } from './calculos';
-import type {
-  PresetMoto,
-  RegistroManutencao,
-  CustosPorCategoria,
-  FiltrosCategorias,
-  DadosRJ,
-} from '../types/calculos';
-import type { DiarioEntry, HistoricoManutencao, ServicoIndependente } from '../types/perfil';
+import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from '../types/calculos';
+import type { PecaOverride, ServicoIndependente } from '../types/perfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import pop110i from '../presets/pop110i.json';
 
@@ -87,49 +71,63 @@ const presetMock: PresetMoto = {
     },
   ],
   revisaoAutorizada: [
-    { intervaloKm: 1000, intervaloMeses: 6, precoPecas: 105.94, precoMaoDeObra: 0, precoTotal: 105.94 },
-    { intervaloKm: 6000, intervaloMeses: 12, precoPecas: 248.06, precoMaoDeObra: 0, precoTotal: 248.06 },
-    { intervaloKm: 12000, intervaloMeses: 18, precoPecas: 352.29, precoMaoDeObra: 216.0, precoTotal: 568.29 },
-    { intervaloKm: 18000, intervaloMeses: 24, precoPecas: 402.7, precoMaoDeObra: 104.0, precoTotal: 506.7 },
-    { intervaloKm: 24000, intervaloMeses: 30, precoPecas: 449.76, precoMaoDeObra: 288.0, precoTotal: 737.76 },
-    { intervaloKm: 30000, intervaloMeses: 36, precoPecas: 247.67, precoMaoDeObra: 40.0, precoTotal: 287.67 },
-    { intervaloKm: 36000, intervaloMeses: 42, precoPecas: 600.2, precoMaoDeObra: 280.0, precoTotal: 880.2 },
+    {
+      intervaloKm: 1000,
+      intervaloMeses: 6,
+      precoPecas: 105.94,
+      precoMaoDeObra: 0,
+      precoTotal: 105.94,
+    },
+    {
+      intervaloKm: 6000,
+      intervaloMeses: 12,
+      precoPecas: 248.06,
+      precoMaoDeObra: 0,
+      precoTotal: 248.06,
+    },
+    {
+      intervaloKm: 12000,
+      intervaloMeses: 18,
+      precoPecas: 352.29,
+      precoMaoDeObra: 216.0,
+      precoTotal: 568.29,
+    },
+    {
+      intervaloKm: 18000,
+      intervaloMeses: 24,
+      precoPecas: 402.7,
+      precoMaoDeObra: 104.0,
+      precoTotal: 506.7,
+    },
+    {
+      intervaloKm: 24000,
+      intervaloMeses: 30,
+      precoPecas: 449.76,
+      precoMaoDeObra: 288.0,
+      precoTotal: 737.76,
+    },
+    {
+      intervaloKm: 30000,
+      intervaloMeses: 36,
+      precoPecas: 247.67,
+      precoMaoDeObra: 40.0,
+      precoTotal: 287.67,
+    },
+    {
+      intervaloKm: 36000,
+      intervaloMeses: 42,
+      precoPecas: 600.2,
+      precoMaoDeObra: 280.0,
+      precoTotal: 880.2,
+    },
   ],
 };
-
-function makeDiario(kms: number[], dataBase = '2026-01-06'): DiarioEntry[] {
-  return kms.map((km, i) => ({
-    id: String(i),
-    data: new Date(new Date(dataBase + 'T12:00:00Z').getTime() + i * 86_400_000)
-      .toISOString()
-      .slice(0, 10),
-    kmInicial: 0,
-    kmFinal: km,
-    kmPercorridos: km,
-    comeu: false,
-    abasteceu: false,
-    litros: null,
-    precoLitro: null,
-  }));
-}
 
 // ─── I. Rodagem ──────────────────────────────────────────────────
 
 describe('resolverKmDia', () => {
-  it('usa perfil no modo predefinidos (sem registros)', () => {
-    expect(resolverKmDia(80, [], 'predefinidos')).toBe(80);
-  });
-
-  it('usa perfil no modo predefinidos mesmo com registros', () => {
-    expect(resolverKmDia(80, makeDiario([100, 120]), 'predefinidos')).toBe(80);
-  });
-
-  it('usa média do diário no modo personalizado com registros', () => {
-    expect(resolverKmDia(80, makeDiario([100, 120]), 'personalizado')).toBe(110);
-  });
-
-  it('cai no perfil quando personalizado mas diário vazio', () => {
-    expect(resolverKmDia(80, [], 'personalizado')).toBe(80);
+  it('retorna sempre o kmPorDia do perfil (modo único após ADR-003)', () => {
+    expect(resolverKmDia(80)).toBe(80);
   });
 });
 
@@ -137,54 +135,12 @@ describe('calcularKmAnual', () => {
   it('usa multiplicação direta por 52 (canônico)', () => {
     expect(calcularKmAnual(80, 6)).toBe(80 * 6 * 52); // 24960
   });
-
-  it('resultado difere de kmMensal × 12 (validação anti-bug)', () => {
-    const kmAnual = calcularKmAnual(80, 6);
-    const viaMensal = calcularKmMensal(80, 6) * 12;
-    // 4.33 não é exato, então os dois caminhos divergem
-    expect(kmAnual).not.toBeCloseTo(viaMensal, 0);
-  });
 });
 
 describe('calcularDiasAno', () => {
   it('é diasSemana × 52 (dias trabalhados, não 365)', () => {
     expect(calcularDiasAno(6)).toBe(312);
     expect(calcularDiasAno(5)).toBe(260);
-  });
-});
-
-describe('calcularKmMensalPorSemanas', () => {
-  it('retorna null com menos de 2 semanas completas', () => {
-    expect(calcularKmMensalPorSemanas(makeDiario([100, 120]))).toBeNull();
-  });
-
-  it('retorna média semanal × 4.33 com 2 semanas', () => {
-    // Semana 1: 06/01 + 07/01 (terça + quarta) = 140 km
-    // Semana 2: 13/01 + 14/01 (terça + quarta) = 146 km
-    const diario: DiarioEntry[] = [
-      ...makeDiario([72, 68], '2026-01-06'),
-      ...makeDiario([75, 71], '2026-01-13'),
-    ];
-    const resultado = calcularKmMensalPorSemanas(diario);
-    expect(resultado).not.toBeNull();
-    expect(resultado!).toBeCloseTo(((140 + 146) / 2) * 4.33, 1);
-  });
-});
-
-describe('agruparRegistrosPorSemana', () => {
-  it('exclui semanas com apenas 1 dia registrado', () => {
-    expect(agruparRegistrosPorSemana(makeDiario([100]))).toHaveLength(0);
-  });
-
-  it('agrupa corretamente 2 semanas', () => {
-    const diario: DiarioEntry[] = [
-      ...makeDiario([100, 80], '2026-01-06'),
-      ...makeDiario([90, 70], '2026-01-13'),
-    ];
-    const resultado = agruparRegistrosPorSemana(diario);
-    expect(resultado).toHaveLength(2);
-    expect(resultado[0].totalKm).toBe(180);
-    expect(resultado[1].totalKm).toBe(160);
   });
 });
 
@@ -208,90 +164,85 @@ describe('calcularCpkCombustivel', () => {
 
 // ─── III. CPK por Peça ───────────────────────────────────────────
 
-describe('calcularCpkPeca', () => {
-  it('divide preço pelo intervalo', () => {
-    expect(calcularCpkPeca(40, 1250)).toBeCloseTo(0.032, 3);
-    expect(calcularCpkPeca(245, 16000)).toBeCloseTo(0.0153, 3);
-  });
-});
-
 describe('resolverIntervaloPeca', () => {
-  it('usa intervaloKmEntrega para entrega (predefinidos)', () => {
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], 'predefinidos')).toBe(
-      1250,
-    );
+  it('usa intervaloKmEntrega para tipoUso entrega', () => {
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega')).toBe(1250);
   });
 
-  it('usa intervaloKm para passageiro (predefinidos)', () => {
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'passageiro', [], 'predefinidos')).toBe(
-      6000,
-    );
-  });
-
-  it('usa média dos kmDesdeAnterior no modo personalizado', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-      { pecaId: 'oleo_motor', kmNaTroca: 2300, kmDesdeAnterior: 1200, preco: 38 },
-    ];
-    expect(
-      resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', registros, 'personalizado'),
-    ).toBeCloseTo(1150, 1);
+  it('usa intervaloKm para tipoUso passageiro', () => {
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'passageiro')).toBe(6000);
   });
 
   it('usa vidaUtilKm para pneus (igual para entrega e passageiro)', () => {
-    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], 'predefinidos')).toBe(
-      16000,
-    );
-    expect(
-      resolverIntervaloPeca('pneu_traseiro', presetMock, 'passageiro', [], 'predefinidos'),
-    ).toBe(16000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega')).toBe(16000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'passageiro')).toBe(16000);
+  });
+
+  it('usa override.intervaloKmEditado quando presente', () => {
+    const overrides: PecaOverride[] = [
+      {
+        id: 'oleo_motor',
+        precoEditadoOriginal: null,
+        precoEditadaParalela: null,
+        intervaloKmEditado: 2500,
+      },
+    ];
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', overrides)).toBe(2500);
   });
 
   it('usa ServicoIndependente.intervalKm quando serviço ativo coincide com pecaId (ADR-004)', () => {
     const servicos: ServicoIndependente[] = [
-      { id: 'pneu_traseiro', nome: 'Pneu traseiro', intervalKm: 9000, precoMaoDeObra: 125, ativo: true, ehExcepcional: false },
+      {
+        id: 'pneu_traseiro',
+        nome: 'Pneu traseiro',
+        intervalKm: 9000,
+        precoMaoDeObra: 125,
+        ativo: true,
+        ehExcepcional: false,
+      },
     ];
-    expect(
-      resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], 'predefinidos', [], servicos),
-    ).toBe(9000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], servicos)).toBe(9000);
   });
 
   it('ignora ServicoIndependente inativo e cai no preset', () => {
     const servicos: ServicoIndependente[] = [
-      { id: 'pneu_traseiro', nome: 'Pneu traseiro', intervalKm: 9000, precoMaoDeObra: 125, ativo: false, ehExcepcional: false },
+      {
+        id: 'pneu_traseiro',
+        nome: 'Pneu traseiro',
+        intervalKm: 9000,
+        precoMaoDeObra: 125,
+        ativo: false,
+        ehExcepcional: false,
+      },
     ];
-    expect(
-      resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], 'predefinidos', [], servicos),
-    ).toBe(16000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], servicos)).toBe(16000);
   });
 });
 
 describe('resolverPrecoPeca', () => {
   it('usa precoOriginal quando perfilPecas = original', () => {
-    expect(resolverPrecoPeca('oleo_motor', presetMock, 'original', [], 'predefinidos')).toBe(40);
+    expect(resolverPrecoPeca('oleo_motor', presetMock, 'original')).toBe(40);
   });
 
   it('usa precoParalela quando perfilPecas = paralela', () => {
-    expect(resolverPrecoPeca('oleo_motor', presetMock, 'paralela', [], 'predefinidos')).toBe(23);
+    expect(resolverPrecoPeca('oleo_motor', presetMock, 'paralela')).toBe(23);
   });
 
-  it('usa média dos preços dos registros no modo personalizado', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-      { pecaId: 'oleo_motor', kmNaTroca: 2300, kmDesdeAnterior: 1200, preco: 38 },
+  it('usa override.precoEditadaParalela quando presente (perfilPecas = paralela)', () => {
+    const overrides: PecaOverride[] = [
+      {
+        id: 'oleo_motor',
+        precoEditadoOriginal: null,
+        precoEditadaParalela: 30,
+        intervaloKmEditado: null,
+      },
     ];
-    expect(
-      resolverPrecoPeca('oleo_motor', presetMock, 'original', registros, 'personalizado'),
-    ).toBe(40);
+    expect(resolverPrecoPeca('oleo_motor', presetMock, 'paralela', overrides)).toBe(30);
   });
 
   it('funciona para pneus (precoOriginal / precoParalela)', () => {
-    expect(resolverPrecoPeca('pneu_traseiro', presetMock, 'original', [], 'predefinidos')).toBe(
-      245,
-    );
-    expect(resolverPrecoPeca('pneu_traseiro', presetMock, 'paralela', [], 'predefinidos')).toBe(
-      137,
-    );
+    expect(resolverPrecoPeca('pneu_traseiro', presetMock, 'original')).toBe(245);
+    expect(resolverPrecoPeca('pneu_traseiro', presetMock, 'paralela')).toBe(137);
   });
 });
 
@@ -301,8 +252,6 @@ describe('calcularCpkPorPeca', () => {
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
@@ -317,8 +266,6 @@ describe('calcularCpkPorPeca', () => {
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
@@ -332,8 +279,6 @@ describe('calcularCpkPorPeca', () => {
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual,
@@ -347,8 +292,6 @@ describe('calcularCpkPorPeca', () => {
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
@@ -356,19 +299,23 @@ describe('calcularCpkPorPeca', () => {
     expect(resultado.get('oleo_motor')!.fonte).toBe('preset');
   });
 
-  it('fonte = registro quando personalizado e há registro; demais = preset', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
+  it('fonte = registro quando há override de preço; demais = preset', () => {
+    const overrides: PecaOverride[] = [
+      {
+        id: 'oleo_motor',
+        precoEditadoOriginal: null,
+        precoEditadaParalela: 25,
+        intervaloKmEditado: null,
+      },
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros,
-      modoExibicao: 'personalizado',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
+      pecasOverrides: overrides,
     });
     expect(resultado.get('oleo_motor')!.fonte).toBe('registro');
     expect(resultado.get('vela_ignicao')!.fonte).toBe('preset');
@@ -381,8 +328,6 @@ describe('calcularCpkPecasTotal', () => {
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'original',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
@@ -433,15 +378,40 @@ describe('calcularLicenciamento', () => {
 
 describe('calcularCustoRevisaoAnual', () => {
   const servicosMock: ServicoIndependente[] = [
-    { id: 'troca-oleo', nome: 'Troca de óleo', intervalKm: 3000, precoMaoDeObra: 25, ativo: true, ehExcepcional: false },
-    { id: 'revisao-geral', nome: 'Revisão geral', intervalKm: 6000, precoMaoDeObra: 80, ativo: true, ehExcepcional: false },
-    { id: 'fazer-motor', nome: 'Fazer motor', intervalKm: 70000, precoMaoDeObra: 1500, ativo: false, ehExcepcional: true },
+    {
+      id: 'troca-oleo',
+      nome: 'Troca de óleo',
+      intervalKm: 3000,
+      precoMaoDeObra: 25,
+      ativo: true,
+      ehExcepcional: false,
+    },
+    {
+      id: 'revisao-geral',
+      nome: 'Revisão geral',
+      intervalKm: 6000,
+      precoMaoDeObra: 80,
+      ativo: true,
+      ehExcepcional: false,
+    },
+    {
+      id: 'fazer-motor',
+      nome: 'Fazer motor',
+      intervalKm: 70000,
+      precoMaoDeObra: 1500,
+      ativo: false,
+      ehExcepcional: true,
+    },
   ];
 
   it('modo autorizadas: km-based — (ciclo / 36000) × kmAnual', () => {
     const ciclo = 3334.62;
-    expect(calcularCustoRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo })).toBeCloseTo(ciclo, 2);
-    expect(calcularCustoRevisaoAnual('autorizadas', 18000, { custoCicloCompleto: ciclo })).toBeCloseTo(ciclo / 2, 2);
+    expect(
+      calcularCustoRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo }),
+    ).toBeCloseTo(ciclo, 2);
+    expect(
+      calcularCustoRevisaoAnual('autorizadas', 18000, { custoCicloCompleto: ciclo }),
+    ).toBeCloseTo(ciclo / 2, 2);
   });
 
   it('modo autorizadas: escala proporcionalmente com kmAnual (rider leve vs pesado)', () => {
@@ -460,34 +430,23 @@ describe('calcularCustoRevisaoAnual', () => {
 
   it('modo independentes: serviço inativo é excluído do cálculo', () => {
     const kmAnual = 12000;
-    const comFazerMotorAtivo = servicosMock.map((s) => (s.id === 'fazer-motor' ? { ...s, ativo: true } : s));
-    const semAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: servicosMock });
-    const comAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: comFazerMotorAtivo });
+    const comFazerMotorAtivo = servicosMock.map((s) =>
+      s.id === 'fazer-motor' ? { ...s, ativo: true } : s,
+    );
+    const semAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
+      servicosIndependentes: servicosMock,
+    });
+    const comAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
+      servicosIndependentes: comFazerMotorAtivo,
+    });
     expect(comAtivo).toBeGreaterThan(semAtivo);
     expect(comAtivo - semAtivo).toBeCloseTo((1500 / 70000) * kmAnual, 2);
   });
 
   it('modo independentes: sem serviços retorna 0', () => {
-    expect(calcularCustoRevisaoAnual('independentes', 10000, { servicosIndependentes: [] })).toBe(0);
-  });
-});
-
-describe('calcularKmParaProximaRevisao', () => {
-  it('calcula km restantes corretamente', () => {
-    expect(calcularKmParaProximaRevisao(7500, 3000, 6000)).toBe(1500);
-  });
-
-  it('retorna negativo quando passou do intervalo', () => {
-    expect(calcularKmParaProximaRevisao(10000, 3000, 6000)).toBe(-1000);
-  });
-});
-
-describe('calcularDiasParaProximaRevisao', () => {
-  it('usa km médio por dia incluindo dias de folga (kmDia × diasSemana / 7)', () => {
-    // kmDia=80, diasSemana=5 → kmDiaMedio = 80×5/7 ≈ 57.14
-    // 1500 / 57.14 ≈ 27 dias
-    const esperado = Math.ceil(1500 / ((80 * 5) / 7));
-    expect(calcularDiasParaProximaRevisao(1500, 80, 5)).toBe(esperado);
+    expect(calcularCustoRevisaoAnual('independentes', 10000, { servicosIndependentes: [] })).toBe(
+      0,
+    );
   });
 });
 
@@ -504,12 +463,16 @@ describe('calcularCustoInternetAnual', () => {
 });
 
 describe('calcularCustoSeguroAnual', () => {
-  it('retorna valorAnual quando ativo', () => {
-    expect(calcularCustoSeguroAnual(true, 800)).toBe(800);
+  it('retorna valorAnual quando > 0', () => {
+    expect(calcularCustoSeguroAnual(800)).toBe(800);
   });
 
-  it('retorna 0 quando inativo', () => {
-    expect(calcularCustoSeguroAnual(false, 800)).toBe(0);
+  it('retorna 0 quando valorAnual === 0', () => {
+    expect(calcularCustoSeguroAnual(0)).toBe(0);
+  });
+
+  it('retorna 0 defensivamente quando valorAnual < 0', () => {
+    expect(calcularCustoSeguroAnual(-100)).toBe(0);
   });
 });
 
@@ -736,194 +699,39 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
   };
 
   it('aplica override de precoTotal ao ciclo Honda antes de calcular revisaoAnual', () => {
-    const semOverride = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock, [], 'predefinidos');
+    const semOverride = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
 
     // Índice 0 tem precoTotal = 105.94 → substituir por 500 (diferença: +394.06)
     const comOverride = calcularCustosPorCategoria(
-      { ...perfilAutorizadas, revisaoAutorizadaOverrides: [{ index: 0, precoPecas: 300, precoMaoDeObra: 200, precoTotal: 500 }] },
+      {
+        ...perfilAutorizadas,
+        revisaoAutorizadaOverrides: [
+          { index: 0, precoPecas: 300, precoMaoDeObra: 200, precoTotal: 500 },
+        ],
+      },
       presetMock,
       dadosRJMock,
-      [],
-      'predefinidos',
     );
 
     expect(comOverride.revisao.total).toBeGreaterThan(semOverride.revisao.total);
-    const kmAnual = calcularKmAnual(perfilPadrao.trabalho.kmPorDia, perfilPadrao.trabalho.diasPorSemana);
-    expect(comOverride.revisao.total - semOverride.revisao.total).toBeCloseTo((394.06 / 36000) * kmAnual, 2);
+    const kmAnual = calcularKmAnual(
+      perfilPadrao.trabalho.kmPorDia,
+      perfilPadrao.trabalho.diasPorSemana,
+    );
+    expect(comOverride.revisao.total - semOverride.revisao.total).toBeCloseTo(
+      (394.06 / 36000) * kmAnual,
+      2,
+    );
   });
 
   it('sem overrides usa precoTotal original do preset', () => {
-    const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock, [], 'predefinidos');
+    const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
     const cicloEsperado = presetMock.revisaoAutorizada.reduce((s, r) => s + r.precoTotal, 0);
-    const kmAnual = calcularKmAnual(perfilPadrao.trabalho.kmPorDia, perfilPadrao.trabalho.diasPorSemana);
+    const kmAnual = calcularKmAnual(
+      perfilPadrao.trabalho.kmPorDia,
+      perfilPadrao.trabalho.diasPorSemana,
+    );
     expect(resultado.revisao.total).toBeCloseTo((cicloEsperado / 36000) * kmAnual, 2);
-  });
-});
-
-// ─── VIII. Modo Personalizado ─────────────────────────────────────
-
-describe('calcularMediaRegistros', () => {
-  it('calcula média do campo especificado', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'x', kmNaTroca: 1000, kmDesdeAnterior: 900, preco: 40 },
-      { pecaId: 'x', kmNaTroca: 2000, kmDesdeAnterior: 1100, preco: 60 },
-    ];
-    expect(calcularMediaRegistros(registros, 'preco')).toBe(50);
-    expect(calcularMediaRegistros(registros, 'kmDesdeAnterior')).toBe(1000);
-  });
-
-  it('retorna 0 para array vazio', () => {
-    expect(calcularMediaRegistros([], 'preco')).toBe(0);
-  });
-});
-
-describe('calcularIntervalMedioReal', () => {
-  it('retorna null quando não há registros para a peça', () => {
-    expect(calcularIntervalMedioReal([], 'oleo_motor')).toBeNull();
-  });
-
-  it('calcula média dos kmDesdeAnterior para a peça', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-      { pecaId: 'oleo_motor', kmNaTroca: 2300, kmDesdeAnterior: 1200, preco: 38 },
-    ];
-    expect(calcularIntervalMedioReal(registros, 'oleo_motor')).toBeCloseTo(1150, 1);
-  });
-
-  it('ignora registros de outras peças', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-      { pecaId: 'pneu_traseiro', kmNaTroca: 10000, kmDesdeAnterior: 10000, preco: 245 },
-    ];
-    expect(calcularIntervalMedioReal(registros, 'oleo_motor')).toBe(1100);
-  });
-});
-
-describe('temDadoSuficiente', () => {
-  it('rodagem: true com ≥ 1 entrada no diário', () => {
-    expect(temDadoSuficiente('rodagem', makeDiario([80]), [], undefined)).toBe(true);
-  });
-
-  it('rodagem: false com diário vazio', () => {
-    expect(temDadoSuficiente('rodagem', [], [], undefined)).toBe(false);
-  });
-
-  it('manutencao: true quando há registro da peça específica', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-    ];
-    expect(temDadoSuficiente('manutencao', [], registros, 'oleo_motor')).toBe(true);
-  });
-
-  it('manutencao: false quando não há registro da peça', () => {
-    const registros: RegistroManutencao[] = [
-      { pecaId: 'oleo_motor', kmNaTroca: 1100, kmDesdeAnterior: 1100, preco: 42 },
-    ];
-    expect(temDadoSuficiente('manutencao', [], registros, 'pneu_traseiro')).toBe(false);
-  });
-});
-
-// ─── Adapter ─────────────────────────────────────────────────────
-
-describe('adaptarHistoricoParaRegistros', () => {
-  const historicoParcial: HistoricoManutencao = {
-    trocasOleo: [
-      {
-        id: '1',
-        data: '2026-01-01',
-        km: 5000,
-        valorTotal: 40,
-        tipoOleo: 'pro honda',
-        marca: 'honda',
-      },
-      {
-        id: '2',
-        data: '2026-02-01',
-        km: 6250,
-        valorTotal: 38,
-        tipoOleo: 'pro honda',
-        marca: 'honda',
-      },
-    ],
-    revisoes: [],
-    trocasPneu: [
-      {
-        id: '3',
-        data: '2025-06-01',
-        km: 14000,
-        posicao: 'traseiro',
-        marca: 'levorin',
-        valorTotal: 245,
-      },
-      {
-        id: '4',
-        data: '2026-04-01',
-        km: 30000,
-        posicao: 'traseiro',
-        marca: 'levorin',
-        valorTotal: 245,
-      },
-    ],
-    trocasKitRelacao: [],
-    abastecimentos: [],
-  };
-
-  it('gera registros oleo_motor com kmDesdeAnterior correto', () => {
-    const resultado = adaptarHistoricoParaRegistros(historicoParcial);
-    const oleos = resultado.filter((r) => r.pecaId === 'oleo_motor');
-    expect(oleos).toHaveLength(2);
-    expect(oleos[0].kmDesdeAnterior).toBe(5000); // primeiro: usa o próprio km
-    expect(oleos[1].kmDesdeAnterior).toBe(1250); // 6250 - 5000
-  });
-
-  it('gera registros pneu_traseiro com kmDesdeAnterior correto', () => {
-    const resultado = adaptarHistoricoParaRegistros(historicoParcial);
-    const pneus = resultado.filter((r) => r.pecaId === 'pneu_traseiro');
-    expect(pneus).toHaveLength(2);
-    expect(pneus[0].kmDesdeAnterior).toBe(14000);
-    expect(pneus[1].kmDesdeAnterior).toBe(16000); // 30000 - 14000
-  });
-
-  it('não gera registros para categorias sem histórico', () => {
-    const resultado = adaptarHistoricoParaRegistros(historicoParcial);
-    expect(resultado.filter((r) => r.pecaId === 'kit_relacao')).toHaveLength(0);
-  });
-
-  it('pneu dianteiro e traseiro têm kmDesdeAnterior calculados independentemente', () => {
-    const historico: HistoricoManutencao = {
-      ...historicoParcial,
-      trocasPneu: [
-        {
-          id: 'a',
-          data: '2026-01-01',
-          km: 10000,
-          posicao: 'dianteiro',
-          marca: 'x',
-          valorTotal: 209,
-        },
-        {
-          id: 'b',
-          data: '2026-01-01',
-          km: 14000,
-          posicao: 'traseiro',
-          marca: 'x',
-          valorTotal: 245,
-        },
-        {
-          id: 'c',
-          data: '2026-06-01',
-          km: 35000,
-          posicao: 'dianteiro',
-          marca: 'x',
-          valorTotal: 209,
-        },
-      ],
-    };
-    const resultado = adaptarHistoricoParaRegistros(historico);
-    const dianteiros = resultado.filter((r) => r.pecaId === 'pneu_dianteiro');
-    const traseiros = resultado.filter((r) => r.pecaId === 'pneu_traseiro');
-    expect(dianteiros[1].kmDesdeAnterior).toBe(25000); // 35000 - 10000
-    expect(traseiros[0].kmDesdeAnterior).toBe(14000);
   });
 });
 
@@ -935,8 +743,6 @@ describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => 
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
       kmAnual: 7280,
@@ -950,8 +756,6 @@ describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => 
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
       kmAnual: 7280,
@@ -965,8 +769,6 @@ describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => 
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
@@ -996,8 +798,6 @@ describe('calcularCustosPorCategoria — modo autorizado não duplica peças da 
       perfilComModo('autorizadas'),
       presetMock,
       dadosRJBG003,
-      [],
-      'predefinidos',
     );
     expect(resultado.manutencao.detalhes.has('oleo_motor')).toBe(false);
     expect(resultado.manutencao.detalhes.has('vela_ignicao')).toBe(false);
@@ -1010,27 +810,17 @@ describe('calcularCustosPorCategoria — modo autorizado não duplica peças da 
       perfilComModo('independentes'),
       presetMock,
       dadosRJBG003,
-      [],
-      'predefinidos',
     );
     expect(resultado.manutencao.detalhes.has('oleo_motor')).toBe(true);
     expect(resultado.manutencao.detalhes.has('vela_ignicao')).toBe(true);
   });
 
   it('total de manutenção no modo autorizado é menor que no independente', () => {
-    const aut = calcularCustosPorCategoria(
-      perfilComModo('autorizadas'),
-      presetMock,
-      dadosRJBG003,
-      [],
-      'predefinidos',
-    );
+    const aut = calcularCustosPorCategoria(perfilComModo('autorizadas'), presetMock, dadosRJBG003);
     const ind = calcularCustosPorCategoria(
       perfilComModo('independentes'),
       presetMock,
       dadosRJBG003,
-      [],
-      'predefinidos',
     );
     expect(aut.manutencao.total).toBeLessThan(ind.manutencao.total);
   });
@@ -1091,8 +881,6 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 13000,
       kmAnual: 18200,
@@ -1109,8 +897,6 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 13000,
       kmAnual: 18200,
@@ -1125,8 +911,6 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       preset: presetMock,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
-      registros: [],
-      modoExibicao: 'predefinidos',
       modoRevisao: 'independentes',
       kmAtual: 13000,
       kmAnual: 18200,
@@ -1148,7 +932,7 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       },
     };
     // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano
-    const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ, [], 'predefinidos');
+    const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ);
     expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(26000);
   });
 });

@@ -107,97 +107,102 @@ export function PaginaDetalhamento() {
   const toggleAcordeao = (id: string) => setExpandido((prev) => ({ ...prev, [id]: !prev[id] }));
 
   return (
-    <div className="px-md py-md space-y-3">
+    <div className="flex flex-col min-h-screen bg-background">
       <CabecalhoVoltar titulo="Detalhamento" />
 
-      <CardTotalAnual totalFiltrado={totalFiltrado} mensal={gran.mensal} porKm={gran.porKm} />
-      <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />
-      {perfil.trabalho.diasPorSemana === 1 && (
-        <p className="text-muted-foreground/60 text-xs px-xs">
-          Com 1 dia/semana configurado, os modos Dia e Sem mostram o mesmo valor. Ajuste em
-          Estimativa.
-        </p>
-      )}
+      <div className="px-md py-md space-y-3">
+        <CardTotalAnual totalFiltrado={totalFiltrado} mensal={gran.mensal} porKm={gran.porKm} />
+        <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />
+        {perfil.trabalho.diasPorSemana === 1 && (
+          <p className="text-muted-foreground/60 text-xs px-xs">
+            Com 1 dia/semana configurado, os modos Dia e Sem mostram o mesmo valor. Ajuste em
+            Estimativa.
+          </p>
+        )}
 
-      <CategoriaAccordion
-        label="Documentos"
-        corClasse="bg-blue-400"
-        valorExibido={pp(custos.documentos.total)}
-        porcentagem={pct(custos.documentos.total)}
-        ativo={filtros.documentos}
-        expandido={!!expandido['documentos']}
-        onToggleAtivo={() => toggleFiltro('documentos')}
-        onToggleExpandido={() => toggleAcordeao('documentos')}
-      >
-        <LinhaDetalhe label="IPVA" valor={cvt(custos.documentos.detalhes.ipva)} />
-        <LinhaDetalhe label="Licenciamento" valor={cvt(custos.documentos.detalhes.licenciamento)} />
-      </CategoriaAccordion>
-
-      <SecaoManutencao
-        totalManutencaoComRevisao={totalManutencaoComRevisao}
-        totalRevisao={custos.revisao.total}
-        modoRevisao={custos.revisao.detalhes.modo}
-        pecas={[...custos.manutencao.detalhes.entries()]}
-        filtroAtivo={filtros.manutencao}
-        filtroRevisao={filtros.revisao}
-        filtrosPecas={filtros.manutencaoPorPeca}
-        expandido={!!expandido['manutencao']}
-        onToggleAtivo={() => toggleFiltro('manutencao')}
-        onToggleExpandido={() => toggleAcordeao('manutencao')}
-        onToggleRevisao={() => toggleFiltro('revisao')}
-        onTogglePeca={togglePeca}
-        pp={pp}
-        pct={pct}
-      />
-
-      <CategoriaAccordion
-        label="Combustível"
-        corClasse="bg-green-500"
-        valorExibido={pp(custos.combustivel.total)}
-        porcentagem={pct(custos.combustivel.total)}
-        ativo={filtros.combustivel}
-        expandido={!!expandido['combustivel']}
-        onToggleAtivo={() => toggleFiltro('combustivel')}
-        onToggleExpandido={() => toggleAcordeao('combustivel')}
-      >
-        <LinhaDetalhe
-          label="Custo por km"
-          valor={custos.combustivel.detalhes.cpk}
-          formatter={cpkFormatado}
-        />
-        <LinhaDetalhe
-          label="Consumo efetivo"
-          valor={custos.combustivel.detalhes.consumoEfetivo}
-          suffix="km/L"
-        />
-      </CategoriaAccordion>
-
-      {CATEGORIAS_SEM_EXPANSAO.filter((c) => custos[c.chave].ativo).map((c) => (
         <CategoriaAccordion
-          key={c.chave}
-          label={c.label}
-          corClasse={c.cor}
-          valorExibido={pp(custos[c.chave].total)}
-          porcentagem={pct(custos[c.chave].total)}
-          ativo={filtros[c.chave]}
-          expandido={false}
-          onToggleAtivo={() => toggleFiltro(c.chave)}
-          onToggleExpandido={() => {}}
-          semExpansao
+          label="Documentos"
+          corClasse="bg-blue-400"
+          valorExibido={pp(custos.documentos.total)}
+          porcentagem={pct(custos.documentos.total)}
+          ativo={filtros.documentos}
+          expandido={!!expandido['documentos']}
+          onToggleAtivo={() => toggleFiltro('documentos')}
+          onToggleExpandido={() => toggleAcordeao('documentos')}
+        >
+          <LinhaDetalhe label="IPVA" valor={cvt(custos.documentos.detalhes.ipva)} />
+          <LinhaDetalhe
+            label="Licenciamento"
+            valor={cvt(custos.documentos.detalhes.licenciamento)}
+          />
+        </CategoriaAccordion>
+
+        <SecaoManutencao
+          totalManutencaoComRevisao={totalManutencaoComRevisao}
+          totalRevisao={custos.revisao.total}
+          modoRevisao={custos.revisao.detalhes.modo}
+          pecas={[...custos.manutencao.detalhes.entries()]}
+          filtroAtivo={filtros.manutencao}
+          filtroRevisao={filtros.revisao}
+          filtrosPecas={filtros.manutencaoPorPeca}
+          expandido={!!expandido['manutencao']}
+          onToggleAtivo={() => toggleFiltro('manutencao')}
+          onToggleExpandido={() => toggleAcordeao('manutencao')}
+          onToggleRevisao={() => toggleFiltro('revisao')}
+          onTogglePeca={togglePeca}
+          pp={pp}
+          pct={pct}
         />
-      ))}
 
-      <SecaoImprevistos
-        gastosCustom={perfil.financeiro.gastosCustom}
-        dispatch={dispatch}
-        valorTotal={custos.gastosCustom.total}
-        expandido={!!expandido['imprevistos']}
-        onToggleExpandido={() => toggleAcordeao('imprevistos')}
-        pp={pp}
-        pct={pct}
-      />
+        <CategoriaAccordion
+          label="Combustível"
+          corClasse="bg-green-500"
+          valorExibido={pp(custos.combustivel.total)}
+          porcentagem={pct(custos.combustivel.total)}
+          ativo={filtros.combustivel}
+          expandido={!!expandido['combustivel']}
+          onToggleAtivo={() => toggleFiltro('combustivel')}
+          onToggleExpandido={() => toggleAcordeao('combustivel')}
+        >
+          <LinhaDetalhe
+            label="Custo por km"
+            valor={custos.combustivel.detalhes.cpk}
+            formatter={cpkFormatado}
+          />
+          <LinhaDetalhe
+            label="Consumo efetivo"
+            valor={custos.combustivel.detalhes.consumoEfetivo}
+            suffix="km/L"
+          />
+        </CategoriaAccordion>
 
-      <div className="h-6" />
+        {CATEGORIAS_SEM_EXPANSAO.filter((c) => custos[c.chave].ativo).map((c) => (
+          <CategoriaAccordion
+            key={c.chave}
+            label={c.label}
+            corClasse={c.cor}
+            valorExibido={pp(custos[c.chave].total)}
+            porcentagem={pct(custos[c.chave].total)}
+            ativo={filtros[c.chave]}
+            expandido={false}
+            onToggleAtivo={() => toggleFiltro(c.chave)}
+            onToggleExpandido={() => {}}
+            semExpansao
+          />
+        ))}
+
+        <SecaoImprevistos
+          gastosCustom={perfil.financeiro.gastosCustom}
+          dispatch={dispatch}
+          valorTotal={custos.gastosCustom.total}
+          expandido={!!expandido['imprevistos']}
+          onToggleExpandido={() => toggleAcordeao('imprevistos')}
+          pp={pp}
+          pct={pct}
+        />
+
+        <div className="h-6" />
+      </div>
     </div>
   );
 }

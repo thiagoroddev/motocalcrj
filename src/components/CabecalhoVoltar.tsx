@@ -9,7 +9,7 @@ interface PropsCabecalhoVoltar {
 export function CabecalhoVoltar({ titulo }: PropsCabecalhoVoltar) {
   const navigate = useNavigate();
   return (
-    <div className="flex items-center gap-3 pb-1">
+    <header className="flex items-center gap-3 px-md py-3 bg-card border-b border-muted shrink-0">
       <Button
         variant="ghost"
         size="icon"
@@ -19,7 +19,7 @@ export function CabecalhoVoltar({ titulo }: PropsCabecalhoVoltar) {
       >
         <IconVoltar className="w-5 h-5" />
       </Button>
-      <p className="text-foreground font-semibold text-base flex-1">{titulo}</p>
-    </div>
+      <h1 className="text-foreground font-semibold text-base flex-1">{titulo}</h1>
+    </header>
   );
 }

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
 import { calcularBreakdownPercentual, categoriasParaFiltros } from '../utils/calculos';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { CardCpk } from '../components/estimativa/CardCpk';
 import { CardPeriodo } from '../components/estimativa/CardPeriodo';
@@ -104,14 +103,6 @@ export function PaginaEstimativa() {
         <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
         <CardPeriodo label="Estimado por ano" valor={granularidades.anual} km={kmAnual} />
       </div>
-
-      {resultado.modoAtivo === 'personalizado' && (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-primary border-primary/30 bg-primary/20">
-            Modo personalizado ativo
-          </Badge>
-        </div>
-      )}
 
       <DistribuicaoCustos segmentos={segmentos} />
 

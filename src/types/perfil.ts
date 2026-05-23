@@ -3,7 +3,6 @@
 // ──────────────────────────────────────────────
 
 export type PerfilUso = 'entrega' | 'passageiro';
-export type ModoExibicao = 'predefinidos' | 'personalizado';
 export type ModoRevisao = 'autorizadas' | 'independentes';
 export type TipoCombustivel = 'comum' | 'aditivada' | 'etanol';
 export type PerfilPecas = 'original' | 'paralela';
@@ -22,7 +21,6 @@ export interface ConfiguracaoCombustivel {
 }
 
 export interface SeguroConfig {
-  tem: boolean;
   valorAnual: number;
   empresa: string | null;
   periodicidade: PeriodicidadeSeguro;
@@ -91,82 +89,6 @@ export interface KmUltimaTrocas {
 }
 
 // ──────────────────────────────────────────────
-// Registros / histórico
-// ──────────────────────────────────────────────
-
-export interface TrocaOleo {
-  id: string;
-  data: string;
-  km: number;
-  valorTotal: number;
-  tipoOleo: string;
-  marca: string;
-}
-
-export interface RevisaoGeral {
-  id: string;
-  data: string;
-  km: number;
-  local: 'autorizada' | 'independente';
-  qualRevisao: string;
-  status: 'concluido' | 'pendente';
-  itensTrocados: string[];
-  valorMaoDeObra: number;
-  valorPecas: number;
-  valorTotal: number;
-}
-
-export interface TrocaPneu {
-  id: string;
-  data: string;
-  km: number;
-  posicao: 'dianteiro' | 'traseiro';
-  marca: string;
-  valorTotal: number;
-}
-
-export interface TrocaKitRelacao {
-  id: string;
-  data: string;
-  km: number;
-  marca: string;
-  valorPecas: number;
-  valorMaoDeObra: number;
-  valorTotal: number;
-}
-
-export interface Abastecimento {
-  id: string;
-  data: string;
-  tipo: TipoCombustivel;
-  posto: string;
-  km: number;
-  litros: number;
-  precoLitro: number;
-  valorTotal: number;
-}
-
-export interface DiarioEntry {
-  id: string;
-  data: string;
-  kmInicial: number;
-  kmFinal: number;
-  kmPercorridos: number;
-  comeu: boolean;
-  abasteceu: boolean;
-  litros: number | null;
-  precoLitro: number | null;
-}
-
-export interface HistoricoManutencao {
-  trocasOleo: TrocaOleo[];
-  revisoes: RevisaoGeral[];
-  trocasPneu: TrocaPneu[];
-  trocasKitRelacao: TrocaKitRelacao[];
-  abastecimentos: Abastecimento[];
-}
-
-// ──────────────────────────────────────────────
 // Perfil principal
 // ──────────────────────────────────────────────
 
@@ -191,8 +113,6 @@ export interface PerfilUsuario {
   perfilManutencao: {
     perfilPecasGlobal: PerfilPecas;
     modoRevisao: ModoRevisao;
-    precoMaoDeObraIndependente: number;
-    frequenciaRevisaoKm: number;
   };
 
   trabalho: {
@@ -217,8 +137,6 @@ export interface PerfilUsuario {
   };
 
   configuracaoDisplay: {
-    modoExibicao: ModoExibicao;
-    modoOficinDisplay: ModoRevisao;
     categoriasAtivas: CategoriaDisplay;
   };
 
@@ -227,9 +145,6 @@ export interface PerfilUsuario {
   revisaoAutorizadaOverrides: RevisaoAutorizadaOverride[];
 
   fipeCache: FipeCache | null;
-
-  historicoManutencao: HistoricoManutencao;
-  diarioTrabalho: DiarioEntry[];
 }
 
 // ──────────────────────────────────────────────
@@ -259,8 +174,6 @@ export type PerfilAction =
   | { type: 'SET_KM_ATUAL'; valor: number }
 
   // Display
-  | { type: 'SET_MODO_EXIBICAO'; modo: ModoExibicao }
-  | { type: 'SET_MODO_OFICINA'; modo: ModoRevisao }
   | { type: 'TOGGLE_CATEGORIA'; categoria: keyof CategoriaDisplay }
 
   // Overrides de peças
@@ -270,13 +183,21 @@ export type PerfilAction =
       campo: 'precoOriginal' | 'precoParalela' | 'intervaloKm';
       valor: number;
     }
-  | { type: 'RESET_PECA_OVERRIDE'; id: string; campo?: 'precoOriginal' | 'precoParalela' | 'intervaloKm' }
+  | {
+      type: 'RESET_PECA_OVERRIDE';
+      id: string;
+      campo?: 'precoOriginal' | 'precoParalela' | 'intervaloKm';
+    }
 
   // Mão de obra
   | { type: 'SET_SERVICO_INDEPENDENTE'; payload: ServicoIndependente }
-  | { type: 'TOGGLE_SERVICO_INDEPENDENTE'; payload: { id: string } }
   | { type: 'RESET_SERVICOS_INDEPENDENTES' }
-  | { type: 'SET_REVISAO_AUTORIZADA_OVERRIDE'; index: number; precoPecas: number; precoMaoDeObra: number }
+  | {
+      type: 'SET_REVISAO_AUTORIZADA_OVERRIDE';
+      index: number;
+      precoPecas: number;
+      precoMaoDeObra: number;
+    }
   | { type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE'; index: number }
 
   // Financeiro
@@ -289,27 +210,17 @@ export type PerfilAction =
   | { type: 'TOGGLE_GASTO_CUSTOM'; id: string }
   | { type: 'DELETE_GASTO_CUSTOM'; id: string }
 
-  // Registros
-  | { type: 'ADD_TROCA_OLEO'; registro: Omit<TrocaOleo, 'id'> }
-  | { type: 'DELETE_TROCA_OLEO'; id: string }
-  | { type: 'ADD_REVISAO'; registro: Omit<RevisaoGeral, 'id'> }
-  | { type: 'DELETE_REVISAO'; id: string }
-  | { type: 'ADD_TROCA_PNEU'; registro: Omit<TrocaPneu, 'id'> }
-  | { type: 'DELETE_TROCA_PNEU'; id: string }
-  | { type: 'ADD_TROCA_KIT_RELACAO'; registro: Omit<TrocaKitRelacao, 'id'> }
-  | { type: 'DELETE_TROCA_KIT_RELACAO'; id: string }
-  | { type: 'ADD_ABASTECIMENTO'; registro: Omit<Abastecimento, 'id'> }
-  | { type: 'DELETE_ABASTECIMENTO'; id: string }
-  | { type: 'ADD_DIA_TRABALHO'; entrada: Omit<DiarioEntry, 'id'> }
-  | { type: 'DELETE_DIA_TRABALHO'; id: string }
-
   // FIPE
   | { type: 'SET_FIPE_CACHE'; cache: FipeCache }
 
   // Histórico de manutenção
   | { type: 'SET_KM_ULTIMA_TROCA'; componente: keyof KmUltimaTrocas; km: number }
   | { type: 'SET_MOTOR_REFEITO'; km: number | null }
-  | { type: 'MARCAR_TROCAS_REVISAO'; componentesMarcados: (keyof KmUltimaTrocas)[]; kmRevisao: number }
+  | {
+      type: 'MARCAR_TROCAS_REVISAO';
+      componentesMarcados: (keyof KmUltimaTrocas)[];
+      kmRevisao: number;
+    }
 
   // Ajustes de predefinição
   | { type: 'SET_ANO_MOTO'; ano: number }
@@ -318,7 +229,11 @@ export type PerfilAction =
   | { type: 'SET_MODO_REVISAO'; modo: ModoRevisao }
   | { type: 'SET_SITUACAO_MOTO'; situacao: SituacaoMoto }
   | { type: 'SET_PARCELA'; parcelaMensal: number | null; parcelasRestantes: number | null }
-  | { type: 'SET_ALUGUEL'; aluguelMensal: number | null; aluguelPeriodicidade: PeriodicidadeAluguel | null }
+  | {
+      type: 'SET_ALUGUEL';
+      aluguelMensal: number | null;
+      aluguelPeriodicidade: PeriodicidadeAluguel | null;
+    }
   | { type: 'RESETAR_AJUSTES_PADRAO' }
 
   // Presets
