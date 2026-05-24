@@ -9,29 +9,11 @@ Obedeça essa ordem:
 
 > **TASK-REF-15** concluída em 23/05/26 — ver `docs/tarefas/concluidas/` (escopo reformulado: PaginaAjustes movida para dentro do LayoutApp; CabecalhoVoltar promovido a barra superior e usado também em PaginaPerfil).
 
----
+> **TASK-REF-13** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (fechamento por validação visual implícita em uso real entre 22/05 e 24/05).
 
-## TASK-REF-13 — PaginaAjustes: gap excessivo entre label e input no componente Linha
-- **Status:** Pendente (interrompida)
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:** Interrompida em 22/05/26 para priorizar as tarefas da revisão geral (ADR-005/006). Estava em "AGUARDANDO VALIDAÇÃO VISUAL" — o código já foi aplicado: na função `Linha` de `PaginaAjustes.tsx`, `gap-4` → `gap-2` e o `<span>` de label recebeu `flex-1 min-w-0`. Falta apenas a validação visual no browser (label não pode dar overflow em 375px; input alinhado à direita). `npm run test` 98 verdes e `tsc --noEmit` limpo no momento da interrupção. Nota: o componente `Linha` foi depois extraído para `src/components/Linha.tsx` pela REF-14.
+> **TASK-REF-14** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (fechamento por validação visual implícita; débitos `CampoSwitch.tsx` e segmentado "Estimativa sobre dados" já resolvidos por REF-21 e REF-18 respectivamente).
 
-## TASK-REF-14 — Extrair componentes inline e refatorar PaginaAjustes
-- **Status:** Pendente (interrompida)
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/G
-- **Data origem:** 20/05/26
-- **Dependências:** TASK-REF-13
-- **REQ/ADR/DT:** —
-- **Observações:** Interrompida em 22/05/26 para priorizar as tarefas da revisão geral (ADR-005/006). Estava em "AGUARDANDO VALIDAÇÃO VISUAL" — o código já foi aplicado: `PaginaAjustes.tsx` reescrito de 572 → 88 linhas; criados `Segmentado.tsx`, `Stepper.tsx`, `Linha.tsx` em `src/components/`, `CampoSwitch.tsx` em `src/components/ajustes/` e 6 componentes de seção em `src/components/ajustes/`. Falta a validação visual no browser. **Atenção — pontos afetados pela revisão geral:** (1) `CampoSwitch.tsx` foi criado mas nunca usado (`SecaoFinanceiro` não o integrou) — pela ADR-005 não há switch em Ajustes, então será excluído pela TASK-REF-21, não integrado; (2) `SecaoPreferencias` ganhou o segmentado "Estimativa sobre dados", que viola a ADR-003 e será removido pela TASK-REF-18. Esses dois itens devem ser considerados já resolvidos pelo redirecionamento das ADRs — a validação visual restante cobre só o layout das seções. `npm run test` 98 verdes no momento da interrupção.
+> **TASK-REF-23** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (cleanup pós-revisão: `IconRegistros` morto removido, `_descricao` da fixture, lint format em 3 arquivos).
 
 ---
 

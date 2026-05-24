@@ -12,7 +12,9 @@ interface SegmentadoProps {
 
 export function Segmentado({ opcoes, valor, onChange, className }: SegmentadoProps) {
   return (
-    <div className={`flex rounded-md overflow-hidden border border-muted${className ? ` ${className}` : ''}`}>
+    <div
+      className={`flex rounded-md overflow-hidden border border-muted${className ? ` ${className}` : ''}`}
+    >
       {opcoes.map((op, i) => (
         <button
           key={op.valor}

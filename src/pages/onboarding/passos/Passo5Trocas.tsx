@@ -5,10 +5,10 @@ import { PassoLayout } from '../PassoLayout';
 import type { KmUltimaTrocas } from '../../../types/perfil';
 
 const ITENS: { key: keyof KmUltimaTrocas; label: string }[] = [
-  { key: 'oleo',          label: 'Troca de óleo'  },
+  { key: 'oleo', label: 'Troca de óleo' },
   { key: 'pneuDianteiro', label: 'Pneu dianteiro' },
-  { key: 'pneuTraseiro',  label: 'Pneu traseiro'  },
-  { key: 'kitRelacao',    label: 'Kit relação'     },
+  { key: 'pneuTraseiro', label: 'Pneu traseiro' },
+  { key: 'kitRelacao', label: 'Kit relação' },
 ];
 
 export function Passo5Trocas() {
@@ -44,9 +44,10 @@ export function Passo5Trocas() {
     irParaProximo();
   }
 
-  const subtitulo = kmUltimaRevisao != null
-    ? `Na revisão de ${kmUltimaRevisao.toLocaleString('pt-BR')} km`
-    : 'Passo opcional';
+  const subtitulo =
+    kmUltimaRevisao != null
+      ? `Na revisão de ${kmUltimaRevisao.toLocaleString('pt-BR')} km`
+      : 'Passo opcional';
 
   return (
     <PassoLayout
@@ -90,7 +91,9 @@ export function Passo5Trocas() {
                   </svg>
                 )}
               </span>
-              <span className={`text-sm font-medium ${checked ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <span
+                className={`text-sm font-medium ${checked ? 'text-foreground' : 'text-muted-foreground'}`}
+              >
                 {label}
               </span>
             </button>
@@ -122,7 +125,9 @@ export function Passo5Trocas() {
                 </svg>
               )}
             </span>
-            <span className={`text-sm font-medium ${motorMarcado ? 'text-foreground' : 'text-muted-foreground'}`}>
+            <span
+              className={`text-sm font-medium ${motorMarcado ? 'text-foreground' : 'text-muted-foreground'}`}
+            >
               Motor refeito
             </span>
           </button>

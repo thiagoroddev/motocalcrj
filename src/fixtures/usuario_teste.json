@@ -1,5 +1,5 @@
 {
-  "_descricao": "Fixture de teste — simula o conteúdo do localStorage após onboarding completo com registros",
+  "_descricao": "Fixture de teste — simula o conteúdo do localStorage após onboarding completo",
   "_uso": "Carregar via usePerfil.ts em modo dev: if (import.meta.env.DEV) localStorage.setItem('motocalc:v5:presets', JSON.stringify(fixture['motocalc:v5:presets']))",
   "_usuario": "João da Silva — motoboy fictício RJ, Pop 110i 2024",
 
