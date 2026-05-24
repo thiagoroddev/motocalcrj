@@ -37,9 +37,7 @@ docs/dominio/
 ├── bloco-financeiro.md                ← perfil.financeiro
 ├── bloco-configuracao-display.md      ← perfil.configuracaoDisplay
 │
-├── overrides.md                       ← Sistema de overrides (3 estruturas)
-├── historico-manutencao.md            ← perfil.historicoManutencao (5 listas)
-├── diario-trabalho.md                 ← perfil.diarioTrabalho
+├── overrides.md                       ← Sistema de overrides (pecasOverrides, servicosIndependentes, revisaoAutorizadaOverrides)
 ├── value-objects.md                   ← Value Objects do dominio e saidas de calculo
 │
 ├── entidade-moto.md                   ← Entidade Moto (bloco do perfil)
@@ -64,14 +62,11 @@ Perfil Local (Aggregate Root)
             ├── financeiro             ← bloco-financeiro.md
             ├── configuracaoDisplay    ← bloco-configuracao-display.md
             │
-            ├── pecasOverrides[]       ┐
-            ├── servicosMaoDeObra      ├── overrides.md
-            ├── revisaoAutorizadaOverrides[] ┘
+            ├── pecasOverrides[]               ┐
+            ├── servicosIndependentes[]        ├── overrides.md
+            └── revisaoAutorizadaOverrides[]   ┘
             │
-            ├── fipeCache              ← perfil-usuario.md (secao FipeCache)
-            │
-            ├── historicoManutencao    ← historico-manutencao.md
-            └── diarioTrabalho[]       ← diario-trabalho.md
+            └── fipeCache              ← perfil-usuario.md (secao FipeCache)
 ```
 
 
@@ -100,8 +95,8 @@ Se um conceito nao existe na cabeca do Motoboy, **nao e dominio**. E detalhe tec
 Itens que exigem decisao ou validacao de produto:
 
 1. **RN-11 (anoFimOriginal):** regra citada em requisitos nao esta implementada no codigo de calculo; decidir se vira regra oficial.
-2. **Modo Personalizado e medias reais:** codigo usa 1+ registros para substituir valores; requisitos podem pedir limites maiores e/ou opt-in. Ver `divida-tecnica.md`.
-3. **Modo de oficina vs modo de revisao:** `modoOficinDisplay` nao altera `perfilManutencao.modoRevisao` no reducer; decidir se UI deve sincronizar.
+
+> Pendencias 2 e 3 (Modo Personalizado e modoOficinDisplay) eliminadas pela ADR-003: modo unico, sem Registros. Implementadas em TASK-REF-18, REF-19 e REF-21.
 
 ---
 
@@ -112,3 +107,4 @@ Itens que exigem decisao ou validacao de produto:
 | 2026-05-09 (v1) | Criacao inicial por inferencia apenas do contexto-base                |
 | 2026-05-09 (v2) | Reescrita baseada em codigo real (PresetEntry envelopa PerfilUsuario) |
 | 2026-05-11 (v3) | Inclusao do aggregate-perfil e alinhamento com reducer                |
+| 2026-05-24 (v4) | TASK-DOC-009: removidos `historico-manutencao.md` e `diario-trabalho.md` (conceitos eliminados pela ADR-003 / REF-19). `servicosMaoDeObra` substituido por `servicosIndependentes[]` (REF-11). |
