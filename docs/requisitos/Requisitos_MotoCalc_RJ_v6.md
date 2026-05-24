@@ -83,10 +83,11 @@ SPA mobile-first que:
 | Aba | Label          | Ícone                | Rota           | Conteúdo                                                                                                 |
 | --- | -------------- | -------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
 | 1   | **ESTIMATIVA** | Gráfico/painel       | `/estimativa`  | Painel de custos com rodagem editável, cards por período, custo/km e acesso ao detalhamento              |
-| 2   | **REGISTROS**  | Tabela com lápis     | `/registros`   | Histórico de manutenções, abastecimentos e rodagem. Sub-abas: Geral · Rodagem · Combustível · Manutenção |
-| 3   | **M. DE OBRA** | Chave + martelo      | `/mao-de-obra` | Ajustes avançados de serviços + revisões autorizadas Honda                                               |
-| 4   | **INSUMOS**    | Velocímetro circular | `/insumos`     | Ajustes avançados de combustíveis, peças e pneus (renomeada pela TASK-DOC-008 em 24/05/26 — era "AUTONOMIA" / `/vida-util`)         |
-| 5   | **AJUSTES**    | Perfil/usuário       | `/ajustes`     | Ajustes de predefinição (dados do onboarding)                                                            |
+| 2   | **M. DE OBRA** | Chave + martelo      | `/mao-de-obra` | Ajustes avançados de serviços + revisões autorizadas Honda                                               |
+| 3   | **INSUMOS**    | Velocímetro circular | `/insumos`     | Ajustes avançados de combustíveis, peças e pneus (renomeada pela TASK-DOC-008 em 24/05/26 — era "AUTONOMIA" / `/vida-util`)         |
+| 4   | **AJUSTES**    | Perfil/usuário       | `/ajustes`     | Ajustes de predefinição (dados do onboarding)                                                            |
+
+> ⚠️ **ADIADO via ADR-003 (18/05/26):** a aba **REGISTROS** (`/registros`, ícone tabela com lápis, sub-abas Geral · Rodagem · Combustível · Manutenção) foi removida da bottom nav para a entrega de maio/2026. Bottom nav passou de 5 para 4 abas. Conteúdo preservado em V.4 / V.5 / VIII.2.3 / XI / XII com o mesmo banner para fidelidade histórica desta spec v6.0.
 
 **Estados visuais:**
 
@@ -137,14 +138,6 @@ Hamburguer → abre o menu inferior quando ele não estiver visível.
 ├── /estimativa              → PainelEstimativa
 │   └── /estimativa/detalhamento → DetalhamentoCustos
 │
-├── /registros               → Registros (sub-abas)
-│   ├── /registros/rodagem       → form RegistroRodagem
-│   ├── /registros/abastecimento → form RegistroAbastecimento
-│   ├── /registros/oleo          → form RegistroOleo
-│   ├── /registros/pneu          → form RegistroPneu
-│   ├── /registros/revisao       → form RegistroRevisao
-│   └── /registros/kit-relacao   → form RegistroKitRelacao
-│
 ├── /mao-de-obra             → MaoDeObra
 │
 ├── /insumos                 → Insumos (PaginaInsumos)
@@ -153,6 +146,8 @@ Hamburguer → abre o menu inferior quando ele não estiver visível.
 │
 └── /perfil                  → Perfil (acesso via avatar no header)
 ```
+
+> ⚠️ **ADIADO via ADR-003:** as rotas `/registros`, `/registros/rodagem`, `/registros/abastecimento`, `/registros/oleo`, `/registros/pneu`, `/registros/revisao` e `/registros/kit-relacao` foram removidas do escopo de maio/2026 e não constam mais no roteamento do app.
 
 ---
 
@@ -373,6 +368,8 @@ CTA: `Concluir Configuração ✓`
 
 ### V.4- Aba REGISTROS
 
+> ⚠️ **ADIADO via ADR-003 (18/05/26):** toda esta seção (RF-REG-01 a RF-REG-12) foi removida do escopo de maio/2026. O conteúdo está preservado abaixo para fidelidade histórica da spec v6.0 e como referência para reavaliação futura (backlog pós-produção).
+
 | ID        | Descrição                                                                                                                                                                                                                       | Critério de Aceite                                           |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | RF-REG-01 | Exibir 4 sub-abas horizontais: **Geral · Rodagem · Combustível · Manutenção**.                                                                                                                                                  | Sub-aba "Geral" ativa por padrão.                            |
@@ -391,6 +388,8 @@ CTA: `Concluir Configuração ✓`
 ---
 
 ### V.5- Formulários de Registro (acessados via botão [＋])
+
+> ⚠️ **ADIADO via ADR-003 (18/05/26):** toda esta seção (RF-FORM-01 a RF-FORM-06) foi removida do escopo de maio/2026. Conteúdo preservado para fidelidade histórica da spec v6.0.
 
 Todos os formulários compartilham:
 
@@ -541,7 +540,7 @@ Formulário de edição pós-onboarding com 5 seções, cada uma com reset indiv
 | Seção              | Campos                                                                                                           |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | **Veículo**        | Ano de Fabricação (dropdown) · KM Atual · KM Última Revisão                                                      |
-| **Preferências**   | Manutenção/Peças: AUTORIZADAS / INDEPENDENTES · Estimativa: PREDEFINIDOS / PERSONALIZADO                         |
+| **Preferências**   | Manutenção/Peças: AUTORIZADAS / INDEPENDENTES                                                                    |
 | **Uso Diário**     | Perfil de Trabalho: Entrega / Passageiro · Dias na Semana (stepper ⊖ N ⊕) · KM por Dia (input)                   |
 | **Financeiro**     | Seguro (toggle + valor + periodicidade) · Alimentação diária (toggle + valor) · Internet mensal (toggle + valor) |
 | **Situação Legal** | Tipo: QUITADA / FINANCIADA / ALUGADA · Valor Parcela (condicional) · Restantes (condicional)                     |
@@ -634,6 +633,8 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | RN-23 | Se `situacaoMoto !== 'alugada'`, todos os fatores são `1.0` (sem efeito).                                                         |
 
 ### VI.8- Consistências de Dados
+
+> ⚠️ **ADIADO via ADR-003 (18/05/26):** RN-24, RN-25 e RN-26 dependiam da tela Registros e foram removidas do escopo de maio/2026. Conteúdo preservado para fidelidade histórica desta spec v6.0.
 
 | ID    | Regra                                                                                                                                                   |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
