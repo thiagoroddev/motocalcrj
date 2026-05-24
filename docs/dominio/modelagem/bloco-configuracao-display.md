@@ -8,20 +8,12 @@
 
 ## Conceito no Mundo Real
 
-Bloco que controla **como os cálculos são exibidos** ao Motoboy. Não armazena valores de cálculo armazena **preferências de visualização**:
+Bloco que controla **o que é exibido** na Estimativa e no Detalhamento. Não armazena valores de cálculo — armazena **preferências de visualização**:
 
-- Modo de exibição (predefinidos vs personalizado)
-- Modo de oficina (autorizadas vs independentes preferência de UI, não cálculo)
-- Quais categorias de custo aparecem ativas no donut e total
+- Quais categorias de custo entram no donut e no total exibido
+- Quais imprevistos sugeridos (retíficas) estão ligados
 
-🔍 **Análise Profunda qual a diferença para `perfilManutencao`?**
-
-- `perfilManutencao.modoRevisao` é o **modo efetivo do cálculo** (qual fórmula é usada).
-- `configuracaoDisplay.modoOficinDisplay` é a **preferência de exibição** (qual modo aparece selecionado nos toggles da UI).
-
-São **separados intencionalmente** para permitir cenário: "eu estou em modo autorizadas (cálculo), mas estou comparando com independentes na tela momentaneamente".
-
-**No reducer atual, `SET_MODO_OFICINA` altera apenas `configuracaoDisplay` e não sincroniza `perfilManutencao.modoRevisao`.**
+Após ADR-003 / TASK-REF-18 / REF-19, **não existe mais `modoExibicao` nem `modoOficinDisplay`**. O app opera em modo único — `perfilManutencao.modoRevisao` é a única fonte de "qual modo de revisão" tanto para cálculo quanto para UI.
 
 ---
 
@@ -31,9 +23,8 @@ São **separados intencionalmente** para permitir cenário: "eu estou em modo au
 // src/types/perfil.ts (dentro de PerfilUsuario)
 
 configuracaoDisplay: {
-  modoExibicao: ModoExibicao; // 'predefinidos' | 'personalizado'
-  modoOficinDisplay: ModoRevisao; // 'autorizadas' | 'independentes'
   categoriasAtivas: CategoriaDisplay;
+  imprevistosSugeridosAtivos: Record<string, boolean>;
 }
 ```
 
@@ -43,96 +34,76 @@ configuracaoDisplay: {
 type CategoriaDisplay = {
   combustivel: boolean;
   alimentacao: boolean;
-  manutencao: boolean; // engloba revisão (RN-27)
+  manutencao: boolean;   // engloba revisão (RN-27)
   documentacao: boolean; // ATENÇÃO: nome difere de 'documentos' nos cálculos
   internet: boolean;
   seguro: boolean;
   financiamento: boolean;
+  imprevistos: boolean;
 };
 ```
 
-⚠️ **Divergência de nomenclatura crítica:**
+⚠️ **Divergência de nomenclatura:** `CategoriaDisplay.documentacao` (no perfil persistido) vs `FiltrosCategorias.documentos` (nos cálculos). A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Registrada como dívida técnica leve de nomenclatura.
 
-- `CategoriaDisplay.documentacao` (no perfil persistido)
-- `FiltrosCategorias.documentos` (nos cálculos)
+⚠️ **Sem campo `revisao` separado:** revisão é sub-item de manutenção (RN-27). `categoriasParaFiltros()` espelha: `revisao: cat.manutencao`. Toggle de manutenção liga/desliga revisão junto.
 
-A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Se um agente futuramente confundir e usar a chave errada, vai dar bug. **Registrado como dívida técnica de nomenclatura.**
+⚠️ **Sem campo `gastosCustom` próprio em `CategoriaDisplay`:** o toggle visível na UI é `imprevistos` (categoria nova adicionada pela RF-6.9). `categoriasParaFiltros()` traduz `imprevistos` para `gastosCustom: cat.imprevistos` e também para `imprevistosSugeridos` (ver abaixo).
 
-⚠️ **Outra divergência:** `CategoriaDisplay` **não tem campo `revisao` separado** porque revisão é sub-item de manutenção (RN-27). A função `categoriasParaFiltros()` espelha: `revisao: cat.manutencao`. Toggle de manutenção liga/desliga revisão junto.
+### `imprevistosSugeridosAtivos`
 
-⚠️ **Mais uma:** `CategoriaDisplay` **não tem campo `gastosCustom`**. A função `categoriasParaFiltros()` mapeia `gastosCustom: cat.financiamento` o que significa que **toggle de financiamento controla também os gastos custom**. Comportamento sutil que pode confundir o Motoboy.
+```typescript
+imprevistosSugeridosAtivos: Record<string, boolean>;
+```
 
-⚠️ **Imprevistos sugeridos não seguem esse toggle.** Retíficas aparecem em `FiltrosCategorias.imprevistosSugeridos` e só entram no total quando o item está explicitamente `true`.
+Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-completa`). Padrão é `{}` (vazio) — qualquer id sem entrada conta como **desligado**. Apenas `true` explícito ativa o cálculo da retífica no total.
 
 ---
 
 ## Comportamentos (Actions do Reducer)
 
-| Action              | Comportamento                                               |
-| ------------------- | ----------------------------------------------------------- |
-| `SET_MODO_EXIBICAO` | Alterna entre `'predefinidos'` e `'personalizado'`          |
-| `SET_MODO_OFICINA`  | Alterna entre `'autorizadas'` e `'independentes'`           |
-| `TOGGLE_CATEGORIA`  | Liga/desliga uma categoria específica em `categoriasAtivas` |
+| Action                       | Comportamento                                                            |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                         |
+| `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`            |
+
+> Actions `SET_MODO_EXIBICAO` e `SET_MODO_OFICINA` **foram removidas** pelas TASK-REF-18 e REF-19 (ADR-003 — modo único).
 
 ---
 
 ## Mapeamento `categoriasAtivas` → `FiltrosCategorias`
 
-**Esta é a função-chave** que conecta este bloco com os cálculos:
+**Função-chave** que conecta este bloco com os cálculos (ler implementação real em `src/utils/calculos.ts`):
 
 ```typescript
-// utils/calculos.ts
-export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias {
+// Esboço — ver código para detalhes
+export function categoriasParaFiltros(
+  cat: CategoriaDisplay,
+  imprevistosSugeridosAtivos: Record<string, boolean>,
+): FiltrosCategorias {
   return {
-    documentos: cat.documentacao, // tradução de nome
-    revisao: cat.manutencao, // revisao espelha manutencao (RN-27)
+    documentos: cat.documentacao,        // tradução de nome
+    revisao: cat.manutencao,             // espelha manutenção (RN-27)
     manutencao: cat.manutencao,
-    manutencaoPorPeca: {}, // peças individuais entram aqui (filtro fino)
-    revisaoPorServico: {}, // serviços de revisão individuais
-    imprevistosSugeridos: {}, // desligados por padrão; true explícito ativa
+    manutencaoPorPeca: {},               // filtro fino por peça
+    revisaoPorServico: {},               // filtro fino por serviço de revisão
+    imprevistosSugeridos: imprevistosSugeridosAtivos, // explícito via TOGGLE_IMPREVISTO_SUGERIDO
     combustivel: cat.combustivel,
     internet: cat.internet,
     seguro: cat.seguro,
     alimentacao: cat.alimentacao,
     financiamento: cat.financiamento,
-    gastosCustom: cat.financiamento, // gastosCustom segue financiamento
+    gastosCustom: cat.imprevistos,       // imprevistos controla gastosCustom (RF-6.9)
   };
 }
 ```
 
-🔍 **Análise:** Esta função é **a tradução semântica** entre o que o usuário vê (categorias visuais) e o que o cálculo trata (categorias granulares). Ela carrega regras de domínio:
+🔍 **Regras de domínio embutidas no mapeamento:**
 
-1. `documentacao` → `documentos` (nome diferente em camadas diferentes)
+1. `documentacao` → `documentos` (nomes diferentes em camadas diferentes)
 2. `manutencao` controla `manutencao` E `revisao` (RN-27)
-3. `financiamento` controla `financiamento` E `gastosCustom`
-4. `manutencaoPorPeca` é filtro fino por peça (não vem deste bloco vem de outro mecanismo)
-5. `imprevistosSugeridos` começa vazio porque sugestões corretivas, como retíficas, não entram no custo por padrão
-
----
-
-## Modo de Exibição em Detalhe
-
-```typescript
-type ModoExibicao = 'predefinidos' | 'personalizado';
-```
-
-### `'predefinidos'`
-
-- **Ignora todos os Overrides** (`pecasOverrides`, `servicosMaoDeObra`, `revisaoAutorizadaOverrides`)
-- Calcula usando exclusivamente os valores do Preset JSON
-- Útil para: "quanto custaria se eu seguisse os valores médios de mercado?"
-
-### `'personalizado'`
-
-- Usa Overrides onde existem
-- Cai no Preset JSON onde não há
-- Modo padrão após qualquer personalização (RN-05)
-- Útil para: "qual é o meu custo real, considerando o que eu já personalizei?"
-
-⚠️ **Nuance:** Modo personalizado **também ativa** o uso da média real do `diarioTrabalho` para `kmPorDia` (ver `bloco-trabalho.md` → `resolverKmDia`). Assim:
-
-- `'predefinidos'` = "use só o que veio do Onboarding e do Preset JSON"
-- `'personalizado'` = "use o que eu personalizei + o que registrei na prática"
+3. `imprevistos` controla `gastosCustom` (lista fechada de Multa/Sinistros/Outros)
+4. `imprevistosSugeridos` vem direto de `imprevistosSugeridosAtivos` — retíficas começam desligadas, ativam só com `true` explícito
+5. `manutencaoPorPeca`/`revisaoPorServico` são filtros finos que **não vêm deste bloco** — são estado local do Detalhamento
 
 ---
 
@@ -140,25 +111,23 @@ type ModoExibicao = 'predefinidos' | 'personalizado';
 
 ### INV-DISPLAY-1: Pelo menos uma categoria ativa
 
-**Regra:** Pelo menos uma categoria em `categoriasAtivas` deve estar `true`.
+**Regra:** Pelo menos uma categoria em `categoriasAtivas` deve estar `true` para a tela fazer sentido.
 
-**Por quê:** Donut chart vazio (todas off) seria UX ruim. Total = 0 também.
+**Onde é protegida:** ⚠️ **Não está protegida no código.** Estado de "tudo desligado" é tolerado (donut vazio + total = 0). Possível dívida técnica leve (DT-10 em `divida-tecnica.md`).
 
-**Onde é protegida:** ⚠️ **Não está protegida no código** atual conforme tipos mostrados. **Possível dívida técnica.** Registrar.
+### INV-DISPLAY-2: `categoriasAtivas` tem todas as 8 chaves
 
-⚠️ **Verificar comportamento:** se Motoboy desliga a última, o que acontece? Investigar.
-
-### INV-DISPLAY-2: Modos sempre dentro do union
-
-**Regra:** TypeScript garante que `modoExibicao ∈ {'predefinidos', 'personalizado'}` e `modoOficinDisplay ∈ {'autorizadas', 'independentes'}`.
-
-**Onde é protegida:** sistema de tipos. Compilação falha se outro valor entra.
-
-### INV-DISPLAY-3: categoriasAtivas tem todas as 7 chaves
-
-**Regra:** O tipo `CategoriaDisplay` exige todas as 7 propriedades. Não pode ter chave faltando.
+**Regra:** O tipo `CategoriaDisplay` exige todas as 8 propriedades (`combustivel`, `alimentacao`, `manutencao`, `documentacao`, `internet`, `seguro`, `financiamento`, `imprevistos`).
 
 **Onde é protegida:** sistema de tipos.
+
+### INV-DISPLAY-3: `imprevistosSugeridosAtivos` é default-off
+
+**Regra:** Item de `imprevistosSugeridosAtivos[id]` ativa custo somente quando valor é `true` explícito. `undefined` ou `false` mantém desligado. Inverso de `manutencaoPorPeca` (que é default-on).
+
+**Por quê:** Retíficas são custos corretivos de alto km — não devem inflar o total exibido por padrão. O Motoboy liga o sugerido quando quer planejar para o evento. (BG-005)
+
+**Onde é protegida:** lógica de `calcularTotalFiltrado` em `calculos.ts`.
 
 ---
 
@@ -166,40 +135,34 @@ type ModoExibicao = 'predefinidos' | 'personalizado';
 
 ```
 PerfilUsuario.configuracaoDisplay
-├── modoExibicao → resolverKmDia + resolverIntervaloPeca + resolverPrecoPeca
-│                  (decide se usa overrides ou só preset)
-├── modoOficinDisplay → UI da Estimativa (toggle visual; pode ou não bater com perfilManutencao.modoRevisao)
-└── categoriasAtivas → categoriasParaFiltros() → calcularTotalFiltrado()
-                       (decide quais categorias entram no total exibido)
+├── categoriasAtivas → categoriasParaFiltros() → calcularTotalFiltrado()
+│                      (decide quais categorias entram no total exibido)
+└── imprevistosSugeridosAtivos → categoriasParaFiltros() → filtros.imprevistosSugeridos
+                                  (ativa retíficas no total quando true)
 ```
 
 ---
 
 ## Eventos Relacionados
 
-- `ModoExibicaoTrocado` `SET_MODO_EXIBICAO`. Recálculo afeta praticamente tudo.
-- `ModoOficinaTrocado` `SET_MODO_OFICINA`. Apenas troca o display do toggle (não muda cálculo se `perfilManutencao.modoRevisao` estiver separado).
-- `CategoriaAlternada` `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
+- `CategoriaAlternada` — `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
+- `ImprevistoSugeridoAlternado` — `TOGGLE_IMPREVISTO_SUGERIDO`. Liga/desliga uma retífica específica.
 
 ---
 
 ## Pontos de Atenção
 
-### Possível redundância modoOficinDisplay × perfilManutencao.modoRevisao
-
-Os dois campos parecem ter o mesmo propósito. **Confirmar com o código** se há cenário real onde divergem. Se não há, é redundância candidata a remoção (V2).
-
-### Toggle de financiamento controla gastosCustom
-
-Comportamento sutil que pode confundir Motoboy: ao desativar "financiamento", os gastos custom também somem. Pode ser intencional (organizar visualmente) ou bug de UX. **Investigar.**
-
 ### Toggle de manutenção controla revisão
 
-Comportamento explícito (RN-27). Documentado mas vale lembrar revisão não tem toggle próprio.
+Comportamento explícito (RN-27). Documentado mas vale lembrar — revisão não tem toggle próprio.
 
-### Sincronização entre o que está no perfil e o que está no UI
+### Toggle de imprevistos controla gastosCustom
 
-Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. **Confirmar < 200ms** (RNF-04).
+Após RF-6.9, `imprevistos` é a categoria que engloba tanto os 3 presets fixos (Multa, Sinistros, Outros) quanto as retíficas sugeridas. Desligar `imprevistos` esconde os dois grupos do total. Imprevistos é a **única categoria editável direto na tela de Detalhamento** (via lápis — RF-6.11).
+
+### Sincronização perfil → UI
+
+Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA` ou `TOGGLE_IMPREVISTO_SUGERIDO` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. Performance esperada < 200ms (RNF-04).
 
 ---
 
@@ -207,9 +170,6 @@ Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA` e atualiza
 
 ```typescript
 // src/types/perfil.ts
-
-export type ModoExibicao = 'predefinidos' | 'personalizado';
-export type ModoRevisao = 'autorizadas' | 'independentes';
 
 export type CategoriaDisplay = {
   combustivel: boolean;
@@ -219,13 +179,13 @@ export type CategoriaDisplay = {
   internet: boolean;
   seguro: boolean;
   financiamento: boolean;
+  imprevistos: boolean;
 };
 
 // Dentro de PerfilUsuario:
 configuracaoDisplay: {
-  modoExibicao: ModoExibicao;
-  modoOficinDisplay: ModoRevisao;
   categoriasAtivas: CategoriaDisplay;
+  imprevistosSugeridosAtivos: Record<string, boolean>;
 }
 ```
 
@@ -235,14 +195,9 @@ configuracaoDisplay: {
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
-- `src/types/calculos.ts` `FiltrosCategorias`
-- `src/utils/calculos.ts` `categoriasParaFiltros`
-- `Requisitos v6` RN-04, RN-05, RN-06, RN-08, RN-27
+- `src/types/perfil.ts` — bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
+- `src/types/calculos.ts` — `FiltrosCategorias`
+- `src/utils/calculos.ts` — `categoriasParaFiltros`
+- `src/context/PerfilContext.tsx` — actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO`
 
-**Divergências encontradas:**
-
-- Naming `documentacao` (perfil) vs `documentos` (cálculos) registrado como dívida técnica
-- Possível redundância entre `modoOficinDisplay` e `perfilManutencao.modoRevisao` pendente de investigação
-- INV-DISPLAY-1 (pelo menos uma categoria ativa) não parece ter proteção explícita pendente de investigação
-- Toggle financiamento controla gastosCustom pode ser confuso para o usuário, registrado como observação
+**Divergências encontradas:** nenhuma. Documentação atualizada em 24/05/26 (TASK-DOC-009) após REF-18/REF-19 (remoção de `modoExibicao`/`modoOficinDisplay`) e RF-6.9/RF-6.11 (categoria `imprevistos`, `imprevistosSugeridosAtivos`).

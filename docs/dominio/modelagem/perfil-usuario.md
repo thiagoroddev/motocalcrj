@@ -16,7 +16,7 @@ O `PerfilUsuario` é **a totalidade dos dados de um Motoboy** dentro de um Prese
 
 ## Estrutura Real
 
-`PerfilUsuario` é uma **entidade com 11 blocos coesos**. Cada bloco tem um arquivo dedicado nesta pasta. Esta página é o **mapa geral** que liga todos eles.
+`PerfilUsuario` é uma **entidade com 9 blocos coesos**. Cada bloco tem um arquivo dedicado nesta pasta. Esta página é o **mapa geral** que liga todos eles.
 
 ```typescript
 // src/types/perfil.ts
@@ -37,16 +37,12 @@ export interface PerfilUsuario {
   configuracaoDisplay: { ... };           // → bloco-configuracao-display.md
 
   // ─── Overrides ───
-  pecasOverrides: PecaOverride[];         // → overrides.md
-  servicosMaoDeObra: ServicosMaoDeObra;   // → overrides.md
-  revisaoAutorizadaOverrides: RevisaoAutorizadaOverride[];  // → overrides.md
+  pecasOverrides: PecaOverride[];                         // → overrides.md
+  servicosIndependentes: ServicoIndependente[];           // → overrides.md
+  revisaoAutorizadaOverrides: RevisaoAutorizadaOverride[]; // → overrides.md
 
   // ─── Cache externo ───
   fipeCache: FipeCache | null;
-
-  // ─── Histórico ───
-  historicoManutencao: HistoricoManutencao;  // → historico-manutencao.md
-  diarioTrabalho: DiarioEntry[];             // → diario-trabalho.md
 }
 ```
 
@@ -56,7 +52,7 @@ export interface PerfilUsuario {
 
 | Atributo              | Tipo             | Descrição                                                                            |
 | --------------------- | ---------------- | ------------------------------------------------------------------------------------ |
-| `schemaVersion`       | number           | Versão do schema. Atual: 5. Migrações controladas por `migrarPerfil.ts` (pendente)   |
+| `schemaVersion`       | number           | Versão do schema. **Atual: 14.** Migrações em cascata aplicadas inline em `criarEstadoInicial` (PerfilContext.tsx) ao carregar |
 | `userId`              | `string \| null` | Login-ready (RNF-LR-02). Sempre `null` em V1. UUID do backend em V2                  |
 | `onboardingConcluido` | boolean          | Gatilho de `RotaProtegida` se `false`, app redireciona para `/onboarding/1`          |
 | `apelido`             | `string \| null` | Apelido do Motoboy. Opcional. Aparece no header se preenchido                        |
@@ -89,27 +85,17 @@ export interface PerfilUsuario {
 ### 🎨 `configuracaoDisplay`
 
 **Arquivo:** `bloco-configuracao-display.md`
-**O quê:** controle do que é exibido modo de exibição (predefinidos/personalizado), modo de oficina, quais categorias estão ativas no donut e total.
+**O quê:** controle do que é exibido — quais categorias estão ativas no donut e total, e quais imprevistos sugeridos (retíficas) estão ligados.
 
 ### ✏️ Overrides
 
 **Arquivo:** `overrides.md`
-**O quê:** três estruturas que materializam o sistema de overrides `pecasOverrides[]` (preço/intervalo/perfil de cada peça customizado), `servicosMaoDeObra` (preços de serviços), `revisaoAutorizadaOverrides[]` (preço por linha da tabela de revisões).
+**O quê:** três estruturas que materializam o sistema de overrides — `pecasOverrides[]` (preço original/paralela e intervalo customizados por peça), `servicosIndependentes[]` (intervalo + preço de mão de obra dos serviços de manutenção; substituiu `servicosMaoDeObra` pela TASK-REF-11), `revisaoAutorizadaOverrides[]` (preço por linha da tabela de revisões Honda).
 
 ### 🌐 `fipeCache`
 
 **Arquivo:** seção desta página (abaixo).
 **O quê:** cache da consulta FIPE feita no Onboarding.
-
-### 📋 `historicoManutencao`
-
-**Arquivo:** `historico-manutencao.md`
-**O quê:** cinco listas de registros estruturados trocas de óleo, revisões, trocas de pneu, trocas de kit relação, abastecimentos.
-
-### 📔 `diarioTrabalho`
-
-**Arquivo:** `diario-trabalho.md`
-**O quê:** lista de dias trabalhados com km inicial/final, alimentação, abastecimento. Base para cálculo de média real de km/dia (Modo Personalizado).
 
 ---
 
@@ -147,16 +133,18 @@ Foram adicionados na correção A06 do checklist. Sem eles, ao trocar de modelo 
 
 ## Comportamentos do PerfilUsuario
 
-Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver `src/types/perfil.ts` type `PerfilAction`). Listados em alto nível aqui; cada bloco tem suas Actions específicas detalhadas no arquivo dele.
+Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver `src/types/perfil.ts` type `PerfilAction`). Catálogo completo em `docs/arquitetura/estado_inicial.md` §IV. Categorias:
 
 | Categoria               | Actions principais                                                         |
 | ----------------------- | -------------------------------------------------------------------------- |
 | Onboarding              | `SET_ONBOARDING_CAMPO`, `COMMIT_ONBOARDING`                                |
-| Configuração de Rodagem | `SET_KM_POR_DIA`, `SET_DIAS_POR_SEMANA`, `SET_KM_ATUAL`                    |
-| Display                 | `SET_MODO_EXIBICAO`, `SET_MODO_OFICINA`, `TOGGLE_CATEGORIA`                |
-| Overrides               | `SET_PECA_OVERRIDE`, `RESET_PECA_OVERRIDE`, `SET_SERVICO_MAO_DE_OBRA`, etc |
-| Financeiro              | `SET_INTERNET`, `SET_SEGURO`, `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, etc    |
-| Histórico               | `ADD_TROCA_OLEO`, `DELETE_TROCA_OLEO`, `ADD_REVISAO`, etc                  |
+| Rodagem inline          | `SET_KM_POR_DIA`, `SET_DIAS_POR_SEMANA`, `SET_KM_ATUAL`                    |
+| Display                 | `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO`                           |
+| Overrides de peça       | `SET_PECA_OVERRIDE`, `RESET_PECA_OVERRIDE`                                 |
+| Mão de obra e revisão   | `SET_SERVICO_INDEPENDENTE`, `RESET_SERVICOS_INDEPENDENTES`, `SET_REVISAO_AUTORIZADA_OVERRIDE`, `RESET_REVISAO_AUTORIZADA_OVERRIDE` |
+| Financeiro              | `SET_INTERNET`, `SET_SEGURO`, `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR` |
+| Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`, `MARCAR_TROCAS_REVISAO`        |
+| Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_PERFIL_USO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
 | FIPE                    | `SET_FIPE_CACHE`                                                           |
 | Persistência            | `CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`                     |
 
@@ -184,16 +172,16 @@ Ver INV-FIPE-1 acima.
 
 ### INV-PERFIL-5: Categorias de Display espelham realidade do perfil
 
-**Regra:** Se `financeiro.seguro.tem === false`, então `configuracaoDisplay.categoriasAtivas.seguro` pode estar `true` ou `false` (independente). Mas se categoria está `true` e seguro `tem = false`, o cálculo retorna 0 sem erro.
+**Regra:** Categoria `true` com valor de origem `<= 0` (ex.: `categoriasAtivas.seguro: true` mas `financeiro.seguro.valorAnual === 0`) é estado tolerado. O cálculo retorna 0 sem erro — presença derivada de `valor > 0` (REF-21 / ADR-005).
 
-⚠️ Esta NÃO é uma invariante forte; é mais uma observação de comportamento do `categoriasParaFiltros()`.
+⚠️ Não é invariante forte; é observação de comportamento de `categoriasParaFiltros()` e das funções de cálculo defensivas.
 
 ---
 
 ## Snippet TypeScript (Real, simplificado)
 
 ```typescript
-// Estrutura geral ver bloco-*.md para detalhes de cada parte
+// Estrutura geral — ver bloco-*.md para detalhes de cada parte
 
 export interface PerfilUsuario {
   schemaVersion: number;
@@ -202,30 +190,17 @@ export interface PerfilUsuario {
   apelido: string | null;
   aplicativos: string[];
 
-  moto: {
-    /* bloco-moto.md */
-  };
-  perfilManutencao: {
-    /* bloco-perfil-manutencao.md */
-  };
-  trabalho: {
-    /* bloco-trabalho.md */
-  };
-  financeiro: {
-    /* bloco-financeiro.md */
-  };
-  configuracaoDisplay: {
-    /* bloco-configuracao-display.md */
-  };
+  moto: { /* bloco-moto.md */ };
+  perfilManutencao: { /* bloco-perfil-manutencao.md */ };
+  trabalho: { /* bloco-trabalho.md */ };
+  financeiro: { /* bloco-financeiro.md */ };
+  configuracaoDisplay: { /* bloco-configuracao-display.md */ };
 
   pecasOverrides: PecaOverride[];
-  servicosMaoDeObra: ServicosMaoDeObra;
+  servicosIndependentes: ServicoIndependente[];
   revisaoAutorizadaOverrides: RevisaoAutorizadaOverride[];
 
   fipeCache: FipeCache | null;
-
-  historicoManutencao: HistoricoManutencao;
-  diarioTrabalho: DiarioEntry[];
 }
 ```
 
@@ -235,9 +210,9 @@ export interface PerfilUsuario {
 
 Esta documentação foi validada contra:
 
-- `src/types/perfil.ts` estrutura completa de `PerfilUsuario` e `FipeCache`
-- `src/types/perfil.ts` type `PerfilAction` (Actions disponíveis)
-- `docs/Requisitos_MotoCalc_RJ_v6.md` Seção XII (Estrutura de Dados)
-- `contexto-base.instructions.md` chaves de localStorage, regras de COMMIT_ONBOARDING
+- `src/types/perfil.ts` — estrutura completa de `PerfilUsuario` (schema 14) e `FipeCache`
+- `src/types/perfil.ts` — type `PerfilAction` (Actions disponíveis)
+- `src/context/PerfilContext.tsx` — `perfilPadrao` e reducer
+- `docs/arquitetura/estado_inicial.md` — visão completa do estado e migrações
 
-**Divergências encontradas:** nenhuma. Documentação fiel ao código.
+**Divergências encontradas:** nenhuma. Documentação fiel ao código pós-TASK-DOC-009 (24/05/26).

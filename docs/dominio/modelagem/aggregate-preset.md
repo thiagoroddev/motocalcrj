@@ -3,6 +3,7 @@
 > **Status:** Engenharia reversa baseada em código real (`src/types/perfil.ts`).
 > **Tipo:** Aggregate Root raiz do aggregate de dados persistidos.
 > **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `motocalc:v5:presets`.
+> **Última atualização:** 2026-05-24 (TASK-DOC-009).
 
 ---
 
@@ -39,13 +40,13 @@ export interface PresetEntry {
 }
 ```
 
-| Atributo       | Tipo            | Descrição                                                                           |
-| -------------- | --------------- | ----------------------------------------------------------------------------------- |
+| Atributo       | Tipo            | Descrição                                                                        |
+| -------------- | --------------- | -------------------------------------------------------------------------------- |
 | `presetId`     | string          | Identificador único usado em `motocalc:v5:presetAtivo` para apontar qual está ativo |
-| `nome`         | string          | Nome amigável dado pelo Motoboy ("Honda Pop 2024", "Biz Reserva")                   |
-| `criadoEm`     | string (ISO)    | Data de criação do PresetEntry                                                      |
-| `atualizadoEm` | string (ISO)    | Última modificação                                                                  |
-| `perfil`       | `PerfilUsuario` | Conteúdo completo todos os dados do Motoboy                                         |
+| `nome`         | string          | Nome amigável dado pelo Motoboy ("Honda Pop 2024", "Biz Reserva")                |
+| `criadoEm`     | string (ISO)    | Data de criação do PresetEntry                                                   |
+| `atualizadoEm` | string (ISO)    | Última modificação                                                               |
+| `perfil`       | `PerfilUsuario` | Conteúdo completo todos os dados do Motoboy                                      |
 
 ⚠️ **Observação importante:** o `PerfilUsuario` é uma estrutura grande. Ele tem suas próprias entidades aninhadas (Moto, blocos financeiros, históricos, overrides). Ver `perfil-usuario.md` para detalhamento. Aqui só descrevemos o **envelope**.
 
@@ -55,18 +56,18 @@ export interface PresetEntry {
 
 ### Chaves do localStorage
 
-| Chave                     | Conteúdo                                     |
-| ------------------------- | -------------------------------------------- |
+| Chave                  | Conteúdo                                     |
+| ---------------------- | -------------------------------------------- |
 | `motocalc:v5:presets`     | Array `PresetEntry[]` em JSON                |
 | `motocalc:v5:presetAtivo` | String com o `presetId` do PresetEntry ativo |
 
 ### Acesso isolado
 
-**Toda leitura/escrita passa por `src/services/perfilStorage.ts`** interface `IPerfilStorage` implementada por `LocalStoragePerfilStorage`. Componentes, hooks e contexto **nunca** acessam `localStorage` diretamente. Esta é uma regra de arquitetura crítica (RNF-LR-01).
+**Toda leitura/escrita passa por `src/services/perfilStorage.ts`** — interface `IPerfilStorage` implementada por `LocalStoragePerfilStorage`. Componentes, hooks e contexto **nunca** acessam `localStorage` diretamente. Regra de arquitetura crítica (RNF-LR-01 / INV-PRESET-3).
 
 ### Versionamento
 
-A chave inclui `:v5:` indicando schema versão 5 (atual). O campo `schemaVersion` dentro de `PerfilUsuario` permite migrações controladas (RNF-LR-06).
+O namespace contém `:v5:` por razões históricas (era a versão do schema quando o storage foi definido). **A versão real do schema vive em `perfil.schemaVersion`** dentro de cada `PresetEntry` — **atual: v14.** O namespace ficou como string opaca para não invalidar storage de usuários a cada bump de schema; migrações em cascata em `criarEstadoInicial` (PerfilContext.tsx) cuidam de normalizar perfis antigos no carregamento. Ver `docs/arquitetura/estado_inicial.md` §VI para tabela completa.
 
 ---
 
@@ -119,7 +120,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 
 **Por quê:** Centralizar permite (a) trocar implementação no futuro (IndexedDB, sync com servidor), (b) garantir formato consistente, (c) controlar versionamento de schema. (RNF-LR-01)
 
-**Validação:** `grep -r "localStorage" src/` deve retornar zero resultados fora de `src/services/perfilStorage.ts` (e da chave de tema).
+**Validação:** `grep -r "localStorage" src/` deve retornar zero resultados fora de `src/services/perfilStorage.ts`.
 
 ### INV-PRESET-4: Imutabilidade do Preset JSON
 
@@ -143,7 +144,7 @@ export interface PresetEntry {
 }
 
 // Uso típico no localStorage:
-// motocalc:v5:presets   → JSON.stringify(PresetEntry[])
+// motocalc:v5:presets    → JSON.stringify(PresetEntry[])
 // motocalc:v5:presetAtivo → string (presetId)
 ```
 
@@ -169,18 +170,16 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
 
 ```
 PresetEntry (Aggregate Root)
-└── perfil: PerfilUsuario           ← conteúdo completo (ver perfil-usuario.md)
-    ├── moto                        ← bloco-moto.md
-    ├── trabalho                    ← bloco-trabalho.md
-    ├── perfilManutencao            ← bloco-perfil-manutencao.md
-    ├── financeiro                  ← bloco-financeiro.md
-    ├── configuracaoDisplay         ← bloco-configuracao-display.md
-    ├── pecasOverrides[]            ← overrides.md
-    ├── servicosMaoDeObra           ← overrides.md
-    ├── revisaoAutorizadaOverrides[]← overrides.md
-    ├── fipeCache                   ← perfil-usuario.md
-    ├── historicoManutencao         ← historico-manutencao.md
-    └── diarioTrabalho[]            ← diario-trabalho.md
+└── perfil: PerfilUsuario                 ← conteúdo completo (ver perfil-usuario.md)
+    ├── moto                              ← bloco-moto.md
+    ├── trabalho                          ← bloco-trabalho.md
+    ├── perfilManutencao                  ← bloco-perfil-manutencao.md
+    ├── financeiro                        ← bloco-financeiro.md
+    ├── configuracaoDisplay               ← bloco-configuracao-display.md
+    ├── pecasOverrides[]                  ← overrides.md
+    ├── servicosIndependentes[]           ← overrides.md
+    ├── revisaoAutorizadaOverrides[]      ← overrides.md
+    └── fipeCache                         ← perfil-usuario.md
 ```
 
 ⚠️ **Importante:** `PerfilUsuario` **não tem `presets[]`** dentro dele esta é uma confusão fácil de cometer. A lista de Presets vive **fora**, no localStorage como `PresetEntry[]`. Cada `PresetEntry` contém **um único `PerfilUsuario`**.

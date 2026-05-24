@@ -10,11 +10,10 @@
 
 Bloco que representa **as preferências do Motoboy quanto à manutenção da moto**. Define globalmente:
 
-- Se compra peças originais ou paralelas (mais baratas)
+- Se compra peças originais ou paralelas
 - Se faz revisões em concessionária autorizada Honda ou em oficina independente
-- Quando independente: qual o preço de mão de obra que considera padrão e a frequência das revisões
 
-Estas preferências afetam **todos os cálculos de manutenção e revisão**.
+Estas preferências afetam **todos os cálculos de manutenção e revisão**. Após REF-19 (ADR-003), o bloco virou enxuto — preço de mão de obra e intervalo agora vivem por serviço em `perfil.servicosIndependentes[]` (ADR-004).
 
 ---
 
@@ -25,105 +24,79 @@ Estas preferências afetam **todos os cálculos de manutenção e revisão**.
 
 perfilManutencao: {
   perfilPecasGlobal: PerfilPecas; // 'original' | 'paralela'
-  modoRevisao: ModoRevisao; // 'autorizadas' | 'independentes'
-  precoMaoDeObraIndependente: number; // padrão: 150
-  frequenciaRevisaoKm: number; // padrão: 6000
+  modoRevisao: ModoRevisao;       // 'autorizadas' | 'independentes'
 }
 ```
 
-| Atributo                     | Tipo          | Descrição                                                                       | Padrão                    |
-| ---------------------------- | ------------- | ------------------------------------------------------------------------------- | ------------------------- |
-| `perfilPecasGlobal`          | `PerfilPecas` | Preferência global de peças. Pode ser sobrescrita por peça via `pecasOverrides` | (escolhido no Onboarding) |
-| `modoRevisao`                | `ModoRevisao` | Concessionária autorizada Honda ou oficina independente                         | (escolhido no Onboarding) |
-| `precoMaoDeObraIndependente` | number        | Preço médio de mão de obra de revisão em oficina independente                   | 150                       |
-| `frequenciaRevisaoKm`        | number        | Quantos km entre revisões na oficina independente                               | 6000                      |
+| Atributo            | Tipo          | Descrição                                                                       | Padrão           |
+| ------------------- | ------------- | ------------------------------------------------------------------------------- | ---------------- |
+| `perfilPecasGlobal` | `PerfilPecas` | Preferência global de peças. Pode ser sobrescrita por peça via `pecasOverrides` | `'original'`     |
+| `modoRevisao`       | `ModoRevisao` | Concessionária autorizada Honda ou oficina independente                         | `'independentes'`|
+
+> `precoMaoDeObraIndependente` e `frequenciaRevisaoKm` **foram removidos** pela TASK-REF-19. No modo `independentes`, cada serviço de manutenção em `perfil.servicosIndependentes[]` tem seu próprio `intervalKm` e `precoMaoDeObra` (ADR-004 / TASK-REF-11).
 
 ---
 
 ## Comportamentos (Actions do Reducer)
 
-⚠️ **Observação:** o reducer **não tem actions específicas** para alterar este bloco diretamente. As mudanças ocorrem via:
+| Action             | Comportamento                                                |
+| ------------------ | ------------------------------------------------------------ |
+| `SET_MODO_REVISAO` | Alterna entre `'autorizadas'` e `'independentes'` (Ajustes)  |
+| `SET_PERFIL_USO`   | Define perfil de uso (afeta `bloco-moto`, mas controla qual intervalo de peça usar: entrega vs casual) |
 
-- `SET_ONBOARDING_CAMPO` durante o Onboarding (e possivelmente em Ajustes)
-- `COMMIT_ONBOARDING` para persistir
-
-**No reducer atual, nao existe action dedicada para `perfilManutencao` fora do onboarding.**
+> `perfilPecasGlobal` é definido durante o Onboarding via `SET_ONBOARDING_CAMPO`. Não há action dedicada para mudá-lo depois (DT-14 candidata).
 
 ---
 
 ## Como `perfilPecasGlobal` Interage com Overrides
 
-Esta é a regra mais importante deste bloco:
+`perfilPecasGlobal` ('original' | 'paralela') é a fonte única — `resolverPrecoPeca(pecaId, preset, perfilPecas, pecasOverrides)` lê a coluna correspondente do Preset JSON (`precoOriginal` ou `precoParalela`), a menos que haja override individual.
 
-```typescript
-// Conceito (não código literal)
-function resolverPerfilPeca(pecaId, perfilPecasGlobal, override): PerfilPecas {
-  // Override por peça vence o global
-  if (override?.perfilPecasOverride !== null) {
-    return override.perfilPecasOverride;
-  }
-  return perfilPecasGlobal;
-}
-```
+🔍 **Override por peça é granular por preço, não por perfil:** após a estrutura atual (REF-11), `PecaOverride` tem `precoEditadoOriginal` e `precoEditadaParalela` separados — o Motoboy pode informar valores diferentes para cada coluna. **Não existe mais `perfilPecasOverride` por peça** (esse conceito antigo morreu na refatoração).
 
-🔍 **Análise:** `perfilPecasGlobal` é o **padrão**. Cada peça pode ter um `perfilPecasOverride` em `pecasOverrides[]` que sobrescreve só pra ela. Isso permite o cenário real: "uso peças originais em geral, mas pneu é paralelo porque é mais barato e dura quase igual".
-
-⚠️ **Caso especial:** Se o Preset JSON da peça tem `anoFimOriginal` e o ano da moto é maior, **força paralela** independente do override (RN-11). Original descontinuada não existe sistema não pode oferecer.
+⚠️ **Caso especial (RN-11):** Se o Preset JSON da peça tem `anoFimOriginal` e o ano da moto é maior, deveria **forçar paralela** independente do `perfilPecasGlobal`. Regra documentada nos Requisitos v6 mas ainda **não implementada** em `calculos.ts`. Registrada como pendência no README da modelagem.
 
 ---
 
 ## Como `modoRevisao` Afeta Cálculos
 
+Esboço — ler `calcularDetalhesRevisaoAnual` em `src/utils/calculos.ts` para detalhes:
+
 ```typescript
-// utils/calculos.ts calcularCustoRevisaoAnual
 if (modoRevisao === 'autorizadas') {
-  // Soma o ciclo completo de revisões do Preset JSON
-  // Distribui proporcionalmente em 12 meses
-  const ciclo = preset.revisaoAutorizada.reduce((s, r) => s + r.precoTotal, 0);
-  const duracao = preset.revisaoAutorizada[ultimo].intervaloMeses; // ex: 42 meses
-  return (ciclo / duracao) * 12; // anualizado
+  // Custo do ciclo Honda escalado por km rodado no ano
+  const ciclo = opcoes.custoCicloCompleto ?? 3334.62;  // soma das 7 revisões padrão
+  return (ciclo / 36000) * kmAnual;  // 36000 = KM_CICLO_REVISAO_HONDA
 }
 
-// Modo 'independentes':
-return (kmAnual / frequenciaRevisaoKm) * precoMaoDeObraIndependente;
+// Modo 'independentes': soma dos serviços ativos não-excepcionais
+return servicosIndependentes
+  .filter((s) => s.ativo && !s.ehExcepcional)
+  .reduce((sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual, 0);
 ```
 
-🔍 **Análise:** Os dois modos calculam por lógicas radicalmente diferentes:
+🔍 **Análise:** Os dois modos calculam por lógicas diferentes:
 
-- **Autorizadas:** custo é "fixo" do Preset JSON, escalado por tempo. Não depende de quanto o Motoboy roda.
-- **Independentes:** custo é proporcional aos km. Quanto mais roda, mais paga em revisões.
+- **Autorizadas:** custo proporcional aos km rodados, ancorado no preço do ciclo Honda (do Preset JSON). Cobre **mão de obra + peças trocadas nas revisões periódicas** — por isso `calcularCpkPorPeca` exclui peças com `incluidoNaRevisaoAutorizada: true` neste modo (INV-CALC-3 / ADR-006, sem dupla contagem).
+- **Independentes:** soma de cada serviço de mão de obra cadastrado em `servicosIndependentes[]` (apenas `ativo && !ehExcepcional`). Cobre **só mão de obra** — as peças entram pelo cálculo por peça normalmente.
 
-Isso significa que **a comparação entre os dois modos é uma feature de produto**: o Motoboy pode alternar e ver qual sai mais em conta para o seu padrão de uso.
+A comparação entre os dois modos é uma feature de produto: o Motoboy alterna em Ajustes (`SET_MODO_REVISAO`) e vê qual sai mais em conta.
 
 ---
 
 ## Invariantes
 
-### INV-MANUT-1: perfilPecasGlobal é padrão, não comando
+### INV-MANUT-1: `intervalKm` positivo em `ServicoIndependente`
 
-**Regra:** Mudar `perfilPecasGlobal` afeta apenas peças **sem override próprio**. Peças com `perfilPecasOverride !== null` mantêm sua escolha individual.
+**Regra:** `ServicoIndependente.intervalKm > 0`. Divisão por zero quebra `(precoMaoDeObra / intervalKm) × kmAnual`.
 
-**Onde é protegida:** `resolverPerfilPeca()` em `utils/calculos.ts`.
+**Onde é protegida:** Action `SET_SERVICO_INDEPENDENTE` no reducer rejeita `payload.intervalKm <= 0` (guard explícito em `PerfilContext.tsx`).
 
-### INV-MANUT-2: precoMaoDeObraIndependente positivo
+### INV-MANUT-2: `perfilPecasGlobal` é padrão, não comando
 
-**Regra:** `precoMaoDeObraIndependente > 0`. Caso contrário, custo de revisão independente fica zero semanticamente errado.
+**Regra:** Mudar `perfilPecasGlobal` afeta o **preço lido do Preset JSON**. Peças com `precoEditadoOriginal` ou `precoEditadaParalela` definido usam o override correspondente à coluna global ativa.
 
-**Onde é protegida:** validação na tela Mão de Obra.
-
-### INV-MANUT-3: frequenciaRevisaoKm positivo
-
-**Regra:** `frequenciaRevisaoKm > 0`. Divisão por zero quebra `(kmAnual / frequenciaRevisaoKm)`.
-
-**Onde é protegida:** validação na tela Mão de Obra ou em Ajustes.
-
-### INV-MANUT-4: modoRevisao em modo predefinidos
-
-**Regra:** No `modoExibicao === 'predefinidos'`, **`perfilPecasGlobal` é respeitado** (não sobrescrito por overrides), mas **overrides individuais de peça (`perfilPecasOverride`) também são ignorados**.
-
-**Por quê:** Modo `predefinidos` significa "ignore tudo que customizei". Aplica-se a overrides individuais, mas a preferência global de peças continua ativa.
-
-🔍 **Confirmar com código:** essa interpretação vem do snippet `resolverPrecoPeca` que mostra `perfilEfetivo = modoExibicao === 'personalizado' ? (override ?? global) : global`. Confirma a invariante.
+**Onde é protegida:** `resolverPrecoPeca()` em `utils/calculos.ts`.
 
 ---
 
@@ -132,10 +105,11 @@ Isso significa que **a comparação entre os dois modos é uma feature de produt
 ```
 PerfilUsuario.perfilManutencao
 ├── perfilPecasGlobal → resolverPrecoPeca() para cada peça
-├── modoRevisao → calcularCustoRevisaoAnual()
-├── precoMaoDeObraIndependente → calcularCustoRevisaoAnual() (modo independentes)
-└── frequenciaRevisaoKm → calcularCustoRevisaoAnual() (modo independentes) + alertas
+└── modoRevisao → calcularDetalhesRevisaoAnual()
+                  + calcularCpkPorPeca() (exclui peças do pacote no modo autorizadas)
 ```
+
+> A "frequência de revisão" e o "preço de mão de obra independente" agora vivem por serviço em `perfil.servicosIndependentes[]` — ver `overrides.md`.
 
 ---
 
@@ -151,8 +125,6 @@ export type ModoRevisao = 'autorizadas' | 'independentes';
 perfilManutencao: {
   perfilPecasGlobal: PerfilPecas;
   modoRevisao: ModoRevisao;
-  precoMaoDeObraIndependente: number;
-  frequenciaRevisaoKm: number;
 }
 ```
 
@@ -162,8 +134,8 @@ perfilManutencao: {
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` bloco `perfilManutencao` e tipos `PerfilPecas`, `ModoRevisao`
-- `src/utils/calculos.ts` `resolverPrecoPeca`, `calcularCustoRevisaoAnual`
-- `Requisitos v6` RN-10, RN-11, RF-MO-01 a 05
+- `src/types/perfil.ts` — bloco `perfilManutencao` e tipos `PerfilPecas`, `ModoRevisao`
+- `src/utils/calculos.ts` — `resolverPrecoPeca`, `calcularDetalhesRevisaoAnual`, `calcularCpkPorPeca`
+- `src/context/PerfilContext.tsx` — `SET_MODO_REVISAO`, `SET_PERFIL_USO`, `SET_SERVICO_INDEPENDENTE`
 
-**Divergências encontradas:** nenhuma estrutural. Pendência: confirmar quais Actions do reducer atualizam este bloco fora do Onboarding (não aparece explicitamente no `PerfilAction` mostrado).
+**Divergências encontradas:** nenhuma. Documentação atualizada em 24/05/26 (TASK-DOC-009) após REF-19 (remoção de `precoMaoDeObraIndependente` e `frequenciaRevisaoKm`) e REF-11 (migração para `servicosIndependentes[]`).

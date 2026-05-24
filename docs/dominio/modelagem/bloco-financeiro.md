@@ -62,14 +62,15 @@ Repetido 3x dentro do bloco uma para cada `TipoCombustivel`. O Motoboy configura
 
 ```typescript
 interface SeguroConfig {
-  tem: boolean;
-  valorAnual: number; // sempre normalizado para anual
-  empresa: string | null; // nome opcional ("Porto Seguro", etc)
+  valorAnual: number;                // sempre anualizado; 0 = sem seguro (REF-21)
+  empresa: string | null;            // nome opcional ("Porto Seguro", etc)
   periodicidade: 'anual' | 'mensal'; // como o Motoboy paga
 }
 ```
 
-⚠️ **Atenção:** mesmo que `periodicidade === 'mensal'`, o `valorAnual` está sempre **anualizado**. A periodicidade é informação de display, não de cálculo. O Onboarding P7 normaliza: se Motoboy informa mensalmente, multiplica por 12 antes de salvar em `valorAnual`.
+⚠️ **Sem campo `tem` (REF-21 / ADR-005).** Presença de seguro é derivada de `valorAnual > 0`. O toggle Sim/Não no Passo 7 do Onboarding existe como UX local — quando "Não", o dispatch grava `valorAnual: 0`.
+
+⚠️ **`periodicidade` é informação de display, não de cálculo.** O valor armazenado é sempre anual. Se o Motoboy informa mensalmente, o Onboarding multiplica por 12 antes de gravar.
 
 ### `ResponsabilidadeAluguel`
 
@@ -120,17 +121,21 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 
 ## Comportamentos (Actions do Reducer)
 
-| Action                           | Comportamento                                                           |
-| -------------------------------- | ----------------------------------------------------------------------- |
-| `SET_INTERNET`                   | Atualiza valor de internet mensal                                       |
-| `SET_SEGURO`                     | Atualiza configuração de seguro (Partial pode atualizar só o que mudou) |
-| `SET_ALIMENTACAO`                | Atualiza gasto diário com alimentação                                   |
-| `SET_COMBUSTIVEL`                | Atualiza preço ou autonomia de um tipo específico de combustível        |
-| `SET_TIPO_COMBUSTIVEL_PREFERIDO` | Troca o tipo principal usado nos cálculos                               |
-| `TOGGLE_GASTO_CUSTOM`            | Liga/desliga um preset sem zerar o valor                                |
-| `SET_GASTO_CUSTOM_VALOR`         | Atualiza `valorAnual` do preset; ativa o toggle se passar de 0 para >0  |
+| Action                           | Comportamento                                                                       |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| `SET_INTERNET`                   | Atualiza valor de internet mensal                                                   |
+| `SET_SEGURO`                     | Atualiza configuração de seguro (Partial — pode atualizar só o que mudou)           |
+| `SET_ALIMENTACAO`                | Atualiza gasto diário com alimentação                                               |
+| `SET_COMBUSTIVEL`                | Atualiza preço ou autonomia de um tipo específico de combustível                    |
+| `SET_TIPO_COMBUSTIVEL_PREFERIDO` | Troca o tipo principal usado nos cálculos                                           |
+| `TOGGLE_GASTO_CUSTOM`            | Liga/desliga um preset (Multa, Sinistros, Outros) sem zerar o valor                 |
+| `SET_GASTO_CUSTOM_VALOR`         | Atualiza `valorAnual` do preset; ativa o toggle se passar de 0 para >0              |
+| `SET_SITUACAO_MOTO`              | Define `situacaoMoto` (quitada/financiada/alugada)                                  |
+| `SET_PARCELA`                    | Define `parcelaMensal` + `parcelasRestantes`                                        |
+| `SET_ALUGUEL`                    | Define `aluguelMensal` + `aluguelPeriodicidade`                                     |
+| `SET_RESPONSABILIDADE_ALUGUEL`   | Atualiza `responsabilidadeAluguel` (Partial — campos documentos/manutencao/seguro). Adicionado pela BG-006 |
 
-⚠️ **Não há actions específicas** para `situacaoMoto`, `parcelaMensal`, `aluguelMensal`, `responsabilidadeAluguel`. Essas mudanças precisam usar `SET_ONBOARDING_CAMPO` (Onboarding ou Ajustes). No reducer atual nao existe action dedicada para esses campos.
+> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` — lista de imprevistos é **fechada** em 3 presets (Multa, Sinistros, Outros), TASK-RF-6.9 / ADR-006.
 
 ---
 
@@ -162,15 +167,15 @@ documentos: {
 
 ## Cálculo de Custos por Categoria deste Bloco
 
-| Sub-bloco             | Função de cálculo                                        | Resultado anual                       |
-| --------------------- | -------------------------------------------------------- | ------------------------------------- |
-| Combustível           | `calcularCpkCombustivel(preco, autonomia) × kmAnual`     | combustível anual                     |
-| Internet              | `calcularCustoInternetAnual(internet > 0, internet)`     | `internet × 12` se > 0                |
-| Seguro                | `calcularCustoSeguroAnual(tem, valorAnual) × fatorSeg`   | `valorAnual × fatorSeg` se `tem`      |
-| Alimentação           | `calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno)` | `alimentacaoDia × diasAno`            |
-| Financiamento/Aluguel | `calcularCustoFinanciamentoAnual(...)`                   | depende da situação                   |
-| Gastos Custom         | `calcularCustoGastosCustomAnual(gastosCustom)`           | soma de `valorAnual` dos presets ativos |
-| Imprevistos sugeridos | derivado de `servicosIndependentes` excepcionais         | só entra no total com filtro explícito |
+| Sub-bloco             | Função de cálculo                                        | Resultado anual                          |
+| --------------------- | -------------------------------------------------------- | ---------------------------------------- |
+| Combustível           | `calcularCpkCombustivel(preco, autonomia) × kmAnual`     | combustível anual                        |
+| Internet              | `calcularCustoInternetAnual(internet > 0, internet)`     | `internet × 12` se > 0                   |
+| Seguro                | `calcularCustoSeguroAnual(valorAnual) × fatorSeg`        | `valorAnual × fatorSeg` se `valorAnual > 0` (defensiva) |
+| Alimentação           | `calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno)` | `alimentacaoDia × diasAno`               |
+| Financiamento/Aluguel | `calcularCustoFinanciamentoAnual(...)`                   | depende da situação                      |
+| Gastos Custom         | `calcularCustoGastosCustomAnual(gastosCustom)`           | soma de `valorAnual` dos presets ativos  |
+| Imprevistos sugeridos | derivado de `servicosIndependentes` excepcionais         | só entra no total com filtro explícito   |
 
 ### Cálculo de Financiamento/Aluguel
 
@@ -225,11 +230,11 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, aluguel, periodicida
 
 **Onde é protegida:** validação nos formulários (Onboarding e Ajustes).
 
-### INV-FIN-5: Seguro coerente
+### INV-FIN-5: Presença de seguro derivada de `valorAnual > 0`
 
-**Regra:** Se `seguro.tem === false`, então `valorAnual` pode ser qualquer coisa (ignorado pelo cálculo). Se `seguro.tem === true`, então `valorAnual > 0`.
+**Regra:** Após REF-21 (ADR-005), não há mais `seguro.tem`. Custo de seguro está presente sse `seguro.valorAnual > 0`. Editar `valorAnual` em SecaoFinanceiro reflete imediatamente na Estimativa (corrige bug B-1).
 
-**Onde é protegida:** lógica no Onboarding P7 (`seguro.tem === true → exibe input do valor`).
+**Onde é protegida:** `calcularCustoSeguroAnual(valorAnual)` é defensiva (`valorAnual > 0 ? valorAnual : 0`); o COMMIT_ONBOARDING deriva `categoriasAtivas.seguro` de `valorAnual > 0`; o Passo 7 do Onboarding mantém o toggle Sim/Não apenas como estado local de UX (quando "Não", grava `valorAnual: 0`).
 
 ### INV-FIN-6: aluguelPeriodicidade só faz sentido com aluguelMensal
 
@@ -293,5 +298,5 @@ Documentação validada contra:
 
 **Divergências encontradas:**
 
-- Naming `aluguelMensal` ambíguo (registrado como dívida técnica candidata)
-- Actions do reducer parecem incompletas no `PerfilAction` mostrado (verificar implementação real para `situacaoMoto`, `responsabilidadeAluguel`)
+- Naming `aluguelMensal` ambíguo (registrado como DT-8 em `divida-tecnica.md`).
+- Documentação atualizada em 24/05/26 (TASK-DOC-009) — `SeguroConfig.tem` removido, actions BG-006 (`SET_RESPONSABILIDADE_ALUGUEL`) e ajustes adicionadas, `calcularCustoSeguroAnual` com assinatura única (REF-21).

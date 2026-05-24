@@ -35,8 +35,7 @@ interface ConfiguracaoCombustivel {
 
 ```typescript
 interface SeguroConfig {
-  tem: boolean;
-  valorAnual: number;
+  valorAnual: number;                // 0 = sem seguro (REF-21)
   empresa: string | null;
   periodicidade: 'anual' | 'mensal';
 }
@@ -46,7 +45,7 @@ interface SeguroConfig {
 
 **Invariantes:**
 
-- Se `tem === true`, entao `valorAnual > 0`.
+- Presença de seguro derivada de `valorAnual > 0` (após REF-21 / ADR-005 — sem mais campo `tem`).
 - `valorAnual` e sempre anualizado (mesmo que `periodicidade` seja `mensal`).
 
 ---
@@ -81,6 +80,7 @@ type CategoriaDisplay = {
   internet: boolean;
   seguro: boolean;
   financiamento: boolean;
+  imprevistos: boolean;
 };
 ```
 
@@ -88,8 +88,9 @@ type CategoriaDisplay = {
 
 **Invariantes:**
 
-- Todas as chaves devem existir (tipo fechado).
-- `documentacao` e traduzido para `documentos` nos calculos.
+- Todas as 8 chaves devem existir (tipo fechado).
+- `documentacao` é traduzido para `documentos` nos calculos.
+- `imprevistos` controla tanto `gastosCustom` (Multa/Sinistros/Outros) quanto `imprevistosSugeridos` no mapeamento.
 
 ---
 
@@ -165,19 +166,6 @@ interface DadosRJ {
 
 ## Value Objects Derivados de Calculo (nao persistidos)
 
-### RegistroManutencao
-
-```typescript
-interface RegistroManutencao {
-  pecaId: string;
-  kmNaTroca: number;
-  kmDesdeAnterior: number;
-  preco: number;
-}
-```
-
-Derivado de `HistoricoManutencao` por `adaptarHistoricoParaRegistros()`. Nao e persistido.
-
 ### CustoPeca
 
 ```typescript
@@ -188,14 +176,46 @@ interface CustoPeca {
   custoAnual: number;
   intervaloKm: number;
   preco: number;
-  fonte: 'preset' | 'registro';
+  fonte: 'preset' | 'registro';  // semantica atual: 'registro' = tem override
   proximaTrocaKm: number;
+  trocasNoAno: number;
 }
 ```
 
+⚠️ Campo `fonte: 'preset' | 'registro'` permanece com naming herdado — sua semantica hoje é "tem override?" (REF-18). Nao renomear sem ADR.
+
+### CustoServicoRevisao
+
+```typescript
+interface CustoServicoRevisao {
+  servicoId: string;
+  label: string;
+  custoAnual: number;
+  intervalKm: number;
+  precoMaoDeObra: number;
+  eventosNoAno: number;
+  ehExcepcional: boolean;
+}
+```
+
+### CustoImprevistoSugerido
+
+```typescript
+interface CustoImprevistoSugerido {
+  id: string;
+  label: string;
+  custoAnual: number;
+  intervalKm: number;
+  precoServico: number;
+  eventosNoAno: number;
+}
+```
+
+Usado para retíficas (`retifica-cabecote`, `retifica-completa`) em `CustosPorCategoria.gastosCustom.detalhes.sugeridos`.
+
 ### CustosPorCategoria
 
-Estrutura agregada com totais e detalhes por categoria.
+Estrutura agregada com totais e detalhes por categoria — `documentos`, `revisao`, `manutencao`, `combustivel`, `internet`, `seguro`, `alimentacao`, `financiamento`, `gastosCustom`. Ver `src/types/calculos.ts` para shape completo.
 
 ### ResultadoCalculo
 
@@ -206,18 +226,21 @@ interface ResultadoCalculo {
   granularidadesMoto: GranularidadesCusto;
   kmAnual: number;
   diasAno: number;
-  modoAtivo: ModoExibicao;
 }
 ```
+
+Após REF-18 (modo único), nao tem mais `modoAtivo`.
 
 ---
 
 ## Value Objects que NAO existem no codigo atual
 
-Alguns conceitos anteriores nao existem no codigo atual e nao devem ser usados como verdade:
+Conceitos antigos removidos ou que nunca foram materializados — nao usar como verdade:
 
-- `HabitosUso`
-- `CustosFixos`
+- `HabitosUso` (nunca existiu)
+- `CustosFixos` (nunca existiu como tipo)
+- `RegistroManutencao` (eliminado por REF-19 — Registros mortos)
+- `ModoExibicao` (eliminado por REF-18 — modo unico)
 
 Se esses conceitos voltarem a ser necessarios, devem ser modelados novamente com base no codigo real.
 

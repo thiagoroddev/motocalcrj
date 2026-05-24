@@ -66,27 +66,18 @@ Indiretamente alimenta praticamente todos os custos anuais (combustível, manute
 
 ---
 
-## Modo Personalizado e o Diário de Trabalho
+## `resolverKmDia` (modo único)
 
-⚠️ **Há uma sutileza importante:** quando `modoExibicao === 'personalizado'` E o Motoboy tem **5+ entradas no `diarioTrabalho`**, a função `resolverKmDia()` substitui o `perfil.trabalho.kmPorDia` pela **média real calculada do diário** (RN-25).
+Após ADR-003 / TASK-REF-18-19, `resolverKmDia` é trivial:
 
 ```typescript
 // utils/calculos.ts
-export function resolverKmDia(
-  kmPorDia: number,
-  diarioTrabalho: DiarioEntry[],
-  modoExibicao: ModoExibicao,
-): number {
-  if (modoExibicao === 'personalizado' && diarioTrabalho.length >= 1) {
-    return media(diarioTrabalho.map((r) => r.kmPercorridos));
-  }
+export function resolverKmDia(kmPorDia: number): number {
   return kmPorDia;
 }
 ```
 
-🔍 **Análise Profunda:** o `kmPorDia` armazenado no perfil **não é "a verdade"** ele é o **valor declarado no Onboarding** que pode ser sobrescrito em runtime pela média real. Isso é diferente do sistema de overrides convencional (que é explícito) aqui é uma substituição implícita no cálculo. Documentar essa nuance é crítico para o `tech-lead-revisor` saber o que verificar.
-
-⚠️ **Bug latente potencial:** o código diz `>= 1` mas o `Requisitos v6` (RN-25) diz "Após 5+ Registros". **Divergência entre código e requisitos.** Registrar em `divida-tecnica.md`.
+`kmPorDia` declarado pelo Motoboy é a fonte única — não há mais Diário de Trabalho nem médias automáticas substituindo o valor. A função existe ainda como ponto de extensibilidade caso isso volte numa V2.
 
 ---
 
@@ -168,12 +159,11 @@ const diasAno = calcularDiasAno(perfil.trabalho.diasPorSemana);
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` bloco `trabalho`
-- `src/utils/calculos.ts` `calcularKmAnual`, `calcularDiasAno`, `resolverKmDia`
-- `Requisitos v6` RN-25 (modo personalizado e média real), RF-EST-04
-- `contexto-base.instructions.md` INV-PRESET-1 (kmAnual derivada)
+- `src/types/perfil.ts` — bloco `trabalho`
+- `src/utils/calculos.ts` — `calcularKmAnual`, `calcularDiasAno`, `resolverKmDia`
+- `Requisitos v6` — RF-EST-04 (configuração de rodagem inline)
 
 **Divergências encontradas:**
 
-- Código diz `diarioTrabalho.length >= 1` em `resolverKmDia()`, mas RN-25 diz "Após 5+ Registros". Registrado em `divida-tecnica.md` como item novo.
 - Bloco tem `horasPorDia` mas Onboarding não coleta. Documentado como observação.
+- Documentação atualizada em 24/05/26 (TASK-DOC-009) — seção sobre Diário de Trabalho removida (eliminado pela ADR-003 / REF-19).

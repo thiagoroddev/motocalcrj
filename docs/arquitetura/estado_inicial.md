@@ -15,12 +15,12 @@ O app não tem login em V1. Existe **um perfil local** e **vários presets** (co
 
 Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-3).
 
-| Chave             | Tipo                   | Conteúdo                                        |
-| ----------------- | ---------------------- | ----------------------------------------------- |
-| `motocalc:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
-| `motocalc:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
+| Chave                     | Tipo                   | Conteúdo                                        |
+| ------------------------- | ---------------------- | ----------------------------------------------- |
+| `motocalc:v5:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
+| `motocalc:v5:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-> **Nota:** o namespace `motocalc:` não embute mais a versão do schema — a versão vive em `perfil.schemaVersion` dentro de cada `PresetEntry`. Migrações em cascata garantem que perfis salvos em versões antigas sejam normalizados ao carregar.
+> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v14**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
 
 ### I.2 — Envelope: `PresetEntry`
 
