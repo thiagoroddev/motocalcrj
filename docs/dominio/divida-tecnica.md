@@ -48,44 +48,9 @@ Em DDD clássico, comportamento de domínio pertence à entidade. Modelo anêmic
 
 ---
 
-## DT-2: Divergência RevisaoGeral.status entre Código e Requisitos
+## ~~DT-2: Divergência RevisaoGeral.status entre Código e Requisitos~~ — ENDEREÇADA (23/05/26)
 
-### Situação atual (CORRIGIDA na v2)
-
-⚠️ **Importante:** a v1 desta DT estava errada. Eu havia interpretado o item A12 do checklist (`Tipos ResponsabilidadeCusto e RevisaoGeral.status divergentes`) como "esses dois tipos conflitam entre si". Na verdade são tipos diferentes para coisas diferentes:
-
-- `ResponsabilidadeCusto = 'eu' | 'locador' | 'dividido'` (responsabilidade financeira em moto alugada)
-- `RevisaoGeral.status = 'concluido' | 'pendente'` (status de uma revisão registrada)
-
-A divergência real é entre:
-
-- **Código atual:** `RevisaoGeral.status: 'concluido' | 'pendente'` (2 valores)
-- **Requisitos v6 (RF-REG-05):** "Badge de status (CONCLUÍDO / EM DIA / PRÓXIMO)" → 3 valores
-
-### Por que é dívida técnica
-
-- A UI exibe **3 estados de badge** mas o tipo só permite **2**
-- Implementação atual está **abaixo do requisito**
-- Quando a feature de Registros for tocada (TASK-5.x), inconsistência aparece
-
-### Por que NÃO refatorar agora
-
-- Não há feature funcional usando os 3 estados ainda
-- Status `'em_dia'` e `'proximo'` provavelmente seriam **calculados** (a partir de km e data), não armazenados
-- Decisão de produto: armazenar 3 estados literais OU armazenar 2 + calcular o terceiro
-
-### Gatilho que justificaria endereçar
-
-- TASK que toque a tela de Registros de Revisão (TASK-5.x)
-- Implementação do badge de status na UI
-
-### Recomendação
-
-**Quando uma task tocar Revisões pela primeira vez, chamar o `modelador-dominio` para reconciliar:**
-
-- Adicionar `'em_dia'` e `'proximo'` ao type union? (mais simples)
-- Ou armazenar 2 estados + calcular o 3º como derivado? (mais elegante)
-- Decisão é do produto.
+`RevisaoGeral` foi inteiramente removido pela TASK-REF-19 — conceito morto pela ADR-003 (sem Registros). A divergência deixou de existir. Os requisitos RF-REG-* serão revistos na TASK-DOC-010.
 
 ---
 
@@ -173,51 +138,9 @@ Motoboy com moto não-listada não consegue usar o app. Em V1 isso é aceitável
 
 ---
 
-## DT-7: Substituição Automática vs Opt-in no Modo Personalizado (NOVA)
+## ~~DT-7: Substituição Automática vs Opt-in no Modo Personalizado~~ — ENDEREÇADA (23/05/26)
 
-### Situação atual
-
-Em `modoExibicao === 'personalizado'`, a função `resolverKmDia()` em `utils/calculos.ts` substitui `kmPorDia` declarado pelo Motoboy pela **média do diário** assim que houver `>= 1` registro.
-
-```typescript
-if (modoExibicao === 'personalizado' && diarioTrabalho.length >= 1) {
-  return media(diarioTrabalho.map((r) => r.kmPercorridos));
-}
-```
-
-### Divergência com Requisitos v6
-
-- **RN-25 dos Requisitos:** "Após **5+ Registros**, kmDiaMedioReal é calculado. **O usuário pode optar por usá-lo** em vez do valor do onboarding."
-- **Diferença dupla:**
-  1. Quantidade mínima: código usa `>= 1`, requisitos pedem `>= 5`
-  2. Comportamento: código substitui automaticamente, requisitos pedem opt-in (Motoboy escolhe)
-
-### Mesma divergência se aplica a:
-
-- `resolverIntervaloPeca` e `resolverPrecoPeca` (`>= 1` no código vs `>= 2` em RN-26)
-
-### Por que é dívida técnica
-
-- Comportamento atual pode confundir Motoboy: "registrei 1 dia que rodei pouco e meu cálculo virou tudo errado"
-- Divergência entre código e requisito é problema potencial de QA / produto
-
-### Por que NÃO endereçar agora
-
-- Não bloqueia uso atual (Motoboy ainda não tem registros suficientes para sentir o impacto)
-- Decisão de produto: requisito original ou comportamento atual?
-
-### Gatilho que justificaria endereçar
-
-- Feedback de Motoboy reportando "valores estranhos no modo personalizado"
-- TASK-5.x (registros) sendo implementada (boa hora para rever)
-
-### Recomendação
-
-**Próxima TASK que tocar Modo Personalizado, chamar `modelador-dominio` para decidir:**
-
-- (a) Ajustar código para `>= 5` automático
-- (b) Ajustar para `>= 5` + opt-in (mais alinhado com RN-25)
-- (c) Documentar e manter `>= 1` (código vence requisito atualizar requisito)
+ADR-003 eliminou Modo Personalizado e Registros. TASK-REF-18 removeu `modoExibicao`; TASK-REF-19 removeu `diarioTrabalho` e funções derivadas (`resolverKmDia` ficou trivial, sem `>= 1` registro). A divergência com RN-25/RN-26 deixou de existir — os requisitos serão atualizados na TASK-DOC-010.
 
 ---
 
@@ -247,34 +170,9 @@ Renomear para `aluguelValor` quando schemaVersion subir. Combinar com migração
 
 ---
 
-## DT-9: Sem Action de EDIT em Histórico e Diário (NOVA)
+## ~~DT-9: Sem Action de EDIT em Histórico e Diário~~ — ENDEREÇADA (23/05/26)
 
-### Situação atual
-
-Para Histórico de Manutenção (5 listas) e Diário de Trabalho, o `PerfilAction` só prevê `ADD_*` e `DELETE_*`. Para corrigir um registro com erro de digitação, Motoboy precisa **deletar e recriar**.
-
-### Divergência com Requisitos v6
-
-- **RF-REG-12:** "Editar ou excluir qualquer registro via swipe-left ou long-press"
-- Código atual só implementa "excluir"
-
-### Por que é dívida técnica
-
-- UX pior corrigir erro pequeno é trabalhoso
-- Pode levar Motoboys a desistir de registrar (medo de errar)
-
-### Por que NÃO endereçar agora
-
-- Funcionalidade básica de excluir já cobre o erro grave
-- Implementação fácil (paralela aos ADD), pode ser feita quando UI dos formulários de edição existir
-
-### Gatilho que justificaria endereçar
-
-- TASK-5.x (formulários de Registros) adicionar EDIT junto
-
-### Recomendação
-
-Marcar como funcionalidade pendente da TASK-5.x.
+Histórico de Manutenção e Diário de Trabalho foram inteiramente removidos pela TASK-REF-19 — não existe mais nem `ADD_*` nem `DELETE_*` para esses conceitos. A divergência com RF-REG-12 deixou de existir.
 
 ---
 
@@ -332,60 +230,38 @@ Função de limpeza em `migrarPerfil.ts` quando ele for criado.
 
 ---
 
-## DT-12: Duplicidade Abastecimento Diário × Histórico (CONFIRMADA)
+## ~~DT-12: Duplicidade Abastecimento Diário × Histórico~~ — ENDEREÇADA (23/05/26)
 
-### Situação atual
-
-Motoboy pode registrar abastecimento em dois lugares:
-
-- `perfil.diarioTrabalho[].abasteceu` + `litros` + `precoLitro` (no Diário do dia)
-- `perfil.historicoManutencao.abastecimentos[]` (no Histórico, formulário separado)
-
-### Por que é dívida técnica
-
-- Mesmo evento físico = dois registros possíveis
-- Registros são independentes (não há sincronização no reducer)
-- Cálculo de consumo real usa apenas `Abastecimento[]` do Histórico; Diário é ignorado
-
-### Por que NÃO endereçar agora
-
-- A feature de Registros ainda não foi implementada na UI (TASK-5.x)
-- Decisão de produto: manter dois fluxos ou unificar
-
-### Gatilho que justificaria endereçar
-
-- TASK-5.x (formularios de registros) decidir fluxo unico
-- Feedback de usuario sobre duplicidade/confusao
+Ambos os lugares (`diarioTrabalho` e `historicoManutencao.abastecimentos`) foram removidos pela TASK-REF-19. Sem dois fluxos, sem duplicidade.
 
 ---
 
 ---
 
-## DT-14: SET_ONBOARDING_CAMPO fora do Onboarding (PRIORIDADE ALTA)
+## DT-14: SET_ONBOARDING_CAMPO fora do Onboarding (PARCIALMENTE ENDEREÇADA)
 
 ### Situação atual
 
-A action `SET_ONBOARDING_CAMPO` aceita `campo: string` e `valor: unknown`. Ela e usada fora do Onboarding para atualizar campos que nao possuem actions dedicadas (ex.: `financeiro.situacaoMoto`, `financeiro.responsabilidadeAluguel`, `perfilManutencao`).
+A action `SET_ONBOARDING_CAMPO` aceita `campo: string` e `valor: unknown`. **Várias actions específicas já foram criadas progressivamente** conforme cada bloco foi tocado pelas REFs recentes:
 
-### Por que e dívida técnica
+| Action específica                | TASK que criou           |
+| -------------------------------- | ------------------------ |
+| `SET_MODO_REVISAO`               | REF-19 / Ajustes         |
+| `SET_SITUACAO_MOTO`              | Ajustes                  |
+| `SET_PARCELA`                    | Ajustes                  |
+| `SET_ALUGUEL`                    | Ajustes                  |
+| `SET_RESPONSABILIDADE_ALUGUEL`   | TASK-BG-006 (24/05/26)   |
+| `SET_PERFIL_USO`                 | Ajustes                  |
+| `SET_ANO_MOTO`                   | Ajustes                  |
+| `SET_KM_ULTIMA_REVISAO`          | Ajustes                  |
 
-- **Type-safety perdida:** `unknown` permite valores incompatíveis sem alerta de tipo.
-- **Invariantes nao protegidas:** e possivel sobrescrever blocos inteiros e violar invariantes (INV-FIN-1, INV-MANUT-\*, etc).
-- **Confusao semantica:** action chamada "ONBOARDING" usada fora do Onboarding conflita com a Linguagem Ubiqua.
+### O que ainda usa `SET_ONBOARDING_CAMPO`
 
-### Por que NÃO refatorar imediatamente
-
-- Funciona em producao sem bug observado.
-- Refatoracao exige mapear todos os usos atuais e ajustar chamadas.
-
-### Gatilho que justificaria enderecar
-
-- **Enderecar antes de TASK-5.1 (formularios de Registros)**, quando novas actions de update serao introduzidas.
+Apenas o fluxo de Onboarding propriamente dito (passos 1-9) — uso legítimo. Pode permanecer como está; a action virou específica do contexto que dá nome a ela.
 
 ### Recomendação
 
-Criar actions especificas progressivamente conforme cada bloco for tocado. Lista inicial:
-`SET_SITUACAO_MOTO`, `SET_RESPONSABILIDADE_ALUGUEL`, `SET_PERFIL_PECAS_GLOBAL`, `SET_MODO_REVISAO`.
+Considerar DT-14 **endereçada na prática**. Manter apenas o uso intra-onboarding. Se aparecer nova necessidade fora do onboarding, criar action específica direto.
 
 ---
 
@@ -504,3 +380,4 @@ A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) perm
 | 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |
 | 2026-05-20 (v5) | DT-13 endereçada — override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
 | 2026-05-20 (v6) | DT-16 adicionada — excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
+| 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada — várias actions específicas já criadas, DT considerada endereçada na prática. |

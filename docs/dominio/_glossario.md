@@ -45,7 +45,7 @@ Um Motoboy pode ter múltiplos Presets (ex: "Honda Pop 110i da Semana", "Biz Res
 
 ### Preset Ativo
 
-O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocalc:v5:presetAtivo` (apenas o id, não o objeto).
+O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocalc:v5:presetAtivo` (apenas o id, não o objeto — o `:v5:` no namespace é histórico; a versão real do schema vive em `perfil.schemaVersion`, atualmente v14).
 
 ### Preset JSON / Preset Técnico
 
@@ -53,16 +53,7 @@ Arquivo `.json` em `src/presets/` com dados técnico-financeiros pré-cadastrado
 
 ### Override
 
-Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosIndependentes[]`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02).
-
-### Modo de Exibição (`ModoExibicao`)
-
-Controla **como os Overrides são aplicados** nos cálculos. Tipo: `'predefinidos' | 'personalizado'`.
-
-- **`predefinidos`:** ignora todos os Overrides. Calcula usando exclusivamente os valores do Preset JSON. (RN-04)
-- **`personalizado`:** usa Overrides onde existem, cai no Preset JSON onde não há. Modo padrão após qualquer personalização. (RN-05)
-
-⚠️ **Não confundir** com `Preset` (envelope) ou `Preset JSON` (arquivo). "Modo de Exibição" é uma chave do `configuracaoDisplay` dentro do `PerfilUsuario`.
+Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosIndependentes[]`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** — o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02). Após ADR-003 (modo único), Override sempre se aplica quando presente — não há mais modo "ignorar customizações para comparar".
 
 ### Modo de Revisão (`ModoRevisao`)
 
@@ -92,7 +83,7 @@ Defaults de 9 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (val
 
 ### Perfil de Peças (`PerfilPecas`)
 
-Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (mais caras, vida útil maior) ou paralelas. Pode ser **global** (`perfilPecasGlobal`) ou **por peça** (override individual em `pecasOverrides`).
+Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (mais caras, vida útil maior) ou paralelas. É **global** via `perfil.perfilManutencao.perfilPecasGlobal`. Override por peça existe em `pecasOverrides[]` apenas para **preço** (campos `precoEditadoOriginal` e `precoEditadaParalela`) — o perfil ativo (original ou paralela) é único para todas as peças.
 
 ### Perfil de Uso (`PerfilUso`)
 
@@ -145,11 +136,14 @@ Controle de quais categorias estão **ativas** no cálculo exibido. Vive em `con
 
 ```typescript
 {
-  (combustivel, alimentacao, manutencao, documentacao, internet, seguro, financiamento); // todas: boolean
+  combustivel, alimentacao, manutencao, documentacao,
+  internet, seguro, financiamento, imprevistos  // todas: boolean
 }
 ```
 
 ⚠️ **Atenção a uma divergência semântica:** o campo no perfil chama-se `documentacao`, mas a categoria de custo no `FiltrosCategorias` chama-se `documentos`. A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Não confundir.
+
+⚠️ **`imprevistos`** (adicionado pela RF-6.9) controla tanto `gastosCustom` (presets Multa/Sinistros/Outros) quanto `imprevistosSugeridos` (retíficas) no mapeamento.
 
 ### Filtros de Categorias (`FiltrosCategorias`)
 
@@ -213,22 +207,6 @@ Tela `/estimativa/detalhamento`. Visão expandida da Estimativa, com accordions 
 ### Configuração de Rodagem
 
 Bloco visual editável na Estimativa que contém: `kmPorDia` (input) + `diasPorSemana` (stepper). Qualquer alteração recalcula tudo.
-
-### Diário de Trabalho
-
-`diarioTrabalho: DiarioEntry[]`. Histórico de dias trabalhados com `kmInicial`, `kmFinal`, `kmPercorridos`, alimentação e abastecimento. No código atual, em `modoExibicao === 'personalizado'` a média de `kmPercorridos` passa a ser usada quando há registros.
-
-### Histórico de Manutenção
-
-`historicoManutencao: HistoricoManutencao`. Agrupador de cinco listas:
-
-- `trocasOleo[]`
-- `revisoes[]`
-- `trocasPneu[]`
-- `trocasKitRelacao[]`
-- `abastecimentos[]`
-
-Cada lista contém registros estruturados com data, km, valores. No modo personalizado, registros de peças/pneus/kit alimentam médias reais usadas no cálculo.
 
 ### Onboarding
 
@@ -306,3 +284,4 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-20 (v5) | Modo de Revisão | Confirmação de implementação — fórmula km-based e CPK por serviço agora no calculador | TASK-REF-12 concluída |
 | 2026-05-22 (v6) | Modo de Revisão, Peça | Nota de não-duplicação no modo autorizado; campo `incluidoNaRevisaoAutorizada` na Peça | TASK-BG-003 (ADR-006) |
 | 2026-05-22 (v7) | Vida Útil | Ciclo de troca ancorado no km da última troca; `CustoPeca.trocasNoAno` | TASK-RF-6.7 (ADR-006) |
+| 2026-05-24 (v8) | Modo de Exibição, Diário de Trabalho, Histórico de Manutenção | **Termos eliminados** — conceitos removidos pelas TASK-REF-18/REF-19 (ADR-003, modo único, sem Registros). `Perfil de Peças` atualizado (`perfilPecasOverride` por peça não existe mais). `Categoria Display` ganhou `imprevistos`. Override ganhou nota sobre modo único. | TASK-DOC-009 |

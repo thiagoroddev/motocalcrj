@@ -17,51 +17,32 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-DOC-009 — Sincronizar docs/dominio, docs/arquitetura e docs/requisitos com código pós-ADR-003
+> **TASK-DOC-009** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (sincronização de docs/dominio + docs/arquitetura com código pós-ADR-003; 4 ondas, 14 arquivos tocados).
+
+## TASK-DOC-010 — Sincronizar docs/requisitos com ADR-003
 
 - **Status:** Pendente
 - **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/G
-- **Data origem:** 24/05/26 (revisão de docs)
+- **Valor:** Importante
+- **Urgência:** Normal
+- **Esforço-H/IA:** P/M
+- **Data origem:** 24/05/26 (gerada pela TASK-DOC-009)
 - **Dependências:** —
-- **REQ/ADR/DT:** ADR-003, ADR-005, ADR-006
-- **Observações:** Detectado na revisão geral de 24/05/26 que a documentação de domínio, arquitetura e requisitos ficou substancialmente desincronizada do código após as TASK-REF-18 (remoção de `modoExibicao`/`PaginaRegistros`), TASK-REF-19 (remoção de `historicoManutencao`, `diarioTrabalho`, `frequenciaRevisaoKm`, `precoMaoDeObraIndependente`, `modoOficinDisplay`, 14 actions, 10 funções de `calculos.ts`), TASK-REF-21 (remoção de `seguro.tem`) e TASK-RF-6.7/6.9/6.11 (km como âncora, gastosCustom como lista fechada de presets, lápis no Detalhamento).
+- **REQ/ADR/DT:** ADR-003
+- **Observações:** Gerada como spin-off da TASK-DOC-009. Os arquivos de domínio e arquitetura foram sincronizados; falta varrer requisitos. Decisões pendem de produto (não engenharia reversa) — daí ficar Normal e separada.
 
-**Escopo — 4 arquivos vermelhos (reescrita praticamente do zero):**
-- `docs/dominio/modelagem/historico-manutencao.md` — descreve bloco removido pela REF-19. Decidir: deletar OU transformar em descrição de `moto.kmUltimaTrocas`.
-- `docs/dominio/modelagem/diario-trabalho.md` — descreve bloco removido pela REF-19. Provável **deletar**.
-- `docs/arquitetura/calculos-api.md` — 1200+ linhas de espec pré-implementação de 05/05/26 que nunca foi sincronizada. Reescrever a partir do `src/utils/calculos.ts` real.
-- `docs/arquitetura/estado_inicial.md` — schemaVersion 5 (atual 10), `perfilPadrao` desatualizado em 8+ campos, 12+ actions removidas listadas. Reescrever a partir de `src/context/PerfilContext.tsx`.
+**Escopo:**
+- `docs/requisitos/Requisitos_MotoCalc_RJ_v6.md` — seções V.4, V.5 (Registros e Diário) e RF-REG-* mencionam features removidas pela ADR-003. Decidir: deletar seções OU marcar como "ADIADO via ADR-003" preservando para histórico.
+- `docs/requisitos/funcionais.md` — varredura por RF-REG-*, RN-25 (modo personalizado), RN-26 (médias de registros) — provavelmente todas obsoletas.
+- `docs/requisitos/regras-negocio.md` — verificar se há regras que dependem de Registros/modoExibicao.
+- `docs/contexto-projeto-ai.md` — varredura pontual; pode ter menções pequenas a termos removidos.
 
-**Escopo — 11 arquivos amarelos (reescrita parcial dirigida):**
-- `docs/dominio/modelagem/perfil-usuario.md` — schemaVersion, lista de blocos, INV-PERFIL-5 (seguro.tem), `servicosMaoDeObra` → `servicosIndependentes`.
-- `docs/dominio/modelagem/bloco-financeiro.md` — `SeguroConfig.tem`, INV-FIN-5, `calcularCustoSeguroAnual` (assinatura), faltam actions BG-006/RF-6.9 (`SET_RESPONSABILIDADE_ALUGUEL`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR`).
-- `docs/dominio/modelagem/bloco-configuracao-display.md` — remover `modoExibicao`/`modoOficinDisplay`, atualizar `CategoriaDisplay` (ganhou `imprevistos`), adicionar `imprevistosSugeridosAtivos`, ajustar mapeamento `categoriasParaFiltros`.
-- `docs/dominio/modelagem/bloco-trabalho.md` — `resolverKmDia` simplificada (sem `diarioTrabalho` nem `modoExibicao`).
-- `docs/dominio/modelagem/bloco-perfil-manutencao.md` — remover `precoMaoDeObraIndependente` e `frequenciaRevisaoKm`.
-- `docs/dominio/modelagem/overrides.md` — remover ramo personalizado/`RegistroManutencao`, atualizar de `servicosMaoDeObra` para `servicosIndependentes` (REF-11).
-- `docs/dominio/modelagem/value-objects.md` — limpar tipos removidos.
-- `docs/dominio/modelagem/aggregate-preset.md` — varredura por menções a campos removidos.
-- `docs/dominio/modelagem/README.md` — atualizar árvore (remover `historico-manutencao.md` e `diario-trabalho.md` se deletados).
-- `docs/dominio/_glossario.md` — limpar termos removidos (Registros, Diário, modoExibicao).
-- `docs/dominio/divida-tecnica.md` — reavaliar DT-2 (status RevisaoGeral), DT do `>= 1` registro, demais DTs — várias podem estar resolvidas pelas REFs recentes.
-
-**Escopo — requisitos:**
-- `docs/requisitos/Requisitos_MotoCalc_RJ_v6.md` — varredura por seções de Registros (V.4, V.5, RF-REG-*); decidir se removem-se ou marca-se como ADIADO via ADR-003.
-- `docs/requisitos/funcionais.md` — idem.
-
-**Pré-requisito:** análise de impacto completa (cerimônia Strict) — decidir caso-a-caso: deletar arquivo (se conceito morreu), reescrever (se conceito mudou de forma), ou ajustar pontualmente (se só algumas seções estão estragadas).
+**Pré-requisito:** decisão de produto se requisitos eliminados são "removidos para sempre" ou "adiados como melhoria futura". ADR-003 já decidiu — mas requer alguém confirmar que a documentação reflete a decisão.
 
 **Critérios de aceite:**
-- Zero referência a `modoExibicao`, `historicoManutencao`, `diarioTrabalho`, `seguro.tem`, `precoMaoDeObraIndependente`, `frequenciaRevisaoKm`, `modoOficinDisplay`, `servicosMaoDeObra`, `PaginaRegistros`, `PaginaVidaUtil`, `RegistroManutencao` em qualquer doc vivo (ADRs e tarefas concluídas preservam fidelidade histórica e não contam).
-- `schemaVersion` correto (10) em todo lugar que cita schema.
-- Bloco `imprevistos` e `imprevistosSugeridosAtivos` documentados (são novos).
-- Banner ⚠️ DESATUALIZADO removido dos 4 arquivos atuais (ou os arquivos deletados, se for o caso).
-- `npm run test` continua verde (provavelmente sem impacto, mas validar).
-
-**Não é Light:** afeta múltiplos módulos de domínio + 3 ADRs envolvidas + reescrita pesada. Cerimônia Strict obrigatória.
+- Requisitos sem menção desencontrada com o estado atual do código.
+- Zero referência ativa (fora de seções marcadas explicitamente como "ADIADO") a Registros, modoExibicao, Diário, modoOficinDisplay, etc.
+- `docs/contexto-projeto-ai.md` consistente com o código atual.
 
 ---
 
