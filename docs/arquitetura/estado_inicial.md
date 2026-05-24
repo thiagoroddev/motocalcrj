@@ -1,129 +1,98 @@
-> ⚠️ **DESATUALIZADO — NÃO USAR COMO REFERÊNCIA.**
-> Este arquivo é a **especificação pré-implementação de 05/05/2026**. Nunca foi sincronizado. Divergências críticas:
-> - `schemaVersion: 5` → real **10** (migrações v5→v6→v7→v8→v9→v10 já rodaram via TASK-REF-11, RF-6.3.2, REF-18, REF-19, REF-21).
-> - Namespace `motocalc:v5:` → atual reflete schema atual.
-> - `perfilPadrao` mostrado tem `historicoManutencao`, `diarioTrabalho`, `modoExibicao`, `modoOficinDisplay`, `precoMaoDeObraIndependente`, `frequenciaRevisaoKm`, `servicosMaoDeObra`, `seguro.tem` — **todos removidos**.
-> - Catálogo de Actions inclui 12+ actions removidas (ADD_TROCA_OLEO, ADD_REVISAO, ADD_DIA_TRABALHO, SET_MODO_EXIBICAO, SET_MODO_OFICINA, ADD_GASTO_CUSTOM, etc).
-> - Função `migrarPerfil` documentada não corresponde à atual (que está inline no PerfilContext).
-> - Falta: `kmUltimaTrocas`, `kmMotorRefeito`, `servicosIndependentes`, `imprevistosSugeridosAtivos`, `responsabilidadeAluguel`, novas actions de Ajustes.
->
-> Verdade primária atual: ler `src/types/perfil.ts` (`PerfilUsuario` + `PerfilAction`) e `src/context/PerfilContext.tsx` (`perfilPadrao` + migrações + reducer). Reescrita completa programada na **TASK-DOC-009** (Strict).
-> Mantido apenas para referência histórica.
+# MotoCalc RJ — Estado Inicial e Arquitetura de Persistência
+
+> **Status:** Engenharia reversa validada contra código real.
+> **Última atualização:** 2026-05-24 (TASK-DOC-009).
+> **Verdade primária:** `src/context/PerfilContext.tsx` (`perfilPadrao`, reducer, migrações) e `src/services/perfilStorage.ts` (acesso ao localStorage).
+> **Schema atual:** v14.
 
 ---
 
-# MotoCalc RJ Estado Inicial e Arquitetura de Persistência
+## I — Modelo de Persistência: Um Perfil Local com Múltiplas Predefinições
 
-> Status: especificação definitiva pré-implementação
-> Versão: 1.0 05/05/2026
-> Baseado em: `Requisitos_MotoCalc_RJ_v5.md`, interfaces `PerfilUsuario`
+O app não tem login em V1. Existe **um perfil local** e **vários presets** (configurações nomeadas) salvos no `localStorage`. Um motoboy pode ter "Honda Pop Trabalho" e "Biz Reserva" como presets distintos, com o app trabalhando sempre **com um deles ativo por vez**.
 
----
+### I.1 — Chaves do localStorage
 
-## I- Perfil Unico com Multiplas Predefinicoes (Presets)
+Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-3).
 
-O app nao tem login em V1. Existe **um unico perfil local** e **varias predefinicoes (presets)** de configuracao. Um motoboy pode ter "Trabalho" e "Pessoal" como presets, ou criar variações do mesmo modelo (ex: "Pop 110i 2024 - v2"). A estrutura no localStorage reflete isso.
+| Chave             | Tipo                   | Conteúdo                                        |
+| ----------------- | ---------------------- | ----------------------------------------------- |
+| `motocalc:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
+| `motocalc:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-### I.1- Chaves do localStorage
+> **Nota:** o namespace `motocalc:` não embute mais a versão do schema — a versão vive em `perfil.schemaVersion` dentro de cada `PresetEntry`. Migrações em cascata garantem que perfis salvos em versões antigas sejam normalizados ao carregar.
 
-| Chave                     | Tipo                   | Descricao                                               |
-| ------------------------- | ---------------------- | ------------------------------------------------------- |
-| `motocalc:v5:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinicoes. Maximo recomendado: 5 |
-| `motocalc:v5:presetAtivo` | `string`               | `presetId` do preset atualmente ativo                   |
+### I.2 — Envelope: `PresetEntry`
 
-> **Convencao de namespace:** `motocalc:v5:` para isolar dados e facilitar migrations. A versao (`v5`) refere-se ao `schemaVersion`. Ao migrar para v6, o hook `migrarPerfil.ts` le `v5:presets`, transforma, e grava em `v6:presets`.
-
-### I.2- Tipo PresetEntry (wrapper de preset)
+Não pertence ao `PerfilUsuario` — é o **wrapper** com metadados de identidade do preset:
 
 ```typescript
-// Nao esta em PerfilUsuario e o envelope do localStorage
-interface PresetEntry {
-  presetId: string            // nanoid() gerado na criacao
-  nome: string                // ex: "Trabalho Pop 110i"
-  criadoEm: string            // ISO 8601
-  atualizadoEm: string        // ISO 8601 atualizado a cada dispatch
-  perfil: PerfilUsuario       // snapshot completo do preset
+// src/types/perfil.ts
+export interface PresetEntry {
+  presetId: string;     // crypto.randomUUID() gerado em COMMIT_ONBOARDING
+  nome: string;         // ex: "Honda pop110i 2024"
+  criadoEm: string;     // ISO 8601
+  atualizadoEm: string; // ISO 8601, atualizado a cada dispatch que toca o perfil
+  perfil: PerfilUsuario;
 }
-
-> **Por que nao usar `userId` do PerfilUsuario?** O `userId` e reservado para autenticacao (login V2). O `presetId` identifica o preset localmente.
-> **Por que não usar `userId` do PerfilUsuario?** O `userId` é reservado para autenticação (login V2). O `perfilId` identifica o perfil localmente, é diferente.
-
-### I.3- Fluxo de Leitura ao Abrir o App
-
 ```
 
-App.tsx renderiza
-↓
-usePerfil.ts → localStorage.getItem('motocalc:v5:presetAtivo')
-↓
-null? → nenhum preset ativo → redirecionar para /onboarding
-string → presetId encontrado
-↓
-usePerfil.ts → localStorage.getItem('motocalc:v5:presets')
-↓
-null? → array vazio → redirecionar para /onboarding
-array → procurar entrada com presetId === ativo
-↓
-nao encontrado? → usar primeiro preset do array
-encontrado → carregar preset no PerfilContext via dispatch CARREGAR_PERFIL
-↓
-perfil.onboardingConcluido === false → /onboarding
-perfil.onboardingConcluido === true → /estimativa
+`presetId` ≠ `perfil.userId`. O primeiro é local; o segundo é reservado para auth V2 e sempre `null` em V1.
 
-````
+### I.3 — Fluxo de Abertura do App
+
+1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
+2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
+3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 14`.
+4. Se não há preset ativo OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
+5. Caso contrário, renderiza app com `perfil` ativo.
 
 ---
 
-## II- Objeto PerfilUsuario Padrão (Estado Pré-Onboarding)
+## II — `perfilPadrao` (estado pré-onboarding)
 
-Este é o objeto exato que o app cria ao iniciar um novo onboarding. Todos os campos têm valores seguros. O onboarding sobrescreve os campos relevantes antes de salvar.
+O objeto inicial criado quando o usuário começa um onboarding novo. Valores reais em `src/context/PerfilContext.tsx`:
 
 ```typescript
-// src/context/PerfilContext.tsx valor inicial do useReducer
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 5,
+  schemaVersion: 14,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
   aplicativos: [],
 
-  // ── Moto ──────────────────────────────────────────────────────────
   moto: {
     marca: '',
-    modelo: '',           // chave do preset JSON, ex: 'pop110i'
+    modelo: '',
     ano: new Date().getFullYear(),
     perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
+    kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 0, kitRelacao: 0 },
+    kmMotorRefeito: null,
   },
 
-  // ── Manutenção ────────────────────────────────────────────────────
   perfilManutencao: {
     perfilPecasGlobal: 'original',
     modoRevisao: 'independentes',
-    precoMaoDeObraIndependente: 150,   // dados_rj.json → manutencao.precoRevisaoIndependentePadrao
-    frequenciaRevisaoKm: 6000,
   },
 
-  // ── Trabalho ──────────────────────────────────────────────────────
   trabalho: {
-    kmPorDia: 70,        // default razoável para motoboy RJ
+    kmPorDia: 70,
     diasPorSemana: 5,
     horasPorDia: 8,
   },
 
-  // ── Financeiro ────────────────────────────────────────────────────
   financeiro: {
     tipoGasolinaPreferida: 'comum',
     combustiveis: {
-      comum:     { preco: 6.61, autonomia: 36 },  // dados_rj.json → combustivel.gasolinaComumPadrao
+      comum:     { preco: 6.61, autonomia: 36 },
       aditivada: { preco: 6.99, autonomia: 36 },
-      etanol:    { preco: 4.29, autonomia: 28  },
+      etanol:    { preco: 4.29, autonomia: 28 },
     },
-    internet: 0,           // 0 = não tem internet de trabalho
+    internet: 0,
     seguro: {
-      tem: false,
-      valorAnual: 929.96,  // referência Suhai editável
+      valorAnual: 0,                 // presença derivada de > 0 (REF-21 / ADR-005)
       empresa: null,
       periodicidade: 'anual',
     },
@@ -132,377 +101,188 @@ export const perfilPadrao: PerfilUsuario = {
     parcelasRestantes: null,
     aluguelMensal: null,
     aluguelPeriodicidade: null,
-    alimentacaoDia: 20,   // R$20 default perguntado no P9
-    gastosCustom: [],
+    alimentacaoDia: 20,
+    gastosCustom: PRESETS_GASTOS_PADRAO,  // ver II.1
     responsabilidadeAluguel: {
-      documentos: 'eu',   // default: todos os custos são do entregador
+      documentos: 'eu',
       manutencao: 'eu',
       seguro:     'eu',
     },
   },
 
-  // ── Display ───────────────────────────────────────────────────────
   configuracaoDisplay: {
-    modoExibicao: 'predefinidos',       // inicia com dados do preset
-    modoOficinDisplay: 'independentes', // modo de revisão na UI
     categoriasAtivas: {
-      combustivel:  true,
-      alimentacao:  true,
-      manutencao:   true,
-      documentacao: true,
-      internet:     false,  // começa false; ativado pelo onboarding se internet > 0
-      seguro:       false,  // começa false; ativado pelo onboarding se seguro.tem
-      financiamento:false,  // começa false; ativado pelo onboarding se financiada/alugada
+      combustivel:   true,
+      alimentacao:   true,
+      manutencao:    true,
+      documentacao:  true,
+      internet:      false,  // ativada por COMMIT_ONBOARDING se > 0
+      seguro:        false,  // ativada se valorAnual > 0
+      financiamento: false,  // ativada se situacaoMoto !== 'quitada'
+      imprevistos:   true,
     },
+    imprevistosSugeridosAtivos: {},  // toggle por id; padrão = false implícito
   },
 
-  // ── Overrides ─────────────────────────────────────────────────────
-  pecasOverrides: [],             // sem overrides iniciais → usa preset
-  servicosMaoDeObra: {
-    trocaOleo:          30,       // dados_rj.json → manutencao.servicosPadrao
-    trocaKitTransmissao:50,
-    trocaPneu:          30,
-    revisaoGeral:       150,
-    avulso:             80,
-  },
+  pecasOverrides: [],
+  servicosIndependentes: SERVICOS_INDEPENDENTES_PADRAO,  // ver II.2
   revisaoAutorizadaOverrides: [],
+  fipeCache: null,
+};
+```
 
-  // ── Cache ─────────────────────────────────────────────────────────
-  fipeCache: null,                // preenchido no P3 do onboarding
+### II.1 — `PRESETS_GASTOS_PADRAO` (lista fechada de imprevistos)
 
-  // ── Histórico ─────────────────────────────────────────────────────
-  historicoManutencao: {
-    trocasOleo:        [],
-    revisoes:          [],
-    trocasPneu:        [],
-    trocasKitRelacao:  [],
-    abastecimentos:    [],
-  },
+Definida em `PerfilContext.tsx`. Lista fechada pela TASK-RF-6.9 (ADR-003/ADR-006): usuário **edita** valor e toggle, **não adiciona/remove** itens.
 
-  diarioTrabalho: [],
-}
-````
+```typescript
+export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
+  { id: 'preset-multa',    nome: 'Multa',     valorAnual: 0, ativo: false, ehPreset: true },
+  { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 0, ativo: false, ehPreset: true },
+  { id: 'preset-outros',   nome: 'Outros',    valorAnual: 0, ativo: false, ehPreset: true },
+];
+```
+
+### II.2 — `SERVICOS_INDEPENDENTES_PADRAO` (9 serviços, defaults RJ)
+
+Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas excepcionais (`ehExcepcional: true, ativo: false`). Os excepcionais só aparecem na seção Imprevistos do Detalhamento, desligados por padrão.
+
+| `id`                    | `nome`                         | `intervalKm` | `precoMaoDeObra` | `ativo` | `ehExcepcional` |
+| ----------------------- | ------------------------------ | ------------ | ---------------- | ------- | --------------- |
+| `troca-oleo`            | Troca de óleo                  | 3000         | 25               | true    | false           |
+| `troca-kit-transmissao` | Troca kit transmissão          | 12000        | 60               | true    | false           |
+| `troca-pneu-dianteiro`  | Troca pneu dianteiro           | 25000        | 30               | true    | false           |
+| `troca-pneu-traseiro`   | Troca pneu traseiro            | 15000        | 30               | true    | false           |
+| `revisao-geral`         | Revisão geral (independente)   | 6000         | 80               | true    | false           |
+| `troca-vela`            | Troca de vela                  | 6000         | 15               | true    | false           |
+| `troca-filtro-ar`       | Troca filtro de ar             | 6000         | 15               | true    | false           |
+| `retifica-cabecote`     | Retífica de cabeçote           | 80000        | 800              | false   | true            |
+| `retifica-completa`     | Retífica completa              | 120000       | 1500             | false   | true            |
+
+> No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) — `resolverIntervaloPeca` casa serviço por `id` quando o `id` coincide com o da peça (`troca-oleo` ↔ `oleo_motor` via `MAPA_PECA_PARA_SERVICO` em `calculos.ts`).
 
 ---
 
-## III- Defaults por Campo: Origem e Regra
+## III — `EstadoApp` (estado de runtime)
 
-| Campo                                                | Default          | De onde vem               | Regra de atualização                                             |
-| ---------------------------------------------------- | ---------------- | ------------------------- | ---------------------------------------------------------------- |
-| `moto.perfilUso`                                     | `'entrega'`      | Hardcoded                 | P4 do onboarding                                                 |
-| `trabalho.kmPorDia`                                  | `70`             | Estimativa RJ             | P5 do onboarding → RF-EST-04 inline                              |
-| `trabalho.diasPorSemana`                             | `5`              | Estimativa                | P5 do onboarding → RF-EST-04 stepper                             |
-| `trabalho.horasPorDia`                               | `8`              | Padrão CLT                | Ajustes Predefinição                                             |
-| `financeiro.combustiveis.comum.preco`                | `6.61`           | `dados_rj.json`           | Editável em VIDA ÚTIL                                            |
-| `financeiro.combustiveis.comum.autonomia`            | `36`             | Preset `consumoKmL`       | Editável em VIDA ÚTIL                                            |
-| `financeiro.combustiveis.comum.autonomia` (com baú)  | `33`             | Preset `consumoKmLComBau` | Automático ao marcar baú                                         |
-| `financeiro.internet`                                | `0`              | Sem internet              | P8 do onboarding                                                 |
-| `financeiro.seguro.valorAnual`                       | `929.96`         | Referência Suhai          | P7 do onboarding                                                 |
-| `financeiro.alimentacaoDia`                          | `20`             | Estimativa RJ             | P9 do onboarding                                                 |
-| `perfilManutencao.precoMaoDeObraIndependente`        | `150`            | `dados_rj.json`           | Aba MÃO DE OBRA                                                  |
-| `servicosMaoDeObra.*`                                | Ver tabela acima | `dados_rj.json`           | Aba MÃO DE OBRA                                                  |
-| `configuracaoDisplay.categoriasAtivas.internet`      | `false`          |                         | Muda para `true` após onboarding se `internet > 0`               |
-| `configuracaoDisplay.categoriasAtivas.seguro`        | `false`          |                         | Muda para `true` após onboarding se `seguro.tem === true`        |
-| `configuracaoDisplay.categoriasAtivas.financiamento` | `false`          |                         | Muda para `true` após onboarding se `situacaoMoto !== 'quitada'` |
+`PerfilContext` mantém este shape no `useReducer`:
+
+```typescript
+export interface EstadoApp {
+  perfil: PerfilUsuario;       // sempre o do preset ativo (ou perfilPadrao se nenhum)
+  presets: PresetEntry[];
+  presetAtivoId: string | null;
+}
+```
+
+O helper interno `comPerfil(novoPerfil)` do reducer mantém `perfil` e `presets[].find(presetAtivoId).perfil` **sempre em sincronia** numa mesma operação (sem janela de inconsistência).
 
 ---
 
-## IV- Catálogo de Actions do useReducer
+## IV — Catálogo de Actions (`PerfilAction`)
 
-Todas as mudanças de estado passam por `dispatch(action)`. Nenhum componente acessa localStorage diretamente.
+Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`. Todas as mutações de estado passam por aqui — componentes nunca tocam `localStorage` diretamente (INV-PRESET-3).
 
-```typescript
-// src/context/PerfilContext.tsx
+### IV.1 — Onboarding
 
-type PerfilAction =
-  // ── Onboarding ──────────────────────────────────────────────────
-  | { type: "SET_ONBOARDING_CAMPO"; campo: string; valor: unknown }
-  // Define um campo qualquer durante o onboarding (antes de salvar)
-  | { type: "COMMIT_ONBOARDING" }
-  // Persiste o perfil no localStorage. Único momento de escrita durante onboarding.
-  // Também: ativa categoriasAtivas baseado nas respostas (internet, seguro, financiamento)
+| Action                | Efeito                                                                 |
+| --------------------- | ---------------------------------------------------------------------- |
+| `SET_ONBOARDING_CAMPO`| Set genérico de campo durante o onboarding (DT-14 — type-safety fraca) |
+| `COMMIT_ONBOARDING`   | Único momento de primeira persistência. Cria `PresetEntry`, deriva `categoriasAtivas` a partir das respostas, ajusta autonomias por modelo do `CATALOGO` |
 
-  // ── Rodagem (inline no Painel) ──────────────────────────────────
-  | { type: "SET_KM_POR_DIA"; valor: number }
-  | { type: "SET_DIAS_POR_SEMANA"; valor: number }
-  | { type: "SET_KM_ATUAL"; valor: number }
+### IV.2 — Rodagem inline (Estimativa)
 
-  // ── Display ─────────────────────────────────────────────────────
-  | { type: "SET_MODO_EXIBICAO"; modo: ModoExibicao }
-  | { type: "SET_MODO_OFICINA"; modo: ModoRevisao }
-  | { type: "TOGGLE_CATEGORIA"; categoria: keyof CategoriaDisplay }
+`SET_KM_POR_DIA`, `SET_DIAS_POR_SEMANA`, `SET_KM_ATUAL`.
 
-  // ── Overrides de Peças ──────────────────────────────────────────
-  | {
-      type: "SET_PECA_OVERRIDE";
-      id: string;
-      campo: "preco" | "intervaloKm" | "perfilPecas";
-      valor: number | PerfilPecas;
-    }
-  | {
-      type: "RESET_PECA_OVERRIDE";
-      id: string;
-      campo?: "preco" | "intervaloKm" | "perfilPecas";
-    }
-  // campo undefined → reseta todos os campos daquela peça
+### IV.3 — Display
 
-  // ── Mão de Obra ─────────────────────────────────────────────────
-  | {
-      type: "SET_SERVICO_MAO_DE_OBRA";
-      servico: keyof ServicosMaoDeObra;
-      valor: number;
-    }
-  | { type: "RESET_SERVICO_MAO_DE_OBRA"; servico: keyof ServicosMaoDeObra }
-  | {
-      type: "SET_REVISAO_AUTORIZADA_OVERRIDE";
-      index: number;
-      precoTotal: number;
-    }
-  | { type: "RESET_REVISAO_AUTORIZADA_OVERRIDE"; index: number }
+| Action                       | Efeito                                                            |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                  |
+| `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`     |
 
-  // ── Financeiro ──────────────────────────────────────────────────
-  | { type: "SET_INTERNET"; valor: number } // 0 = desativa
-  | { type: "SET_SEGURO"; config: Partial<SeguroConfig> }
-  | { type: "SET_ALIMENTACAO"; valorDia: number }
-  | {
-      type: "SET_COMBUSTIVEL";
-      tipo: TipoCombustivel;
-      campo: "preco" | "autonomia";
-      valor: number;
-    }
-  | { type: "SET_TIPO_COMBUSTIVEL_PREFERIDO"; tipo: TipoCombustivel }
-  | { type: "ADD_GASTO_CUSTOM"; gasto: Omit<GastoCustom, "id"> }
-  | { type: "TOGGLE_GASTO_CUSTOM"; id: string }
-  | { type: "DELETE_GASTO_CUSTOM"; id: string }
+### IV.4 — Overrides de peças
 
-  // ── Registros / Diário ──────────────────────────────────────────
-  | { type: "ADD_TROCA_OLEO"; registro: Omit<TrocaOleo, "id"> }
-  | { type: "DELETE_TROCA_OLEO"; id: string }
-  | { type: "ADD_REVISAO"; registro: Omit<RevisaoGeral, "id"> }
-  | { type: "DELETE_REVISAO"; id: string }
-  | { type: "ADD_TROCA_PNEU"; registro: Omit<TrocaPneu, "id"> }
-  | { type: "DELETE_TROCA_PNEU"; id: string }
-  | { type: "ADD_TROCA_KIT_RELACAO"; registro: Omit<TrocaKitRelacao, "id"> }
-  | { type: "DELETE_TROCA_KIT_RELACAO"; id: string }
-  | { type: "ADD_ABASTECIMENTO"; registro: Omit<Abastecimento, "id"> }
-  | { type: "DELETE_ABASTECIMENTO"; id: string }
-  | { type: "ADD_DIA_TRABALHO"; entrada: Omit<DiarioEntry, "id"> }
-  | { type: "DELETE_DIA_TRABALHO"; id: string }
-  // ADD_* → gera id via nanoid(), atualiza kmAtual se necessário (RN-24)
+| Action                      | Efeito                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `SET_PECA_OVERRIDE`         | Define um campo (`precoOriginal`, `precoParalela` ou `intervaloKm`) de `PecaOverride[]` por `id`  |
+| `RESET_PECA_OVERRIDE`       | Sem `campo`: remove o `PecaOverride` inteiro. Com `campo`: zera só aquele atributo (= null)       |
 
-  // ── FIPE ────────────────────────────────────────────────────────
-  | { type: "SET_FIPE_CACHE"; cache: FipeCache }
+`campoOverrideMap` em `PerfilContext.tsx` faz a tradução do nome amigável (`precoOriginal`) para o nome real do tipo (`precoEditadoOriginal`).
 
-  // ── Presets ─────────────────────────────────────────────────────
-  | { type: "CARREGAR_PERFIL"; perfil: PerfilUsuario }
-  // Chamado ao abrir o app hidrata o estado com o preset ativo
-  | { type: "RESETAR_PERFIL" }
-  // Volta para perfilPadrao e apaga todos os presets do localStorage
+### IV.5 — Mão de obra e revisão
 
-  // ── Import ──────────────────────────────────────────────────────
-  | { type: "IMPORTAR_PERFIL"; perfil: PerfilUsuario };
-// Valida schemaVersion, aplica migrations se necessário, persiste
-```
+| Action                                | Efeito                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| `SET_SERVICO_INDEPENDENTE`            | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` (INV-MANUT-1) |
+| `RESET_SERVICOS_INDEPENDENTES`        | Volta para `SERVICOS_INDEPENDENTES_PADRAO`                                   |
+| `SET_REVISAO_AUTORIZADA_OVERRIDE`     | Upsert por `index` em `revisaoAutorizadaOverrides[]`. Calcula `precoTotal = pecas + maoDeObra` |
+| `RESET_REVISAO_AUTORIZADA_OVERRIDE`   | Remove override por `index`                                                  |
+
+### IV.6 — Financeiro
+
+`SET_INTERNET`, `SET_SEGURO` (Partial), `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR`.
+
+> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` — lista de imprevistos é fechada (RF-6.9). `SET_GASTO_CUSTOM_VALOR` ativa o toggle automaticamente ao passar de 0 → >0.
+
+### IV.7 — FIPE
+
+`SET_FIPE_CACHE` (preenche o cache no Passo 3 do Onboarding).
+
+### IV.8 — Manutenção (km como âncora — RF-6.7)
+
+| Action                  | Efeito                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| `SET_KM_ULTIMA_TROCA`   | Atualiza `moto.kmUltimaTrocas[componente]` (oleo, pneuDianteiro, pneuTraseiro, kitRelacao) |
+| `SET_MOTOR_REFEITO`     | Define ou limpa `moto.kmMotorRefeito` (`number \| null`)                        |
+| `MARCAR_TROCAS_REVISAO` | Aplica `kmRevisao` em vários componentes de uma vez (checkpoint do Onboarding) |
+
+### IV.9 — Ajustes de predefinição
+
+`SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_PERFIL_USO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO`.
+
+> `RESETAR_AJUSTES_PADRAO` (BG-004): zera custos (alimentação, seguro, gastosCustom) e volta uso/modo de revisão ao padrão. **Não** mexe em moto nem em mão de obra.
+
+### IV.10 — Presets (envelope)
+
+`CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
 
 ---
 
-## V- Lógica do Reducer Regras Especiais
+## V — Persistência
 
-Alguns actions têm comportamento não óbvio que deve ser implementado corretamente:
+`PerfilContext` declara um `useEffect` que sincroniza com `LocalStoragePerfilStorage` a cada mudança em `state.presets` ou `state.presetAtivoId`. O `useRef` inicial evita escrita na primeira montagem (que apenas reidrata do storage).
 
-### V.1- COMMIT_ONBOARDING
-
-Além de persistir, este action ativa automaticamente as `categoriasAtivas` com base nas respostas:
-
-```typescript
-case 'COMMIT_ONBOARDING': {
-  const novo = {
-    ...state,
-    onboardingConcluido: true,
-    configuracaoDisplay: {
-      ...state.configuracaoDisplay,
-      categoriasAtivas: {
-        ...state.configuracaoDisplay.categoriasAtivas,
-        internet:      state.financeiro.internet > 0,
-        seguro:        state.financeiro.seguro.tem,
-        financiamento: state.financeiro.situacaoMoto !== 'quitada',
-        alimentacao:   state.financeiro.alimentacaoDia > 0,
-      },
-    },
-  }
-  usePerfil.save(novo)   // persiste no localStorage
-  return novo
-}
-```
-
-### V.2- ADD\_\* de registros (atualização automática de kmAtual)
-
-Conforme RN-24, ao adicionar qualquer registro com campo `km` ou `kmFinal`:
-
-```typescript
-case 'ADD_DIA_TRABALHO': {
-  const novoKm = entrada.kmFinal
-  return {
-    ...state,
-    moto: {
-      ...state.moto,
-      kmAtual: Math.max(state.moto.kmAtual, novoKm),  // nunca diminui
-    },
-    diarioTrabalho: [...state.diarioTrabalho, { id: nanoid(), ...entrada }],
-  }
-}
-```
-
-### V.3- RESET_PECA_OVERRIDE sem campo
-
-Se `campo` não informado, remove o override inteiro da peça do array:
-
-```typescript
-case 'RESET_PECA_OVERRIDE': {
-  if (!action.campo) {
-    // remove override completo
-    return {
-      ...state,
-      pecasOverrides: state.pecasOverrides.filter(o => o.id !== action.id),
-    }
-  }
-  // reseta apenas o campo específico → null
-  return {
-    ...state,
-    pecasOverrides: state.pecasOverrides.map(o =>
-      o.id === action.id
-        ? { ...o, [`${action.campo}Editado`]: null }
-        : o
-    ),
-  }
-}
-```
-
-### V.4- SET_MODO_EXIBICAO
-
-Quando muda de `'personalizado'` para `'predefinidos'`, o app recalcula imediatamente usando apenas o preset sem apagar os overrides salvos (RN-04).
+**INV-PRESET-2:** `PresetEntry` só é gravado após `COMMIT_ONBOARDING`. Actions intermediárias do onboarding (`SET_ONBOARDING_CAMPO`) mutam `state.perfil` mas **não** disparam persistência porque `presetAtivoId` ainda é `null`.
 
 ---
 
-## VI- Hook usePerfil Interface IPerfilStorage
+## VI — Migrações de Schema
 
-Conforme RNF-LR-03, a persistência é abstraída:
+Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 endereçada parcialmente — `migrarPerfil.ts` ainda não foi extraído para arquivo próprio). Cascata: v5 → v6 → ... → v14.
 
-```typescript
-// src/hooks/usePerfil.ts
+| Migração         | TASK que introduziu | Mudança principal |
+| ---------------- | ------------------- | ----------------- |
+| v5 → v6          | TASK-REF-11         | `servicosMaoDeObra` (plano) → `servicosIndependentes[]` |
+| v6 → v7          | TASK-RF-6.3.2       | `moto.kmUltimaTrocas` + `moto.kmMotorRefeito` |
+| v7 → v8          | TASK-REF-18         | Remove `configuracaoDisplay.modoExibicao` (modo único — ADR-003) |
+| v8 → v9          | TASK-REF-19         | Remove `historicoManutencao`, `diarioTrabalho`, `precoMaoDeObraIndependente`, `frequenciaRevisaoKm`, `modoOficinDisplay` |
+| v9 → v10         | TASK-REF-21         | Remove `seguro.tem` (presença derivada de `valorAnual > 0`); force-zero quando `tem === false` |
+| v10 → v14        | RF-6.9, RF-6.11, BG-006, etc | Lista fechada de gastosCustom, novas actions, ajustes finos |
 
-interface IPerfilStorage {
-  carregarPresets(): PresetEntry[];
-  salvarPresets(presets: PresetEntry[]): void;
-  getPresetAtivo(): string | null;
-  setPresetAtivo(presetId: string): void;
-  limpar(): void;
-}
-
-class LocalStoragePerfilStorage implements IPerfilStorage {
-  private readonly CHAVE_PRESETS = "motocalc:v5:presets";
-  private readonly CHAVE_ATIVO = "motocalc:v5:presetAtivo";
-
-  carregarPresets(): PresetEntry[] {
-    try {
-      const raw = localStorage.getItem(this.CHAVE_PRESETS);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  salvarPresets(presets: PresetEntry[]): void {
-    localStorage.setItem(this.CHAVE_PRESETS, JSON.stringify(presets));
-  }
-
-  getPresetAtivo(): string | null {
-    return localStorage.getItem(this.CHAVE_ATIVO);
-  }
-
-  setPresetAtivo(presetId: string): void {
-    localStorage.setItem(this.CHAVE_ATIVO, presetId);
-  }
-
-  limpar(): void {
-    localStorage.removeItem(this.CHAVE_PRESETS);
-    localStorage.removeItem(this.CHAVE_ATIVO);
-  }
-}
-```
-
-Em V2 (com login), substituir `LocalStoragePerfilStorage` por `ApiPerfilStorage` zero mudança no restante do código (RNF-LR-01).
+**Regra de ouro das migrações:** ordem ascendente (v8→v9 antes de v9→v10). Adicionar nova migração v(N)→v(N+1) sempre **depois** dos ifs com M < N. Lição reforçada em REF-19 e REF-21.
 
 ---
 
-## VII- Carregando o Fixture de Teste em Dev
+## VII — Fixture de dev (`src/fixtures/usuario_teste.json`)
 
-Para iniciar o app com o usuário fictício já configurado (evita fazer onboarding toda vez durante desenvolvimento):
-
-```typescript
-// src/main.tsx ativar APENAS em dev
-if (import.meta.env.DEV && !localStorage.getItem("motocalc:v5:presets")) {
-  const fixture = await import("../data-testes/usuario_teste.json");
-  localStorage.setItem(
-    "motocalc:v5:presets",
-    JSON.stringify(fixture["motocalc:v5:presets"]),
-  );
-  localStorage.setItem(
-    "motocalc:v5:presetAtivo",
-    fixture["motocalc:v5:presetAtivo"],
-  );
-  console.info("[DEV] Fixture carregado: Joao da Silva 2 presets");
-}
-```
-
-> **Importante:** A verificação `!localStorage.getItem(...)` garante que o fixture só é carregado se não houver dados reais não apaga trabalho existente.
+Fixture em `schemaVersion: 6` exercita a cascata completa de migrações ao carregar. Mantida deliberadamente em versão antiga como teste vivo das migrações.
 
 ---
 
-## VIII- Migrations (migrarPerfil.ts)
+## VIII — Histórico deste documento
 
-Ao carregar um perfil, sempre verificar e migrar se necessário:
-
-```typescript
-// src/utils/migrarPerfil.ts
-
-export function migrarPerfil(raw: Record<string, unknown>): PerfilUsuario {
-  const versao = (raw.schemaVersion as number) ?? 0;
-
-  if (versao < 3) {
-    throw new Error("Schema muito antigo (< v3). Import não suportado.");
-  }
-
-  if (versao === 3) {
-    // v3 → v4: adicionar campos ausentes
-    raw = migrarV3paraV4(raw);
-  }
-
-  if (versao === 4) {
-    // v4 → v5: TypeScript strict renomear 'perfilUso' de 'motoboy' para 'entrega'
-    if ((raw as any).moto?.perfilUso === "motoboy") {
-      (raw as any).moto.perfilUso = "entrega";
-    }
-    raw.schemaVersion = 5;
-  }
-
-  // Completar campos ausentes com defaults (import de versão mais antiga)
-  return completarComDefaults(raw as Partial<PerfilUsuario>);
-}
-
-function completarComDefaults(parcial: Partial<PerfilUsuario>): PerfilUsuario {
-  return {
-    ...perfilPadrao, // spread dos defaults
-    ...parcial, // sobrescreve com o que veio do import
-    moto: { ...perfilPadrao.moto, ...parcial.moto },
-    financeiro: { ...perfilPadrao.financeiro, ...parcial.financeiro },
-    // ... demais subconfigs
-    schemaVersion: 5,
-  };
-}
-```
-
----
-
-_Última atualização: 05/05/2026 especificação pré-implementação._
-_Próxima etapa: Fase 1 Setup do projeto (npm create vite@latest)._
+| Data       | Mudança |
+| ---------- | ------- |
+| 2026-05-05 | Especificação pré-implementação original (v5) |
+| 2026-05-24 | Reescrita completa (TASK-DOC-009) — sincronizado com schema 14, perfilPadrao real, actions reais, migrações documentadas |
