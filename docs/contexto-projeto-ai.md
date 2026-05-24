@@ -130,10 +130,11 @@ src/
 └── pages/
     ├── PaginaEstimativa.tsx    # 127 linhas ✅
     ├── PaginaDetalhamento.tsx  # 199 linhas ✅
-    ├── PaginaRegistros.tsx
     ├── PaginaMaoDeObra.tsx
     ├── PaginaInsumos.tsx
     ├── PaginaAjustes.tsx
+    ├── PaginaPerfil.tsx
+    ├── PaginaOnboarding.tsx
     └── onboarding/
         ├── FluxoOnboarding.tsx
         ├── PassoLayout.tsx

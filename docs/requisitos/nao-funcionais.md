@@ -35,7 +35,7 @@
 | RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** (meta revisada para ≤ 200 em TASK-REF-02 — Prettier expande JSX) e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 200 linhas. | ✅ CONCLUÍDO (PaginaEstimativa: 127, PaginaDetalhamento: 199 linhas — TASK-REF-01/02) |
 | RNF-COMP-02 | **Tudo que se repete vira componente.** Qualquer JSX de card, input, label, badge, toggle, stepper, accordion, botão ou separador que aparece ≥ 2 vezes no app deve estar em `src/components/ui/`. | Revisão de código: nenhuma duplicação de estrutura JSX entre arquivos. | [ ] PENDENTE |
 | RNF-COMP-03 | **`src/components/ui/` é a camada Shadcn.** Componentes customizados seguem o mesmo padrão de arquivo (export nomeado, props tipadas, sem lógica de negócio). | `ls src/components/ui/` lista tanto componentes Shadcn quanto os custom do projeto, no mesmo estilo. | ✅ CONCLUÍDO (shadcn instalado em TASK-REF-03; Card, Button, Input, Badge, Label, Accordion em uso) |
-| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/detalhamento/`. Formulário de registro → `src/components/registros/formularios/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente. | ✅ CONCLUÍDO (subpastas estimativa/ com 5 componentes e detalhamento/ com 7 componentes — TASK-REF-01/02) |
+| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/detalhamento/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente. | ✅ CONCLUÍDO (subpastas estimativa/ com 5 componentes e detalhamento/ com 7 componentes — TASK-REF-01/02) |
 | RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict — zero erros de tipo. | ✅ CONCLUÍDO |
 | RNF-COMP-06 | **Lógica de negócio fora do JSX.** Cálculos, formatação e filtragem ficam em hooks ou utils. | Revisão de código: ausência de cálculos dentro de `return (...)`. | [ ] PENDENTE |
 
@@ -54,8 +54,6 @@
 Eventos de **Onboarding**: `onboarding_iniciado`, `onboarding_passo_concluido`, `onboarding_marca_selecionada`, `onboarding_modelo_selecionado`, `onboarding_situacao_selecionada`, `onboarding_concluido`, `onboarding_abandonado`.
 
 Eventos de **Estimativa**: `estimativa_km_alterado`, `estimativa_dias_alterado`, `estimativa_modo_alterado`, `estimativa_oficina_alterada`, `estimativa_detalhamento_aberto`, `estimativa_categoria_toggle`, `estimativa_gasto_adicionado`.
-
-Eventos de **Registros**: `registro_salvo`, `registro_excluido`, `registro_foto_adicionada` (por tipo: rodagem, abastecimento, oleo, pneu, revisao, kit_relacao).
 
 Eventos de **Configuração**: `override_salvo`, `override_resetado`, `perfil_exportado`, `perfil_importado`, `perfil_resetado`, `fipe_consultada`, `fipe_offline`.
 
@@ -134,12 +132,12 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | Dialog | Modal de gasto, confirmação "Apagar Tudo" |
 | Badge | Status de revisão, "Modo personalizado ativo" |
 | Select | Dropdown ano, tipo de óleo, marca |
-| Tabs | Sub-abas da tela Registros |
+| Tabs | (sem uso ativo após ADR-003) |
 | Input | Todos os inputs |
 | Button | Todos os botões |
 | Separator | Divisores entre seções |
 | Toggle | MENSAL/ANUAL, AUTORIZADAS/INDEPENDENTES |
-| Sheet | Painel hamburguer |
+| Sheet | (sem uso ativo após ADR-003) |
 
 ---
 
@@ -151,7 +149,6 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 /onboarding/6/responsabilidade
 /estimativa
 /estimativa/detalhamento
-/registros
 /mao-de-obra
 /insumos
 /ajustes

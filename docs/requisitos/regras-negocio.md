@@ -1,7 +1,8 @@
 # Regras de Negócio MotoCalc RJ
 
 > Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026).
-> IDs: RN-01 a RN-27. Regras que definem o que é válido no domínio, independente de implementação.
+> IDs ativos: RN-01 a RN-23 e RN-27. Regras que definem o que é válido no domínio, independente de implementação.
+> **Nota:** RN-24, RN-25 e RN-26 dependiam da tela Registros e foram **adiadas via ADR-003**. Removidas deste documento operacional; permanecem em `Requisitos_MotoCalc_RJ_v6.md` (banner ADIADO) para fidelidade histórica da spec v6.0.
 
 ---
 
@@ -78,16 +79,6 @@
 
 ---
 
-## Consistências de Dados
-
-| ID | Regra |
-|---|---|
-| RN-24 | `kmAtual` é atualizado automaticamente após cada Registro de Rodagem: `kmAtual = max(kmAtual, kmFinal)`. |
-| RN-25 | Após 5+ Registros de Rodagem, `kmDiaMedioReal` é calculado. O usuário pode optar por usá-lo em vez do valor do onboarding. |
-| RN-26 | Após 2+ registros do mesmo tipo de manutenção, `intervaloRealObservado` é calculado e exibido como informação (não substitui automaticamente o preset). |
-
----
-
 ## Invariantes do Domínio (RN com status de invariante)
 
 As regras abaixo são também listadas em `docs/dominio/invariantes.md` por serem protegidas no código e nunca poderem ser violadas:
@@ -103,4 +94,4 @@ As regras abaixo são também listadas em `docs/dominio/invariantes.md` por sere
 
 ---
 
-> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-25 e RN-26 têm divergências registradas em `docs/dominio/divida-tecnica.md` (DT-7 e relacionadas).
+> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-24, RN-25 e RN-26 foram adiadas via ADR-003 (dependiam de Registros) — DT-7 já marcada ENDEREÇADA em `docs/dominio/divida-tecnica.md` pela TASK-DOC-009.

@@ -1,7 +1,8 @@
 # Requisitos Funcionais - MotoCalc RJ
 
 > Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026).
-> IDs dos requisitos: RF-ON-xx, RF-EST-xx, RF-DET-xx, RF-REG-xx, RF-FORM-xx, RF-MO-xx, RF-VU-xx, RF-PERF-xx, RF-DOC-xx, RF-CONF-xx, RF-EXP-xx.
+> IDs dos requisitos: RF-ON-xx, RF-EST-xx, RF-DET-xx, RF-MO-xx, RF-VU-xx, RF-PERF-xx, RF-DOC-xx, RF-CONF-xx, RF-EXP-xx.
+> **Nota:** RF-REG-* e RF-FORM-* (tela Registros e formulários) foram **adiados via ADR-003** e removidos deste documento operacional. Para fidelidade histórica da spec v6.0, ver `Requisitos_MotoCalc_RJ_v6.md` (banner ADIADO).
 
 ---
 
@@ -51,38 +52,6 @@
 | RF-DET-09 | Detalhamento expandido de **Financiamento** (se `situacaoMoto === 'financiada'`): Custo mensal (parcela) · Parcelas restantes. | Label muda para "Aluguel" se `situacaoMoto === 'alugada'`. | ✅ CONCLUÍDO |
 | RF-DET-10 | Botão "＋ Adicionar Novo Gasto" ao final da lista. | Abre modal/inline form: nome + valor mensal. Gasto salvo como categoria própria no total. | ✅ CONCLUÍDO |
 | RF-DET-11 | Porcentagens somam 100% considerando apenas categorias com toggle ativo. | | ✅ CONCLUÍDO |
-
----
-
-## Aba REGISTROS (RF-REG)
-
-| ID | Descrição | Critério de Aceite | Status |
-|---|---|---|---|
-| RF-REG-01 | Exibir 4 sub-abas horizontais: **Geral · Rodagem · Combustível · Manutenção**. | Sub-aba "Geral" ativa por padrão. | [ ] PENDENTE |
-| RF-REG-02 | Sub-aba **Geral**: seções para cada categoria (Óleo Motor · Combustível · Revisão Geral · Pneu Dianteiro · Pneu Traseiro · Kit Transmissão · Rodagem). Cada seção: botão [＋] para adicionar + botão [Ver] para lista completa. | | [ ] PENDENTE |
-| RF-REG-03 | Registros de **Óleo Motor**: tabela DATA / KM / VALOR. | | [ ] PENDENTE |
-| RF-REG-04 | Registros de **Combustível**: card com ícone tipo (Aditivada/Comum) · valor pago · data · posto/local · km. | Posto/local: texto livre. | [ ] PENDENTE |
-| RF-REG-05 | Registros de **Revisão Geral**: card com nome do serviço · valor total · local (autorizada/independente) · badge de status (CONCLUÍDO / EM DIA / PRÓXIMO) · data · km · itens trocados. | Badge "PRÓXIMO" quando próxima revisão em < 500 km. | [ ] PENDENTE |
-| RF-REG-06 | Registros de **Pneu Dianteiro/Traseiro**: tabela DATA / KM / MARCA / VALOR. | | [ ] PENDENTE |
-| RF-REG-07 | Registros de **Kit Transmissão**: tabela DATA / KM / MARCA / VALOR. | | [ ] PENDENTE |
-| RF-REG-08 | Sub-aba **Rodagem**: lista de dias com DATA e KM. Após 5+ registros: exibir média real de km/dia no topo. | | [ ] PENDENTE |
-| RF-REG-09 | Sub-aba **Combustível**: lista detalhada (tipo · valor · posto · km · litros · preço/L). Após 3+ registros: exibir consumo real (km/L) no topo. | `consumoReal = soma(km) / soma(litros)`. | [ ] PENDENTE |
-| RF-REG-10 | Sub-aba **Manutenção**: todos os registros de manutenção ordenados por data desc. | | [ ] PENDENTE |
-| RF-REG-11 | Após 2+ registros do mesmo tipo: calcular e exibir intervalo médio real. | "Seu intervalo real observado: X.XXX km (preset: Y.XXX km)". | [ ] PENDENTE |
-| RF-REG-12 | Editar ou excluir qualquer registro via swipe-left ou long-press. Confirmação antes de excluir. | | [ ] PENDENTE |
-
----
-
-## Formulários de Registro (RF-FORM)
-
-| ID | Descrição | Status |
-|---|---|---|
-| RF-FORM-01 | Registro de Rodagem (KM do Dia): Odômetro Inicial/Final, Alimentação toggle, card TOTAL RODADO e MÉDIA ESTIMADA. | [ ] PENDENTE |
-| RF-FORM-02 | Registro de Abastecimento: tipo gasolina, data, odômetro, total pago, preço/L, volume estimado, evidências (fotos). | [ ] PENDENTE |
-| RF-FORM-03 | Registro de Troca de Óleo: data, tipo de óleo, marca, km, valor, evidência (foto). | [ ] PENDENTE |
-| RF-FORM-04 | Registro de Troca de Pneu: data, km, posição, marca, valor pneu, mão de obra, evidência. | [ ] PENDENTE |
-| RF-FORM-05 | Registro de Revisão Geral: local, qual revisão, mão de obra, peças, peças individuais dinâmicas, card TOTAL ESTIMADO. | [ ] PENDENTE |
-| RF-FORM-06 | Registro de Kit Relação: data, odômetro, marca, peças, mão de obra, evidência. | [ ] PENDENTE |
 
 ---
 
@@ -139,7 +108,7 @@
 | RF-CONF-02 | Ao reabrir com perfil salvo, carregar estado sem ação do usuário. Onboarding nunca reexibido. | ✅ CONCLUÍDO |
 | RF-EXP-01 | Exportar todos os dados como `motocalc_backup.json`. Download automático. | [ ] PENDENTE |
 | RF-EXP-02 | Importar arquivo `.json` com validação e confirmação. Compatível com schemas v3+. | [ ] PENDENTE |
-| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 5. | [ ] PENDENTE |
+| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 14 (ver `docs/arquitetura/estado_inicial.md` para tabela de migrações). | [ ] PENDENTE |
 
 ---
 
@@ -200,4 +169,5 @@ Cards: "Sim, como na rua" / "Não, levo de casa". Se Sim: gasto médio por dia (
 
 > **Status geral:**
 > - ✅ CONCLUÍDO: Onboarding, Estimativa, Detalhamento, persistence, FIPE, IPVA/Licenciamento.
-> - [ ] PENDENTE: Registros, Mão de Obra, Autonomia, Perfil, Export/Import, Tooltips.
+> - [ ] PENDENTE: Mão de Obra, Autonomia, Perfil, Export/Import, Tooltips.
+> - ⚠️ ADIADO via ADR-003: Registros (RF-REG-*) e Formulários de Registro (RF-FORM-*) — backlog futuro.

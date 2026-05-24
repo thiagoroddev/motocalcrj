@@ -19,30 +19,7 @@ Obedeça essa ordem:
 
 > **TASK-DOC-009** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (sincronização de docs/dominio + docs/arquitetura com código pós-ADR-003; 4 ondas, 14 arquivos tocados).
 
-## TASK-DOC-010 — Sincronizar docs/requisitos com ADR-003
-
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** Normal
-- **Esforço-H/IA:** P/M
-- **Data origem:** 24/05/26 (gerada pela TASK-DOC-009)
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-003
-- **Observações:** Gerada como spin-off da TASK-DOC-009. Os arquivos de domínio e arquitetura foram sincronizados; falta varrer requisitos. Decisões pendem de produto (não engenharia reversa) — daí ficar Normal e separada.
-
-**Escopo:**
-- `docs/requisitos/Requisitos_MotoCalc_RJ_v6.md` — seções V.4, V.5 (Registros e Diário) e RF-REG-* mencionam features removidas pela ADR-003. Decidir: deletar seções OU marcar como "ADIADO via ADR-003" preservando para histórico.
-- `docs/requisitos/funcionais.md` — varredura por RF-REG-*, RN-25 (modo personalizado), RN-26 (médias de registros) — provavelmente todas obsoletas.
-- `docs/requisitos/regras-negocio.md` — verificar se há regras que dependem de Registros/modoExibicao.
-- `docs/contexto-projeto-ai.md` — varredura pontual; pode ter menções pequenas a termos removidos.
-
-**Pré-requisito:** decisão de produto se requisitos eliminados são "removidos para sempre" ou "adiados como melhoria futura". ADR-003 já decidiu — mas requer alguém confirmar que a documentação reflete a decisão.
-
-**Critérios de aceite:**
-- Requisitos sem menção desencontrada com o estado atual do código.
-- Zero referência ativa (fora de seções marcadas explicitamente como "ADIADO") a Registros, modoExibicao, Diário, modoOficinDisplay, etc.
-- `docs/contexto-projeto-ai.md` consistente com o código atual.
+> **TASK-DOC-010** movida para `em-andamento.md` em 24/05/26 16:53 — sincronização de `docs/requisitos/*` + `docs/contexto-projeto-ai.md` com ADR-003 (estratégia Híbrida, 4 ondas).
 
 ---
 
