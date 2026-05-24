@@ -91,7 +91,9 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 ### Invariantes de Cálculo
 
 #### INV-CALC-1: Filtros com Semântica Tristate
-**Regra:** Em `filtros.manutencaoPorPeca`, peça é considerada **ativa** se valor for `true` ou `undefined`. Apenas `false` explícito desativa.
+**Regra:** Em `filtros.manutencaoPorPeca` e `filtros.revisaoPorServico`, item é considerado **ativo** se valor for `true` ou `undefined`. Apenas `false` explícito desativa.
+
+Em `filtros.imprevistosSugeridos`, a semântica é diferente: item é considerado **ativo** apenas se valor for `true`. `false` ou `undefined` mantém desligado.
 
 **Por quê:** Permite armazenar apenas as exceções (peças desativadas) ao invés do estado completo. Estado mínimo.
 
@@ -100,6 +102,14 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 if (filtros.manutencaoPorPeca[pecaId] !== false) {
   // peça ativa
 }
+
+if (filtros.revisaoPorServico[servicoId] !== false) {
+  // serviço ativo
+}
+
+if (filtros.imprevistosSugeridos[imprevistoId] === true) {
+  // imprevisto sugerido ativo
+}
 ```
 
 ⚠️ **Anti-padrão a evitar:**
@@ -107,6 +117,15 @@ if (filtros.manutencaoPorPeca[pecaId] !== false) {
 // ERRADO quebra a invariante
 if (filtros.manutencaoPorPeca[pecaId] === true) {
   // peças sem entrada explícita ficam de fora!
+}
+
+if (filtros.revisaoPorServico[servicoId] === true) {
+  // serviços sem entrada explícita ficam de fora!
+}
+
+// ERRADO: para imprevistos sugeridos, undefined não pode ativar custo
+if (filtros.imprevistosSugeridos[imprevistoId] !== false) {
+  // retíficas entrariam ligadas por padrão
 }
 ```
 
@@ -154,13 +173,13 @@ if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
 ---
 
 #### INV-VIDA-UTIL-1: ServicoIndependente é fonte canônica de intervalKm para peças vinculadas
-**Regra:** Para peças cujo `id` existe em `servicosIndependentes` com `ativo: true`, a fonte canônica de `intervalKm` é `ServicoIndependente.intervalKm`, não o Preset JSON. A aba Preço Peças exibe esse valor como somente leitura — apenas a aba Mão de Obra permite editá-lo.
+**Regra:** Para peças cujo `id` existe em `servicosIndependentes` com `ativo: true`, a fonte canônica de `intervalKm` é `ServicoIndependente.intervalKm`, não o Preset JSON. A tela Insumos exibe esse valor como somente leitura — apenas a aba Mão de Obra permite editá-lo.
 
 **Por quê:** Evitar conflito de fonte de verdade. Se a peça e o serviço puderem ter intervalos independentes, o calculador ficará inconsistente: `calcularCpkPorPeca` usaria um valor e `calcularCustoRevisaoAnual` usaria outro.
 
 **Onde é protegida:**
 - `src/utils/calculos.ts` — `resolverIntervaloPeca`: verifica `servicosIndependentes.find(s => s.id === pecaId && s.ativo)` antes do fallback do preset.
-- `src/pages/PaginaVidaUtil.tsx` — `resolverIntervalo`: mesmo lookup; campo exibido como `<div>` read-only, sem `<Input>`.
+- `src/pages/PaginaInsumos.tsx` — `resolverIntervalo`: mesmo lookup; campo exibido como `<div>` read-only, sem `<Input>`.
 
 ⚠️ **Limitação atual (DT-15):** Os IDs dos serviços (`troca-oleo`, `troca-pneu-dianteiro`) divergem dos IDs das peças no Preset JSON (`oleo_motor`, `pneu_dianteiro`). Portanto, o lookup nunca casa na versão atual e a Vida Útil exibida sempre cai no fallback do preset. A invariante descreve o comportamento *quando* os IDs casarem — seja via mapeamento explícito futuro ou normalização dos IDs.
 

@@ -95,12 +95,26 @@ Define quem paga cada bloco quando a moto é alugada. Aplicado via `fatorRespons
 interface GastoCustom {
   id: string;
   nome: string;
-  valorMensal: number;
+  valorAnual: number;   // total acumulado no ano (não recorrência mensal)
   ativo: boolean;
+  ehPreset: boolean;    // presets fixos não podem ser deletados
 }
 ```
 
-Despesas que o Motoboy adiciona livremente ("manutenção do celular", "EPI"). Cada gasto pode ser ativado/desativado sem deletar.
+Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento:
+
+| `id`              | `nome`       | Propósito                                                       |
+| ----------------- | ------------ | --------------------------------------------------------------- |
+| `preset-multa`    | Multa        | Total de multas no ano (atuais + previstas).                    |
+| `preset-sinistro` | Sinistros    | Prejuízos diversos por acidente, furto, queda etc.              |
+| `preset-outros`   | Outros       | Coringa para custos não previstos pelos presets acima.          |
+
+⚠️ **Regras** (definidas pela TASK-RF-6.9 — ver ADR-003 e ADR-006):
+
+- **Sem cadastro avulso.** O usuário não adiciona nem deleta itens. A lista é fechada — quando um custo não cabe em Multa ou Sinistros, vai em "Outros".
+- **Valor único acumulado.** `valorAnual` é o **total que o usuário já gastou e/ou prevê gastar no ano corrente**, somado num único campo. Não há recorrência mensal nem registro item-a-item: ao tomar nova multa, edita o valor somando ao que já estava.
+- **Edição direta no Detalhamento.** Imprevistos é a **única categoria** editável direto na tela de Detalhamento, via popup acionado pelo ícone de lápis.
+- **Auto-ativação por conveniência.** Ao informar valor > 0 num item desligado, o toggle ativa automaticamente (o usuário acabou de declarar o custo). Zerar o valor **não** desativa — quem zera mantém controle explícito do toggle.
 
 ---
 
@@ -113,9 +127,8 @@ Despesas que o Motoboy adiciona livremente ("manutenção do celular", "EPI"). C
 | `SET_ALIMENTACAO`                | Atualiza gasto diário com alimentação                                   |
 | `SET_COMBUSTIVEL`                | Atualiza preço ou autonomia de um tipo específico de combustível        |
 | `SET_TIPO_COMBUSTIVEL_PREFERIDO` | Troca o tipo principal usado nos cálculos                               |
-| `ADD_GASTO_CUSTOM`               | Adiciona novo gasto personalizado                                       |
-| `TOGGLE_GASTO_CUSTOM`            | Liga/desliga um gasto sem deletá-lo                                     |
-| `DELETE_GASTO_CUSTOM`            | Remove um gasto personalizado                                           |
+| `TOGGLE_GASTO_CUSTOM`            | Liga/desliga um preset sem zerar o valor                                |
+| `SET_GASTO_CUSTOM_VALOR`         | Atualiza `valorAnual` do preset; ativa o toggle se passar de 0 para >0  |
 
 ⚠️ **Não há actions específicas** para `situacaoMoto`, `parcelaMensal`, `aluguelMensal`, `responsabilidadeAluguel`. Essas mudanças precisam usar `SET_ONBOARDING_CAMPO` (Onboarding ou Ajustes). No reducer atual nao existe action dedicada para esses campos.
 
@@ -156,7 +169,8 @@ documentos: {
 | Seguro                | `calcularCustoSeguroAnual(tem, valorAnual) × fatorSeg`   | `valorAnual × fatorSeg` se `tem`      |
 | Alimentação           | `calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno)` | `alimentacaoDia × diasAno`            |
 | Financiamento/Aluguel | `calcularCustoFinanciamentoAnual(...)`                   | depende da situação                   |
-| Gastos Custom         | `calcularCustoGastosCustomAnual(gastosCustom)`           | soma de `valorMensal × 12` dos ativos |
+| Gastos Custom         | `calcularCustoGastosCustomAnual(gastosCustom)`           | soma de `valorAnual` dos presets ativos |
+| Imprevistos sugeridos | derivado de `servicosIndependentes` excepcionais         | só entra no total com filtro explícito |
 
 ### Cálculo de Financiamento/Aluguel
 
@@ -199,7 +213,7 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, aluguel, periodicida
 
 ### INV-FIN-3: Valores monetários não negativos
 
-**Regra:** Todos os valores em R$ (`internet`, `seguro.valorAnual`, `alimentacaoDia`, `parcelaMensal`, `aluguelMensal`, `gastosCustom[].valorMensal`, `combustiveis.*.preco`) devem ser `>= 0`.
+**Regra:** Todos os valores em R$ (`internet`, `seguro.valorAnual`, `alimentacaoDia`, `parcelaMensal`, `aluguelMensal`, `gastosCustom[].valorAnual`, `combustiveis.*.preco`) devem ser `>= 0`.
 
 **Onde é protegida:** validação nos formulários de UI.
 
@@ -247,9 +261,8 @@ PerfilUsuario.financeiro
 - `ConfiguracaoFinanceiraDefinida` fim do Onboarding (P6, P7, P8, P9)
 - `SeguroAtualizado` `SET_SEGURO`
 - `CombustivelAtualizado` `SET_COMBUSTIVEL` ou `SET_TIPO_COMBUSTIVEL_PREFERIDO`
-- `GastoCustomCriado` `ADD_GASTO_CUSTOM`
 - `GastoCustomAlternado` `TOGGLE_GASTO_CUSTOM`
-- `GastoCustomRemovido` `DELETE_GASTO_CUSTOM`
+- `GastoCustomValorEditado` `SET_GASTO_CUSTOM_VALOR`
 
 ---
 
@@ -263,9 +276,9 @@ Apesar do nome, pode armazenar valor semanal. Registrar como dívida técnica de
 
 O Motoboy informa o **valor cheio** dos custos (IPVA total, manutenção total). O fator divide depois no cálculo final. Isso significa que **alterar o fator não muda os inputs no perfil** só muda o cálculo derivado. Documentar isso é importante para evitar bugs.
 
-### `gastosCustom` cresce sem limite
+### `gastosCustom` é lista fechada
 
-Sem mecanismo de arquivamento ou limite de quantidade. Se Motoboy criar 100 gastos custom ao longo dos anos, persistência fica pesada. **Não é problema agora**, mas considerar quando crescer.
+Pela TASK-RF-6.9 / ADR-006, a lista é fechada em 3 presets (Multa, Sinistros, Outros). Sem mecanismo de cadastro avulso. Se uma necessidade futura justificar abrir, é decisão arquitetural — ADR nova.
 
 ---
 

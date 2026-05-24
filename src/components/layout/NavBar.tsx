@@ -36,8 +36,8 @@ const TABS = [
     ),
   },
   {
-    to: '/vida-util',
-    label: 'AUTONOMIA',
+    to: '/insumos',
+    label: 'INSUMOS',
     icon: (
       <svg
         viewBox="0 0 24 24"

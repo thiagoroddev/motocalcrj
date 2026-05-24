@@ -1,6 +1,8 @@
+import { useId } from 'react';
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction, PerfilUso } from '../../types/perfil';
 import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { Segmentado } from '../Segmentado';
 import { Stepper } from '../Stepper';
 import { Linha } from '../Linha';
@@ -13,6 +15,7 @@ interface Props {
 }
 
 export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
+  const idKmPorDia = useId();
   const temAlteracao =
     moto.perfilUso !== 'entrega' || trabalho.diasPorSemana !== 5 || trabalho.kmPorDia !== 70;
 
@@ -46,9 +49,13 @@ export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
         />
       </Linha>
       <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">KM por dia (média)</p>
+        <Label htmlFor={idKmPorDia} className="text-xs text-muted-foreground font-normal">
+          KM por dia (média)
+        </Label>
         <Input
+          id={idKmPorDia}
           type="number"
+          inputMode="numeric"
           value={trabalho.kmPorDia}
           min={1}
           onChange={(e) => {

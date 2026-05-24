@@ -82,13 +82,13 @@ interface ServicoIndependente {
   id: string;           // ex: 'troca-oleo', 'revisao-geral'
   nome: string;
   intervalKm: number;   // sempre > 0 (INV-MANUT-1)
-  precoMaoDeObra: number;
-  ativo: boolean;       // false = excluído do cálculo de CPK
-  ehExcepcional: boolean; // true = alerta ao atingir km (ex: fazer motor)
+  precoMaoDeObra: number; // em excepcionais, representa o preço total do serviço (peças + MO)
+  ativo: boolean;       // false = excluído do cálculo periódico
+  ehExcepcional: boolean; // true = configurado em Excepcional e sugerido em Imprevistos
 }
 ```
 
-Defaults de 8 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (valores campo RJ). Serviços com `ehExcepcional: true` têm `ativo: false` por padrão e geram alerta contextual quando `kmAtual >= intervalKm`.
+Defaults de 9 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (valores campo RJ). Serviços com `ehExcepcional: true` representam custos corretivos de alto km, ficam na aba Excepcional para edição de preço/intervalo e aparecem no Detalhamento em Imprevistos como sugestões desligadas por padrão.
 
 ### Perfil de Peças (`PerfilPecas`)
 
@@ -129,9 +129,15 @@ Classificação de despesas para o cálculo. As categorias **reais do projeto** 
 | `seguro`        | Seguro da moto (anual)                         |
 | `alimentacao`   | Refeições no trabalho                          |
 | `financiamento` | Parcela de financiamento OU aluguel            |
-| `gastosCustom`  | Gastos personalizados criados pelo Motoboy     |
+| `gastosCustom`  | Imprevistos: presets fixos editáveis (Multa, Sinistros, Outros) + sugestões corretivas desligadas por padrão |
 
 ⚠️ **Regra crítica (RN-27):** `revisao` **não é fatia separada no donut** da Estimativa seu custo é incorporado à fatia de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção. Não existe toggle individual para revisão.
+
+### Gasto Personalizado (`GastoCustom`) — valor único acumulado
+
+Lista fechada de 3 presets em `financeiro.gastosCustom` que o usuário edita direto na seção Imprevistos do Detalhamento: **Multa**, **Sinistros** e **Outros**. Cada item tem `valorAnual` (total acumulado no ano corrente — não recorrência mensal), `ativo` (toggle) e `ehPreset: true` (não deletável). Quando vier custo novo do mesmo tipo, o usuário **edita somando** ao valor anterior. Padrão estabelecido pela TASK-RF-6.9 (consequência da ADR-003 e ADR-006).
+
+⚠️ Imprevistos é a **única categoria editável direto na tela de Detalhamento**. As demais (combustível, internet, seguro, alimentação, financiamento, mão de obra, custos & peças) só são editáveis nas suas telas dedicadas.
 
 ### Categoria Display (`CategoriaDisplay`)
 
@@ -151,9 +157,11 @@ Estrutura usada **internamente nos cálculos** para decidir quais categorias ent
 
 1. Tem chave `documentos` (não `documentacao`)
 2. Tem chave `revisao` separada (que `CategoriaDisplay` não tem espelha `manutencao`)
-3. Tem `manutencaoPorPeca: Record<string, boolean>` para granularidade individual
+3. Tem `manutencaoPorPeca: Record<string, boolean>` para granularidade individual de peças
+4. Tem `revisaoPorServico: Record<string, boolean>` para granularidade individual de serviços de revisão exibidos separadamente
+5. Tem `imprevistosSugeridos: Record<string, boolean>` para sugestões como retífica de cabeçote e retífica completa
 
-**Invariante crítica:** em `manutencaoPorPeca`, peça é **ativa** se valor é `true` ou `undefined`. Apenas `false` explícito desativa.
+**Invariante crítica:** em `manutencaoPorPeca` e `revisaoPorServico`, item é **ativo** se valor é `true` ou `undefined`. Apenas `false` explícito desativa. Em `imprevistosSugeridos`, a regra é inversa: apenas `true` explícito ativa; `false` ou `undefined` mantém desligado.
 
 ### Peça
 

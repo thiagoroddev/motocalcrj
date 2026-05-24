@@ -25,12 +25,19 @@ export interface PneuPreset {
   precoParalela: number;
 }
 
+export interface ServicosExecutadosRevisaoPreset {
+  categoria: string;
+  servicos: string[];
+}
+
 export interface RevisaoAutorizadaPreset {
   intervaloKm: number;
   intervaloMeses: number;
   precoPecas: number;
   precoMaoDeObra: number;
   precoTotal: number; // precoPecas + precoMaoDeObra
+  itensSubstituidos: string[];
+  servicosExecutados: ServicosExecutadosRevisaoPreset[];
 }
 
 export interface PresetMoto {
@@ -82,6 +89,25 @@ export interface CustoPeca {
   trocasNoAno: number;
 }
 
+export interface CustoServicoRevisao {
+  servicoId: string;
+  label: string;
+  custoAnual: number;
+  intervalKm: number;
+  precoMaoDeObra: number;
+  eventosNoAno: number;
+  ehExcepcional: boolean;
+}
+
+export interface CustoImprevistoSugerido {
+  id: string;
+  label: string;
+  custoAnual: number;
+  intervalKm: number;
+  precoServico: number;
+  eventosNoAno: number;
+}
+
 export interface CustosPorCategoria {
   documentos: {
     total: number;
@@ -89,7 +115,12 @@ export interface CustosPorCategoria {
   };
   revisao: {
     total: number;
-    detalhes: { modo: ModoRevisao };
+    detalhes: {
+      modo: ModoRevisao;
+      base: number;
+      eventosNoAno: number;
+      servicos: Map<string, CustoServicoRevisao>;
+    };
   };
   manutencao: {
     total: number;
@@ -103,7 +134,13 @@ export interface CustosPorCategoria {
   seguro: { total: number; ativo: boolean };
   alimentacao: { total: number; ativo: boolean };
   financiamento: { total: number; ativo: boolean };
-  gastosCustom: { total: number; ativo: boolean };
+  gastosCustom: {
+    total: number;
+    ativo: boolean;
+    detalhes: {
+      sugeridos: Map<string, CustoImprevistoSugerido>;
+    };
+  };
 }
 
 export interface FiltrosCategorias {
@@ -111,6 +148,8 @@ export interface FiltrosCategorias {
   revisao: boolean;
   manutencao: boolean;
   manutencaoPorPeca: Record<string, boolean>;
+  revisaoPorServico: Record<string, boolean>;
+  imprevistosSugeridos: Record<string, boolean>;
   combustivel: boolean;
   internet: boolean;
   seguro: boolean;
@@ -124,6 +163,8 @@ export const filtrosPadrao: FiltrosCategorias = {
   revisao: true,
   manutencao: true,
   manutencaoPorPeca: {},
+  revisaoPorServico: {},
+  imprevistosSugeridos: {},
   combustivel: true,
   internet: true,
   seguro: true,

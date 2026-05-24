@@ -29,8 +29,12 @@ export interface SeguroConfig {
 export interface GastoCustom {
   id: string;
   nome: string;
-  valorMensal: number;
+  // Valor único acumulado no ano (não recorrência mensal). Padrão do app
+  // para valores personalizados após ADR-003 — ver ADR-006.
+  valorAnual: number;
   ativo: boolean;
+  // Presets fixos (Multa, Sinistros, Outros) não podem ser deletados.
+  ehPreset: boolean;
 }
 
 export interface ResponsabilidadeAluguel {
@@ -47,6 +51,7 @@ export type CategoriaDisplay = {
   internet: boolean;
   seguro: boolean;
   financiamento: boolean;
+  imprevistos: boolean;
 };
 
 export interface PecaOverride {
@@ -60,6 +65,8 @@ export interface ServicoIndependente {
   id: string;
   nome: string;
   intervalKm: number;
+  // Em serviços excepcionais, este campo representa o preço total do serviço
+  // (peças + mão de obra). Nome mantido por compatibilidade de schema.
   precoMaoDeObra: number;
   ativo: boolean;
   ehExcepcional: boolean;
@@ -138,6 +145,7 @@ export interface PerfilUsuario {
 
   configuracaoDisplay: {
     categoriasAtivas: CategoriaDisplay;
+    imprevistosSugeridosAtivos: Record<string, boolean>;
   };
 
   pecasOverrides: PecaOverride[];
@@ -175,6 +183,7 @@ export type PerfilAction =
 
   // Display
   | { type: 'TOGGLE_CATEGORIA'; categoria: keyof CategoriaDisplay }
+  | { type: 'TOGGLE_IMPREVISTO_SUGERIDO'; id: string }
 
   // Overrides de peças
   | {
@@ -206,9 +215,8 @@ export type PerfilAction =
   | { type: 'SET_ALIMENTACAO'; valorDia: number }
   | { type: 'SET_COMBUSTIVEL'; tipo: TipoCombustivel; campo: 'preco' | 'autonomia'; valor: number }
   | { type: 'SET_TIPO_COMBUSTIVEL_PREFERIDO'; tipo: TipoCombustivel }
-  | { type: 'ADD_GASTO_CUSTOM'; gasto: Omit<GastoCustom, 'id'> }
   | { type: 'TOGGLE_GASTO_CUSTOM'; id: string }
-  | { type: 'DELETE_GASTO_CUSTOM'; id: string }
+  | { type: 'SET_GASTO_CUSTOM_VALOR'; id: string; valorAnual: number }
 
   // FIPE
   | { type: 'SET_FIPE_CACHE'; cache: FipeCache }
@@ -234,6 +242,7 @@ export type PerfilAction =
       aluguelMensal: number | null;
       aluguelPeriodicidade: PeriodicidadeAluguel | null;
     }
+  | { type: 'SET_RESPONSABILIDADE_ALUGUEL'; config: Partial<ResponsabilidadeAluguel> }
   | { type: 'RESETAR_AJUSTES_PADRAO' }
 
   // Presets

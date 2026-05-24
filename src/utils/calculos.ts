@@ -15,6 +15,7 @@ import type {
   DadosRJ,
   GranularidadesCusto,
   CustoPeca,
+  CustoImprevistoSugerido,
   CustosPorCategoria,
   FiltrosCategorias,
   ResultadoCalculo,
@@ -112,6 +113,17 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   pneu_dianteiro: 'pneuDianteiro',
   pneu_traseiro: 'pneuTraseiro',
   kit_relacao: 'kitRelacao',
+};
+
+// Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
+// a mão de obra de troca. Peças sem serviço cadastrado (sapata) ficam fora.
+export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
+  oleo_motor: 'troca-oleo',
+  vela_ignicao: 'troca-vela',
+  filtro_ar: 'troca-filtro-ar',
+  kit_relacao: 'troca-kit-transmissao',
+  pneu_dianteiro: 'troca-pneu-dianteiro',
+  pneu_traseiro: 'troca-pneu-traseiro',
 };
 
 const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
@@ -273,6 +285,68 @@ export function calcularCustoDocumentosAnual(ipva: number, licenciamento: number
 
 // ─── V. Revisão Periódica ─────────────────────────────────────────
 
+const KM_CICLO_REVISAO_HONDA = 36000;
+const INTERVALO_REVISAO_INDEPENDENTE_KM = 6000;
+
+function calcularEventosRevisaoNoAno(
+  modoRevisao: ModoRevisao,
+  kmAnual: number,
+  quantidadeRevisoesCicloHonda: number,
+): number {
+  if (kmAnual <= 0) return 0;
+  const eventos =
+    modoRevisao === 'autorizadas'
+      ? (quantidadeRevisoesCicloHonda / KM_CICLO_REVISAO_HONDA) * kmAnual
+      : kmAnual / INTERVALO_REVISAO_INDEPENDENTE_KM;
+  return eventos;
+}
+
+export function calcularDetalhesRevisaoAnual(
+  modoRevisao: ModoRevisao,
+  kmAnual: number,
+  opcoes: {
+    custoCicloCompleto?: number;
+    quantidadeRevisoesCicloHonda?: number;
+    servicosIndependentes?: ServicoIndependente[];
+  } = {},
+): CustosPorCategoria['revisao'] {
+  const servicos = opcoes.servicosIndependentes ?? [];
+  const servicosNormaisAtivos = servicos.filter((s) => s.ativo && !s.ehExcepcional);
+
+  if (modoRevisao === 'autorizadas') {
+    const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
+    const quantidadeRevisoesCicloHonda = opcoes.quantidadeRevisoesCicloHonda ?? 7;
+    const base = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnual;
+    return {
+      total: base,
+      detalhes: {
+        modo: modoRevisao,
+        base,
+        eventosNoAno: calcularEventosRevisaoNoAno(
+          modoRevisao,
+          kmAnual,
+          quantidadeRevisoesCicloHonda,
+        ),
+        servicos: new Map(),
+      },
+    };
+  }
+
+  const base = servicosNormaisAtivos.reduce(
+    (sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual,
+    0,
+  );
+  return {
+    total: base,
+    detalhes: {
+      modo: modoRevisao,
+      base,
+      eventosNoAno: calcularEventosRevisaoNoAno(modoRevisao, kmAnual, 0),
+      servicos: new Map(),
+    },
+  };
+}
+
 export function calcularCustoRevisaoAnual(
   modoRevisao: ModoRevisao,
   kmAnual: number,
@@ -281,16 +355,7 @@ export function calcularCustoRevisaoAnual(
     servicosIndependentes?: ServicoIndependente[];
   } = {},
 ): number {
-  if (modoRevisao === 'autorizadas') {
-    const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
-    // km-based: quanto do ciclo é consumido por ano (36000 km = ciclo completo Honda)
-    return (ciclo / 36000) * kmAnual;
-  }
-
-  const servicos = opcoes.servicosIndependentes ?? [];
-  return servicos
-    .filter((s) => s.ativo)
-    .reduce((sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual, 0);
+  return calcularDetalhesRevisaoAnual(modoRevisao, kmAnual, opcoes).total;
 }
 
 // ─── VI. Custos Operacionais ──────────────────────────────────────
@@ -341,7 +406,43 @@ export function calcularCustoFinanciamentoAnual(
 }
 
 export function calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): number {
-  return gastosCustom.filter((g) => g.ativo).reduce((soma, g) => soma + g.valorMensal * 12, 0);
+  return gastosCustom.filter((g) => g.ativo).reduce((soma, g) => soma + g.valorAnual, 0);
+}
+
+function calcularImprevistosSugeridosAnual(
+  servicosIndependentes: ServicoIndependente[],
+  kmAnual: number,
+): Map<string, CustoImprevistoSugerido> {
+  return new Map<string, CustoImprevistoSugerido>(
+    servicosIndependentes
+      .filter((servico) => servico.ehExcepcional && servico.intervalKm > 0)
+      .map((servico): [string, CustoImprevistoSugerido] => [
+        servico.id,
+        {
+          id: servico.id,
+          label: servico.nome,
+          custoAnual: (servico.precoMaoDeObra / servico.intervalKm) * kmAnual,
+          intervalKm: servico.intervalKm,
+          precoServico: servico.precoMaoDeObra,
+          eventosNoAno: kmAnual / servico.intervalKm,
+        },
+      ]),
+  );
+}
+
+function calcularTotalImprevistosFiltrado(
+  custos: CustosPorCategoria,
+  filtros: FiltrosCategorias,
+): number {
+  // Categoria Imprevistos (filtros.gastosCustom) é o gate único: se off, ambos
+  // gastos custom e sugeridos zeram independente dos toggles individuais.
+  if (!filtros.gastosCustom) return 0;
+  const totalSugeridos = [...custos.gastosCustom.detalhes.sugeridos.entries()].reduce(
+    (soma, [id, imprevisto]) =>
+      filtros.imprevistosSugeridos[id] === true ? soma + imprevisto.custoAnual : soma,
+    0,
+  );
+  return custos.gastosCustom.total + totalSugeridos;
 }
 
 // ─── VII. Agregação e Granularidades ─────────────────────────────
@@ -368,8 +469,9 @@ export function calcularCustosPorCategoria(
     const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
     return s + (override?.precoTotal ?? r.precoTotal);
   }, 0);
-  const revisaoAnual = calcularCustoRevisaoAnual(perfil.perfilManutencao.modoRevisao, kmAnual, {
+  const revisao = calcularDetalhesRevisaoAnual(perfil.perfilManutencao.modoRevisao, kmAnual, {
     custoCicloCompleto,
+    quantidadeRevisoesCicloHonda: preset.revisaoAutorizada.length,
     servicosIndependentes: perfil.servicosIndependentes,
   });
 
@@ -413,6 +515,14 @@ export function calcularCustosPorCategoria(
     perfil.financeiro.aluguelPeriodicidade,
   );
   const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);
+  const imprevistosSugeridos = new Map<string, CustoImprevistoSugerido>(
+    [...calcularImprevistosSugeridosAnual(perfil.servicosIndependentes, kmAnual).entries()].map(
+      ([id, imprevisto]): [string, CustoImprevistoSugerido] => [
+        id,
+        { ...imprevisto, custoAnual: imprevisto.custoAnual * fatorMan },
+      ],
+    ),
+  );
 
   return {
     documentos: {
@@ -420,8 +530,17 @@ export function calcularCustosPorCategoria(
       detalhes: { ipva: ipva * fatorDoc, licenciamento: licenciamento * fatorDoc },
     },
     revisao: {
-      total: revisaoAnual * fatorMan,
-      detalhes: { modo: perfil.perfilManutencao.modoRevisao },
+      total: revisao.total * fatorMan,
+      detalhes: {
+        ...revisao.detalhes,
+        base: revisao.detalhes.base * fatorMan,
+        servicos: new Map(
+          [...revisao.detalhes.servicos.entries()].map(([id, servico]) => [
+            id,
+            { ...servico, custoAnual: servico.custoAnual * fatorMan },
+          ]),
+        ),
+      },
     },
     manutencao: {
       total: calcularCustoManutencaoAnual(cpkPecasTotal, kmAnual) * fatorMan,
@@ -450,6 +569,7 @@ export function calcularCustosPorCategoria(
     gastosCustom: {
       total: totalGastosCustom,
       ativo: totalGastosCustom > 0,
+      detalhes: { sugeridos: imprevistosSugeridos },
     },
   };
 }
@@ -462,9 +582,6 @@ export function calcularTotalFiltrado(
 
   if (filtros.documentos) {
     total += custos.documentos.total;
-  }
-  if (filtros.revisao) {
-    total += custos.revisao.total;
   }
   if (filtros.combustivel) {
     total += custos.combustivel.total;
@@ -481,11 +598,17 @@ export function calcularTotalFiltrado(
   if (filtros.financiamento) {
     total += custos.financiamento.total;
   }
-  if (filtros.gastosCustom) {
-    total += custos.gastosCustom.total;
-  }
+  total += calcularTotalImprevistosFiltrado(custos, filtros);
 
   if (filtros.manutencao) {
+    if (filtros.revisao) {
+      total += custos.revisao.detalhes.base;
+    }
+    custos.revisao.detalhes.servicos.forEach((detalhe, servicoId) => {
+      if (filtros.revisaoPorServico[servicoId] !== false) {
+        total += detalhe.custoAnual;
+      }
+    });
     // undefined em manutencaoPorPeca = peça ativa (só false explícito desativa)
     custos.manutencao.detalhes.forEach((detalhe, pecaId) => {
       if (filtros.manutencaoPorPeca[pecaId] !== false) {
@@ -530,16 +653,31 @@ export function calcularBreakdownPercentual(
     };
   }
   const pct = (valor: number) => (valor / total) * 100;
+  const totalRevisaoFiltrado = filtros.manutencao
+    ? (filtros.revisao ? custos.revisao.detalhes.base : 0) +
+      [...custos.revisao.detalhes.servicos.entries()].reduce(
+        (soma, [id, servico]) =>
+          filtros.revisaoPorServico[id] !== false ? soma + servico.custoAnual : soma,
+        0,
+      )
+    : 0;
+  const totalManutencaoFiltrado = filtros.manutencao
+    ? [...custos.manutencao.detalhes.entries()].reduce(
+        (soma, [id, peca]) =>
+          filtros.manutencaoPorPeca[id] !== false ? soma + peca.custoAnual : soma,
+        0,
+      )
+    : 0;
   return {
     documentos: filtros.documentos ? pct(custos.documentos.total) : 0,
-    revisao: filtros.revisao ? pct(custos.revisao.total) : 0,
-    manutencao: filtros.manutencao ? pct(custos.manutencao.total) : 0,
+    revisao: pct(totalRevisaoFiltrado),
+    manutencao: pct(totalManutencaoFiltrado),
     combustivel: filtros.combustivel ? pct(custos.combustivel.total) : 0,
     internet: filtros.internet ? pct(custos.internet.total) : 0,
     seguro: filtros.seguro ? pct(custos.seguro.total) : 0,
     alimentacao: filtros.alimentacao ? pct(custos.alimentacao.total) : 0,
     financiamento: filtros.financiamento ? pct(custos.financiamento.total) : 0,
-    gastosCustom: filtros.gastosCustom ? pct(custos.gastosCustom.total) : 0,
+    gastosCustom: pct(calcularTotalImprevistosFiltrado(custos, filtros)),
   };
 }
 
@@ -552,18 +690,26 @@ export function calcularCustoMotoAnual(
 
 // ─── Mapeamento categoriasAtivas → FiltrosCategorias ────────────
 
-export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias {
+export function categoriasParaFiltros(
+  cat: CategoriaDisplay,
+  imprevistosSugeridosAtivos: Record<string, boolean> = {},
+): FiltrosCategorias {
   return {
     documentos: cat.documentacao,
     revisao: cat.manutencao, // revisao é sub-item de manutencao
     manutencao: cat.manutencao,
     manutencaoPorPeca: {},
+    revisaoPorServico: {},
+    // Categoria Imprevistos respeita o toggle persistido. Dentro dela, cada
+    // sugerido (retífica) e cada gasto custom (Multa/Sinistros/Outros) ainda
+    // precisa estar ativo individualmente — categoria off zera tudo.
+    imprevistosSugeridos: cat.imprevistos ? imprevistosSugeridosAtivos : {},
     combustivel: cat.combustivel,
     internet: cat.internet,
     seguro: cat.seguro,
     alimentacao: cat.alimentacao,
     financiamento: cat.financiamento,
-    gastosCustom: cat.financiamento, // gastosCustom não tem toggle separado
+    gastosCustom: cat.imprevistos,
   };
 }
 
@@ -581,7 +727,10 @@ export function calcularResultado(
 
   const custos = calcularCustosPorCategoria(perfil, preset, dadosRJ);
 
-  const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
+  const filtrosAtivos = categoriasParaFiltros(
+    perfil.configuracaoDisplay.categoriasAtivas,
+    perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+  );
 
   const total = calcularTotalFiltrado(custos, filtrosAtivos);
   const totalMoto = calcularCustoMotoAnual(total, custos.alimentacao.total);

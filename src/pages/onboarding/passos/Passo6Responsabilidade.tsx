@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { Button } from '../../../components/ui/button';
-import type { ResponsabilidadeCusto } from '../../../types/perfil';
+import type { ResponsabilidadeAluguel, ResponsabilidadeCusto } from '../../../types/perfil';
 
-type CampoResp = 'documentos' | 'manutencao' | 'seguro';
+type CampoResp = keyof ResponsabilidadeAluguel;
 
 const CAMPOS: { id: CampoResp; titulo: string }[] = [
   { id: 'documentos', titulo: 'Documentação (IPVA, licenciamento)' },
@@ -22,22 +21,13 @@ const OPCOES: { valor: ResponsabilidadeCusto; label: string }[] = [
 export function Passo6Responsabilidade() {
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
-  const [resp, setResp] = useState({ ...perfil.financeiro.responsabilidadeAluguel });
-
-  function salvarEAvancar() {
-    dispatch({
-      type: 'SET_ONBOARDING_CAMPO',
-      campo: 'financeiro',
-      valor: { ...perfil.financeiro, responsabilidadeAluguel: resp },
-    });
-    irParaProximo();
-  }
+  const resp = perfil.financeiro.responsabilidadeAluguel;
 
   return (
     <PassoLayout
       titulo="Quem paga o quê?"
       subtitulo="Defina a responsabilidade de cada custo no aluguel"
-      aoProximo={salvarEAvancar}
+      aoProximo={irParaProximo}
     >
       <div className="flex flex-col gap-lg">
         {CAMPOS.map(({ id, titulo }) => (
@@ -47,7 +37,12 @@ export function Passo6Responsabilidade() {
               {OPCOES.map(({ valor, label }) => (
                 <Button
                   key={valor}
-                  onClick={() => setResp((prev) => ({ ...prev, [id]: valor }))}
+                  onClick={() =>
+                    dispatch({
+                      type: 'SET_RESPONSABILIDADE_ALUGUEL',
+                      config: { [id]: valor },
+                    })
+                  }
                   className={`flex-1 min-h-touch rounded-btn text-xs font-semibold transition-colors ${
                     resp[id] === valor
                       ? 'bg-primary text-foreground hover:bg-primary/90'

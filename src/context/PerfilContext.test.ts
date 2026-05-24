@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { perfilReducer, perfilPadrao, migrarPerfil } from './PerfilContext';
+import {
+  perfilReducer,
+  perfilPadrao,
+  migrarPerfil,
+  SERVICOS_INDEPENDENTES_PADRAO,
+  PRESETS_GASTOS_PADRAO,
+} from './PerfilContext';
 import type { EstadoApp } from './PerfilContext';
 import type { PerfilUsuario } from '../types/perfil';
 
@@ -209,7 +215,9 @@ describe('perfilReducer', () => {
           situacaoMoto: 'financiada',
           parcelaMensal: 500,
           parcelasRestantes: 24,
-          gastosCustom: [{ id: 'g1', nome: 'Bag', valorMensal: 8, ativo: true }],
+          gastosCustom: [
+            { id: 'preset-multa', nome: 'Multa', valorAnual: 800, ativo: true, ehPreset: true },
+          ],
         },
         configuracaoDisplay: {
           categoriasAtivas: {
@@ -220,7 +228,9 @@ describe('perfilReducer', () => {
             internet: true,
             seguro: true,
             financiamento: true,
+            imprevistos: true,
           },
+          imprevistosSugeridosAtivos: {},
         },
       },
     };
@@ -231,7 +241,7 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.financeiro.internet).toBe(0);
     expect(resultado.perfil.financeiro.alimentacaoDia).toBe(0);
     expect(resultado.perfil.financeiro.seguro.valorAnual).toBe(0);
-    expect(resultado.perfil.financeiro.gastosCustom).toEqual([]);
+    expect(resultado.perfil.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
     expect(resultado.perfil.financeiro.situacaoMoto).toBe('quitada');
     expect(resultado.perfil.financeiro.parcelaMensal).toBeNull();
     expect(resultado.perfil.financeiro.parcelasRestantes).toBeNull();
@@ -249,6 +259,10 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.alimentacao).toBe(false);
     expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.financiamento).toBe(false);
 
+    // Imprevistos: categoria volta ao default true, sugeridos zerados
+    expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
+    expect(resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
+
     // Moto e servicosIndependentes não são tocados
     expect(resultado.perfil.moto).toEqual(estadoComCustos.perfil.moto);
     expect(resultado.perfil.servicosIndependentes).toBe(
@@ -256,11 +270,51 @@ describe('perfilReducer', () => {
     );
   });
 
+  // ── TOGGLE_IMPREVISTO_SUGERIDO (TASK-RF-6.11 cleanup) ─
+
+  it('TOGGLE_IMPREVISTO_SUGERIDO ativa o sugerido quando estava desligado', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
+      id: 'retifica-cabecote',
+    });
+    expect(
+      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-cabecote'],
+    ).toBe(true);
+  });
+
+  it('TOGGLE_IMPREVISTO_SUGERIDO desativa quando já estava ligado', () => {
+    const estadoComSugeridoLigado: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        configuracaoDisplay: {
+          ...perfilPadrao.configuracaoDisplay,
+          imprevistosSugeridosAtivos: { 'retifica-cabecote': true },
+        },
+      },
+    };
+    const resultado = perfilReducer(estadoComSugeridoLigado, {
+      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
+      id: 'retifica-cabecote',
+    });
+    expect(
+      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-cabecote'],
+    ).toBe(false);
+  });
+
+  it('TOGGLE_CATEGORIA com categoria imprevistos inverte o flag persistido', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_CATEGORIA',
+      categoria: 'imprevistos',
+    });
+    expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(false);
+  });
+
   // ── Migração de schema ────────────────────────
 
-  // Cascata v8 → v9 → v10 (REF-19 + REF-21): perfis v8 chegam ao schema atual limpos.
+  // Cascata v8 → v9 → v10 → v11: perfis v8 chegam ao schema atual limpos.
   // Constrói o input com cast porque os campos legados foram apagados do tipo.
-  it('migrarPerfil cascata v8 → v10 remove todos os campos mortos e chega no schema atual', () => {
+  it('migrarPerfil cascata v8 → v11 remove todos os campos mortos e chega no schema atual', () => {
     const perfilV8 = {
       ...perfilPadrao,
       schemaVersion: 8,
@@ -285,7 +339,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV8) as unknown as Record<string, unknown>;
 
-    expect(migrado.schemaVersion).toBe(10);
+    expect(migrado.schemaVersion).toBe(14);
     expect(
       (migrado.perfilManutencao as Record<string, unknown>).precoMaoDeObraIndependente,
     ).toBeUndefined();
@@ -304,8 +358,8 @@ describe('perfilReducer', () => {
     expect((migrado.configuracaoDisplay as Record<string, unknown>).categoriasAtivas).toBeDefined();
   });
 
-  // v9 → v10 (REF-21): remove seguro.tem; quando tem===false, força valorAnual: 0
-  it('migrarPerfil v9 → v10 com seguro.tem===true preserva valorAnual e remove tem', () => {
+  // v9 → v10 → v11 → v12: remove seguro.tem; quando tem===false, força valorAnual: 0
+  it('migrarPerfil v9 → v12 com seguro.tem===true preserva valorAnual e remove tem', () => {
     const perfilV9 = {
       ...perfilPadrao,
       schemaVersion: 9,
@@ -321,14 +375,14 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(10);
+    expect(migrado.schemaVersion).toBe(14);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(1200);
     expect(seguro.empresa).toBe('Suhai');
     expect(seguro.periodicidade).toBe('anual');
   });
 
-  it('migrarPerfil v9 → v10 com seguro.tem===false força valorAnual: 0 (preserva intenção)', () => {
+  it('migrarPerfil v9 → v12 com seguro.tem===false força valorAnual: 0 (preserva intenção)', () => {
     // Perfil que tinha seguro desligado mas com valor "esquecido" — sem o force-zero,
     // pós-migração ingênua passaria a contar seguro.
     const perfilV9 = {
@@ -346,9 +400,231 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(10);
+    expect(migrado.schemaVersion).toBe(14);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(0);
+  });
+
+  it('migrarPerfil v10 → v12 substitui fazer-motor por retíficas desligadas', () => {
+    const servicosNormais = perfilPadrao.servicosIndependentes.filter((s) => !s.ehExcepcional);
+    const perfilV10 = {
+      ...perfilPadrao,
+      schemaVersion: 10,
+      servicosIndependentes: [
+        ...servicosNormais,
+        {
+          id: 'fazer-motor',
+          nome: 'Fazer motor',
+          intervalKm: 70000,
+          precoMaoDeObra: 1800,
+          ativo: true,
+          ehExcepcional: true,
+        },
+      ],
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV10);
+    const ids = migrado.servicosIndependentes.map((s) => s.id);
+    const retificaCabecote = migrado.servicosIndependentes.find(
+      (s) => s.id === 'retifica-cabecote',
+    );
+    const retificaCompleta = migrado.servicosIndependentes.find(
+      (s) => s.id === 'retifica-completa',
+    );
+
+    expect(migrado.schemaVersion).toBe(14);
+    expect(ids).not.toContain('fazer-motor');
+    expect(retificaCabecote).toMatchObject({
+      nome: 'Retífica de cabeçote',
+      intervalKm: 80000,
+      precoMaoDeObra: 800,
+      ativo: false,
+      ehExcepcional: true,
+    });
+    expect(retificaCompleta).toMatchObject({
+      nome: 'Retífica completa',
+      intervalKm: 120000,
+      precoMaoDeObra: 1800,
+      ativo: false,
+      ehExcepcional: true,
+    });
+  });
+
+  it('migrarPerfil v11 → v12 desliga retíficas existentes sem perder valores editados', () => {
+    const perfilV11 = {
+      ...perfilPadrao,
+      schemaVersion: 11,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+        servico.id === 'retifica-cabecote'
+          ? { ...servico, precoMaoDeObra: 950, ativo: true }
+          : { ...servico, ativo: servico.ehExcepcional ? true : servico.ativo },
+      ),
+    } as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV11);
+    const retificaCabecote = migrado.servicosIndependentes.find(
+      (s) => s.id === 'retifica-cabecote',
+    );
+    const retificaCompleta = migrado.servicosIndependentes.find(
+      (s) => s.id === 'retifica-completa',
+    );
+
+    expect(migrado.schemaVersion).toBe(14);
+    expect(retificaCabecote?.precoMaoDeObra).toBe(950);
+    expect(retificaCabecote?.ativo).toBe(false);
+    expect(retificaCompleta?.ativo).toBe(false);
+  });
+
+  it('SERVICOS_INDEPENDENTES_PADRAO usa retíficas no lugar de fazer-motor', () => {
+    const ids = SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id);
+    const retificas = SERVICOS_INDEPENDENTES_PADRAO.filter((s) => s.ehExcepcional);
+
+    expect(ids).not.toContain('fazer-motor');
+    expect(ids).toContain('retifica-cabecote');
+    expect(ids).toContain('retifica-completa');
+    expect(retificas).toHaveLength(2);
+    expect(retificas.every((s) => !s.ativo)).toBe(true);
+  });
+
+  // ── TASK-RF-6.9: gastosCustom como presets editáveis ──
+
+  it('perfilPadrao traz os 3 presets de gasto desligados e zerados', () => {
+    expect(perfilPadrao.financeiro.gastosCustom).toHaveLength(3);
+    expect(perfilPadrao.financeiro.gastosCustom.map((g) => g.id)).toEqual([
+      'preset-multa',
+      'preset-sinistro',
+      'preset-outros',
+    ]);
+    expect(perfilPadrao.financeiro.gastosCustom.every((g) => g.ehPreset)).toBe(true);
+    expect(perfilPadrao.financeiro.gastosCustom.every((g) => !g.ativo)).toBe(true);
+    expect(perfilPadrao.financeiro.gastosCustom.every((g) => g.valorAnual === 0)).toBe(true);
+  });
+
+  it('SET_GASTO_CUSTOM_VALOR atualiza valorAnual do preset informado', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_GASTO_CUSTOM_VALOR',
+      id: 'preset-multa',
+      valorAnual: 900,
+    });
+    const multa = resultado.perfil.financeiro.gastosCustom.find((g) => g.id === 'preset-multa');
+    expect(multa?.valorAnual).toBe(900);
+  });
+
+  it('SET_GASTO_CUSTOM_VALOR ativa o toggle quando passa de 0 para >0', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_GASTO_CUSTOM_VALOR',
+      id: 'preset-multa',
+      valorAnual: 900,
+    });
+    const multa = resultado.perfil.financeiro.gastosCustom.find((g) => g.id === 'preset-multa');
+    expect(multa?.ativo).toBe(true);
+  });
+
+  it('SET_GASTO_CUSTOM_VALOR não desativa toggle ao zerar valor (preserva intenção)', () => {
+    const estadoAtivo: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          gastosCustom: perfilPadrao.financeiro.gastosCustom.map((g) =>
+            g.id === 'preset-multa' ? { ...g, valorAnual: 900, ativo: true } : g,
+          ),
+        },
+      },
+    };
+    const resultado = perfilReducer(estadoAtivo, {
+      type: 'SET_GASTO_CUSTOM_VALOR',
+      id: 'preset-multa',
+      valorAnual: 0,
+    });
+    const multa = resultado.perfil.financeiro.gastosCustom.find((g) => g.id === 'preset-multa');
+    expect(multa?.valorAnual).toBe(0);
+    expect(multa?.ativo).toBe(true);
+  });
+
+  it('TOGGLE_GASTO_CUSTOM inverte o ativo do preset', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_GASTO_CUSTOM',
+      id: 'preset-sinistro',
+    });
+    const sinistro = resultado.perfil.financeiro.gastosCustom.find(
+      (g) => g.id === 'preset-sinistro',
+    );
+    expect(sinistro?.ativo).toBe(true);
+  });
+
+  it('migrarPerfil v12 → v13 descarta gastos antigos e semeia os 3 presets', () => {
+    const perfilV12 = {
+      ...perfilPadrao,
+      schemaVersion: 12,
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        gastosCustom: [{ id: 'gasto_001', nome: 'Bag térmica', valorMensal: 8.33, ativo: true }],
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV12);
+
+    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
+  });
+
+  it('migrarPerfil é idempotente quando aplicada em perfil já na versão atual', () => {
+    const migrado = migrarPerfil(perfilPadrao);
+    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
+    expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
+    expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
+  });
+
+  // TASK-RF-6.11 cleanup: v13 → v14 adiciona toggle persistido de Imprevistos
+  // e mapa de sugeridos ativos. Default: categoria true, mapa vazio.
+  it('migrarPerfil v13 → v14 adiciona imprevistos true e imprevistosSugeridosAtivos vazio', () => {
+    const perfilV13 = {
+      ...perfilPadrao,
+      schemaVersion: 13,
+      configuracaoDisplay: {
+        categoriasAtivas: {
+          combustivel: true,
+          alimentacao: true,
+          manutencao: true,
+          documentacao: true,
+          internet: false,
+          seguro: false,
+          financiamento: false,
+        },
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV13);
+
+    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
+    expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
+  });
+
+  it('migrarPerfil v13 → v14 preserva imprevistos=false se já estiver gravado (não sobrescreve)', () => {
+    const perfilV13 = {
+      ...perfilPadrao,
+      schemaVersion: 13,
+      configuracaoDisplay: {
+        categoriasAtivas: {
+          combustivel: true,
+          alimentacao: true,
+          manutencao: true,
+          documentacao: true,
+          internet: false,
+          seguro: false,
+          financiamento: false,
+          imprevistos: false,
+        },
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV13);
+
+    expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(false);
   });
 
   it('SET_KM_POR_DIA sincroniza a alteracao com o preset ativo', () => {
@@ -369,5 +645,55 @@ describe('perfilReducer', () => {
     const resultado = perfilReducer(estadoComPreset, { type: 'SET_KM_POR_DIA', valor: 100 });
     expect(resultado.perfil.trabalho.kmPorDia).toBe(100);
     expect(resultado.presets[0].perfil.trabalho.kmPorDia).toBe(100);
+  });
+
+  // ── SET_RESPONSABILIDADE_ALUGUEL ─────────────
+
+  it('SET_RESPONSABILIDADE_ALUGUEL atualiza um campo sem afetar os outros', () => {
+    const estadoComResp: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          responsabilidadeAluguel: { documentos: 'eu', manutencao: 'eu', seguro: 'eu' },
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estadoComResp, {
+      type: 'SET_RESPONSABILIDADE_ALUGUEL',
+      config: { manutencao: 'locador' },
+    });
+
+    expect(resultado.perfil.financeiro.responsabilidadeAluguel).toEqual({
+      documentos: 'eu',
+      manutencao: 'locador',
+      seguro: 'eu',
+    });
+  });
+
+  it('SET_RESPONSABILIDADE_ALUGUEL aceita config parcial com múltiplos campos', () => {
+    const estadoComResp: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          responsabilidadeAluguel: { documentos: 'eu', manutencao: 'eu', seguro: 'eu' },
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estadoComResp, {
+      type: 'SET_RESPONSABILIDADE_ALUGUEL',
+      config: { documentos: 'locador', seguro: 'dividido' },
+    });
+
+    expect(resultado.perfil.financeiro.responsabilidadeAluguel).toEqual({
+      documentos: 'locador',
+      manutencao: 'eu',
+      seguro: 'dividido',
+    });
   });
 });

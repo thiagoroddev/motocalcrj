@@ -15,6 +15,7 @@ import { SecaoPreferencias } from '../components/ajustes/SecaoPreferencias';
 import { SecaoUsoDiario } from '../components/ajustes/SecaoUsoDiario';
 import { SecaoFinanceiro } from '../components/ajustes/SecaoFinanceiro';
 import { SecaoSituacaoLegal } from '../components/ajustes/SecaoSituacaoLegal';
+import { CampoResponsabilidadeAluguel } from '../components/ajustes/CampoResponsabilidadeAluguel';
 
 export function PaginaAjustes() {
   const { perfil, dispatch } = usePerfil();
@@ -29,6 +30,7 @@ export function PaginaAjustes() {
         <SecaoUsoDiario moto={perfil.moto} trabalho={perfil.trabalho} dispatch={dispatch} />
         <SecaoFinanceiro financeiro={perfil.financeiro} dispatch={dispatch} />
         <SecaoSituacaoLegal financeiro={perfil.financeiro} dispatch={dispatch} />
+        <CampoResponsabilidadeAluguel financeiro={perfil.financeiro} dispatch={dispatch} />
         <div className="pb-2">
           <Button
             variant="outline"

@@ -21,13 +21,19 @@ import {
   calcularBreakdownPercentual,
   calcularCustoMotoAnual,
   calcularCustosPorCategoria,
+  calcularCustoGastosCustomAnual,
+  categoriasParaFiltros,
+  MAPA_PECA_PARA_SERVICO,
 } from './calculos';
-import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from '../types/calculos';
-import type { PecaOverride, ServicoIndependente } from '../types/perfil';
-import { perfilPadrao } from '../context/PerfilContext';
+import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import pop110i from '../presets/pop110i.json';
+import type { CategoriaDisplay, PecaOverride, ServicoIndependente } from '../types/perfil';
+import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from '../types/calculos';
 
 // ─── Fixtures ────────────────────────────────────────────────────
+
+const itensSubstituidosMock = ['Óleo Pro Honda 10w30'];
+const servicosExecutadosMock = [{ categoria: 'Ajuste', servicos: ['Corrente de Transmissão'] }];
 
 const presetMock: PresetMoto = {
   consumoKmL: 36,
@@ -77,6 +83,8 @@ const presetMock: PresetMoto = {
       precoPecas: 105.94,
       precoMaoDeObra: 0,
       precoTotal: 105.94,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 6000,
@@ -84,6 +92,8 @@ const presetMock: PresetMoto = {
       precoPecas: 248.06,
       precoMaoDeObra: 0,
       precoTotal: 248.06,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 12000,
@@ -91,6 +101,8 @@ const presetMock: PresetMoto = {
       precoPecas: 352.29,
       precoMaoDeObra: 216.0,
       precoTotal: 568.29,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 18000,
@@ -98,6 +110,8 @@ const presetMock: PresetMoto = {
       precoPecas: 402.7,
       precoMaoDeObra: 104.0,
       precoTotal: 506.7,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 24000,
@@ -105,6 +119,8 @@ const presetMock: PresetMoto = {
       precoPecas: 449.76,
       precoMaoDeObra: 288.0,
       precoTotal: 737.76,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 30000,
@@ -112,6 +128,8 @@ const presetMock: PresetMoto = {
       precoPecas: 247.67,
       precoMaoDeObra: 40.0,
       precoTotal: 287.67,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
     {
       intervaloKm: 36000,
@@ -119,6 +137,8 @@ const presetMock: PresetMoto = {
       precoPecas: 600.2,
       precoMaoDeObra: 280.0,
       precoTotal: 880.2,
+      itensSubstituidos: itensSubstituidosMock,
+      servicosExecutados: servicosExecutadosMock,
     },
   ],
 };
@@ -395,11 +415,19 @@ describe('calcularCustoRevisaoAnual', () => {
       ehExcepcional: false,
     },
     {
-      id: 'fazer-motor',
-      nome: 'Fazer motor',
-      intervalKm: 70000,
+      id: 'retifica-cabecote',
+      nome: 'Retífica de cabeçote',
+      intervalKm: 80000,
+      precoMaoDeObra: 800,
+      ativo: true,
+      ehExcepcional: true,
+    },
+    {
+      id: 'retifica-completa',
+      nome: 'Retífica completa',
+      intervalKm: 120000,
       precoMaoDeObra: 1500,
-      ativo: false,
+      ativo: true,
       ehExcepcional: true,
     },
   ];
@@ -420,6 +448,19 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(pesado / leve).toBeCloseTo(40000 / 15000, 2);
   });
 
+  it('modo autorizadas: ignora serviços excepcionais no ciclo Honda', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const esperado = (cicloHonda / 36000) * kmAnual;
+
+    expect(
+      calcularCustoRevisaoAnual('autorizadas', kmAnual, {
+        custoCicloCompleto: cicloHonda,
+        servicosIndependentes: servicosMock,
+      }),
+    ).toBeCloseTo(esperado, 2);
+  });
+
   it('modo independentes: soma CPK × kmAnual de serviços ativos', () => {
     const kmAnual = 12000;
     const esperado = (25 / 3000) * kmAnual + (80 / 6000) * kmAnual;
@@ -430,17 +471,17 @@ describe('calcularCustoRevisaoAnual', () => {
 
   it('modo independentes: serviço inativo é excluído do cálculo', () => {
     const kmAnual = 12000;
-    const comFazerMotorAtivo = servicosMock.map((s) =>
-      s.id === 'fazer-motor' ? { ...s, ativo: true } : s,
+    const semRevisaoGeral = servicosMock.map((s) =>
+      s.id === 'revisao-geral' ? { ...s, ativo: false } : s,
     );
     const semAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
-      servicosIndependentes: servicosMock,
+      servicosIndependentes: semRevisaoGeral,
     });
     const comAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
-      servicosIndependentes: comFazerMotorAtivo,
+      servicosIndependentes: servicosMock,
     });
     expect(comAtivo).toBeGreaterThan(semAtivo);
-    expect(comAtivo - semAtivo).toBeCloseTo((1500 / 70000) * kmAnual, 2);
+    expect(comAtivo - semAtivo).toBeCloseTo((80 / 6000) * kmAnual, 2);
   });
 
   it('modo independentes: sem serviços retorna 0', () => {
@@ -486,7 +527,28 @@ describe('calcularCustoAlimentacaoAnual', () => {
 
 const custosMock: CustosPorCategoria = {
   documentos: { total: 600, detalhes: { ipva: 400, licenciamento: 200 } },
-  revisao: { total: 953, detalhes: { modo: 'autorizadas' } },
+  revisao: {
+    total: 953,
+    detalhes: {
+      modo: 'autorizadas',
+      base: 900,
+      eventosNoAno: 2.2,
+      servicos: new Map([
+        [
+          'servico-revisao-extra',
+          {
+            servicoId: 'servico-revisao-extra',
+            label: 'Serviço extra de revisão',
+            custoAnual: 53,
+            intervalKm: 12000,
+            precoMaoDeObra: 53,
+            eventosNoAno: 0.2,
+            ehExcepcional: false,
+          },
+        ],
+      ]),
+    },
+  },
   manutencao: {
     total: 1500,
     detalhes: new Map([
@@ -525,7 +587,25 @@ const custosMock: CustosPorCategoria = {
   seguro: { total: 800, ativo: true },
   alimentacao: { total: 2496, ativo: true },
   financiamento: { total: 0, ativo: false },
-  gastosCustom: { total: 0, ativo: false },
+  gastosCustom: {
+    total: 0,
+    ativo: false,
+    detalhes: {
+      sugeridos: new Map([
+        [
+          'retifica-cabecote',
+          {
+            id: 'retifica-cabecote',
+            label: 'Retífica de cabeçote',
+            custoAnual: 53,
+            intervalKm: 80000,
+            precoServico: 800,
+            eventosNoAno: 0.2,
+          },
+        ],
+      ]),
+    },
+  },
 };
 
 const filtrosTudo: FiltrosCategorias = {
@@ -533,6 +613,8 @@ const filtrosTudo: FiltrosCategorias = {
   revisao: true,
   manutencao: true,
   manutencaoPorPeca: {},
+  revisaoPorServico: {},
+  imprevistosSugeridos: {},
   combustivel: true,
   internet: true,
   seguro: true,
@@ -555,7 +637,7 @@ describe('calcularTotalFiltrado', () => {
   });
 
   it('exclui toda manutenção quando filtro manutencao = false', () => {
-    const esperado = 600 + 953 + 1460 + 600 + 800 + 2496;
+    const esperado = 600 + 1460 + 600 + 800 + 2496;
     expect(calcularTotalFiltrado(custosMock, { ...filtrosTudo, manutencao: false })).toBe(esperado);
   });
 
@@ -568,6 +650,29 @@ describe('calcularTotalFiltrado', () => {
         manutencaoPorPeca: { oleo_motor: false },
       }),
     ).toBe(esperado);
+  });
+
+  it('exclui serviço de revisão individual via revisaoPorServico[id] = false', () => {
+    const esperado = 600 + 900 + 1500 + 1460 + 600 + 800 + 2496;
+    expect(
+      calcularTotalFiltrado(custosMock, {
+        ...filtrosTudo,
+        revisaoPorServico: { 'servico-revisao-extra': false },
+      }),
+    ).toBe(esperado);
+  });
+
+  it('inclui imprevisto sugerido somente quando filtro explícito é true', () => {
+    const esperadoSemRetifica = 600 + 953 + 1500 + 1460 + 600 + 800 + 2496;
+    const esperadoComRetifica = esperadoSemRetifica + 53;
+
+    expect(calcularTotalFiltrado(custosMock, filtrosTudo)).toBe(esperadoSemRetifica);
+    expect(
+      calcularTotalFiltrado(custosMock, {
+        ...filtrosTudo,
+        imprevistosSugeridos: { 'retifica-cabecote': true },
+      }),
+    ).toBe(esperadoComRetifica);
   });
 
   it('undefined em manutencaoPorPeca = peça ativa (convenção padrão)', () => {
@@ -611,18 +716,85 @@ describe('calcularGranularidades', () => {
   });
 });
 
+describe('calcularCustoGastosCustomAnual', () => {
+  // TASK-RF-6.9: valorAnual é o total acumulado no ano (não recorrência mensal).
+  it('soma valorAnual dos gastos ativos', () => {
+    const resultado = calcularCustoGastosCustomAnual([
+      { id: 'preset-multa', nome: 'Multa', valorAnual: 900, ativo: true, ehPreset: true },
+      { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 300, ativo: true, ehPreset: true },
+    ]);
+    expect(resultado).toBe(1200);
+  });
+
+  it('ignora gastos desativados', () => {
+    const resultado = calcularCustoGastosCustomAnual([
+      { id: 'preset-multa', nome: 'Multa', valorAnual: 900, ativo: true, ehPreset: true },
+      { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 500, ativo: false, ehPreset: true },
+    ]);
+    expect(resultado).toBe(900);
+  });
+
+  it('retorna 0 para lista vazia', () => {
+    expect(calcularCustoGastosCustomAnual([])).toBe(0);
+  });
+});
+
+describe('categoriasParaFiltros', () => {
+  const baseCategorias: CategoriaDisplay = {
+    combustivel: false,
+    alimentacao: false,
+    manutencao: false,
+    documentacao: false,
+    internet: false,
+    seguro: false,
+    financiamento: false,
+    imprevistos: false,
+  };
+
+  // TASK-RF-6.11 cleanup: Imprevistos ganhou toggle de categoria persistido.
+  // gastosCustom agora reflete cat.imprevistos (não mais hard-coded true).
+  it('gastosCustom segue cat.imprevistos', () => {
+    const semImprevistos = categoriasParaFiltros({ ...baseCategorias, imprevistos: false });
+    const comImprevistos = categoriasParaFiltros({ ...baseCategorias, imprevistos: true });
+    expect(semImprevistos.gastosCustom).toBe(false);
+    expect(comImprevistos.gastosCustom).toBe(true);
+  });
+
+  it('imprevistosSugeridos vem do mapa quando categoria Imprevistos ativa', () => {
+    const filtros = categoriasParaFiltros(
+      { ...baseCategorias, imprevistos: true },
+      { 'retifica-cabecote': true, 'retifica-completa': false },
+    );
+    expect(filtros.imprevistosSugeridos).toEqual({
+      'retifica-cabecote': true,
+      'retifica-completa': false,
+    });
+  });
+
+  it('imprevistosSugeridos zerado quando categoria Imprevistos inativa', () => {
+    const filtros = categoriasParaFiltros(
+      { ...baseCategorias, imprevistos: false },
+      { 'retifica-cabecote': true },
+    );
+    expect(filtros.imprevistosSugeridos).toEqual({});
+  });
+});
+
 describe('calcularBreakdownPercentual', () => {
   it('todos os valores são 0 quando total filtrado é 0', () => {
     const custoVazio: CustosPorCategoria = {
       documentos: { total: 0, detalhes: { ipva: 0, licenciamento: 0 } },
-      revisao: { total: 0, detalhes: { modo: 'independentes' } },
+      revisao: {
+        total: 0,
+        detalhes: { modo: 'independentes', base: 0, eventosNoAno: 0, servicos: new Map() },
+      },
       manutencao: { total: 0, detalhes: new Map() },
       combustivel: { total: 0, detalhes: { cpk: 0, kmAnual: 0, consumoEfetivo: 0 } },
       internet: { total: 0, ativo: false },
       seguro: { total: 0, ativo: false },
       alimentacao: { total: 0, ativo: false },
       financiamento: { total: 0, ativo: false },
-      gastosCustom: { total: 0, ativo: false },
+      gastosCustom: { total: 0, ativo: false, detalhes: { sugeridos: new Map() } },
     };
     const resultado = calcularBreakdownPercentual(custoVazio, filtrosTudo);
     Object.values(resultado).forEach((v) => expect(v).toBe(0));
@@ -652,6 +824,7 @@ describe('calcularBreakdownPercentual', () => {
       ...filtrosTudo,
       documentos: false,
       revisao: false,
+      revisaoPorServico: { 'servico-revisao-extra': false },
       combustivel: false,
       internet: false,
       seguro: false,
@@ -659,6 +832,7 @@ describe('calcularBreakdownPercentual', () => {
     };
     const resultado = calcularBreakdownPercentual(custosMock, filtroSoManu);
     expect(resultado.manutencao).toBeCloseTo(100, 1);
+    expect(resultado.revisao).toBe(0);
     expect(resultado.documentos).toBe(0);
     expect(resultado.combustivel).toBe(0);
     expect(resultado.alimentacao).toBe(0);
@@ -732,6 +906,28 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
       perfilPadrao.trabalho.diasPorSemana,
     );
     expect(resultado.revisao.total).toBeCloseTo((cicloEsperado / 36000) * kmAnual, 2);
+  });
+
+  it('retíficas ficam em imprevistos sugeridos e sincronizam com Mão de Obra', () => {
+    const resultado = calcularCustosPorCategoria(
+      {
+        ...perfilAutorizadas,
+        servicosIndependentes: perfilAutorizadas.servicosIndependentes.map((servico) =>
+          servico.id === 'retifica-cabecote' ? { ...servico, precoMaoDeObra: 900 } : servico,
+        ),
+      },
+      presetMock,
+      dadosRJMock,
+    );
+    const kmAnual = calcularKmAnual(
+      perfilPadrao.trabalho.kmPorDia,
+      perfilPadrao.trabalho.diasPorSemana,
+    );
+    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-cabecote');
+
+    expect(resultado.revisao.detalhes.servicos.has('retifica-cabecote')).toBe(false);
+    expect(retifica?.precoServico).toBe(900);
+    expect(retifica?.custoAnual).toBeCloseTo((900 / 80000) * kmAnual, 2);
   });
 });
 
@@ -831,6 +1027,31 @@ describe('preset pop110i — campo incluidoNaRevisaoAutorizada', () => {
     for (const peca of pop110i.pecas) {
       expect(typeof peca.incluidoNaRevisaoAutorizada).toBe('boolean');
     }
+  });
+});
+
+describe('preset pop110i — detalhamento das revisões Honda', () => {
+  it('toda revisão declara itens substituídos e serviços executados', () => {
+    for (const revisao of pop110i.revisaoAutorizada) {
+      expect(revisao.itensSubstituidos.length).toBeGreaterThan(0);
+      expect(revisao.servicosExecutados.length).toBeGreaterThan(0);
+
+      for (const grupo of revisao.servicosExecutados) {
+        expect(grupo.categoria.trim().length).toBeGreaterThan(0);
+        expect(grupo.servicos.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('preserva serviços e itens específicos do documento oficial', () => {
+    const revisao24k = pop110i.revisaoAutorizada.find((revisao) => revisao.intervaloKm === 24000);
+    const revisao36k = pop110i.revisaoAutorizada.find((revisao) => revisao.intervaloKm === 36000);
+
+    expect(revisao24k?.itensSubstituidos).toContain('Vela de Ignição');
+    expect(revisao36k?.itensSubstituidos).toContain('Eixo e buchas do garfo traseiro');
+    expect(revisao36k?.servicosExecutados.some((grupo) => grupo.categoria === 'Limpeza')).toBe(
+      true,
+    );
   });
 });
 
@@ -934,5 +1155,32 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
     // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano
     const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ);
     expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(26000);
+  });
+});
+
+describe('MAPA_PECA_PARA_SERVICO', () => {
+  it('cada serviço apontado existe em SERVICOS_INDEPENDENTES_PADRAO', () => {
+    const idsServicos = new Set(SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id));
+    for (const servicoId of Object.values(MAPA_PECA_PARA_SERVICO)) {
+      expect(idsServicos.has(servicoId)).toBe(true);
+    }
+  });
+
+  it('cada peça/pneu apontado existe no preset Pop 110i', () => {
+    const idsPecasEPneus = new Set<string>([
+      ...pop110i.pecas.map((p) => p.id),
+      ...pop110i.pneus.map((p) => p.id),
+    ]);
+    for (const pecaId of Object.keys(MAPA_PECA_PARA_SERVICO)) {
+      expect(idsPecasEPneus.has(pecaId)).toBe(true);
+    }
+  });
+
+  it('sapata_freio_traseiro não tem serviço cadastrado (popup mostra só preço da peça)', () => {
+    expect(MAPA_PECA_PARA_SERVICO['sapata_freio_traseiro']).toBeUndefined();
+  });
+
+  it('mapeia oleo_motor para troca-oleo (caminho feliz)', () => {
+    expect(MAPA_PECA_PARA_SERVICO['oleo_motor']).toBe('troca-oleo');
   });
 });

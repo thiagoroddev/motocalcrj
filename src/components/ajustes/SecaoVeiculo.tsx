@@ -1,13 +1,9 @@
+import { useId } from 'react';
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction } from '../../types/perfil';
 import { Input } from '../ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const ANO_ATUAL = new Date().getFullYear();
 const ANOS = Array.from({ length: ANO_ATUAL - 1989 }, (_, i) => ANO_ATUAL + 1 - i);
@@ -18,6 +14,8 @@ interface Props {
 }
 
 export function SecaoVeiculo({ moto, dispatch }: Props) {
+  const idKmAtual = useId();
+  const idKmUltimaRevisao = useId();
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <p className="label-neutro">Veículo</p>
@@ -44,9 +42,13 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">KM atual</p>
+          <Label htmlFor={idKmAtual} className="text-xs text-muted-foreground font-normal">
+            KM atual
+          </Label>
           <Input
+            id={idKmAtual}
             type="number"
+            inputMode="numeric"
             value={moto.kmAtual}
             min={0}
             onChange={(e) => {
@@ -56,9 +58,13 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
           />
         </div>
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">KM última revisão</p>
+          <Label htmlFor={idKmUltimaRevisao} className="text-xs text-muted-foreground font-normal">
+            KM última revisão
+          </Label>
           <Input
+            id={idKmUltimaRevisao}
             type="number"
+            inputMode="numeric"
             value={moto.kmUltimaRevisao ?? ''}
             min={0}
             placeholder="—"

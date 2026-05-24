@@ -132,7 +132,7 @@ src/
     ├── PaginaDetalhamento.tsx  # 199 linhas ✅
     ├── PaginaRegistros.tsx
     ├── PaginaMaoDeObra.tsx
-    ├── PaginaVidaUtil.tsx
+    ├── PaginaInsumos.tsx
     ├── PaginaAjustes.tsx
     └── onboarding/
         ├── FluxoOnboarding.tsx

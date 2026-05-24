@@ -62,6 +62,8 @@ A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Se
 
 ⚠️ **Mais uma:** `CategoriaDisplay` **não tem campo `gastosCustom`**. A função `categoriasParaFiltros()` mapeia `gastosCustom: cat.financiamento` o que significa que **toggle de financiamento controla também os gastos custom**. Comportamento sutil que pode confundir o Motoboy.
 
+⚠️ **Imprevistos sugeridos não seguem esse toggle.** Retíficas aparecem em `FiltrosCategorias.imprevistosSugeridos` e só entram no total quando o item está explicitamente `true`.
+
 ---
 
 ## Comportamentos (Actions do Reducer)
@@ -86,6 +88,8 @@ export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias 
     revisao: cat.manutencao, // revisao espelha manutencao (RN-27)
     manutencao: cat.manutencao,
     manutencaoPorPeca: {}, // peças individuais entram aqui (filtro fino)
+    revisaoPorServico: {}, // serviços de revisão individuais
+    imprevistosSugeridos: {}, // desligados por padrão; true explícito ativa
     combustivel: cat.combustivel,
     internet: cat.internet,
     seguro: cat.seguro,
@@ -102,6 +106,7 @@ export function categoriasParaFiltros(cat: CategoriaDisplay): FiltrosCategorias 
 2. `manutencao` controla `manutencao` E `revisao` (RN-27)
 3. `financiamento` controla `financiamento` E `gastosCustom`
 4. `manutencaoPorPeca` é filtro fino por peça (não vem deste bloco vem de outro mecanismo)
+5. `imprevistosSugeridos` começa vazio porque sugestões corretivas, como retíficas, não entram no custo por padrão
 
 ---
 

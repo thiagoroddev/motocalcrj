@@ -5,6 +5,7 @@ import type {
   PerfilAction,
   PecaOverride,
   ServicoIndependente,
+  GastoCustom,
 } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
@@ -13,6 +14,32 @@ import { CATALOGO } from '../data/catalogoModelos';
 // ──────────────────────────────────────────────
 // Defaults de serviços independentes (campo RJ)
 // ──────────────────────────────────────────────
+
+const SERVICO_RETIFICA_CABECOTE_PADRAO: ServicoIndependente = {
+  id: 'retifica-cabecote',
+  nome: 'Retífica de cabeçote',
+  intervalKm: 80000,
+  precoMaoDeObra: 800,
+  ativo: false,
+  ehExcepcional: true,
+};
+
+const SERVICO_RETIFICA_COMPLETA_PADRAO: ServicoIndependente = {
+  id: 'retifica-completa',
+  nome: 'Retífica completa',
+  intervalKm: 120000,
+  precoMaoDeObra: 1500,
+  ativo: false,
+  ehExcepcional: true,
+};
+
+// Presets fixos da seção Imprevistos. Lista fechada — usuário não adiciona
+// nem remove, apenas edita o valorAnual e o toggle (ver ADR-006).
+export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
+  { id: 'preset-multa', nome: 'Multa', valorAnual: 0, ativo: false, ehPreset: true },
+  { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 0, ativo: false, ehPreset: true },
+  { id: 'preset-outros', nome: 'Outros', valorAnual: 0, ativo: false, ehPreset: true },
+];
 
 export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
   {
@@ -71,14 +98,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     ativo: true,
     ehExcepcional: false,
   },
-  {
-    id: 'fazer-motor',
-    nome: 'Fazer motor',
-    intervalKm: 70000,
-    precoMaoDeObra: 1500,
-    ativo: false,
-    ehExcepcional: true,
-  },
+  SERVICO_RETIFICA_CABECOTE_PADRAO,
+  SERVICO_RETIFICA_COMPLETA_PADRAO,
 ];
 
 // ──────────────────────────────────────────────
@@ -86,7 +107,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 10,
+  schemaVersion: 14,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -133,7 +154,7 @@ export const perfilPadrao: PerfilUsuario = {
     aluguelMensal: null,
     aluguelPeriodicidade: null,
     alimentacaoDia: 20,
-    gastosCustom: [],
+    gastosCustom: PRESETS_GASTOS_PADRAO,
     responsabilidadeAluguel: {
       documentos: 'eu',
       manutencao: 'eu',
@@ -150,7 +171,9 @@ export const perfilPadrao: PerfilUsuario = {
       internet: false,
       seguro: false,
       financiamento: false,
+      imprevistos: true,
     },
+    imprevistosSugeridosAtivos: {},
   },
 
   pecasOverrides: [],
@@ -302,6 +325,20 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
+    case 'TOGGLE_IMPREVISTO_SUGERIDO': {
+      const atual = state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos[action.id] ?? false;
+      return comPerfil({
+        ...state.perfil,
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          imprevistosSugeridosAtivos: {
+            ...state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+            [action.id]: !atual,
+          },
+        },
+      });
+    }
+
     // ── Overrides de peças ──────────────────────
     case 'SET_PECA_OVERRIDE': {
       const campo = campoOverrideMap[action.campo as CampoOverrideChave];
@@ -421,18 +458,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         financeiro: { ...state.perfil.financeiro, tipoGasolinaPreferida: action.tipo },
       });
 
-    case 'ADD_GASTO_CUSTOM':
-      return comPerfil({
-        ...state.perfil,
-        financeiro: {
-          ...state.perfil.financeiro,
-          gastosCustom: [
-            ...state.perfil.financeiro.gastosCustom,
-            { ...action.gasto, id: crypto.randomUUID() },
-          ],
-        },
-      });
-
     case 'TOGGLE_GASTO_CUSTOM':
       return comPerfil({
         ...state.perfil,
@@ -444,12 +469,24 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
-    case 'DELETE_GASTO_CUSTOM':
+    case 'SET_GASTO_CUSTOM_VALOR':
       return comPerfil({
         ...state.perfil,
         financeiro: {
           ...state.perfil.financeiro,
-          gastosCustom: state.perfil.financeiro.gastosCustom.filter((g) => g.id !== action.id),
+          gastosCustom: state.perfil.financeiro.gastosCustom.map((g) =>
+            g.id === action.id
+              ? {
+                  ...g,
+                  valorAnual: action.valorAnual,
+                  // Conveniência: ao informar um valor > 0 num item desligado,
+                  // ativa o toggle (o usuário acabou de declarar o custo).
+                  // Não desativa automaticamente ao zerar — quem zera mantém
+                  // controle explícito do toggle.
+                  ativo: action.valorAnual > 0 && !g.ativo ? true : g.ativo,
+                }
+              : g,
+          ),
         },
       });
 
@@ -526,6 +563,18 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
+    case 'SET_RESPONSABILIDADE_ALUGUEL':
+      return comPerfil({
+        ...state.perfil,
+        financeiro: {
+          ...state.perfil.financeiro,
+          responsabilidadeAluguel: {
+            ...state.perfil.financeiro.responsabilidadeAluguel,
+            ...action.config,
+          },
+        },
+      });
+
     // ── Histórico de manutenção ─────────────────
     case 'SET_KM_ULTIMA_TROCA':
       return comPerfil({
@@ -572,7 +621,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           parcelasRestantes: null,
           aluguelMensal: null,
           aluguelPeriodicidade: null,
-          gastosCustom: [],
+          gastosCustom: PRESETS_GASTOS_PADRAO,
         },
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
@@ -582,7 +631,9 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
             seguro: false,
             alimentacao: false,
             financiamento: false,
+            imprevistos: true,
           },
+          imprevistosSugeridosAtivos: {},
         },
       });
 
@@ -718,6 +769,105 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
       ...dados,
       schemaVersion: 10,
       financeiro: { ...dados.financeiro, seguro: novoSeguro },
+    };
+  }
+
+  if (dados.schemaVersion === 10) {
+    // v10 → v11: substitui "fazer motor" por duas retíficas (ADR-006 / RF-6.10).
+    // Se o usuário já tinha editado o item legado, a retífica completa herda
+    // preço, ativação e intervalo customizado (exceto o intervalo padrão antigo).
+    const servicos = Array.isArray(dados.servicosIndependentes)
+      ? (dados.servicosIndependentes as ServicoIndependente[])
+      : SERVICOS_INDEPENDENTES_PADRAO;
+    const fazerMotorLegado = servicos.find((s) => s.id === 'fazer-motor');
+    const cabecoteExistente = servicos.find((s) => s.id === 'retifica-cabecote');
+    const completaExistente = servicos.find((s) => s.id === 'retifica-completa');
+    const servicosSemMotorERetificas = servicos.filter(
+      (s) => s.id !== 'fazer-motor' && s.id !== 'retifica-cabecote' && s.id !== 'retifica-completa',
+    );
+
+    const retificaCompletaMigrada: ServicoIndependente =
+      completaExistente ??
+      (fazerMotorLegado
+        ? {
+            ...SERVICO_RETIFICA_COMPLETA_PADRAO,
+            precoMaoDeObra: fazerMotorLegado.precoMaoDeObra,
+            intervalKm:
+              fazerMotorLegado.intervalKm === 70000
+                ? SERVICO_RETIFICA_COMPLETA_PADRAO.intervalKm
+                : fazerMotorLegado.intervalKm,
+          }
+        : SERVICO_RETIFICA_COMPLETA_PADRAO);
+
+    dados = {
+      ...dados,
+      schemaVersion: 11,
+      servicosIndependentes: [
+        ...servicosSemMotorERetificas,
+        cabecoteExistente ?? SERVICO_RETIFICA_CABECOTE_PADRAO,
+        retificaCompletaMigrada,
+      ],
+    };
+  }
+
+  if (dados.schemaVersion === 11) {
+    // v11 → v12: retíficas deixam de entrar em Revisão/Manutenção e passam
+    // a aparecer em Imprevistos como sugestões desligadas por padrão.
+    const servicos = Array.isArray(dados.servicosIndependentes)
+      ? (dados.servicosIndependentes as ServicoIndependente[])
+      : SERVICOS_INDEPENDENTES_PADRAO;
+    dados = {
+      ...dados,
+      schemaVersion: 12,
+      servicosIndependentes: servicos.map((servico) =>
+        servico.ehExcepcional ? { ...servico, ativo: false } : servico,
+      ),
+    };
+  }
+
+  if (dados.schemaVersion === 12) {
+    // v12 → v13: gastosCustom vira lista fechada de presets (Multa, Sinistros,
+    // Outros). Gastos livres pré-existentes são descartados — não há usuários
+    // em produção e a Decisão 2 da TASK-RF-6.9 fechou o modelo de cadastro
+    // avulso. Campo valorMensal eliminado em favor de valorAnual (padrão único
+    // acumulado, ver ADR-003/ADR-006).
+    dados = {
+      ...dados,
+      schemaVersion: 13,
+      financeiro: {
+        ...dados.financeiro,
+        gastosCustom: PRESETS_GASTOS_PADRAO,
+      },
+    };
+  }
+
+  if (dados.schemaVersion === 13) {
+    // v13 → v14: toggles de imprevistos persistem no perfil (TASK-RF-6.11 cleanup).
+    // - Nova chave `categoriasAtivas.imprevistos` (default true — categoria
+    //   sempre apareceu sem toggle; mantém comportamento anterior).
+    // - Novo mapa `imprevistosSugeridosAtivos` (default vazio = retíficas
+    //   continuam desligadas, como na v12).
+    const configDisplay = { ...(dados.configuracaoDisplay ?? { categoriasAtivas: {} }) };
+    const categoriasAtivas = {
+      ...(configDisplay.categoriasAtivas ?? {}),
+      imprevistos:
+        typeof configDisplay.categoriasAtivas?.imprevistos === 'boolean'
+          ? configDisplay.categoriasAtivas.imprevistos
+          : true,
+    };
+    const imprevistosSugeridosAtivos =
+      configDisplay.imprevistosSugeridosAtivos &&
+      typeof configDisplay.imprevistosSugeridosAtivos === 'object'
+        ? configDisplay.imprevistosSugeridosAtivos
+        : {};
+    dados = {
+      ...dados,
+      schemaVersion: 14,
+      configuracaoDisplay: {
+        ...configDisplay,
+        categoriasAtivas,
+        imprevistosSugeridosAtivos,
+      },
     };
   }
 

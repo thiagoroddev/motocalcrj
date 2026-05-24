@@ -7,7 +7,7 @@ import { FluxoOnboarding } from './pages/onboarding/FluxoOnboarding';
 import { PaginaEstimativa } from './pages/PaginaEstimativa';
 import { PaginaDetalhamento } from './pages/PaginaDetalhamento';
 import { PaginaMaoDeObra } from './pages/PaginaMaoDeObra';
-import { PaginaVidaUtil } from './pages/PaginaVidaUtil';
+import { PaginaInsumos } from './pages/PaginaInsumos';
 import { PaginaAjustes } from './pages/PaginaAjustes';
 import { PaginaPerfil } from './pages/PaginaPerfil';
 
@@ -27,7 +27,7 @@ function App() {
                 <Route element={<LayoutApp />}>
                   <Route path="/estimativa" element={<PaginaEstimativa />} />
                   <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
-                  <Route path="/vida-util" element={<PaginaVidaUtil />} />
+                  <Route path="/insumos" element={<PaginaInsumos />} />
                   <Route path="/ajustes" element={<PaginaAjustes />} />
                 </Route>
                 {/* Subpáginas com CabecalhoVoltar (header próprio com botão voltar) */}

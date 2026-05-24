@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 6,
+        "schemaVersion": 14,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -58,12 +58,9 @@
           "aluguelPeriodicidade": null,
           "alimentacaoDia": 20,
           "gastosCustom": [
-            {
-              "id": "gasto_001",
-              "nome": "Bag térmica (amortização)",
-              "valorMensal": 8.33,
-              "ativo": true
-            }
+            { "id": "preset-multa", "nome": "Multa", "valorAnual": 900, "ativo": true, "ehPreset": true },
+            { "id": "preset-sinistro", "nome": "Sinistros", "valorAnual": 0, "ativo": false, "ehPreset": true },
+            { "id": "preset-outros", "nome": "Outros", "valorAnual": 0, "ativo": false, "ehPreset": true }
           ],
           "responsabilidadeAluguel": {
             "documentos": "eu",
@@ -80,8 +77,10 @@
             "documentacao": true,
             "internet": true,
             "seguro": true,
-            "financiamento": false
-          }
+            "financiamento": false,
+            "imprevistos": true
+          },
+          "imprevistosSugeridosAtivos": {}
         },
 
         "pecasOverrides": [
@@ -100,8 +99,9 @@
           { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
           { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
           { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "fazer-motor",           "nome": "Fazer motor",                 "intervalKm": 70000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,   "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",        "intervalKm": 80000,  "precoMaoDeObra": 800,  "ativo": false, "ehExcepcional": true  },
+          { "id": "retifica-completa",     "nome": "Retífica completa",           "intervalKm": 120000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
         ],
 
         "revisaoAutorizadaOverrides": [],
@@ -120,7 +120,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 6,
+        "schemaVersion": 14,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -165,7 +165,11 @@
           "aluguelMensal": null,
           "aluguelPeriodicidade": null,
           "alimentacaoDia": 0,
-          "gastosCustom": [],
+          "gastosCustom": [
+            { "id": "preset-multa", "nome": "Multa", "valorAnual": 0, "ativo": false, "ehPreset": true },
+            { "id": "preset-sinistro", "nome": "Sinistros", "valorAnual": 0, "ativo": false, "ehPreset": true },
+            { "id": "preset-outros", "nome": "Outros", "valorAnual": 0, "ativo": false, "ehPreset": true }
+          ],
           "responsabilidadeAluguel": {
             "documentos": "eu",
             "manutencao": "eu",
@@ -181,8 +185,10 @@
             "documentacao": true,
             "internet": false,
             "seguro": true,
-            "financiamento": false
-          }
+            "financiamento": false,
+            "imprevistos": true
+          },
+          "imprevistosSugeridosAtivos": {}
         },
 
         "pecasOverrides": [],
@@ -193,8 +199,9 @@
           { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
           { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
           { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "fazer-motor",           "nome": "Fazer motor",                 "intervalKm": 70000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,   "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
+          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",        "intervalKm": 80000,  "precoMaoDeObra": 800,  "ativo": false, "ehExcepcional": true  },
+          { "id": "retifica-completa",     "nome": "Retífica completa",           "intervalKm": 120000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
         ],
         "revisaoAutorizadaOverrides": [],
         "fipeCache": {

@@ -139,6 +139,21 @@
       "precoPecas": 107.26,
       "precoMaoDeObra": 0,
       "precoTotal": 107.26,
+      "itensSubstituidos": [
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Guarnição registro drenagem",
+        "Óleo Pro Honda 10w30"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": ["Transmissão", "Freios", "Embreagem", "Rodas e pneus"]
+        }
+      ],
       "_fonte": { "notaMaoDeObra": "Gratuita (subsidiada Honda)" }
     },
     {
@@ -147,6 +162,36 @@
       "precoPecas": 127.88,
       "precoMaoDeObra": 0,
       "precoTotal": 127.88,
+      "itensSubstituidos": [
+        "Óleo Pro Honda 10w30",
+        "Kit Revisão",
+        "Pro Honda Kit Limpeza e Lubrificação"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Acelerador",
+            "Vela",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        }
+      ],
       "_fonte": { "notaMaoDeObra": "Gratuita (subsidiada Honda)" }
     },
     {
@@ -154,35 +199,232 @@
       "intervaloMeses": 18,
       "precoPecas": 268.15,
       "precoMaoDeObra": 280.0,
-      "precoTotal": 548.15
+      "precoTotal": 548.15,
+      "itensSubstituidos": [
+        "Kit Revisão",
+        "Anel de Vedação",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Guarnição escapamento",
+        "Óleo Pro Honda 10w30"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "Respiro do motor",
+            "Tela do filtro de Óleo",
+            "Filtro centrífugo Óleo do motor"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção",
+            "Amortecedores"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": ["Coluna de Direção"]
+        }
+      ]
     },
     {
       "intervaloKm": 18000,
       "intervaloMeses": 24,
       "precoPecas": 212.33,
       "precoMaoDeObra": 70.0,
-      "precoTotal": 282.33
+      "precoTotal": 282.33,
+      "itensSubstituidos": [
+        "Pro Honda Fluido da Suspensão Dianteira",
+        "Óleo Pro Honda 10w30",
+        "Junta da tampa do Cabeçote",
+        "Guarnição registro drenagem",
+        "Elemento filtro ar",
+        "Borracha de Fixação",
+        "Anel de Vedação",
+        "Pro Honda Kit Limpeza e Lubrificação"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Acelerador",
+            "Vela",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        }
+      ]
     },
     {
       "intervaloKm": 24000,
       "intervaloMeses": 30,
       "precoPecas": 268.15,
       "precoMaoDeObra": 370.0,
-      "precoTotal": 638.15
+      "precoTotal": 638.15,
+      "itensSubstituidos": [
+        "Borracha de Fixação",
+        "Anel de Vedação",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Vela de Ignição",
+        "Retentor Guidão",
+        "Óleo Pro Honda 10w30",
+        "Junta do tubo de escape",
+        "Junta da tampa lateral direita",
+        "Junta da tampa do Cabeçote",
+        "Junta rotor do filtro de Óleo",
+        "Guarnição registro drenagem"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção",
+            "Amortecedores"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "Respiro do motor",
+            "Tela do filtro de Óleo",
+            "Filtro centrífugo Óleo do motor"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": ["Coluna de Direção"]
+        }
+      ]
     },
     {
       "intervaloKm": 30000,
       "intervaloMeses": 36,
       "precoPecas": 127.88,
       "precoMaoDeObra": 60.0,
-      "precoTotal": 187.88
+      "precoTotal": 187.88,
+      "itensSubstituidos": [
+        "Guarnição registro drenagem",
+        "Junta da tampa do Cabeçote",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Anel de Vedação",
+        "Borracha de Fixação",
+        "Óleo Pro Honda 10w30"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Acelerador",
+            "Vela",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        }
+      ]
     },
     {
       "intervaloKm": 36000,
       "intervaloMeses": 42,
       "precoPecas": 352.6,
       "precoMaoDeObra": 290.0,
-      "precoTotal": 642.6
+      "precoTotal": 642.6,
+      "itensSubstituidos": [
+        "Elemento filtro ar",
+        "Junta rotor do filtro de Óleo",
+        "Junta da tampa do Cabeçote",
+        "Junta da tampa lateral direita",
+        "Junta do tubo de escape",
+        "Óleo Pro Honda 10w30",
+        "Retentor Guidão",
+        "Vela de Ignição",
+        "Anel de Vedação",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Pro Honda Fluido da Suspensão Dianteira",
+        "Borracha de Fixação",
+        "Guarnição registro drenagem",
+        "Coluna de Direção",
+        "Eixo e buchas do garfo traseiro"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "Respiro do motor",
+            "Tela do filtro de Óleo",
+            "Filtro centrífugo Óleo do motor"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção",
+            "Amortecedores"
+          ]
+        }
+      ]
     }
   ],
 

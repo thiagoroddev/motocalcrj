@@ -205,7 +205,7 @@ Mesma lógica, aplicada ao intervalo de troca:
 | "O preço médio do óleo na minha realidade é R$ 35" | "Em 2026-04-15, paguei R$ 38 numa troca de óleo no posto X" |
 | Vive em `pecasOverrides`                           | Vive em `historicoManutencao.trocasOleo`                    |
 | Atemporal, é uma "regra"                           | Datado, é um "evento"                                       |
-| Editado em telas de Mão de Obra / Autonomia        | Criado via formulário de Registro                           |
+| Editado em telas de Mão de Obra / Insumos          | Criado via formulário de Registro                           |
 
 🔍 **Análise:** tanto Override quanto média de Registros são fontes de personalização. Em `modoExibicao === 'personalizado'`, ambos competem (override vence). Isso permite cenários:
 
@@ -219,7 +219,7 @@ Mesma lógica, aplicada ao intervalo de troca:
 ### Cenário 1: "Pneu paralelo dura mais que dizem"
 
 - Motoboy compra pneu paralelo
-- Vai em Autonomia, edita o `intervaloKmEditado` do `pneu_traseiro` para 8000
+- Vai em Insumos, edita o `intervaloKmEditado` do `pneu_traseiro` para 8000
 - Resultado: `pecasOverrides` ganha entrada com `id: 'pneu_traseiro'`, `intervaloKmEditado: 8000`
 - Cálculo: CPK do pneu agora usa 8000km como base
 

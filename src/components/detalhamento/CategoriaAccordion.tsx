@@ -1,5 +1,6 @@
 import { Card } from '../ui/card';
 import { Toggle } from './Toggle';
+import { BotaoLapisEdicao } from './BotaoLapisEdicao';
 
 type Props = {
   label: string;
@@ -10,6 +11,7 @@ type Props = {
   expandido: boolean;
   onToggleAtivo: () => void;
   onToggleExpandido: () => void;
+  onEditar?: () => void;
   semExpansao?: boolean;
   children?: React.ReactNode;
 };
@@ -23,6 +25,7 @@ export function CategoriaAccordion({
   expandido,
   onToggleAtivo,
   onToggleExpandido,
+  onEditar,
   semExpansao = false,
   children,
 }: Props) {
@@ -32,7 +35,7 @@ export function CategoriaAccordion({
         className={`flex items-center gap-3 p-md ${!semExpansao ? 'cursor-pointer' : ''}`}
         onClick={!semExpansao ? onToggleExpandido : undefined}
       >
-        <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${corClasse}`} />
+        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${corClasse}`} />
         <span className="flex-1 text-foreground text-sm font-medium">
           {label}
           <span className="ml-1.5 text-[10px] font-normal text-muted-foreground/40">
@@ -45,6 +48,7 @@ export function CategoriaAccordion({
           {valorExibido}
         </span>
         <Toggle ativo={ativo} onClick={onToggleAtivo} />
+        {onEditar && <BotaoLapisEdicao onClick={onEditar} ariaLabel={`Editar ${label}`} />}
         {!semExpansao && (
           <svg
             viewBox="0 0 24 24"
@@ -52,7 +56,7 @@ export function CategoriaAccordion({
             stroke="currentColor"
             strokeWidth={2}
             aria-hidden="true"
-            className={`w-4 h-4 text-muted-foreground/40 flex-shrink-0 transition-transform ${expandido ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 text-muted-foreground/40 shrink-0 transition-transform ${expandido ? 'rotate-180' : ''}`}
           >
             <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

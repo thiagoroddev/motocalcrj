@@ -101,6 +101,8 @@ interface FiltrosCategorias {
   revisao: boolean;
   manutencao: boolean;
   manutencaoPorPeca: Record<string, boolean>;
+  revisaoPorServico: Record<string, boolean>;
+  imprevistosSugeridos: Record<string, boolean>;
   combustivel: boolean;
   internet: boolean;
   seguro: boolean;
@@ -114,7 +116,8 @@ interface FiltrosCategorias {
 
 **Invariantes:**
 
-- Em `manutencaoPorPeca`, **peca ativa** quando valor e `true` ou `undefined`.
+- Em `manutencaoPorPeca` e `revisaoPorServico`, item ativo quando valor e `true` ou `undefined`.
+- Em `imprevistosSugeridos`, item ativo apenas quando valor e `true`.
 - `revisao` e derivado de `manutencao` via `categoriasParaFiltros()`.
 
 ---

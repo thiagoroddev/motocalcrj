@@ -416,30 +416,49 @@ Documentar a convenção de mapeamento ID em comentário na tela Preço Peças (
 
 ---
 
-## DT-16: Excepcionais e normais somados no mesmo revisao.total
+## DT-16: Excepcionais e normais somados no mesmo revisao.total — ENDEREÇADA
 
 ### Situação atual
 
-`calcularCustoRevisaoAnual` filtra apenas `s.ativo`, sem distinguir `s.ehExcepcional`. Se o usuário ativar `fazer-motor`, o custo entra em `CustosPorCategoria.revisao.total` sem separação. A ADR-004 previu saídas `custoMOAnual` (não-excepcionais) e `custoMOExcepcional` distintas — a implementação simplificou para uma.
+Após TASK-BG-005, `calcularCustoRevisaoAnual` não soma serviços com `ehExcepcional: true`. `retifica-cabecote` e `retifica-completa` são derivadas de `servicosIndependentes` para `CustosPorCategoria.gastosCustom.detalhes.sugeridos` e aparecem no Detalhamento em Imprevistos, desligadas por padrão.
 
-### Por que é dívida técnica
+### Por que deixou de ser dívida técnica
 
-Quando/se existirem múltiplos excepcionais ativados, a UI não poderá mostrar "custo de overhaul separado" sem mudança de tipo e calculador.
+Consumidores que usam `revisao.total` recebem apenas revisão periódica. Custos corretivos excepcionais têm categoria/filtro próprios e só entram no total quando `filtros.imprevistosSugeridos[id] === true`.
 
-### Por que NÃO endereçar agora
+### Histórico da decisão
 
-- Apenas 1 excepcional no MVP (`fazer-motor`), com `ativo: false` por padrão
-- `CustosPorCategoria.revisao` não expõe campo `totalExcepcional` — adicionar quebraria a API sem benefício atual
-- INV-CALC-2: mudança em `calculos.ts` requer aprovação explícita
+- TASK-RF-6.12 explicitou retíficas dentro de Manutenção, mas isso ligava o custo por padrão e gerava ruído antes da quilometragem mínima.
+- TASK-BG-005 moveu retíficas para Imprevistos como lembrete acionável, mantendo preço/intervalo sincronizados com Mão de Obra Excepcional.
 
-### Gatilho que justificaria endereçar
+### Gatilho futuro
 
-- Adição de segundo serviço excepcional
-- UI precisar exibir "custo de overhaul" como linha separada na tela de Detalhamento
+- Se houver uma categoria visual própria para custos corretivos, migrar `gastosCustom.detalhes.sugeridos` para um bloco dedicado em `CustosPorCategoria`.
 
 ### Recomendação
 
-Ao adicionar segundo excepcional ou criar card de "custos eventuais" na UI, adicionar `totalExcepcional` em `CustosPorCategoria.revisao` e atualizar `calcularCustoRevisaoAnual` com aprovação (INV-CALC-2).
+Manter retíficas fora de `revisao.total`. O padrão de filtro de imprevistos sugeridos deve continuar desligado por ausência (`undefined` não ativa custo).
+
+---
+
+## ~~DT-17: Componentes UI usam classes do `tailwindcss-animate` sem o plugin instalado~~ — ENDEREÇADA (23/05/26)
+
+### Situação resolvida
+
+Em 23/05/26 (correção pós-conclusão da TASK-BG-005), instalada a dep `tw-animate-css` (versão Tailwind v4 do `tailwindcss-animate`) e habilitada via `@import "tw-animate-css";` em `src/index.css`.
+
+Com o plugin ativo, todas as classes referenciadas em `dialog.tsx`, `sheet.tsx` e `select.tsx` (`animate-in`, `animate-out`, `fade-in-0`, `fade-out-0`, `zoom-in-95`, `zoom-out-95`, `slide-in-from-*`, `slide-out-to-*`) passam a gerar CSS corretamente.
+
+### Por que era dívida técnica (histórica)
+
+As classes do plugin eram referenciadas mas não geravam CSS, o que tornava o dialog visualmente quebrado em Tailwind v4 (popup renderizando como faixa vertical estreita sem conteúdo visível).
+
+### Como ficou
+
+- `tw-animate-css@^1.4.0` em `package.json > dependencies`.
+- `@import "tw-animate-css";` no topo de `src/index.css`.
+- `dialog.tsx` voltou ao padrão moderno do shadcn/ui com classes de animação ativas.
+- `sheet.tsx` e `select.tsx` automaticamente passam a funcionar (mesmo sem terem sido tocados).
 
 ---
 

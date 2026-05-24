@@ -55,71 +55,13 @@ Obedeça essa ordem:
 
 > **TASK-REF-21** concluída em 23/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-RF-6.8 — Cards de revisão Honda exibem peças substituídas e serviços executados
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-006
-- **Observações:** Cada card de revisão na aba M. Obra (`LinhaRevisaoHonda` em `PaginaMaoDeObra.tsx`) deve mostrar quais peças são substituídas e quais serviços executados naquela revisão — informação ao usuário sobre o que está pagando. **Fonte:** `docs/dominio/valores-mao-de-obra-honda-pop110i-2024-RJ.md`, seção "Detalhamento por Revisão" (itens substituídos + serviços executados, revisões de 1k a 36k). **Escopo:** estruturar os dados no Preset JSON (`pop110i.json` → `revisaoAutorizada[].itensSubstituidos[]` e `.servicosExecutados[]`) e no tipo `RevisaoAutorizadaPreset` (`src/types/calculos.ts`); UI sugerida — bloco expansível/colapsável dentro do card. Predominantemente UI; inclui testes se houver lógica.
+> **TASK-RF-6.9** concluída em 23/05/26 — escopo reformulado para lista fechada de presets editáveis (Multa, Sinistros, Outros) e valor único acumulado, ver `docs/tarefas/concluidas/` e nota no ADR-003.
 
-## TASK-RF-6.10 — Substituir "fazer motor" por retífica de cabeçote e retífica completa
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-006
-- **Observações:** Decisão do usuário (20/05/26): o serviço hoje chamado "fazer motor" (`SERVICOS_INDEPENDENTES_PADRAO` em `PerfilContext.tsx`, id `fazer-motor`, `ehExcepcional: true`, `intervalKm: 70000`) vira DOIS itens, conforme `valores-mao-de-obra-honda-pop110i-2024-RJ.md` seção "Manutenção Corretiva": "Retífica de cabeçote" (~80.000–100.000 km, uso intenso) e "Retífica completa" (~120.000–150.000 km). **Escopo:** substituir o item `fazer-motor` por `retifica-cabecote` e `retifica-completa` em `SERVICOS_INDEPENDENTES_PADRAO`, com intervalos e preços coerentes com o doc; ajustar a `migrarPerfil` (perfis salvos têm o id antigo); revisar o aviso `kmAtual >= 70000` na aba Excepcional para os novos thresholds. Inclui testes do reducer/migração.
+> **TASK-RF-6.11** concluída em 24/05/26 — ver `docs/tarefas/concluidas/`. Modelo híbrido: popup com cards reaproveitados das páginas (sincronização via dispatch) para Combustível/Internet/Seguro/Alimentação/Financiamento/Peças+MO; direcionamento com scroll/destaque para Revisão Geral Autorizada. Documentos sem lápis (não editável). Imprevistos mantém o popup inline atual.
 
-## TASK-RF-6.9 — Completar a categoria Imprevistos no Detalhamento
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-006
-- **Observações:** A categoria Imprevistos (`src/components/detalhamento/SecaoImprevistos.tsx`) está incompleta. Finalidade (decisão do usuário): incluir um gasto arbitrário escolhendo (1) uma categoria, (2) o valor, (3) um nome livre. Hoje `GastoCustom` (`types/perfil.ts`) tem só `{id, nome, valorMensal, ativo}` — FALTA o campo de categoria. O texto-placeholder atual de `SecaoImprevistos` ainda manda o usuário ir à "aba Registros" (removida) — corrigir. **Escopo:** adicionar `categoria` a `GastoCustom`; criar o formulário de adição (nome + categoria + valor); ajustar a action `ADD_GASTO_CUSTOM`; remover a menção a Registros e ao modo Personalizado. Bump de schema + migração. Inclui testes.
+> **TASK-RNF-10** concluída em 24/05/26 — ver `docs/tarefas/concluidas/`.
 
-## TASK-RF-6.11 — Clicar num custo no Detalhamento direciona à edição correspondente
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 20/05/26
-- **Dependências:** TASK-REF-16, TASK-REF-17
-- **REQ/ADR/DT:** ADR-005
-- **Observações:** Pela ADR-005 o Detalhamento só ativa/desativa, não edita. Para facilitar, clicar num custo (linha de peça, serviço, combustível, etc.) deve direcionar à tela/popup de edição correspondente — M. Obra, Custos & Peças ou Ajustes, conforme o item. **A decidir na execução:** navegação para a tela com scroll/destaque do campo, ou popup inline. Tarefa de UI/navegação; depende de REF-16/17 estabilizarem onde cada custo é editado. Inclui testes se houver lógica de roteamento.
-
-## TASK-RNF-10 — Acessibilidade dos inputs das telas de configuração
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:** Achado da revisão de 20/05/26: nas seções de Ajustes (`SecaoVeiculo`, `SecaoUltimasManutencoes`, `SecaoFinanceiro`, `SecaoUsoDiario`) e em Custos & Peças, os labels são `<p className="text-xs">` soltos ao lado do `<Input>`, sem associação `htmlFor`/`id` — leitor de tela não associa e toque no label não foca o campo. Faltam também `inputMode` (`numeric`/`decimal`) nos campos numéricos. **Escopo:** usar `<Label htmlFor>` do shadcn + `id` no `Input` (o componente já suporta `forwardRef`); adicionar `inputMode` apropriado. `CampoSwitch.tsx` já faz a associação certa — usar como referência (se ainda não removido pela REF-21). Predominantemente UI.
-
-## TASK-DOC-008 — Padronizar nome da tela para "Custos & Peças"
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 20/05/26
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-004
-- **Observações:** A tela tem hoje 4 nomes diferentes: rota `/vida-util` (`App.tsx`), componente `PaginaVidaUtil`, label `AUTONOMIA` na NavBar (`NavBar.tsx`) e "Preço Peças" na ADR-004. Decisão do usuário (20/05/26): padronizar como "Custos & Peças". A autonomia (km/L) PERMANECE nessa tela, junto dos combustíveis (decisão confirmada — autonomia é por tipo de combustível, separá-la duplicaria campos). **Escopo:** alinhar rota, nome do componente/arquivo (`PaginaVidaUtil.tsx` → `PaginaCustosPecas.tsx`), label da NavBar e referências em docs (ADR-004, `contexto-projeto-ai.md`, modelagem). Renomeação de arquivo — confirmar antes. Refactor mecânico/cosmético.
+> **TASK-DOC-008** concluída em 24/05/26 — padronizada como "Insumos" (rota `/insumos`, `PaginaInsumos`, label `INSUMOS`), ver `docs/tarefas/concluidas/`.
 
 > **TASK-REF-22** (converter `calcularCpkPorPeca` para objeto de opções) foi **absorvida pela TASK-RF-6.7** e concluída junto — 22/05/26.
 

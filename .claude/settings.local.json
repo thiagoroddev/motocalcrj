@@ -8,7 +8,9 @@
       "Bash(npx vitest *)",
       "PowerShell(npm config get omit)",
       "PowerShell(npm config get userconfig)",
-      "Bash(xargs sed -i 's/rounded-card/rounded-lg/g')"
+      "Bash(xargs sed -i 's/rounded-card/rounded-lg/g')",
+      "Bash(npm run *)",
+      "Bash(Get-Date -Format \"yyyy-MM-dd HH:mm\")"
     ]
   }
 }

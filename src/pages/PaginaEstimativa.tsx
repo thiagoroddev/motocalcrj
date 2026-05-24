@@ -47,7 +47,10 @@ export function PaginaEstimativa() {
   const horas = perfil.trabalho.horasPorDia;
   const porHora = diasAno > 0 && horas > 0 ? granularidades.anual / (diasAno * horas) : 0;
 
-  const filtrosAtivos = categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas);
+  const filtrosAtivos = categoriasParaFiltros(
+    perfil.configuracaoDisplay.categoriasAtivas,
+    perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+  );
   const breakdown = calcularBreakdownPercentual(custos, filtrosAtivos);
   const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG)
     .map(([id, cfg]) => ({

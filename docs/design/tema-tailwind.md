@@ -171,6 +171,6 @@ Utilitários customizados (em `index.css`):
 /estimativa/detalhamento
 /registros
 /mao-de-obra
-/vida-util
+/insumos
 /ajustes
 /perfil

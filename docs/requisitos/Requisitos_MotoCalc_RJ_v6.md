@@ -85,7 +85,7 @@ SPA mobile-first que:
 | 1   | **ESTIMATIVA** | Gráfico/painel       | `/estimativa`  | Painel de custos com rodagem editável, cards por período, custo/km e acesso ao detalhamento              |
 | 2   | **REGISTROS**  | Tabela com lápis     | `/registros`   | Histórico de manutenções, abastecimentos e rodagem. Sub-abas: Geral · Rodagem · Combustível · Manutenção |
 | 3   | **M. DE OBRA** | Chave + martelo      | `/mao-de-obra` | Ajustes avançados de serviços + revisões autorizadas Honda                                               |
-| 4   | **AUTONOMIA**  | Velocímetro circular | `/vida-util`   | Ajustes avançados de combustíveis, peças e pneus                                                         |
+| 4   | **INSUMOS**    | Velocímetro circular | `/insumos`     | Ajustes avançados de combustíveis, peças e pneus (renomeada pela TASK-DOC-008 em 24/05/26 — era "AUTONOMIA" / `/vida-util`)         |
 | 5   | **AJUSTES**    | Perfil/usuário       | `/ajustes`     | Ajustes de predefinição (dados do onboarding)                                                            |
 
 **Estados visuais:**
@@ -147,7 +147,7 @@ Hamburguer → abre o menu inferior quando ele não estiver visível.
 │
 ├── /mao-de-obra             → MaoDeObra
 │
-├── /vida-util               → Autonomia (VidaUtil)
+├── /insumos                 → Insumos (PaginaInsumos)
 │
 ├── /ajustes                 → AjustesPredefinicao (aba Ajustes)
 │
@@ -904,7 +904,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 | Componentes UI      | **Shadcn/ui**                              | latest               | Componentes copiados para `src/components/ui/`. Código próprio, estilo 100% controlado via Tailwind e CSS vars. Padrão reconhecível por qualquer desenvolvedor. Instalação: `npx shadcn@latest init`. |
 | Primitivos          | **Radix UI** (via Shadcn)                  | —                    | Acessibilidade nativa (ARIA, foco, teclado) sem esforço. Accordion, Switch, Dialog, Select, etc. Shadcn é a camada visual sobre Radix.         |
 | Build + PWA         | **Vite** + `vite-plugin-pwa`               | latest               | Service Worker automático. Build leve (< 500 KB meta). HMR instantâneo em dev.                                                                 |
-| Roteamento          | **React Router DOM**                       | 6+                   | Navegação SPA com `<Routes>` + `<Navigate>`. Suporte a rotas `/estimativa`, `/registros`, `/mao-de-obra`, `/vida-util`, `/perfil`, `/ajustes`. |
+| Roteamento          | **React Router DOM**                       | 6+                   | Navegação SPA com `<Routes>` + `<Navigate>`. Suporte a rotas `/estimativa`, `/registros`, `/mao-de-obra`, `/insumos`, `/perfil`, `/ajustes`.   |
 | Estado Global       | **`useReducer` + Context API**             | —                    | `useReducer` para o perfil complexo (evita prop drilling). Context distribui `perfil` e `dispatch`.                                            |
 | Persistência        | **localStorage via `services/perfilStorage.ts`** | —             | Sem backend em V1. Classe abstrai o storage (RNF-LR-01/03).                                                                                    |
 | Dados Estáticos     | **JSON** em `/src/presets/` e `/src/data/` | —                    | Separação total dados/lógica. Novo modelo = novo JSON (RNF-10).                                                                                |
@@ -1510,7 +1510,7 @@ Fase 3 — Persistência e Estado ✅ CONCLUÍDA
 
 ──────────────────────────────────────────────────────────────────
 Fase 4 — Layout Base e Navegação ✅ CONCLUÍDA
-  ✅ App.tsx com React Router (rotas: /estimativa, /estimativa/detalhamento, /registros, /mao-de-obra, /vida-util, /ajustes)
+  ✅ App.tsx com React Router (rotas: /estimativa, /estimativa/detalhamento, /registros, /mao-de-obra, /insumos, /ajustes)
   ✅ RotaProtegida.tsx (RNF-LR-04)
   ✅ LayoutApp.tsx + NavBar.tsx (estados ativo/inativo per Figma: bg-primary text-white / text-neutral/50)
   ✅ ThemeContext.tsx com CHAVE_TEMA const (sem localStorage direto)

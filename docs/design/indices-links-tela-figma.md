@@ -348,7 +348,7 @@ https://www.figma.com/design/xZmWLgFybbotme4B8kZpNl/MotoCalc--Copy-?node-id=2033
 https://www.figma.com/design/xZmWLgFybbotme4B8kZpNl/MotoCalc--Copy-?node-id=2033-3581&t=0LLpFPztYEFqgtxE-4
 ![[11-Aba - Autonomia- 4.png]]
 
-- **Rota:** `/vida-util` (label na nav: Autonomia)
+- **Rota:** `/insumos` (label na nav: INSUMOS) — renomeada pela TASK-DOC-008 (24/05/26). Os screenshots do Figma usam o nome antigo "Autonomia".
 - **Header:** hamburguer + "Autonomia" + help
 - **Acoes no header:** hamburguer → menu inferior (se oculto); help → pop-up (pendente)
 - **Observacoes:** aba de ajustes avancados.

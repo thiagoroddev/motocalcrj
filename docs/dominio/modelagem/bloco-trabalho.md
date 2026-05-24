@@ -11,7 +11,7 @@
 Bloco que representa **a rotina de trabalho do Motoboy**: quanto roda por dia, quantos dias por semana, quantas horas por dia. **É o bloco mais editado dinamicamente** porque a tela Estimativa permite ajustar `kmPorDia` e `diasPorSemana` inline.
 
 🔍 **Análise Profunda por que esse bloco é especial:**
-A maioria dos blocos do `PerfilUsuario` é editada apenas em telas dedicadas (Ajustes, Mão de Obra, Autonomia). Este aqui é editado **diretamente no painel principal** (tela Estimativa). Isso significa que cálculos respondem a alterações desse bloco **em tempo real (< 200ms)** sem precisar de "salvar" alterar o stepper já dispara recálculo + persistência.
+A maioria dos blocos do `PerfilUsuario` é editada apenas em telas dedicadas (Ajustes, Mão de Obra, Insumos). Este aqui é editado **diretamente no painel principal** (tela Estimativa). Isso significa que cálculos respondem a alterações desse bloco **em tempo real (< 200ms)** sem precisar de "salvar" alterar o stepper já dispara recálculo + persistência.
 
 ---
 

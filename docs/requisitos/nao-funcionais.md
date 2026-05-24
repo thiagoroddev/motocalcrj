@@ -153,7 +153,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 /estimativa/detalhamento
 /registros
 /mao-de-obra
-/vida-util
+/insumos
 /ajustes
 /perfil
 
