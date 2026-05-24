@@ -801,6 +801,8 @@ Os componentes abaixo devem ser instalados via `npx shadcn@latest add` e persona
 
 #### VIII.2.3- Registros
 
+> ⚠️ **ADIADO via ADR-003 (18/05/26):** estes eventos servem a uma tela que foi removida do escopo de maio/2026. Conteúdo preservado para fidelidade histórica da spec v6.0.
+
 | Evento                     | Quando disparar                                   | Propriedades                                                                               |
 | -------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `registro_salvo`           | Qualquer formulário de registro salvo com sucesso | `{ tipo: 'rodagem' \| 'abastecimento' \| 'oleo' \| 'pneu' \| 'revisao' \| 'kit_relacao' }` |
@@ -922,298 +924,32 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 
 ## XII- Estrutura de Dados (TypeScript)
 
-### XII.1- Interfaces Principais (`/src/types/index.ts`)
+### XII.1- Interfaces Principais
 
-```typescript
-// ─── Enums ───────────────────────────────────────────────────────────────────
-
-export type SituacaoMoto = "quitada" | "financiada" | "alugada";
-export type PerfilPecas = "original" | "paralela";
-export type ModoRevisao = "autorizadas" | "independentes";
-export type ModoExibicao = "predefinidos" | "personalizado";
-export type TipoCombustivel = "comum" | "aditivada" | "etanol";
-export type FatorResponsabilidade = "eu" | "locador" | "dividimos";
-export type PerfilUso = "entrega" | "passageiro";
-
-// ─── Perfil do Usuário ────────────────────────────────────────────────────────
-
-export interface PerfilUsuario {
-  schemaVersion: 5;
-  userId: string | null; // null em V1; UUID em V2 (login-ready)
-  onboardingConcluido: boolean;
-  apelido: string | null;
-  aplicativos: string[];
-
-  moto: MotoConfig;
-  perfilManutencao: ManutencaoConfig;
-  trabalho: TrabalhoConfig;
-  financeiro: FinanceiroConfig;
-  configuracaoDisplay: DisplayConfig;
-  pecasOverrides: PecaOverride[];
-  servicosMaoDeObra: ServicosMaoDeObra;
-  revisaoAutorizadaOverrides: RevisaoOverride[];
-  fipeCache: FipeCache | null;
-  historicoManutencao: HistoricoManutencao;
-  diarioTrabalho: DiarioEntry[];
-}
-
-export interface MotoConfig {
-  marca: string;
-  modelo: string; // ex: 'pop110i', 'cg_titan160'
-  ano: number;
-  perfilUso: PerfilUso;
-  kmAtual: number;
-  kmUltimaRevisao: number | null;
-}
-
-export interface ManutencaoConfig {
-  perfilPecasGlobal: PerfilPecas;
-  modoRevisao: ModoRevisao;
-  precoMaoDeObraIndependente: number; // padrão: 150
-  frequenciaRevisaoKm: number; // padrão: 6000
-}
-
-export interface TrabalhoConfig {
-  kmPorDia: number;
-  diasPorSemana: number; // 1–7
-  horasPorDia: number; // padrão: 8
-}
-
-export interface CombustivelConfig {
-  preco: number;
-  autonomia: number; // km/L
-}
-
-export interface SeguroConfig {
-  tem: boolean;
-  valorAnual: number;
-  empresa: string | null;
-  periodicidade: "anual" | "mensal";
-}
-
-export interface ResponsabilidadeAluguel {
-  documentos: FatorResponsabilidade;
-  manutencao: FatorResponsabilidade;
-  seguro: FatorResponsabilidade;
-}
-
-export interface GastoCustom {
-  id: string;
-  nome: string;
-  valorMensal: number;
-  ativo: boolean;
-}
-
-export interface FinanceiroConfig {
-  tipoGasolinaPreferida: TipoCombustivel;
-  combustiveis: Record<TipoCombustivel, CombustivelConfig>;
-  internet: number;
-  seguro: SeguroConfig;
-  situacaoMoto: SituacaoMoto;
-  parcelaMensal: number | null;
-  parcelasRestantes: number | null;
-  aluguelMensal: number | null;
-  aluguelPeriodicidade: "mensal" | "semanal" | null;
-  alimentacaoDia: number;
-  gastosCustom: GastoCustom[];
-  responsabilidadeAluguel: ResponsabilidadeAluguel;
-}
-
-export interface CategoriaDisplay {
-  combustivel: boolean;
-  alimentacao: boolean;
-  manutencao: boolean;
-  documentacao: boolean;
-  internet: boolean;
-  seguro: boolean;
-  financiamento: boolean;
-}
-
-export interface DisplayConfig {
-  modoExibicao: ModoExibicao;
-  modoOficinDisplay: ModoRevisao;
-  categoriasAtivas: CategoriaDisplay;
-}
-
-export interface PecaOverride {
-  id: string;
-  precoEditado: number | null;
-  intervaloKmEditado: number | null;
-  perfilPecasOverride: PerfilPecas | null;
-}
-
-export interface ServicosMaoDeObra {
-  trocaOleo: number;
-  trocaKitTransmissao: number;
-  trocaPneu: number;
-  revisaoGeral: number;
-  avulso: number;
-}
-
-export interface RevisaoOverride {
-  intervaloKm: number;
-  precoEditado: number;
-}
-
-export interface FipeCache {
-  valor: number;
-  dataConsulta: string; // ISO 8601: 'YYYY-MM-DD'
-  codigoFipe: string;
-  marca: string;   // ex: 'Honda' — usado para invalidar cache ao trocar modelo
-  modelo: string;  // ex: 'pop110i' — necessário para validar que o cache pertence ao modelo atual
-}
-
-// ─── Histórico e Diário ───────────────────────────────────────────────────────
-
-export interface TrocaOleo {
-  id: string;
-  data: string;
-  km: number;
-  valorTotal: number;
-  tipoOleo?: string;
-  marca?: string;
-}
-
-export interface RevisaoGeral {
-  id: string;
-  data: string;
-  km: number;
-  local: "autorizada" | "independente";
-  qualRevisao: string;
-  status: "concluido" | "em_dia" | "proximo";
-  itensTrocados: string[];
-  valorMaoDeObra: number;
-  valorPecas: number;
-  valorTotal: number;
-}
-
-export interface TrocaPneu {
-  id: string;
-  data: string;
-  km: number;
-  posicao: "dianteiro" | "traseiro";
-  marca: string;
-  valorTotal: number;
-}
-
-export interface TrocaKitRelacao {
-  id: string;
-  data: string;
-  km: number;
-  marca: string;
-  valorTotal: number;
-  valorPecas: number;
-  valorMaoDeObra: number;
-}
-
-export interface Abastecimento {
-  id: string;
-  data: string;
-  tipo: TipoCombustivel;
-  posto: string;
-  km: number;
-  litros: number;
-  precoLitro: number;
-  valorTotal: number;
-}
-
-export interface HistoricoManutencao {
-  trocasOleo: TrocaOleo[];
-  revisoes: RevisaoGeral[];
-  trocasPneu: TrocaPneu[];
-  trocasKitRelacao: TrocaKitRelacao[];
-  abastecimentos: Abastecimento[];
-}
-
-export interface DiarioEntry {
-  id: string;
-  data: string;
-  kmInicial: number;
-  kmFinal: number;
-  kmPercorridos: number;
-  comeu: boolean;
-  abasteceu: boolean;
-  litros: number | null;
-  precoLitro: number | null;
-}
-
-// ─── Preset ──────────────────────────────────────────────────────────────────
-
-export interface PecaPreset {
-  id: string;
-  nome: string;
-  intervaloKm: number;
-  intervaloKmEntrega: number; // intervalo real para motoboy (< manual)
-  intervaloMeses: number;
-  precoOriginal: number;
-  precoParalela: number;
-  anoFimOriginal?: number; // se original descontinuada
-}
-
-export interface PneuPreset {
-  id: string;
-  posicao: "dianteiro" | "traseiro";
-  vidaUtilKm: number;
-  precoOriginal: number;
-  precoParalela: number;
-}
-
-export interface RevisaoPreset {
-  intervaloKm: number;
-  intervaloMeses: number;
-  precoTotal: number;
-}
-
-export interface MotoPreset {
-  marca: string;
-  modelo: string;
-  nomeCurto: string;
-  consumoKmL: number;
-  consumoKmLComBau: number;
-  codigoFipe: string;
-  pecas: PecaPreset[];
-  pneus: PneuPreset[];
-  revisaoAutorizada: RevisaoPreset[];
-}
-
-// ─── Resultado dos Cálculos ───────────────────────────────────────────────────
-
-export interface Granularidades {
-  anual: number;
-  mensal: number;
-  semanal: number;
-  diario: number;
-  horario: number;
-  porKm: number;
-}
-
-export interface DistribuicaoCustos {
-  combustivel: number;
-  alimentacao: number;
-  manutencao: number;
-  documentacao: number;
-  internet: number;
-  seguro: number;
-  financiamento: number;
-  gastosCustom: number;
-  total: number;
-}
-
-export interface AlertaManutencao {
-  pecaId: string;
-  pecaNome: string;
-  kmRestante: number;
-  diasEstimados: number;
-}
-```
+> **Pointer enxuto (atualizado em 24/05/26 pela TASK-DOC-010):** o snapshot original desta seção, congelado em 09/05/26 com `schemaVersion: 5`, decaiu rapidamente após ADR-003, REF-18, REF-19 e REF-21. Para evitar nova divergência, a verdade primária das interfaces agora vive no código.
+>
+> **Onde olhar agora:**
+> - **Tipos do perfil e do estado:** [`src/types/perfil.ts`](../../src/types/perfil.ts) (`PerfilUsuario`, `SeguroConfig`, `CategoriaDisplay`, `PecaOverride`, `ServicoIndependente`, `RevisaoAutorizadaOverride`, `FipeCache`, `KmUltimaTrocas`, `PresetEntry`, `PerfilAction`, e os enums `PerfilUso`/`ModoRevisao`/`TipoCombustivel`/`PerfilPecas`/`SituacaoMoto`/`ResponsabilidadeCusto`).
+> - **Tipos de cálculo e preset:** [`src/types/calculos.ts`](../../src/types/calculos.ts) (`PresetMoto`, `PecaPreset`, `PneuPreset`, `RevisaoAutorizadaPreset`, `DadosRJ`, `GranularidadesCusto`, `CustosPorCategoria`, `FiltrosCategorias`, `ResultadoCalculo`).
+> - **schemaVersion atual e tabela de migrações:** [`docs/arquitetura/estado_inicial.md`](../arquitetura/estado_inicial.md).
+> - **Modelagem conceitual e invariantes:** [`docs/dominio/modelagem/`](../dominio/modelagem/) e [`docs/dominio/invariantes.md`](../dominio/invariantes.md).
+>
+> **O que mudou em relação ao snapshot v6.0 original (resumo, não exaustivo):**
+> - `schemaVersion` evoluiu de 5 (literal) → `number` aberto, em 14 atualmente (ver tabela em `estado_inicial.md`).
+> - **Removidos** (ADIADO via ADR-003 + REF-18/19/21): `PerfilUsuario.historicoManutencao`, `PerfilUsuario.diarioTrabalho`, `ManutencaoConfig.precoMaoDeObraIndependente`, `ManutencaoConfig.frequenciaRevisaoKm`, `SeguroConfig.tem`, `DisplayConfig.modoExibicao`, `DisplayConfig.modoOficinDisplay`, e as interfaces `HistoricoManutencao`, `DiarioEntry`, `TrocaOleo`, `RevisaoGeral`, `TrocaPneu`, `TrocaKitRelacao`, `Abastecimento`.
+> - **Renomeados/reescritos:** `servicosMaoDeObra` (objeto) → `servicosIndependentes` (`ServicoIndependente[]`); `CategoriaDisplay` ganhou `imprevistos` e o perfil ganhou `configuracaoDisplay.imprevistosSugeridosAtivos`; `PecaOverride` agora tem `precoEditadoOriginal` + `precoEditadaParalela` (override por perfil) em vez de `precoEditado` único; `FatorResponsabilidade` virou `ResponsabilidadeCusto`; `MotoPreset` virou `PresetMoto`; `Granularidades`/`DistribuicaoCustos` migraram para `GranularidadesCusto`/`CustosPorCategoria`/`ResultadoCalculo`; o perfil ganhou `moto.kmUltimaTrocas` (`KmUltimaTrocas`) e `moto.kmMotorRefeito`.
+>
+> Esta abordagem (pointer + sumário de divergências) substitui o snapshot de tipos copiado, evitando re-decaimento. Mesmo padrão adotado por `docs/arquitetura/calculos-visao.md` na TASK-DOC-009.
 
 ---
 
 ### XII.2- Schema do Arquivo de Export
 
+> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 14 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
+
 ```typescript
 export interface ExportFile {
-  schemaVersion: 5;
+  schemaVersion: number;
   exportadoEm: string; // ISO 8601
   app: "MotoCalc RJ";
   aviso: "Este arquivo contém dados pessoais. Não compartilhe.";
@@ -1222,6 +958,8 @@ export interface ExportFile {
 ```
 
 ### XII.3- Resolução de Override (algoritmo central)
+
+> ⚠️ **Desatualizado:** este algoritmo era parametrizado por `modoExibicao` ('predefinidos' vs 'personalizado'). Esse modo foi **removido por ADR-003** — o app passa a operar exclusivamente em modo personalizado, e o override (quando presente) é sempre o valor efetivo. A função real vive em [`src/utils/calculos.ts`](../../src/utils/calculos.ts) sob outra forma (`resolverPerfilEfetivoDaPeca`, `resolverServicosIndependentesEfetivos`, etc.). Snippet preservado para fidelidade da spec v6.0.
 
 ```typescript
 // /src/utils/resolverOverride.ts
@@ -1267,6 +1005,8 @@ export function resolverPerfilPeca(
 
 ## XIII- Funções de Cálculo (`/src/utils/calculos.ts`)
 
+> **Catálogo congelado em 09/05/26.** Para o catálogo vivo (assinaturas reais + função→tela), ver [`docs/arquitetura/calculos-visao.md`](../arquitetura/calculos-visao.md) (criado pela TASK-DOC-009). Algumas assinaturas abaixo divergem do código atual — notas inline.
+
 ```typescript
 // Rodagem
 calcularKmMensal(kmDia: number, diasSemana: number): number
@@ -1288,7 +1028,7 @@ calcularCustoRevisaoAnualAutorizado(revisoes: RevisaoPreset[], kmAnual: number):
 calcularCustoRevisaoAnualIndependente(precoMO: number, freqKm: number, kmAnual: number): number
 calcularCustoDocumentosAnual(fipe: number, aliquota: number, idadeMoto: number, licenciamento: number, fator: number): number
 calcularCustoInternetAnual(mensal: number): number
-calcularCustoSeguroAnual(valorAnual: number, tem: boolean, fator: number): number
+calcularCustoSeguroAnual(valorAnual: number, fator: number): number  // [REF-21] param `tem: boolean` removido — ausência de seguro é representada por valorAnual = 0
 calcularCustoFinanciamentoAnual(parcela: number | null, situacao: SituacaoMoto): number
 calcularCustoAluguelAnual(aluguel: number | null, situacao: SituacaoMoto, periodicidade: 'mensal' | 'semanal' | null): number
 calcularCustoAlimentacaoAnual(alimentacaoDia: number, diasAno: number): number
@@ -1315,6 +1055,7 @@ calcularIPVA(valorFipe: number, aliquota: number, idadeMoto: number): number
 calcularProximaManutencao(kmAtual: number, kmUltimaTroca: number, intervaloKm: number, kmDia: number, diasSemana: number): AlertaManutencao
 
 // Médias reais (baseadas em histórico)
+// ⚠️ ADIADO via ADR-003 — estas três funções dependiam da tela Registros e não existem no código atual:
 calcularMediaKmDiaReal(registros: DiarioEntry[]): number | null      // null se < 5 registros
 calcularConsumoRealKmL(abastecimentos: Abastecimento[]): number | null // null se < 3 registros
 calcularIntervaloMedioReal(registros: Array<{ km: number }>): number | null // null se < 2 registros
