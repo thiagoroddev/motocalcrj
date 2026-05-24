@@ -1,3 +1,10 @@
+> ⚠️ **DESATUALIZADO — NÃO USAR COMO REFERÊNCIA.**
+> Este arquivo é a **especificação pré-implementação de 05/05/2026**. Nunca foi sincronizado após a implementação. Diverge profundamente do código atual em assinaturas (`resolverKmDia`, `resolverIntervaloPeca`, `resolverPrecoPeca`, `calcularCpkPorPeca`, `calcularCustosPorCategoria`, `calcularCustoSeguroAnual`), tipos (`RegistroManutencao`, `ModoExibicao`, `RegistroRodagem`, `FiltrosCategorias`, `CustosPorCategoria` antigo, `ResultadoCalculo`), funções inteiras removidas (toda a seção IV.8 sobre Modo Personalizado, `calcularKmMensalPorSemanas`, `agruparRegistrosPorSemana`, `temDadoSuficiente`, `calcularKmParaProximaRevisao`, `calcularDiasParaProximaRevisao`) e estrutura de UI (`<DetalhamentoCustos />` real é completamente diferente).
+> Verdade primária atual: ler diretamente `src/utils/calculos.ts`, `src/types/calculos.ts` e `src/types/perfil.ts`. Reescrita completa programada na **TASK-DOC-009** (Strict).
+> Mantido apenas para referência histórica.
+
+---
+
 # MotoCalc RJ — Arquitetura de Funções de Cálculo
 
 > Status: especificação definitiva — pré-implementação

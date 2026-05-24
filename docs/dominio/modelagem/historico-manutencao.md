@@ -1,3 +1,9 @@
+> ⚠️ **DESATUALIZADO — NÃO USAR COMO REFERÊNCIA.**
+> Este arquivo descreve o bloco `perfil.historicoManutencao` (5 listas: trocas de óleo, revisões, pneus, kit relação, abastecimentos) que foi **removido em 23/05/26 pela TASK-REF-19** após decisão da ADR-003 (modo único, sem Registros). Hoje as "últimas trocas" são apenas km por componente em `perfil.moto.kmUltimaTrocas` (ver `bloco-moto.md` e TASK-RF-6.3.2). Reescrita completa programada na **TASK-DOC-009** (Strict).
+> Mantido apenas para referência histórica enquanto a TASK-DOC-009 não roda.
+
+---
+
 # Histórico de Manutenção
 
 > **Status:** Engenharia reversa baseada em código real.

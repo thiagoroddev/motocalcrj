@@ -1,3 +1,17 @@
+> ⚠️ **DESATUALIZADO — NÃO USAR COMO REFERÊNCIA.**
+> Este arquivo é a **especificação pré-implementação de 05/05/2026**. Nunca foi sincronizado. Divergências críticas:
+> - `schemaVersion: 5` → real **10** (migrações v5→v6→v7→v8→v9→v10 já rodaram via TASK-REF-11, RF-6.3.2, REF-18, REF-19, REF-21).
+> - Namespace `motocalc:v5:` → atual reflete schema atual.
+> - `perfilPadrao` mostrado tem `historicoManutencao`, `diarioTrabalho`, `modoExibicao`, `modoOficinDisplay`, `precoMaoDeObraIndependente`, `frequenciaRevisaoKm`, `servicosMaoDeObra`, `seguro.tem` — **todos removidos**.
+> - Catálogo de Actions inclui 12+ actions removidas (ADD_TROCA_OLEO, ADD_REVISAO, ADD_DIA_TRABALHO, SET_MODO_EXIBICAO, SET_MODO_OFICINA, ADD_GASTO_CUSTOM, etc).
+> - Função `migrarPerfil` documentada não corresponde à atual (que está inline no PerfilContext).
+> - Falta: `kmUltimaTrocas`, `kmMotorRefeito`, `servicosIndependentes`, `imprevistosSugeridosAtivos`, `responsabilidadeAluguel`, novas actions de Ajustes.
+>
+> Verdade primária atual: ler `src/types/perfil.ts` (`PerfilUsuario` + `PerfilAction`) e `src/context/PerfilContext.tsx` (`perfilPadrao` + migrações + reducer). Reescrita completa programada na **TASK-DOC-009** (Strict).
+> Mantido apenas para referência histórica.
+
+---
+
 # MotoCalc RJ Estado Inicial e Arquitetura de Persistência
 
 > Status: especificação definitiva pré-implementação

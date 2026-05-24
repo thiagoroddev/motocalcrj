@@ -1,3 +1,9 @@
+> ⚠️ **DESATUALIZADO — NÃO USAR COMO REFERÊNCIA.**
+> Este arquivo descreve o bloco `perfil.diarioTrabalho` (registros diários com km inicial/final) e funções derivadas (`resolverKmDia(..., diarioTrabalho, modoExibicao)`, `calcularKmMensalPorSemanas`, `agruparRegistrosPorSemana`, `temDadoSuficiente`). **Tudo removido em 23/05/26 pelas TASK-REF-18 e TASK-REF-19** após decisão da ADR-003. Hoje o app opera em modo único sem diário/registros — `resolverKmDia` retorna `perfil.trabalho.kmPorDia` direto. Reescrita/exclusão programada na **TASK-DOC-009** (Strict).
+> Mantido apenas para referência histórica enquanto a TASK-DOC-009 não roda.
+
+---
+
 # Diario de Trabalho
 
 > **Status:** Engenharia reversa baseada em codigo real.
