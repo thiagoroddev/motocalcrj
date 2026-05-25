@@ -21,6 +21,49 @@ Obedeça essa ordem:
 
 > **TASK-DOC-010** concluída em 25/05/26 — ver `docs/tarefas/concluidas/` (sincronização Híbrida de `docs/requisitos/*` + `docs/contexto-projeto-ai.md` com ADR-003; 4 ondas, 5 arquivos tocados; XII.1 substituído por pointer enxuto).
 
+## TASK-DOC-011 — Sincronizar índice I- de Requisitos_MotoCalc_RJ_v6.md com numeração do corpo
+
+- **Status:** Pendente
+- **Modo:** Light
+- **Valor:** Desejável
+- **Urgência:** Imediata
+- **Esforço-H/IA:** P/P
+- **Data origem:** 25/05/26 00:10
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:** Imediata por estar fora do escopo da TASK-DOC-010 (anotado em "O Que NÃO Foi Feito") e ser correção barata enquanto o contexto da spec v6 ainda está fresco. Débito pré-existente: o índice I- numera de 1 a 15 (`1. [[#I- Visão Geral]]` etc.), mas o corpo numera de II a XVI (16 seções, começando em "II- Visão Geral"). Os links de anchor `[[#X-…]]` funcionam por nome de heading, então a navegação não está quebrada — é apenas inconsistência de numeração. Como toda a spec v6.0 está congelada (data 09/05/26), corrigir o índice agora mantém a spec internamente consistente sem alterar conteúdo.
+
+**Escopo:**
+- `docs/requisitos/Requisitos_MotoCalc_RJ_v6.md` — seção `## I- Índice` (linhas ~12–29): trocar a numeração de 1–15 para II–XVI, casando com os headings reais do corpo. Manter os labels (`[[#X- Nome]]`) como estão.
+
+**Critérios de aceite:**
+- Cada item do índice cita o número romano que aparece no heading do corpo (II, III, IV, …, XVI).
+- Total de 15 itens no índice (corresponde às 15 seções de conteúdo; "I- Índice" é a própria seção do índice e não se autorreferencia).
+- Links de anchor continuam funcionando (não há mudança de heading no corpo).
+
+---
+
+## TASK-DOC-012 — Atualizar métricas de teste em docs/contexto-projeto-ai.md
+
+- **Status:** Pendente
+- **Modo:** Light
+- **Valor:** Desejável
+- **Urgência:** Imediata
+- **Esforço-H/IA:** P/P
+- **Data origem:** 25/05/26 00:10
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:** Imediata por estar fora do escopo da TASK-DOC-010 (anotado em "O Que NÃO Foi Feito") e ser correção pontual enquanto o número está fresco. O arquivo `docs/contexto-projeto-ai.md` cita métricas defasadas em dois pontos: na árvore de pastas (`utils/calculos.ts` com "✅ 92 testes") e nas Decisões Arquiteturais Imutáveis ("76 testes"). Verificado em 25/05/26: `npm run test` reporta **124 testes** totais — 33 em `PerfilContext.test.ts` + 91 em `calculos.test.ts`. Como métricas decaem rápido, considerar acoplar a correção a uma instrução genérica "ver `npm run test` para contagem atual" em vez de fixar números — decisão do humano na execução.
+
+**Escopo:**
+- `docs/contexto-projeto-ai.md` — atualizar duas menções defasadas:
+  - Árvore de pastas: `# ✅ 92 testes — NUNCA TOCAR sem aprovação` → considerar trocar por "✅ NUNCA TOCAR sem aprovação (ver `npm run test` para contagem atual)" para evitar re-decaimento.
+  - Decisões Arquiteturais Imutáveis: "`utils/calculos.ts` é imutável (76 testes)" → mesma ideia, remover o número fixo ou atualizar para 91.
+
+**Critérios de aceite:**
+- Zero menção a "76 testes", "92 testes" ou qualquer número de testes que não corresponda à contagem atual.
+- Se optar por manter número fixo: bater com `npm run test` no momento da execução (registrar o comando no arquivo da task).
+
 ---
 
 ## Revisão geral das telas de configuração — ADR-005 e ADR-006 (20/05/26)
