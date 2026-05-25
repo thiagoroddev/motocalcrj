@@ -19,7 +19,7 @@ Obedeça essa ordem:
 
 > **TASK-DOC-009** concluída em 24/05/26 — ver `docs/tarefas/concluidas/` (sincronização de docs/dominio + docs/arquitetura com código pós-ADR-003; 4 ondas, 14 arquivos tocados).
 
-> **TASK-DOC-010** movida para `em-andamento.md` em 24/05/26 16:53 — sincronização de `docs/requisitos/*` + `docs/contexto-projeto-ai.md` com ADR-003 (estratégia Híbrida, 4 ondas).
+> **TASK-DOC-010** concluída em 25/05/26 — ver `docs/tarefas/concluidas/` (sincronização Híbrida de `docs/requisitos/*` + `docs/contexto-projeto-ai.md` com ADR-003; 4 ondas, 5 arquivos tocados; XII.1 substituído por pointer enxuto).
 
 ---
 

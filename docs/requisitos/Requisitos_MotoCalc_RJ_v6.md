@@ -1065,6 +1065,8 @@ calcularIntervaloMedioReal(registros: Array<{ km: number }>): number | null // n
 
 ## XIV- Estrutura de Pastas
 
+> ⚠️ **Snapshot v6.0 desatualizado.** Para a estrutura real do projeto, ver `docs/contexto-projeto-ai.md` (seção "Estrutura Real de Pastas"). Diferenças mais relevantes em relação ao snapshot abaixo: pastas `registros/` e `vidaUtil/` não existem (Registros adiados via ADR-003; AUTONOMIA virou INSUMOS pela TASK-DOC-008), `types/index.ts` foi separado em `types/perfil.ts` + `types/calculos.ts`, e os componentes seguem nomes em `pages/PaginaXxx.tsx`.
+
 ```
 motocalc/
 ├── public/
@@ -1149,19 +1151,7 @@ motocalc/
 │   │   │       ├── DetalhamentoCustos.tsx
 │   │   │       └── CardCategoria.tsx
 │   │   │
-│   │   ├── registros/
-│   │   │   ├── Registros.tsx            → aba REGISTROS com sub-abas
-│   │   │   ├── SubAbaGeral.tsx
-│   │   │   ├── SubAbaRodagem.tsx
-│   │   │   ├── SubAbaCombustivel.tsx
-│   │   │   ├── SubAbaManutencao.tsx
-│   │   │   └── formularios/
-│   │   │       ├── FormRodagem.tsx
-│   │   │       ├── FormAbastecimento.tsx
-│   │   │       ├── FormOleo.tsx
-│   │   │       ├── FormPneu.tsx
-│   │   │       ├── FormRevisao.tsx
-│   │   │       └── FormKitRelacao.tsx
+│   │   ├── registros/   ⚠️ ADIADO via ADR-003 — pasta não foi criada
 │   │   │
 │   │   ├── maoDeObra/
 │   │   │   ├── MaoDeObra.tsx            → aba MÃO DE OBRA
@@ -1194,10 +1184,11 @@ motocalc/
 
 | Prioridade                | Requisitos                                                                                                                                                                              | Justificativa                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Must Have (V1)**        | RF-ON-01 a 07, RF-EST-01 a 10, RF-DET-01 a 11, RF-MO-01 a 05, RF-VU-01 a 05, RF-DOC-01 a 03, RF-CONF-01 a 02, RF-PERF-01 a 04, RN-01 a 26, RNF-01 a 12, RNF-LR-01 a 06, RNF-PWA-01 a 05 | Núcleo funcional. Sistema de overrides (RN-01 a 05) é arquitetural — deve estar desde o início. |
-| **Should Have (V1)**      | RF-REG-01 a 12, RF-FORM-01 a 06, RF-EXP-01 a 03, RNF-ANA-01 a 03 + catálogo de eventos, RNF-TWA-01 a 06 (Play Store)                                                                    | Registros transformam o app de calculadora em ferramenta viva. Play Store expande alcance.      |
-| **Could Have (V1 ou V2)** | Diário de trabalho integrado (cálculo de consumo real), Modo comparativo (duas motos lado a lado), Alertas push via Web Push API                                                        | Melhora a precisão dos cálculos ao longo do tempo. Adicionar sem refatoração do núcleo.         |
+| **Must Have (V1)**        | RF-ON-01 a 07, RF-EST-01 a 10, RF-DET-01 a 11, RF-MO-01 a 05, RF-VU-01 a 05, RF-DOC-01 a 03, RF-CONF-01 a 02, RF-PERF-01 a 04, RN-01 a 23 + RN-27, RNF-01 a 12, RNF-LR-01 a 06, RNF-PWA-01 a 05 | Núcleo funcional. Sistema de overrides (RN-01 a 05) é arquitetural — deve estar desde o início. |
+| **Should Have (V1)**      | RF-EXP-01 a 03, RNF-ANA-01 a 03 + catálogo de eventos, RNF-TWA-01 a 06 (Play Store)                                                                                                      | Export/import e Play Store expandem alcance e segurança dos dados.                              |
+| **Could Have (V1 ou V2)** | Modo comparativo (duas motos lado a lado), Alertas push via Web Push API                                                                                                                | Adicionar sem refatoração do núcleo.                                                            |
 | **Won't Have (V1)**       | Login, sincronização entre dispositivos, backend, API de preços em tempo real, comparativo de plataformas, iOS App Store                                                                | Complexidade excessiva. `RNF-LR-01 a 06` e `RF-EXP-01 a 03` preparam V2.                        |
+| **Backlog (ADR-003)**     | RF-REG-01 a 12, RF-FORM-01 a 06, RN-24/25/26, Diário de trabalho integrado, alertas/histórico de manutenção (RF-7.2)                                                                    | Removidos do MVP por ADR-003 (18/05/26). Reavaliar após app em produção.                        |
 
 ---
 
@@ -1299,14 +1290,9 @@ Fase 8 — Aba AUTONOMIA
   SecaoPneus.tsx (dianteiro + traseiro)
 
 ──────────────────────────────────────────────────────────────────
-Fase 9 — Aba REGISTROS
-  Registros.tsx com 4 sub-abas
-  SubAbaGeral.tsx com todas as seções
-  SubAbaRodagem.tsx + SubAbaCombustivel.tsx + SubAbaManutencao.tsx
-  FormRodagem.tsx + FormAbastecimento.tsx + FormOleo.tsx
-  FormPneu.tsx + FormRevisao.tsx + FormKitRelacao.tsx
-  Lógica de intervalo médio real (RF-REG-11)
-  Editar/excluir registros (RF-REG-12)
+Fase 9 — Aba REGISTROS  ⚠️ ADIADO via ADR-003 (18/05/26)
+  Removida do escopo de maio/2026. Backlog futuro (reavaliar pós-produção).
+  Componentes Registros.tsx, sub-abas, formulários e RF-REG-11/12 não foram implementados.
 
 ──────────────────────────────────────────────────────────────────
 Fase 10 — Perfil e Configurações
