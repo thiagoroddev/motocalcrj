@@ -11,21 +11,21 @@
 
 ## I- Índice
 
-1. [[#I- Visão Geral]]
-2. [[#II- Navegação e Estrutura de Telas]]
-3. [[#III- Fluxo de Onboarding]]
-4. [[#IV- Requisitos Funcionais]]
-5. [[#V- Regras de Negócio]]
-6. [[#VI- Requisitos Não Funcionais]]
-7. [[#VII- Coleta de Eventos (Analytics)]]
-8. [[#VIII- PWA e Distribuição na Play Store]]
-9. [[#IX- Arquitetura Login-Ready]]
-10. [[#X- Stack Tecnológica]]
-11. [[#XI- Estrutura de Dados (TypeScript)]]
-12. [[#XII- Funções de Cálculo]]
-13. [[#XIII- Estrutura de Pastas]]
-14. [[#XIV- Priorização MoSCoW]]
-15. [[#XV- Fases de Implementação]]
+1. [[#II- Visão Geral]]
+2. [[#III- Navegação e Estrutura de Telas]]
+3. [[#IV- Fluxo de Onboarding]]
+4. [[#V- Requisitos Funcionais]]
+5. [[#VI- Regras de Negócio]]
+6. [[#VII- Requisitos Não Funcionais]]
+7. [[#VIII- Coleta de Eventos (Analytics)]]
+8. [[#IX- PWA e Distribuição na Play Store]]
+9. [[#X- Arquitetura Login-Ready]]
+10. [[#XI- Stack Tecnológica]]
+11. [[#XII- Estrutura de Dados (TypeScript)]]
+12. [[#XIII- Funções de Cálculo]]
+13. [[#XIV- Estrutura de Pastas]]
+14. [[#XV- Priorização MoSCoW]]
+15. [[#XVI- Fases de Implementação]]
 
 ---
 

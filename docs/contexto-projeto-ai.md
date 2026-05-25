@@ -81,7 +81,7 @@ src/
 │   ├── perfil.ts            # PerfilUsuario, PresetEntry, PerfilAction
 │   └── calculos.ts          # GranularidadesCusto, CustosPorCategoria, FiltrosCategorias
 ├── utils/
-│   ├── calculos.ts          # ✅ 92 testes — NUNCA TOCAR sem aprovação
+│   ├── calculos.ts          # ✅ NUNCA TOCAR sem aprovação (ver `npm run test` para contagem)
 │   ├── calculos.test.ts
 │   └── formatters.ts        # moeda(), cpkFormatado(), kmFormatado()
 ├── services/
@@ -155,7 +155,7 @@ src/
 - **Estado global:** Context + `useReducer`. Um contexto por domínio. Não atomizar.
 - **Persistência:** `localStorage` acessado exclusivamente via `services/perfilStorage.ts`.
 - **Presets JSON:** Imutáveis em runtime. Toda personalização vai para overrides no perfil.
-- **Cálculos:** `utils/calculos.ts` é imutável (76 testes). Novas funções de cálculo seguem o mesmo estilo, mas não alteram as existentes sem aprovação.
+- **Cálculos:** `utils/calculos.ts` é imutável (ver `npm run test` para contagem atual). Novas funções de cálculo seguem o mesmo estilo, mas não alteram as existentes sem aprovação.
 - **Roteamento:** React Router v7 (modo biblioteca — API v6 preservada).
 - **UI base:** shadcn/ui instalado. Wrappers em `components/ui/`. Componentes em uso: Card, Button, Input, Label, Badge, Accordion, Dialog, Switch, Tabs, Sheet, Separator, Toggle.
 - **Testes:** Vitest com `describe`/`it`, padrão AAA, nomes em português.
