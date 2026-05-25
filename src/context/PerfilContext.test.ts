@@ -231,6 +231,7 @@ describe('perfilReducer', () => {
             imprevistos: true,
           },
           imprevistosSugeridosAtivos: {},
+          filtrosManutencao: perfilPadrao.configuracaoDisplay.filtrosManutencao,
         },
       },
     };
@@ -262,6 +263,11 @@ describe('perfilReducer', () => {
     // Imprevistos: categoria volta ao default true, sugeridos zerados
     expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
+    expect(resultado.perfil.configuracaoDisplay.filtrosManutencao).toEqual({
+      revisao: true,
+      manutencaoPorPeca: {},
+      revisaoPorServico: {},
+    });
 
     // Moto e servicosIndependentes não são tocados
     expect(resultado.perfil.moto).toEqual(estadoComCustos.perfil.moto);
@@ -310,6 +316,76 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(false);
   });
 
+  // ── Filtros finos de Manutenção persistidos (TASK-BG-014) ─
+
+  it('TOGGLE_REVISAO_MANUTENCAO persiste revisão desligada e religa depois', () => {
+    const desligado = perfilReducer(estadoVazio, { type: 'TOGGLE_REVISAO_MANUTENCAO' });
+    const religado = perfilReducer(desligado, { type: 'TOGGLE_REVISAO_MANUTENCAO' });
+
+    expect(desligado.perfil.configuracaoDisplay.filtrosManutencao.revisao).toBe(false);
+    expect(religado.perfil.configuracaoDisplay.filtrosManutencao.revisao).toBe(true);
+  });
+
+  it('TOGGLE_MANUTENCAO_POR_PECA grava false explícito e remove ao religar', () => {
+    const desligado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_MANUTENCAO_POR_PECA',
+      id: 'oleo_motor',
+    });
+    const religado = perfilReducer(desligado, {
+      type: 'TOGGLE_MANUTENCAO_POR_PECA',
+      id: 'oleo_motor',
+    });
+
+    expect(
+      desligado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca.oleo_motor,
+    ).toBe(false);
+    expect(religado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca).toEqual({});
+  });
+
+  it('TOGGLE_REVISAO_POR_SERVICO grava false explícito e remove ao religar', () => {
+    const desligado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_REVISAO_POR_SERVICO',
+      id: 'troca-kit-transmissao',
+    });
+    const religado = perfilReducer(desligado, {
+      type: 'TOGGLE_REVISAO_POR_SERVICO',
+      id: 'troca-kit-transmissao',
+    });
+
+    expect(
+      desligado.perfil.configuracaoDisplay.filtrosManutencao.revisaoPorServico[
+        'troca-kit-transmissao'
+      ],
+    ).toBe(false);
+    expect(religado.perfil.configuracaoDisplay.filtrosManutencao.revisaoPorServico).toEqual({});
+  });
+
+  it('TOGGLE_CATEGORIA manutencao não apaga filtros finos persistidos', () => {
+    const estadoComFiltros: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        configuracaoDisplay: {
+          ...perfilPadrao.configuracaoDisplay,
+          filtrosManutencao: {
+            revisao: false,
+            manutencaoPorPeca: { oleo_motor: false },
+            revisaoPorServico: { 'troca-kit-transmissao': false },
+          },
+        },
+      },
+    };
+    const resultado = perfilReducer(estadoComFiltros, {
+      type: 'TOGGLE_CATEGORIA',
+      categoria: 'manutencao',
+    });
+
+    expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.manutencao).toBe(false);
+    expect(resultado.perfil.configuracaoDisplay.filtrosManutencao).toEqual(
+      estadoComFiltros.perfil.configuracaoDisplay.filtrosManutencao,
+    );
+  });
+
   // ── Migração de schema ────────────────────────
 
   // Cascata v8 → v9 → v10 → v11: perfis v8 chegam ao schema atual limpos.
@@ -339,7 +415,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV8) as unknown as Record<string, unknown>;
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(
       (migrado.perfilManutencao as Record<string, unknown>).precoMaoDeObraIndependente,
     ).toBeUndefined();
@@ -375,7 +451,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(1200);
     expect(seguro.empresa).toBe('Suhai');
@@ -400,7 +476,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(0);
   });
@@ -432,7 +508,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(ids).not.toContain('fazer-motor');
     expect(retificaCabecote).toMatchObject({
       nome: 'Retífica de cabeçote',
@@ -473,7 +549,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(retificaCabecote?.precoMaoDeObraIndependente).toBe(950);
     expect(retificaCabecote?.ativo).toBe(false);
     expect(retificaCompleta?.ativo).toBe(false);
@@ -570,16 +646,65 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV12);
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
   });
 
   it('migrarPerfil é idempotente quando aplicada em perfil já na versão atual', () => {
     const migrado = migrarPerfil(perfilPadrao);
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
+    expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
+      revisao: true,
+      manutencaoPorPeca: {},
+      revisaoPorServico: {},
+    });
+  });
+
+  it('migrarPerfil v16 → v17 adiciona filtros finos de Manutenção com defaults ativos', () => {
+    const perfilV16 = {
+      ...perfilPadrao,
+      schemaVersion: 16,
+      configuracaoDisplay: {
+        categoriasAtivas: perfilPadrao.configuracaoDisplay.categoriasAtivas,
+        imprevistosSugeridosAtivos: {},
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV16);
+
+    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
+      revisao: true,
+      manutencaoPorPeca: {},
+      revisaoPorServico: {},
+    });
+  });
+
+  it('migrarPerfil v16 → v17 preserva filtros finos quando já existirem', () => {
+    const perfilV16 = {
+      ...perfilPadrao,
+      schemaVersion: 16,
+      configuracaoDisplay: {
+        ...perfilPadrao.configuracaoDisplay,
+        filtrosManutencao: {
+          revisao: false,
+          manutencaoPorPeca: { oleo_motor: false },
+          revisaoPorServico: { 'troca-kit-transmissao': false },
+        },
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV16);
+
+    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
+      revisao: false,
+      manutencaoPorPeca: { oleo_motor: false },
+      revisaoPorServico: { 'troca-kit-transmissao': false },
+    });
   });
 
   // TASK-RF-6.11 cleanup: v13 → v14 adiciona toggle persistido de Imprevistos
@@ -603,7 +728,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV13);
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
   });
@@ -666,7 +791,7 @@ describe('perfilReducer', () => {
     const oleo = migrado.servicosIndependentes.find((s) => s.id === 'troca-oleo');
     const kit = migrado.servicosIndependentes.find((s) => s.id === 'troca-kit-transmissao');
 
-    expect(migrado.schemaVersion).toBe(16);
+    expect(migrado.schemaVersion).toBe(17);
     expect(oleo).toMatchObject({
       precoMaoDeObraIndependente: 28,
       precoTotalAutorizada: 0,

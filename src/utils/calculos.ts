@@ -9,6 +9,7 @@ import type {
   CategoriaDisplay,
   ServicoIndependente,
   KmUltimaTrocas,
+  FiltrosManutencaoDisplay,
 } from '../types/perfil';
 import type {
   PresetMoto,
@@ -760,13 +761,18 @@ export function calcularCustoMotoAnual(
 export function categoriasParaFiltros(
   cat: CategoriaDisplay,
   imprevistosSugeridosAtivos: Record<string, boolean> = {},
+  filtrosManutencao: FiltrosManutencaoDisplay = {
+    revisao: true,
+    manutencaoPorPeca: {},
+    revisaoPorServico: {},
+  },
 ): FiltrosCategorias {
   return {
     documentos: cat.documentacao,
-    revisao: cat.manutencao, // revisao é sub-item de manutencao
+    revisao: filtrosManutencao.revisao,
     manutencao: cat.manutencao,
-    manutencaoPorPeca: {},
-    revisaoPorServico: {},
+    manutencaoPorPeca: filtrosManutencao.manutencaoPorPeca,
+    revisaoPorServico: filtrosManutencao.revisaoPorServico,
     // Categoria Imprevistos respeita o toggle persistido. Dentro dela, cada
     // sugerido (retífica) e cada gasto custom (Multa/Sinistros/Outros) ainda
     // precisa estar ativo individualmente — categoria off zera tudo.
@@ -797,6 +803,7 @@ export function calcularResultado(
   const filtrosAtivos = categoriasParaFiltros(
     perfil.configuracaoDisplay.categoriasAtivas,
     perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+    perfil.configuracaoDisplay.filtrosManutencao,
   );
 
   const total = calcularTotalFiltrado(custos, filtrosAtivos);

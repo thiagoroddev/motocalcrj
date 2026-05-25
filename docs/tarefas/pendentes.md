@@ -11,51 +11,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-BG-014 — Detalhamento: toggles finos de Manutenção não persistem ao sair da tela
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 25/05/26 17:16 (validação visual da TASK-BG-013)
-- **Dependências:** —
-- **REQ/ADR/DT:** RF-6.3 (Detalhamento), RF-6.3.4 (toggles por item), INV-CALC-1, TASK-BG-013
-- **Observações:**
-  - **Problema observado pelo usuário:** na tela Detalhamento, os toggles finos dos itens da categoria **Manutenção** podem ser desativados, mas ao sair para Estimativa e voltar para Detalhamento eles aparecem ativados novamente e voltam a entrar no cálculo. O único toggle que persiste parcialmente é "Revisão Geral"; mesmo ele tem comportamento inconsistente quando a categoria Manutenção também está desligada.
-  - **Estado real do código (verificado 25/05/26):**
-    - `PaginaDetalhamento` inicializa `filtros` com `categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas, perfil.configuracaoDisplay.imprevistosSugeridosAtivos)`.
-    - `togglePeca(id)` altera apenas `filtros.manutencaoPorPeca` em `useState` local.
-    - `toggleServicoRevisao(id)` altera apenas `filtros.revisaoPorServico` em `useState` local.
-    - `toggleFiltro('revisao')` também altera apenas `filtros.revisao` local; o dispatch persistido só existe para categorias mapeadas em `TOGGLE_CATEGORIA`.
-    - `PerfilUsuario.configuracaoDisplay` persiste `categoriasAtivas` e `imprevistosSugeridosAtivos`, mas **não tem campos persistidos** para `manutencaoPorPeca`, `revisaoPorServico` nem revisão geral.
-    - Documentação atual em `docs/dominio/modelagem/bloco-configuracao-display.md` ainda diz que `manutencaoPorPeca`/`revisaoPorServico` são estado local do Detalhamento. Essa regra não atende a expectativa real do usuário.
-  - **Comportamento esperado:** qualquer item de Manutenção desligado no Detalhamento deve permanecer desligado até o usuário religar, inclusive após navegar para Estimativa, voltar para Detalhamento ou recarregar o app.
-  - **Fix proposto:**
-    - Estender `PerfilUsuario.configuracaoDisplay` com filtros finos persistidos, por exemplo:
-      - `revisaoAtiva: boolean` ou equivalente para a linha "Revisão Geral".
-      - `manutencaoPorPecaAtiva: Record<string, boolean>`.
-      - `revisaoPorServicoAtivo: Record<string, boolean>`.
-    - Preservar a semântica de `INV-CALC-1`: em mapas de Manutenção, `undefined` e `true` significam ativo; apenas `false` explícito desativa.
-    - Criar actions no reducer para alternar esses filtros finos, no mesmo padrão de `TOGGLE_IMPREVISTO_SUGERIDO`.
-    - Atualizar `categoriasParaFiltros` para receber e aplicar os filtros persistidos.
-    - Atualizar call sites (`PaginaDetalhamento`, `PaginaEstimativa`/orquestrador de cálculo, se aplicável) para ler do perfil.
-    - Adicionar migration de schema para perfis existentes, com defaults compatíveis (`revisaoAtiva: true`, mapas vazios).
-    - Atualizar docs de domínio/modelagem que hoje descrevem os filtros finos como estado local.
-  - **Cuidados:**
-    - Não confundir toggle da categoria `manutencao` com os toggles finos internos: categoria off deve zerar tudo visualmente/cálculo, mas não deve apagar as escolhas finas do usuário.
-    - Quando a categoria Manutenção for religada, os itens previamente desligados devem continuar desligados.
-    - Evitar persistir mapa completo com todos os itens `true`; manter estado mínimo e gravar principalmente `false` explícito.
-    - Garantir compatibilidade com os serviços avulsos autorizados da TASK-BG-013 (`revisaoPorServico[id]` agora inclui kit transmissão, pneus, sapatas etc.).
-  - **Testes sugeridos:**
-    - Reducer: alternar peça grava `false` explícito e alternar de novo volta a `true`/remove ou grava `true` conforme padrão escolhido.
-    - Reducer: alternar serviço de revisão persiste por `servicoId`.
-    - Cálculo: `categoriasParaFiltros` + `calcularTotalFiltrado` respeitam filtros finos persistidos após reconstruir filtros do perfil.
-    - Regressão: categoria Manutenção desligada/religada não reseta filtros finos.
-    - Migration: perfil antigo recebe defaults sem alterar total atual.
-
----
-
 ## TASK-RF-6.13 — Renomear card "Últimas manutenções" e adicionar Bateria, Retífica de cabeçote ,Retífica completa, kit transmissão, kit embreagem,
 
 - **Status:** Pendente
@@ -69,7 +24,7 @@ Obedeça essa ordem:
 - **Observações:**
   - **Problema:** o card "Últimas manutenções" em Ajustes (`SecaoUltimasManutencoes`) registra km da última troca por componente, mas (a) o título não comunica que se trata de quilometragem, e (b) faltam linhas para Bateria, Retífica de cabeçote e Retífica completa — itens que aparecem em outras telas mas não têm registro de km aqui.
   - **Local provável:** `src/components/ajustes/SecaoUltimasManutencoes.tsx` (label do título) e `src/types/perfil.ts` (`kmUltimaTrocas` + `kmMotorRefeito` — pode precisar expandir para `kmBateria`, `kmRetificaCabecote`, `kmRetificaCompleta`).
-  - **Fix proposto:** renomear título do card para **"Quilometragem das últimas trocas/manutenções"**; adicionar 3 linhas (Bateria, Retífica de cabeçote, Retífica completa) ao mesmo accordion/lista; estender o modelo de dados via schema migration (próxima versão, atualmente v14 conforme BG-006).
+  - **Fix proposto:** renomear título do card para **"Quilometragem das últimas trocas/manutenções"**; adicionar 3 linhas (Bateria, Retífica de cabeçote, Retífica completa) ao mesmo accordion/lista; estender o modelo de dados via schema migration (próxima versão, atualmente v17).
   - **Cuidados:** TASK-RF-6.10 já substituiu "fazer motor" por retíficas no cálculo — alinhar os nomes exatos com o que está em `calculos.ts`. Confirmar com `[[project_estima_moto]]` se Bateria já tem campo de km registrado em algum lugar antes de adicionar (evitar duplicação). Nota "Escopo futuro" ainda lista sapata de freio como pendente — não absorver agora, é tarefa separada. Migration precisa de teste de retrocompatibilidade.
 
 ---
@@ -101,7 +56,7 @@ Obedeça essa ordem:
     - troca-bateria: `precoMaoDeObraIndependente` R$ 20; `precoTotalAutorizada` ≈ peça R$ 567,34 (valor Honda fornecido pelo usuário, total já inclui M.O.)
     - troca-kit-embreagem: `precoMaoDeObraIndependente` R$ 250; `precoTotalAutorizada` ≈ peça R$ 300,33 + M.O. ~R$ 400 = R$ 700,33 (aprox.)
     - troca-kit-cilindro: `precoMaoDeObraIndependente` R$ 200; `precoTotalAutorizada` ≈ peça R$ 360,83 + M.O. ~R$ 200 = R$ 560,83 (aprox., concessionária Honda raramente executa em Pop 110i)
-  - **Schema migration v15 → v16** (encadeada após v14 → v15 da TASK-RF-6.22): adicionar overrides vazios para os 4 novos `id`s em `pecasOverrides`; garantir que perfis salvos sem os novos `servicosIndependentes` recebam os defaults.
+  - **Schema migration v17 → v18:** adicionar overrides vazios para os 4 novos `id`s em `pecasOverrides`; garantir que perfis salvos sem os novos `servicosIndependentes` recebam os defaults.
   - **Testes em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts):**
     - Caso "bateria com intervaloMeses=24 entra no cálculo pelo tempo, não pelo km" (kmAnual=30000 → 2 trocas/4 anos = 0,5 trocas/ano).
     - Caso "Kit Revisão 6000km com `incluidoNaRevisaoAutorizada: true` não duplica no modo autorizada" (já coberto pela mecânica existente da flag, mas adicionar caso explícito).

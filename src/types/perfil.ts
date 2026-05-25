@@ -54,6 +54,12 @@ export type CategoriaDisplay = {
   imprevistos: boolean;
 };
 
+export interface FiltrosManutencaoDisplay {
+  revisao: boolean;
+  manutencaoPorPeca: Record<string, boolean>;
+  revisaoPorServico: Record<string, boolean>;
+}
+
 export interface PecaOverride {
   id: string;
   precoEditadoOriginal: number | null;
@@ -154,6 +160,7 @@ export interface PerfilUsuario {
   configuracaoDisplay: {
     categoriasAtivas: CategoriaDisplay;
     imprevistosSugeridosAtivos: Record<string, boolean>;
+    filtrosManutencao: FiltrosManutencaoDisplay;
   };
 
   pecasOverrides: PecaOverride[];
@@ -192,6 +199,9 @@ export type PerfilAction =
   // Display
   | { type: 'TOGGLE_CATEGORIA'; categoria: keyof CategoriaDisplay }
   | { type: 'TOGGLE_IMPREVISTO_SUGERIDO'; id: string }
+  | { type: 'TOGGLE_REVISAO_MANUTENCAO' }
+  | { type: 'TOGGLE_MANUTENCAO_POR_PECA'; id: string }
+  | { type: 'TOGGLE_REVISAO_POR_SERVICO'; id: string }
 
   // Overrides de peças
   | {

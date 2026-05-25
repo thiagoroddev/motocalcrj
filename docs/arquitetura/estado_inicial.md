@@ -1,9 +1,9 @@
 # MotoCalc RJ — Estado Inicial e Arquitetura de Persistência
 
 > **Status:** Engenharia reversa validada contra código real.
-> **Última atualização:** 2026-05-24 (TASK-DOC-009).
+> **Última atualização:** 2026-05-25 (TASK-BG-014).
 > **Verdade primária:** `src/context/PerfilContext.tsx` (`perfilPadrao`, reducer, migrações) e `src/services/perfilStorage.ts` (acesso ao localStorage).
-> **Schema atual:** v14.
+> **Schema atual:** v17.
 
 ---
 
@@ -20,7 +20,7 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-
 | `motocalc:v5:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
 | `motocalc:v5:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v14**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
+> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v17**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
 
 ### I.2 — Envelope: `PresetEntry`
 
@@ -43,7 +43,7 @@ export interface PresetEntry {
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
-3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 14`.
+3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 17`.
 4. Se não há preset ativo OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
@@ -55,7 +55,7 @@ O objeto inicial criado quando o usuário começa um onboarding novo. Valores re
 
 ```typescript
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 14,
+  schemaVersion: 17,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -122,6 +122,11 @@ export const perfilPadrao: PerfilUsuario = {
       imprevistos:   true,
     },
     imprevistosSugeridosAtivos: {},  // toggle por id; padrão = false implícito
+    filtrosManutencao: {
+      revisao: true,
+      manutencaoPorPeca: {},   // default-on; false explícito desativa
+      revisaoPorServico: {},   // default-on; false explícito desativa
+    },
   },
 
   pecasOverrides: [],
@@ -259,7 +264,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ## VI — Migrações de Schema
 
-Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 endereçada parcialmente — `migrarPerfil.ts` ainda não foi extraído para arquivo próprio). Cascata: v5 → v6 → ... → v14.
+Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 endereçada parcialmente — `migrarPerfil.ts` ainda não foi extraído para arquivo próprio). Cascata: v5 → v6 → ... → v17.
 
 | Migração         | TASK que introduziu | Mudança principal |
 | ---------------- | ------------------- | ----------------- |
@@ -269,6 +274,9 @@ Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 en
 | v8 → v9          | TASK-REF-19         | Remove `historicoManutencao`, `diarioTrabalho`, `precoMaoDeObraIndependente`, `frequenciaRevisaoKm`, `modoOficinDisplay` |
 | v9 → v10         | TASK-REF-21         | Remove `seguro.tem` (presença derivada de `valorAnual > 0`); force-zero quando `tem === false` |
 | v10 → v14        | RF-6.9, RF-6.11, BG-006, etc | Lista fechada de gastosCustom, novas actions, ajustes finos |
+| v14 → v15        | TASK-RF-6.22      | `ServicoIndependente` passa a separar M.O. independente e total autorizado |
+| v15 → v16        | TASK-RF-6.22      | Mescla serviços independentes default que faltavam em perfis já v15 |
+| v16 → v17        | TASK-BG-014       | Filtros finos persistidos de Manutenção (`filtrosManutencao`) |
 
 **Regra de ouro das migrações:** ordem ascendente (v8→v9 antes de v9→v10). Adicionar nova migração v(N)→v(N+1) sempre **depois** dos ifs com M < N. Lição reforçada em REF-19 e REF-21.
 
@@ -276,7 +284,7 @@ Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 en
 
 ## VII — Fixture de dev (`src/fixtures/usuario_teste.json`)
 
-Fixture em `schemaVersion: 6` exercita a cascata completa de migrações ao carregar. Mantida deliberadamente em versão antiga como teste vivo das migrações.
+Fixture em `schemaVersion: 17`, acompanhando o schema atual. A retrocompatibilidade das versões antigas é coberta por testes unitários explícitos de `migrarPerfil`.
 
 ---
 

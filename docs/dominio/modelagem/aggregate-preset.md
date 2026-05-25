@@ -67,7 +67,7 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace contém `:v5:` por razões históricas (era a versão do schema quando o storage foi definido). **A versão real do schema vive em `perfil.schemaVersion`** dentro de cada `PresetEntry` — **atual: v14.** O namespace ficou como string opaca para não invalidar storage de usuários a cada bump de schema; migrações em cascata em `criarEstadoInicial` (PerfilContext.tsx) cuidam de normalizar perfis antigos no carregamento. Ver `docs/arquitetura/estado_inicial.md` §VI para tabela completa.
+O namespace contém `:v5:` por razões históricas (era a versão do schema quando o storage foi definido). **A versão real do schema vive em `perfil.schemaVersion`** dentro de cada `PresetEntry` — **atual: v17.** O namespace ficou como string opaca para não invalidar storage de usuários a cada bump de schema; migrações em cascata em `criarEstadoInicial` (PerfilContext.tsx) cuidam de normalizar perfis antigos no carregamento. Ver `docs/arquitetura/estado_inicial.md` §VI para tabela completa.
 
 ---
 

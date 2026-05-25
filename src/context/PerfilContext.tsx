@@ -6,6 +6,7 @@ import type {
   PecaOverride,
   ServicoIndependente,
   GastoCustom,
+  FiltrosManutencaoDisplay,
 } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
@@ -47,6 +48,12 @@ export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
   { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 0, ativo: false, ehPreset: true },
   { id: 'preset-outros', nome: 'Outros', valorAnual: 0, ativo: false, ehPreset: true },
 ];
+
+const FILTROS_MANUTENCAO_PADRAO: FiltrosManutencaoDisplay = {
+  revisao: true,
+  manutencaoPorPeca: {},
+  revisaoPorServico: {},
+};
 
 // Valores de precoTotalAutorizada são "peça documentada Honda + M.O. estimada"
 // e devem ser ajustados pelo usuário no primeiro uso real. Itens com
@@ -152,7 +159,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 16,
+  schemaVersion: 17,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -219,6 +226,7 @@ export const perfilPadrao: PerfilUsuario = {
       imprevistos: true,
     },
     imprevistosSugeridosAtivos: {},
+    filtrosManutencao: FILTROS_MANUTENCAO_PADRAO,
   },
 
   pecasOverrides: [],
@@ -255,6 +263,20 @@ const campoOverrideMap = {
 } as const;
 
 type CampoOverrideChave = keyof typeof campoOverrideMap;
+
+function alternarFiltroDefaultAtivo(
+  filtros: Record<string, boolean>,
+  id: string,
+): Record<string, boolean> {
+  const novo = { ...filtros };
+  const ativoAtual = novo[id] ?? true;
+  if (ativoAtual) {
+    novo[id] = false;
+  } else {
+    delete novo[id];
+  }
+  return novo;
+}
 
 export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp {
   // Atualiza perfil e sincroniza com o preset ativo
@@ -383,6 +405,48 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
     }
+
+    case 'TOGGLE_REVISAO_MANUTENCAO':
+      return comPerfil({
+        ...state.perfil,
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          filtrosManutencao: {
+            ...state.perfil.configuracaoDisplay.filtrosManutencao,
+            revisao: !state.perfil.configuracaoDisplay.filtrosManutencao.revisao,
+          },
+        },
+      });
+
+    case 'TOGGLE_MANUTENCAO_POR_PECA':
+      return comPerfil({
+        ...state.perfil,
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          filtrosManutencao: {
+            ...state.perfil.configuracaoDisplay.filtrosManutencao,
+            manutencaoPorPeca: alternarFiltroDefaultAtivo(
+              state.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca,
+              action.id,
+            ),
+          },
+        },
+      });
+
+    case 'TOGGLE_REVISAO_POR_SERVICO':
+      return comPerfil({
+        ...state.perfil,
+        configuracaoDisplay: {
+          ...state.perfil.configuracaoDisplay,
+          filtrosManutencao: {
+            ...state.perfil.configuracaoDisplay.filtrosManutencao,
+            revisaoPorServico: alternarFiltroDefaultAtivo(
+              state.perfil.configuracaoDisplay.filtrosManutencao.revisaoPorServico,
+              action.id,
+            ),
+          },
+        },
+      });
 
     // ── Overrides de peças ──────────────────────
     case 'SET_PECA_OVERRIDE': {
@@ -679,6 +743,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
             imprevistos: true,
           },
           imprevistosSugeridosAtivos: {},
+          filtrosManutencao: FILTROS_MANUTENCAO_PADRAO,
         },
       });
 
@@ -980,6 +1045,28 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
       ...dados,
       schemaVersion: 16,
       servicosIndependentes: [...servicos, ...defaultsFaltantes],
+    };
+  }
+
+  if (dados.schemaVersion === 16) {
+    // v16 → v17: filtros finos de Manutenção deixam de ser estado local do
+    // Detalhamento e passam a persistir no perfil (TASK-BG-014).
+    const configDisplay = dados.configuracaoDisplay;
+    const filtrosExistentes = (
+      configDisplay as { filtrosManutencao?: Partial<FiltrosManutencaoDisplay> }
+    ).filtrosManutencao;
+    dados = {
+      ...dados,
+      schemaVersion: 17,
+      configuracaoDisplay: {
+        ...configDisplay,
+        filtrosManutencao: {
+          revisao:
+            typeof filtrosExistentes?.revisao === 'boolean' ? filtrosExistentes.revisao : true,
+          manutencaoPorPeca: filtrosExistentes?.manutencaoPorPeca ?? {},
+          revisaoPorServico: filtrosExistentes?.revisaoPorServico ?? {},
+        },
+      },
     };
   }
 

@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 16,
+        "schemaVersion": 17,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -80,7 +80,12 @@
             "financiamento": false,
             "imprevistos": true
           },
-          "imprevistosSugeridosAtivos": {}
+          "imprevistosSugeridosAtivos": {},
+          "filtrosManutencao": {
+            "revisao": true,
+            "manutencaoPorPeca": {},
+            "revisaoPorServico": {}
+          }
         },
 
         "pecasOverrides": [
@@ -122,7 +127,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 16,
+        "schemaVersion": 17,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -190,7 +195,12 @@
             "financiamento": false,
             "imprevistos": true
           },
-          "imprevistosSugeridosAtivos": {}
+          "imprevistosSugeridosAtivos": {},
+          "filtrosManutencao": {
+            "revisao": true,
+            "manutencaoPorPeca": {},
+            "revisaoPorServico": {}
+          }
         },
 
         "pecasOverrides": [],

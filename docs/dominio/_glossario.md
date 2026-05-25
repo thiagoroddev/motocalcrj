@@ -45,7 +45,7 @@ Um Motoboy pode ter múltiplos Presets (ex: "Honda Pop 110i da Semana", "Biz Res
 
 ### Preset Ativo
 
-O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocalc:v5:presetAtivo` (apenas o id, não o objeto — o `:v5:` no namespace é histórico; a versão real do schema vive em `perfil.schemaVersion`, atualmente v14).
+O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocalc:v5:presetAtivo` (apenas o id, não o objeto — o `:v5:` no namespace é histórico; a versão real do schema vive em `perfil.schemaVersion`, atualmente v17).
 
 ### Preset JSON / Preset Técnico
 
@@ -122,7 +122,7 @@ Classificação de despesas para o cálculo. As categorias **reais do projeto** 
 | `financiamento` | Parcela de financiamento OU aluguel            |
 | `gastosCustom`  | Imprevistos: presets fixos editáveis (Multa, Sinistros, Outros) + sugestões corretivas desligadas por padrão |
 
-⚠️ **Regra crítica (RN-27):** `revisao` **não é fatia separada no donut** da Estimativa seu custo é incorporado à fatia de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção. Não existe toggle individual para revisão.
+⚠️ **Regra crítica (RN-27):** `revisao` **não é fatia separada no donut** da Estimativa; seu custo é incorporado à fatia de `manutencao`. No Detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria.
 
 ### Gasto Personalizado (`GastoCustom`) — valor único acumulado
 
@@ -145,12 +145,24 @@ Controle de quais categorias estão **ativas** no cálculo exibido. Vive em `con
 
 ⚠️ **`imprevistos`** (adicionado pela RF-6.9) controla tanto `gastosCustom` (presets Multa/Sinistros/Outros) quanto `imprevistosSugeridos` (retíficas) no mapeamento.
 
+Filtros finos de Manutenção vivem em `configuracaoDisplay.filtrosManutencao`:
+
+```typescript
+{
+  revisao: boolean,
+  manutencaoPorPeca: Record<string, boolean>,
+  revisaoPorServico: Record<string, boolean>
+}
+```
+
+Eles persistem a escolha do usuário para "Revisão Geral", peças e serviços de revisão/avulsos exibidos separadamente. Desligar a categoria Manutenção não apaga esses filtros; apenas zera o bloco inteiro enquanto a categoria estiver off.
+
 ### Filtros de Categorias (`FiltrosCategorias`)
 
 Estrutura usada **internamente nos cálculos** para decidir quais categorias entram no total. Diferente de `CategoriaDisplay` em três pontos:
 
 1. Tem chave `documentos` (não `documentacao`)
-2. Tem chave `revisao` separada (que `CategoriaDisplay` não tem espelha `manutencao`)
+2. Tem chave `revisao` separada (vem de `configuracaoDisplay.filtrosManutencao.revisao`)
 3. Tem `manutencaoPorPeca: Record<string, boolean>` para granularidade individual de peças
 4. Tem `revisaoPorServico: Record<string, boolean>` para granularidade individual de serviços de revisão exibidos separadamente
 5. Tem `imprevistosSugeridos: Record<string, boolean>` para sugestões como retífica de cabeçote e retífica completa

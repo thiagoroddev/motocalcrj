@@ -26,7 +26,7 @@
 | RN-07 | Toggle off não apaga dados ao reativar, custo retorna normalmente. |
 | RN-08 | Toggle de categoria é independente do fator de responsabilidade de moto alugada. São camadas ortogonais. |
 | RN-09 | Porcentagens calculadas apenas sobre categorias com toggle ativo, somando ~100%. `calcularBreakdownPercentual` retorna `0` para categorias desativadas nunca uma fatia do total filtrado. |
-| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção. Não existe toggle individual para revisão. |
+| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No Detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria. |
 
 ---
 

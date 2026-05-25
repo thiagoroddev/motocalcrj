@@ -927,6 +927,40 @@ describe('categoriasParaFiltros', () => {
     );
     expect(filtros.imprevistosSugeridos).toEqual({});
   });
+
+  it('filtros finos de Manutenção vêm do perfil persistido', () => {
+    const filtros = categoriasParaFiltros(
+      { ...baseCategorias, manutencao: true },
+      {},
+      {
+        revisao: false,
+        manutencaoPorPeca: { oleo_motor: false },
+        revisaoPorServico: { 'troca-kit-transmissao': false },
+      },
+    );
+
+    expect(filtros.manutencao).toBe(true);
+    expect(filtros.revisao).toBe(false);
+    expect(filtros.manutencaoPorPeca).toEqual({ oleo_motor: false });
+    expect(filtros.revisaoPorServico).toEqual({ 'troca-kit-transmissao': false });
+  });
+
+  it('categoria Manutenção desligada não apaga filtros finos persistidos', () => {
+    const filtros = categoriasParaFiltros(
+      { ...baseCategorias, manutencao: false },
+      {},
+      {
+        revisao: false,
+        manutencaoPorPeca: { oleo_motor: false },
+        revisaoPorServico: { 'troca-kit-transmissao': false },
+      },
+    );
+
+    expect(filtros.manutencao).toBe(false);
+    expect(filtros.revisao).toBe(false);
+    expect(filtros.manutencaoPorPeca).toEqual({ oleo_motor: false });
+    expect(filtros.revisaoPorServico).toEqual({ 'troca-kit-transmissao': false });
+  });
 });
 
 describe('calcularBreakdownPercentual', () => {

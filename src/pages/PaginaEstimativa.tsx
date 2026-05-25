@@ -50,6 +50,7 @@ export function PaginaEstimativa() {
   const filtrosAtivos = categoriasParaFiltros(
     perfil.configuracaoDisplay.categoriasAtivas,
     perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+    perfil.configuracaoDisplay.filtrosManutencao,
   );
   const breakdown = calcularBreakdownPercentual(custos, filtrosAtivos);
   const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG)

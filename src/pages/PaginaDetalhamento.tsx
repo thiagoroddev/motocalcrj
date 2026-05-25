@@ -77,11 +77,10 @@ export function PaginaDetalhamento() {
   const navigate = useNavigate();
   const { perfil, dispatch } = usePerfil();
   const resultado = useCustos();
-  const [filtros, setFiltros] = useState<FiltrosCategorias>(() =>
-    categoriasParaFiltros(
-      perfil.configuracaoDisplay.categoriasAtivas,
-      perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
-    ),
+  const filtros = categoriasParaFiltros(
+    perfil.configuracaoDisplay.categoriasAtivas,
+    perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+    perfil.configuracaoDisplay.filtrosManutencao,
   );
   const [expandido, setExpandido] = useState<Record<string, boolean>>({});
   const [periodo, setPeriodo] = useState<Periodo>('ano');
@@ -115,42 +114,27 @@ export function PaginaDetalhamento() {
   const cvt = (anual: number) => converterParaPeriodo(anual, periodo, diasAno, horasDia);
 
   function toggleFiltro(cat: ChaveFiltroCategoria) {
-    setFiltros((prev) => {
-      const novo: FiltrosCategorias = { ...prev, [cat]: !prev[cat] };
-      if (cat === 'manutencao' && !novo.manutencao) novo.revisao = false;
-      return novo;
-    });
+    if (cat === 'revisao') {
+      dispatch({ type: 'TOGGLE_REVISAO_MANUTENCAO' });
+      return;
+    }
     const cat2 = FILTRO_PARA_CATEGORIA[cat];
     if (cat2) dispatch({ type: 'TOGGLE_CATEGORIA', categoria: cat2 });
   }
 
   function togglePeca(id: string) {
-    const atual = filtros.manutencaoPorPeca[id] ?? true;
-    setFiltros((prev) => ({
-      ...prev,
-      manutencaoPorPeca: { ...prev.manutencaoPorPeca, [id]: !atual },
-    }));
+    dispatch({ type: 'TOGGLE_MANUTENCAO_POR_PECA', id });
   }
 
   function toggleServicoRevisao(id: string) {
-    const atual = filtros.revisaoPorServico[id] ?? true;
-    setFiltros((prev) => ({
-      ...prev,
-      revisaoPorServico: { ...prev.revisaoPorServico, [id]: !atual },
-    }));
+    dispatch({ type: 'TOGGLE_REVISAO_POR_SERVICO', id });
   }
 
   function toggleImprevistoSugerido(id: string) {
-    const atual = filtros.imprevistosSugeridos[id] ?? false;
-    setFiltros((prev) => ({
-      ...prev,
-      imprevistosSugeridos: { ...prev.imprevistosSugeridos, [id]: !atual },
-    }));
     dispatch({ type: 'TOGGLE_IMPREVISTO_SUGERIDO', id });
   }
 
   function toggleCategoriaImprevistos() {
-    setFiltros((prev) => ({ ...prev, gastosCustom: !prev.gastosCustom }));
     dispatch({ type: 'TOGGLE_CATEGORIA', categoria: 'imprevistos' });
   }
 

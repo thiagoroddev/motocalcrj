@@ -108,7 +108,7 @@
 | RF-CONF-02 | Ao reabrir com perfil salvo, carregar estado sem ação do usuário. Onboarding nunca reexibido. | ✅ CONCLUÍDO |
 | RF-EXP-01 | Exportar todos os dados como `motocalc_backup.json`. Download automático. | [ ] PENDENTE |
 | RF-EXP-02 | Importar arquivo `.json` com validação e confirmação. Compatível com schemas v3+. | [ ] PENDENTE |
-| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 14 (ver `docs/arquitetura/estado_inicial.md` para tabela de migrações). | [ ] PENDENTE |
+| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 17 (ver `docs/arquitetura/estado_inicial.md` para tabela de migrações). | [ ] PENDENTE |
 
 ---
 

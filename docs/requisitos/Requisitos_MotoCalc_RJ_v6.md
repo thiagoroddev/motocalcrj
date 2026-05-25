@@ -591,7 +591,7 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | RN-07 | Toggle off não apaga dados — ao reativar, custo retorna normalmente.                                                                                                       |
 | RN-08 | Toggle de categoria é independente do fator de responsabilidade de moto alugada. São camadas ortogonais.                                                                   |
 | RN-09 | Porcentagens calculadas apenas sobre categorias com toggle ativo, somando ~100%. `calcularBreakdownPercentual` retorna `0` para categorias desativadas — nunca uma fatia do total filtrado. |
-| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção. Não existe toggle individual para revisão. |
+| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria. |
 
 ### VI.3- Toggle ORG/PAR por Peça
 
@@ -935,7 +935,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 > - **Modelagem conceitual e invariantes:** [`docs/dominio/modelagem/`](../dominio/modelagem/) e [`docs/dominio/invariantes.md`](../dominio/invariantes.md).
 >
 > **O que mudou em relação ao snapshot v6.0 original (resumo, não exaustivo):**
-> - `schemaVersion` evoluiu de 5 (literal) → `number` aberto, em 14 atualmente (ver tabela em `estado_inicial.md`).
+> - `schemaVersion` evoluiu de 5 (literal) → `number` aberto, em 17 atualmente (ver tabela em `estado_inicial.md`).
 > - **Removidos** (ADIADO via ADR-003 + REF-18/19/21): `PerfilUsuario.historicoManutencao`, `PerfilUsuario.diarioTrabalho`, `ManutencaoConfig.precoMaoDeObraIndependente`, `ManutencaoConfig.frequenciaRevisaoKm`, `SeguroConfig.tem`, `DisplayConfig.modoExibicao`, `DisplayConfig.modoOficinDisplay`, e as interfaces `HistoricoManutencao`, `DiarioEntry`, `TrocaOleo`, `RevisaoGeral`, `TrocaPneu`, `TrocaKitRelacao`, `Abastecimento`.
 > - **Renomeados/reescritos:** `servicosMaoDeObra` (objeto) → `servicosIndependentes` (`ServicoIndependente[]`); `CategoriaDisplay` ganhou `imprevistos` e o perfil ganhou `configuracaoDisplay.imprevistosSugeridosAtivos`; `PecaOverride` agora tem `precoEditadoOriginal` + `precoEditadaParalela` (override por perfil) em vez de `precoEditado` único; `FatorResponsabilidade` virou `ResponsabilidadeCusto`; `MotoPreset` virou `PresetMoto`; `Granularidades`/`DistribuicaoCustos` migraram para `GranularidadesCusto`/`CustosPorCategoria`/`ResultadoCalculo`; o perfil ganhou `moto.kmUltimaTrocas` (`KmUltimaTrocas`) e `moto.kmMotorRefeito`.
 >
@@ -945,7 +945,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 
 ### XII.2- Schema do Arquivo de Export
 
-> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 14 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
+> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 17 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
 
 ```typescript
 export interface ExportFile {

@@ -119,7 +119,7 @@ interface FiltrosCategorias {
 
 - Em `manutencaoPorPeca` e `revisaoPorServico`, item ativo quando valor e `true` ou `undefined`.
 - Em `imprevistosSugeridos`, item ativo apenas quando valor e `true`.
-- `revisao` e derivado de `manutencao` via `categoriasParaFiltros()`.
+- `revisao` vem de `configuracaoDisplay.filtrosManutencao.revisao`; continua sendo sub-item de Manutenção, não categoria independente.
 
 ---
 

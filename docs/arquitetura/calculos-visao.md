@@ -140,7 +140,7 @@ calcularResultado(perfil, preset, dadosRJ, valorFipe, tabelaLicenciamento): Resu
 calcularTotalFiltrado(custos: CustosPorCategoria, filtros: FiltrosCategorias): number
 calcularBreakdownPercentual(custos, filtros): Record<string, number>
 calcularGranularidades(custoTotalAnual, diasAno, kmAnual): GranularidadesCusto
-categoriasParaFiltros(cat: CategoriaDisplay, imprevistosSugeridosAtivos): FiltrosCategorias
+categoriasParaFiltros(cat: CategoriaDisplay, imprevistosSugeridosAtivos, filtrosManutencao): FiltrosCategorias
 ```
 
 **Convenção de granularidades:**

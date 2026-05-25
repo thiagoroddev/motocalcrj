@@ -25,6 +25,11 @@ Após ADR-003 / TASK-REF-18 / REF-19, **não existe mais `modoExibicao` nem `mod
 configuracaoDisplay: {
   categoriasAtivas: CategoriaDisplay;
   imprevistosSugeridosAtivos: Record<string, boolean>;
+  filtrosManutencao: {
+    revisao: boolean;
+    manutencaoPorPeca: Record<string, boolean>;
+    revisaoPorServico: Record<string, boolean>;
+  };
 }
 ```
 
@@ -45,7 +50,7 @@ type CategoriaDisplay = {
 
 ⚠️ **Divergência de nomenclatura:** `CategoriaDisplay.documentacao` (no perfil persistido) vs `FiltrosCategorias.documentos` (nos cálculos). A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Registrada como dívida técnica leve de nomenclatura.
 
-⚠️ **Sem campo `revisao` separado:** revisão é sub-item de manutenção (RN-27). `categoriasParaFiltros()` espelha: `revisao: cat.manutencao`. Toggle de manutenção liga/desliga revisão junto.
+⚠️ **Revisão é sub-item de manutenção:** revisão não é categoria independente (RN-27). O toggle de categoria `manutencao` zera todo o bloco no cálculo, mas o toggle fino `filtrosManutencao.revisao` preserva a escolha do usuário para a linha "Revisão Geral".
 
 ⚠️ **Sem campo `gastosCustom` próprio em `CategoriaDisplay`:** o toggle visível na UI é `imprevistos` (categoria nova adicionada pela RF-6.9). `categoriasParaFiltros()` traduz `imprevistos` para `gastosCustom: cat.imprevistos` e também para `imprevistosSugeridos` (ver abaixo).
 
@@ -57,6 +62,18 @@ imprevistosSugeridosAtivos: Record<string, boolean>;
 
 Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-completa`). Padrão é `{}` (vazio) — qualquer id sem entrada conta como **desligado**. Apenas `true` explícito ativa o cálculo da retífica no total.
 
+### `filtrosManutencao`
+
+```typescript
+filtrosManutencao: {
+  revisao: boolean;
+  manutencaoPorPeca: Record<string, boolean>;
+  revisaoPorServico: Record<string, boolean>;
+};
+```
+
+Filtros finos persistidos da seção Manutenção no Detalhamento. `revisao` controla a linha "Revisão Geral". Os mapas controlam peças e serviços exibidos separadamente. Padrão: revisão ligada e mapas vazios. Nos mapas, `undefined` e `true` significam ativo; apenas `false` explícito desativa. Ao religar um item, a chave pode ser removida para manter estado mínimo.
+
 ---
 
 ## Comportamentos (Actions do Reducer)
@@ -65,6 +82,9 @@ Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-c
 | ---------------------------- | ------------------------------------------------------------------------ |
 | `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                         |
 | `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`            |
+| `TOGGLE_REVISAO_MANUTENCAO`  | Liga/desliga a linha "Revisão Geral" dentro de Manutenção                |
+| `TOGGLE_MANUTENCAO_POR_PECA` | Liga/desliga uma peça específica em `filtrosManutencao.manutencaoPorPeca` |
+| `TOGGLE_REVISAO_POR_SERVICO` | Liga/desliga um serviço em `filtrosManutencao.revisaoPorServico`         |
 
 > Actions `SET_MODO_EXIBICAO` e `SET_MODO_OFICINA` **foram removidas** pelas TASK-REF-18 e REF-19 (ADR-003 — modo único).
 
@@ -79,13 +99,14 @@ Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-c
 export function categoriasParaFiltros(
   cat: CategoriaDisplay,
   imprevistosSugeridosAtivos: Record<string, boolean>,
+  filtrosManutencao: FiltrosManutencaoDisplay,
 ): FiltrosCategorias {
   return {
     documentos: cat.documentacao,        // tradução de nome
-    revisao: cat.manutencao,             // espelha manutenção (RN-27)
+    revisao: filtrosManutencao.revisao,
     manutencao: cat.manutencao,
-    manutencaoPorPeca: {},               // filtro fino por peça
-    revisaoPorServico: {},               // filtro fino por serviço de revisão
+    manutencaoPorPeca: filtrosManutencao.manutencaoPorPeca,
+    revisaoPorServico: filtrosManutencao.revisaoPorServico,
     imprevistosSugeridos: imprevistosSugeridosAtivos, // explícito via TOGGLE_IMPREVISTO_SUGERIDO
     combustivel: cat.combustivel,
     internet: cat.internet,
@@ -100,10 +121,10 @@ export function categoriasParaFiltros(
 🔍 **Regras de domínio embutidas no mapeamento:**
 
 1. `documentacao` → `documentos` (nomes diferentes em camadas diferentes)
-2. `manutencao` controla `manutencao` E `revisao` (RN-27)
+2. `manutencao` controla a categoria inteira; `filtrosManutencao.revisao` controla a linha "Revisão Geral"
 3. `imprevistos` controla `gastosCustom` (lista fechada de Multa/Sinistros/Outros)
 4. `imprevistosSugeridos` vem direto de `imprevistosSugeridosAtivos` — retíficas começam desligadas, ativam só com `true` explícito
-5. `manutencaoPorPeca`/`revisaoPorServico` são filtros finos que **não vêm deste bloco** — são estado local do Detalhamento
+5. `manutencaoPorPeca`/`revisaoPorServico` vêm de `filtrosManutencao` e persistem no perfil
 
 ---
 
@@ -131,14 +152,26 @@ export function categoriasParaFiltros(
 
 ---
 
+### INV-DISPLAY-4: filtros finos de Manutenção são default-on
+
+**Regra:** Em `filtrosManutencao.manutencaoPorPeca` e `filtrosManutencao.revisaoPorServico`, item sem entrada é ativo. Apenas `false` explícito desativa.
+
+**Por quê:** Manutenção tem vários itens derivados de preset/serviços. Persistir apenas exceções evita gravar mapa completo de itens ligados e permite que novos itens apareçam ativos por padrão.
+
+**Onde é protegida:** `TOGGLE_MANUTENCAO_POR_PECA`, `TOGGLE_REVISAO_POR_SERVICO` e `calcularTotalFiltrado`.
+
+---
+
 ## Relacionamentos
 
 ```
 PerfilUsuario.configuracaoDisplay
 ├── categoriasAtivas → categoriasParaFiltros() → calcularTotalFiltrado()
 │                      (decide quais categorias entram no total exibido)
-└── imprevistosSugeridosAtivos → categoriasParaFiltros() → filtros.imprevistosSugeridos
-                                  (ativa retíficas no total quando true)
+├── imprevistosSugeridosAtivos → categoriasParaFiltros() → filtros.imprevistosSugeridos
+│                                (ativa retíficas no total quando true)
+└── filtrosManutencao → categoriasParaFiltros() → filtros.manutencaoPorPeca/revisaoPorServico
+                         (preserva escolhas finas de Manutenção)
 ```
 
 ---
@@ -147,14 +180,15 @@ PerfilUsuario.configuracaoDisplay
 
 - `CategoriaAlternada` — `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
 - `ImprevistoSugeridoAlternado` — `TOGGLE_IMPREVISTO_SUGERIDO`. Liga/desliga uma retífica específica.
+- `FiltroManutencaoAlternado` — `TOGGLE_REVISAO_MANUTENCAO`, `TOGGLE_MANUTENCAO_POR_PECA` ou `TOGGLE_REVISAO_POR_SERVICO`.
 
 ---
 
 ## Pontos de Atenção
 
-### Toggle de manutenção controla revisão
+### Toggle de manutenção não apaga filtros finos
 
-Comportamento explícito (RN-27). Documentado mas vale lembrar — revisão não tem toggle próprio.
+Comportamento explícito pós TASK-BG-014. Desligar a categoria Manutenção remove o bloco inteiro do cálculo, mas não apaga `filtrosManutencao`. Ao religar a categoria, peças/serviços/revisão previamente desligados continuam desligados.
 
 ### Toggle de imprevistos controla gastosCustom
 
@@ -162,7 +196,7 @@ Após RF-6.9, `imprevistos` é a categoria que engloba tanto os 3 presets fixos 
 
 ### Sincronização perfil → UI
 
-Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA` ou `TOGGLE_IMPREVISTO_SUGERIDO` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. Performance esperada < 200ms (RNF-04).
+Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` ou uma action de `filtrosManutencao` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. Performance esperada < 200ms (RNF-04).
 
 ---
 
@@ -186,6 +220,7 @@ export type CategoriaDisplay = {
 configuracaoDisplay: {
   categoriasAtivas: CategoriaDisplay;
   imprevistosSugeridosAtivos: Record<string, boolean>;
+  filtrosManutencao: FiltrosManutencaoDisplay;
 }
 ```
 
@@ -198,6 +233,6 @@ Documentação validada contra:
 - `src/types/perfil.ts` — bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
 - `src/types/calculos.ts` — `FiltrosCategorias`
 - `src/utils/calculos.ts` — `categoriasParaFiltros`
-- `src/context/PerfilContext.tsx` — actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO`
+- `src/context/PerfilContext.tsx` — actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` e filtros finos de Manutenção
 
-**Divergências encontradas:** nenhuma. Documentação atualizada em 24/05/26 (TASK-DOC-009) após REF-18/REF-19 (remoção de `modoExibicao`/`modoOficinDisplay`) e RF-6.9/RF-6.11 (categoria `imprevistos`, `imprevistosSugeridosAtivos`).
+**Divergências encontradas:** nenhuma. Documentação atualizada em 25/05/26 (TASK-BG-014) após persistência dos filtros finos de Manutenção.
