@@ -15,6 +15,7 @@ import type {
   DadosRJ,
   GranularidadesCusto,
   CustoPeca,
+  CustoServicoRevisao,
   CustoImprevistoSugerido,
   CustosPorCategoria,
   FiltrosCategorias,
@@ -341,14 +342,33 @@ export function calcularDetalhesRevisaoAnual(
     // ADR-007: soma serviços fora do pacote Honda (kit transmissão, pneus, etc.)
     // usando precoTotalAutorizada (peça + M.O. cobradas em conjunto pela Honda).
     // Excepcionais (retíficas) ficam fora aqui — saem por imprevistos sugeridos.
-    const extraServicosForaDoPacote = servicosNormaisAtivos
-      .filter(
-        (s) => !s.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada > 0 && s.intervalKm > 0,
-      )
-      .reduce((sum, s) => sum + (s.precoTotalAutorizada / s.intervalKm) * kmAnual, 0);
-    const base = basePacoteHonda + extraServicosForaDoPacote;
+    const servicosForaDoPacote = servicosNormaisAtivos.filter(
+      (s) => !s.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada > 0 && s.intervalKm > 0,
+    );
+    const detalhesServicos = new Map<string, CustoServicoRevisao>(
+      servicosForaDoPacote.map((s): [string, CustoServicoRevisao] => {
+        const custoAnual = (s.precoTotalAutorizada / s.intervalKm) * kmAnual;
+        return [
+          s.id,
+          {
+            servicoId: s.id,
+            label: s.nome,
+            custoAnual,
+            intervalKm: s.intervalKm,
+            precoMaoDeObra: s.precoTotalAutorizada,
+            eventosNoAno: kmAnual > 0 ? kmAnual / s.intervalKm : 0,
+            ehExcepcional: s.ehExcepcional,
+          },
+        ];
+      }),
+    );
+    const totalServicosForaDoPacote = [...detalhesServicos.values()].reduce(
+      (sum, s) => sum + s.custoAnual,
+      0,
+    );
+    const base = basePacoteHonda;
     return {
-      total: base,
+      total: base + totalServicosForaDoPacote,
       detalhes: {
         modo: modoRevisao,
         base,
@@ -357,7 +377,7 @@ export function calcularDetalhesRevisaoAnual(
           kmAnual,
           quantidadeRevisoesCicloHonda,
         ),
-        servicos: new Map(),
+        servicos: detalhesServicos,
       },
     };
   }

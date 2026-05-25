@@ -210,7 +210,9 @@ export function PaginaDetalhamento() {
           onTogglePeca={togglePeca}
           onEditarPeca={(pecaId) => setEdicao({ tipo: 'pecaComMO', pecaId })}
           onEditarRevisaoGeral={() => irParaRevisaoHonda()}
-          onEditarServicoRevisao={(idx) => irParaRevisaoHonda(idx)}
+          onEditarServicoRevisao={(servicoId) =>
+            setEdicao({ tipo: 'servicoAutorizada', servicoId })
+          }
           pp={pp}
           pct={pct}
         />

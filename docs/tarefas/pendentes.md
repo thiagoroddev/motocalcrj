@@ -11,6 +11,51 @@ Obedeça essa ordem:
 
 ---
 
+## TASK-BG-014 — Detalhamento: toggles finos de Manutenção não persistem ao sair da tela
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 25/05/26 17:16 (validação visual da TASK-BG-013)
+- **Dependências:** —
+- **REQ/ADR/DT:** RF-6.3 (Detalhamento), RF-6.3.4 (toggles por item), INV-CALC-1, TASK-BG-013
+- **Observações:**
+  - **Problema observado pelo usuário:** na tela Detalhamento, os toggles finos dos itens da categoria **Manutenção** podem ser desativados, mas ao sair para Estimativa e voltar para Detalhamento eles aparecem ativados novamente e voltam a entrar no cálculo. O único toggle que persiste parcialmente é "Revisão Geral"; mesmo ele tem comportamento inconsistente quando a categoria Manutenção também está desligada.
+  - **Estado real do código (verificado 25/05/26):**
+    - `PaginaDetalhamento` inicializa `filtros` com `categoriasParaFiltros(perfil.configuracaoDisplay.categoriasAtivas, perfil.configuracaoDisplay.imprevistosSugeridosAtivos)`.
+    - `togglePeca(id)` altera apenas `filtros.manutencaoPorPeca` em `useState` local.
+    - `toggleServicoRevisao(id)` altera apenas `filtros.revisaoPorServico` em `useState` local.
+    - `toggleFiltro('revisao')` também altera apenas `filtros.revisao` local; o dispatch persistido só existe para categorias mapeadas em `TOGGLE_CATEGORIA`.
+    - `PerfilUsuario.configuracaoDisplay` persiste `categoriasAtivas` e `imprevistosSugeridosAtivos`, mas **não tem campos persistidos** para `manutencaoPorPeca`, `revisaoPorServico` nem revisão geral.
+    - Documentação atual em `docs/dominio/modelagem/bloco-configuracao-display.md` ainda diz que `manutencaoPorPeca`/`revisaoPorServico` são estado local do Detalhamento. Essa regra não atende a expectativa real do usuário.
+  - **Comportamento esperado:** qualquer item de Manutenção desligado no Detalhamento deve permanecer desligado até o usuário religar, inclusive após navegar para Estimativa, voltar para Detalhamento ou recarregar o app.
+  - **Fix proposto:**
+    - Estender `PerfilUsuario.configuracaoDisplay` com filtros finos persistidos, por exemplo:
+      - `revisaoAtiva: boolean` ou equivalente para a linha "Revisão Geral".
+      - `manutencaoPorPecaAtiva: Record<string, boolean>`.
+      - `revisaoPorServicoAtivo: Record<string, boolean>`.
+    - Preservar a semântica de `INV-CALC-1`: em mapas de Manutenção, `undefined` e `true` significam ativo; apenas `false` explícito desativa.
+    - Criar actions no reducer para alternar esses filtros finos, no mesmo padrão de `TOGGLE_IMPREVISTO_SUGERIDO`.
+    - Atualizar `categoriasParaFiltros` para receber e aplicar os filtros persistidos.
+    - Atualizar call sites (`PaginaDetalhamento`, `PaginaEstimativa`/orquestrador de cálculo, se aplicável) para ler do perfil.
+    - Adicionar migration de schema para perfis existentes, com defaults compatíveis (`revisaoAtiva: true`, mapas vazios).
+    - Atualizar docs de domínio/modelagem que hoje descrevem os filtros finos como estado local.
+  - **Cuidados:**
+    - Não confundir toggle da categoria `manutencao` com os toggles finos internos: categoria off deve zerar tudo visualmente/cálculo, mas não deve apagar as escolhas finas do usuário.
+    - Quando a categoria Manutenção for religada, os itens previamente desligados devem continuar desligados.
+    - Evitar persistir mapa completo com todos os itens `true`; manter estado mínimo e gravar principalmente `false` explícito.
+    - Garantir compatibilidade com os serviços avulsos autorizados da TASK-BG-013 (`revisaoPorServico[id]` agora inclui kit transmissão, pneus, sapatas etc.).
+  - **Testes sugeridos:**
+    - Reducer: alternar peça grava `false` explícito e alternar de novo volta a `true`/remove ou grava `true` conforme padrão escolhido.
+    - Reducer: alternar serviço de revisão persiste por `servicoId`.
+    - Cálculo: `categoriasParaFiltros` + `calcularTotalFiltrado` respeitam filtros finos persistidos após reconstruir filtros do perfil.
+    - Regressão: categoria Manutenção desligada/religada não reseta filtros finos.
+    - Migration: perfil antigo recebe defaults sem alterar total atual.
+
+---
+
 ## TASK-RF-6.13 — Renomear card "Últimas manutenções" e adicionar Bateria, Retífica de cabeçote ,Retífica completa, kit transmissão, kit embreagem,
 
 - **Status:** Pendente

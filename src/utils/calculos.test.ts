@@ -13,6 +13,7 @@ import {
   calcularIPVA,
   calcularLicenciamento,
   calcularCustoRevisaoAnual,
+  calcularDetalhesRevisaoAnual,
   calcularCustoInternetAnual,
   calcularCustoSeguroAnual,
   calcularCustoAlimentacaoAnual,
@@ -526,6 +527,69 @@ describe('calcularCustoRevisaoAnual', () => {
     // Pacote Honda escalado + kit transmissão (1 troca/ano × 313.56)
     const esperado = (cicloHonda / 36000) * kmAnual + 313.56;
     expect(total).toBeCloseTo(esperado, 2);
+  });
+
+  it('modo autorizadas: detalha serviços avulsos fora do pacote sem alterar o total', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObraIndependente: 60,
+        precoTotalAutorizada: 313.56,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+      {
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 3000,
+        precoMaoDeObraIndependente: 25,
+        precoTotalAutorizada: 999,
+        incluidoNaRevisaoAutorizada: true,
+        ativo: true,
+        ehExcepcional: false,
+      },
+      {
+        id: 'retifica-completa',
+        nome: 'Retífica completa',
+        intervalKm: 120000,
+        precoMaoDeObraIndependente: 1500,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: true,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicos,
+    });
+    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+    const kit = resultado.detalhes.servicos.get('troca-kit-transmissao');
+
+    expect(resultado.detalhes.base).toBeCloseTo(baseEsperada, 2);
+    expect(resultado.total).toBeCloseTo(baseEsperada + 313.56, 2);
+    expect(kit?.label).toBe('Troca kit transmissão');
+    expect(kit?.custoAnual).toBeCloseTo(313.56, 2);
+    expect(kit?.eventosNoAno).toBe(1);
+    expect(resultado.detalhes.servicos.has('troca-oleo')).toBe(false);
+    expect(resultado.detalhes.servicos.has('retifica-completa')).toBe(false);
+  });
+
+  it('modo independentes: mantém serviços agregados em Revisão Geral', () => {
+    const kmAnual = 12000;
+    const resultado = calcularDetalhesRevisaoAnual('independentes', kmAnual, {
+      servicosIndependentes: servicosMock,
+    });
+
+    expect(resultado.detalhes.servicos.size).toBe(0);
+    expect(resultado.detalhes.base).toBeCloseTo((25 / 3000) * kmAnual + (80 / 6000) * kmAnual, 2);
+    expect(resultado.total).toBeCloseTo(resultado.detalhes.base, 2);
   });
 
   it('modo autorizadas: NÃO soma serviço com incluidoNaRevisaoAutorizada=true (já no pacote)', () => {

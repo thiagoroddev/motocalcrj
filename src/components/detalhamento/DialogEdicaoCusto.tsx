@@ -34,6 +34,7 @@ export type EdicaoAlvo =
   | { tipo: 'seguro' }
   | { tipo: 'financiamento' }
   | { tipo: 'pecaComMO'; pecaId: string }
+  | { tipo: 'servicoAutorizada'; servicoId: string }
   | { tipo: 'servicoExcepcional'; servicoId: string };
 
 type Props = {
@@ -64,6 +65,10 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
       return 'Editar';
     }
     case 'servicoExcepcional': {
+      const servico = perfil.servicosIndependentes.find((s) => s.id === alvo.servicoId);
+      return servico?.nome ?? 'Editar';
+    }
+    case 'servicoAutorizada': {
       const servico = perfil.servicosIndependentes.find((s) => s.id === alvo.servicoId);
       return servico?.nome ?? 'Editar';
     }
@@ -112,6 +117,10 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
     return (
       <ConteudoServicoExcepcional servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />
     );
+  if (alvo.tipo === 'servicoAutorizada')
+    return (
+      <ConteudoServicoAutorizada servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />
+    );
   return <ConteudoPecaComMO pecaId={alvo.pecaId} perfil={perfil} dispatch={dispatch} />;
 }
 
@@ -137,6 +146,32 @@ function ConteudoServicoExcepcional({
         </span>
       </div>
       <CardServico servico={servico} dispatch={dispatch} />
+    </div>
+  );
+}
+
+function ConteudoServicoAutorizada({
+  servicoId,
+  perfil,
+  dispatch,
+}: {
+  servicoId: string;
+  perfil: PerfilUsuario;
+  dispatch: Dispatch<PerfilAction>;
+}) {
+  const servico = perfil.servicosIndependentes.find((s) => s.id === servicoId);
+  if (!servico) {
+    return <p className="text-sm text-muted-foreground">Serviço não encontrado.</p>;
+  }
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 px-px">
+        <Wrench className="w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          Serviço avulso Honda
+        </span>
+      </div>
+      <CardServico servico={servico} dispatch={dispatch} modo="autorizada" />
     </div>
   );
 }

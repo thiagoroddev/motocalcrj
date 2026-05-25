@@ -23,7 +23,7 @@ type Props = {
   onTogglePeca: (id: string) => void;
   onEditarPeca: (pecaId: string) => void;
   onEditarRevisaoGeral: () => void;
-  onEditarServicoRevisao: (servicoIndex: number) => void;
+  onEditarServicoRevisao: (servicoId: string) => void;
   pp: (anual: number) => string;
   pct: (valor: number, ativo?: boolean) => string;
 };
@@ -88,7 +88,7 @@ export function SecaoManutencao({
             />
           )}
         </div>
-        {servicosRevisao.map(([id, servico], idx) => {
+        {servicosRevisao.map(([id, servico]) => {
           const ativo = filtrosServicosRevisao[id] ?? true;
           const freq = Math.ceil(servico.eventosNoAno);
           return (
@@ -106,7 +106,7 @@ export function SecaoManutencao({
                 {pp(servico.custoAnual)}
               </span>
               <BotaoLapisEdicao
-                onClick={() => onEditarServicoRevisao(idx)}
+                onClick={() => onEditarServicoRevisao(id)}
                 ariaLabel={`Editar ${servico.label}`}
               />
             </div>
