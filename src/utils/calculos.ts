@@ -116,7 +116,10 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
 };
 
 // Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
-// a mão de obra de troca. Peças sem serviço cadastrado (sapata) ficam fora.
+// a mão de obra de troca. Usado também por calcularCpkPorPeca para evitar
+// dupla contagem no modo autorizado (ADR-007): se o serviço associado tem
+// precoTotalAutorizada > 0 e está ativo, a peça é pulada — o serviço cobre
+// peça + M.O. juntos no orçamento Honda.
 export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   oleo_motor: 'troca-oleo',
   vela_ignicao: 'troca-vela',
@@ -124,6 +127,8 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   kit_relacao: 'troca-kit-transmissao',
   pneu_dianteiro: 'troca-pneu-dianteiro',
   pneu_traseiro: 'troca-pneu-traseiro',
+  sapata_freio_dianteiro: 'troca-sapata-dianteira',
+  sapata_freio_traseiro: 'troca-sapata-traseira',
 };
 
 const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
@@ -194,16 +199,32 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
 
   const resultado = new Map<string, CustoPeca>();
 
-  // No modo autorizado, peças cobertas pelo pacote de revisão Honda não entram
-  // no cálculo por peça — seu custo já está em revisaoAutorizada (ADR-006).
+  // No modo autorizado, pula peças por dois critérios (ADR-006 + ADR-007):
+  //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote Honda;
+  //  (b) peça associada a um ServicoIndependente com `precoTotalAutorizada > 0`
+  //      e ativo — o serviço cobre peça + M.O. juntos (modelo Honda) e somar a
+  //      peça aqui duplica o custo.
+  const ehPecaCobertaPorServicoAutorizada = (pecaId: string): boolean => {
+    if (modoRevisao !== 'autorizadas') return false;
+    const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
+    if (!servicoId) return false;
+    const servico = servicosIndependentes.find((s) => s.id === servicoId);
+    return !!servico && servico.ativo && servico.precoTotalAutorizada > 0;
+  };
   const pecasConsideradas =
     modoRevisao === 'autorizadas'
-      ? preset.pecas.filter((p) => !p.incluidoNaRevisaoAutorizada)
+      ? preset.pecas.filter(
+          (p) => !p.incluidoNaRevisaoAutorizada && !ehPecaCobertaPorServicoAutorizada(p.id),
+        )
       : preset.pecas;
+  const pneusConsiderados =
+    modoRevisao === 'autorizadas'
+      ? preset.pneus.filter((p) => !ehPecaCobertaPorServicoAutorizada(p.id))
+      : preset.pneus;
 
   const todasPecas: Array<{ id: string; label: string }> = [
     ...pecasConsideradas.map((p) => ({ id: p.id, label: p.nome })),
-    ...preset.pneus.map((p) => ({
+    ...pneusConsiderados.map((p) => ({
       id: p.id,
       label: p.posicao === 'dianteiro' ? 'Pneu dianteiro' : 'Pneu traseiro',
     })),
@@ -316,7 +337,16 @@ export function calcularDetalhesRevisaoAnual(
   if (modoRevisao === 'autorizadas') {
     const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
     const quantidadeRevisoesCicloHonda = opcoes.quantidadeRevisoesCicloHonda ?? 7;
-    const base = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnual;
+    const basePacoteHonda = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnual;
+    // ADR-007: soma serviços fora do pacote Honda (kit transmissão, pneus, etc.)
+    // usando precoTotalAutorizada (peça + M.O. cobradas em conjunto pela Honda).
+    // Excepcionais (retíficas) ficam fora aqui — saem por imprevistos sugeridos.
+    const extraServicosForaDoPacote = servicosNormaisAtivos
+      .filter(
+        (s) => !s.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada > 0 && s.intervalKm > 0,
+      )
+      .reduce((sum, s) => sum + (s.precoTotalAutorizada / s.intervalKm) * kmAnual, 0);
+    const base = basePacoteHonda + extraServicosForaDoPacote;
     return {
       total: base,
       detalhes: {
@@ -333,7 +363,7 @@ export function calcularDetalhesRevisaoAnual(
   }
 
   const base = servicosNormaisAtivos.reduce(
-    (sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual,
+    (sum, s) => sum + (s.precoMaoDeObraIndependente / s.intervalKm) * kmAnual,
     0,
   );
   return {
@@ -412,21 +442,34 @@ export function calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): num
 function calcularImprevistosSugeridosAnual(
   servicosIndependentes: ServicoIndependente[],
   kmAnual: number,
+  modoRevisao: ModoRevisao,
 ): Map<string, CustoImprevistoSugerido> {
+  // ADR-007: imprevistos sugeridos respeitam o modo. No autorizado, o preço é
+  // o total Honda (peça + M.O.); valor 0 indica que a Honda não executa o
+  // serviço (caso das retíficas, substituídas por troca de kit cilindro) — o
+  // imprevisto some do mapa nesse modo.
   return new Map<string, CustoImprevistoSugerido>(
     servicosIndependentes
       .filter((servico) => servico.ehExcepcional && servico.intervalKm > 0)
-      .map((servico): [string, CustoImprevistoSugerido] => [
-        servico.id,
-        {
-          id: servico.id,
-          label: servico.nome,
-          custoAnual: (servico.precoMaoDeObra / servico.intervalKm) * kmAnual,
-          intervalKm: servico.intervalKm,
-          precoServico: servico.precoMaoDeObra,
-          eventosNoAno: kmAnual / servico.intervalKm,
-        },
-      ]),
+      .map((servico): [string, CustoImprevistoSugerido] | null => {
+        const preco =
+          modoRevisao === 'autorizadas'
+            ? servico.precoTotalAutorizada
+            : servico.precoMaoDeObraIndependente;
+        if (modoRevisao === 'autorizadas' && preco <= 0) return null;
+        return [
+          servico.id,
+          {
+            id: servico.id,
+            label: servico.nome,
+            custoAnual: (preco / servico.intervalKm) * kmAnual,
+            intervalKm: servico.intervalKm,
+            precoServico: preco,
+            eventosNoAno: kmAnual / servico.intervalKm,
+          },
+        ];
+      })
+      .filter((entry): entry is [string, CustoImprevistoSugerido] => entry !== null),
   );
 }
 
@@ -516,12 +559,16 @@ export function calcularCustosPorCategoria(
   );
   const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);
   const imprevistosSugeridos = new Map<string, CustoImprevistoSugerido>(
-    [...calcularImprevistosSugeridosAnual(perfil.servicosIndependentes, kmAnual).entries()].map(
-      ([id, imprevisto]): [string, CustoImprevistoSugerido] => [
-        id,
-        { ...imprevisto, custoAnual: imprevisto.custoAnual * fatorMan },
-      ],
-    ),
+    [
+      ...calcularImprevistosSugeridosAnual(
+        perfil.servicosIndependentes,
+        kmAnual,
+        perfil.perfilManutencao.modoRevisao,
+      ).entries(),
+    ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [
+      id,
+      { ...imprevisto, custoAnual: imprevisto.custoAnual * fatorMan },
+    ]),
   );
 
   return {

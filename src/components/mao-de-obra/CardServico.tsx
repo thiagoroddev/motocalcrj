@@ -5,36 +5,54 @@ import { BotaoReset } from '@/components/BotaoReset';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
 import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
 
+type ModoCard = 'independente' | 'autorizada';
+
 interface Props {
   servico: ServicoIndependente;
   dispatch: Dispatch<PerfilAction>;
+  modo?: ModoCard;
 }
 
-export function CardServico({ servico, dispatch }: Props) {
+export function CardServico({ servico, dispatch, modo = 'independente' }: Props) {
   const padrao = SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
 
-  const [preco, setPreco] = useState(servico.precoMaoDeObra.toFixed(2));
+  const valorAtual =
+    modo === 'autorizada' ? servico.precoTotalAutorizada : servico.precoMaoDeObraIndependente;
+  const valorPadrao =
+    modo === 'autorizada' ? padrao?.precoTotalAutorizada : padrao?.precoMaoDeObraIndependente;
+  const rotuloPreco =
+    modo === 'autorizada'
+      ? 'Preço total Honda (R$)'
+      : servico.ehExcepcional
+        ? 'Peças + MO (R$)'
+        : 'Preço MO (R$)';
+
+  const [preco, setPreco] = useState(valorAtual.toFixed(2));
   const [intervalo, setIntervalo] = useState(String(servico.intervalKm));
 
   useEffect(() => {
-    setPreco(servico.precoMaoDeObra.toFixed(2));
-  }, [servico.precoMaoDeObra]);
+    setPreco(valorAtual.toFixed(2));
+  }, [valorAtual]);
 
   useEffect(() => {
     setIntervalo(String(servico.intervalKm));
   }, [servico.intervalKm]);
 
-  const temOverridePreco = padrao !== undefined && servico.precoMaoDeObra !== padrao.precoMaoDeObra;
+  const temOverridePreco = valorPadrao !== undefined && valorAtual !== valorPadrao;
   const temOverrideIntervalo = padrao !== undefined && servico.intervalKm !== padrao.intervalKm;
   const temOverride = temOverridePreco || temOverrideIntervalo;
 
   function handleBlurPreco() {
     const num = parseFloat(preco.replace(',', '.'));
     if (isNaN(num) || num < 0) {
-      setPreco(servico.precoMaoDeObra.toFixed(2));
+      setPreco(valorAtual.toFixed(2));
       return;
     }
-    dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload: { ...servico, precoMaoDeObra: num } });
+    const payload: ServicoIndependente =
+      modo === 'autorizada'
+        ? { ...servico, precoTotalAutorizada: num }
+        : { ...servico, precoMaoDeObraIndependente: num };
+    dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload });
   }
 
   function handleBlurIntervalo() {
@@ -59,9 +77,7 @@ export function CardServico({ servico, dispatch }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-1">
-          <span className="label-neutro block">
-            {servico.ehExcepcional ? 'Peças + MO (R$)' : 'Preço MO (R$)'}
-          </span>
+          <span className="label-neutro block">{rotuloPreco}</span>
           <Input
             type="number"
             className={`rounded-input bg-input min-h-touch text-sm${temOverridePreco ? ' border-primary' : ''}`}

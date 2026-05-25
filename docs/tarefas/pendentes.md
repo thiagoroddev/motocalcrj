@@ -11,7 +11,7 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.13 — Renomear card "Últimas manutenções" e adicionar Bateria, Retífica de cabeçote e Retífica completa
+## TASK-RF-6.13 — Renomear card "Últimas manutenções" e adicionar Bateria, Retífica de cabeçote ,Retífica completa, kit transmissão, kit embreagem,
 
 - **Status:** Pendente
 - **Modo:** Standard
@@ -29,46 +29,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.22 — Estender modelo de Serviços com M.O. por modo (independente + autorizada) e ativar cards autorizada para serviços fora do pacote Honda
-
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 25/05/26 10:29
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-004, ADR-006 (complementa)
-- **Observações:**
-  - **Problema (issue estrutural):** hoje `ServicoIndependente` tem um único campo `precoMaoDeObra` consumido só no modo independente. No modo autorizada, [`calculos.ts:316-333`](src/utils/calculos.ts#L316-L333) calcula revisão **apenas** pelo pacote `revisaoAutorizada[]` de [`pop110i.json`](src/presets/pop110i.json) (custoCicloCompleto) e **ignora `servicosIndependentes` por completo**. Resultado: serviços que existem fora das revisões periódicas Honda (kit transmissão, pneus, e os novos bateria/embreagem/cilindro a serem adicionados pela TASK-RF-6.14) **não têm M.O. cobrada no modo autorizada** — gap de cálculo.
-  - **Decisão de modelagem (do usuário, 25/05/26):** criar na aba "Mão de Obra" modo Autorizada os mesmos cards que existem na Independente para serviços fora do pacote Honda (cards com inputs de M.O. e km), com persistência separada por modo. Cada `ServicoIndependente` passa a ter `precoMaoDeObraIndependente` e `precoMaoDeObraAutorizada` (ambos numéricos, valor 0 = "não cobrado").
-  - **Local provável:**
-    - [`src/types/perfil.ts`](src/types/perfil.ts) (interface `ServicoIndependente` ganha 2 campos numéricos + flag `incluidoNaRevisaoAutorizada`; rename do campo atual `precoMaoDeObra` → `precoMaoDeObraIndependente`).
-    - [`src/types/calculos.ts`](src/types/calculos.ts) (se houver tipos espelhados do cálculo).
-    - [`src/context/PerfilContext.tsx:18-103`](src/context/PerfilContext.tsx#L18-L103) (`SERVICO_RETIFICA_CABECOTE_PADRAO`, `SERVICO_RETIFICA_COMPLETA_PADRAO`, `SERVICOS_INDEPENDENTES_PADRAO`): atualizar os 9 serviços padrão com valores por modo e a flag `incluidoNaRevisaoAutorizada` (true para troca-oleo, troca-vela, troca-filtro-ar; false para troca-kit-transmissao, troca-pneu-dianteiro, troca-pneu-traseiro, revisao-geral, retifica-cabecote, retifica-completa).
-    - [`src/utils/calculos.ts:304-348`](src/utils/calculos.ts#L304-L348) (`calcularDetalhesRevisaoAnual`): no ramo `modoRevisao === 'autorizadas'`, somar ao `base` os serviços com `!incluidoNaRevisaoAutorizada && ativo && !ehExcepcional` usando `precoMaoDeObraAutorizada`.
-    - [`src/utils/calculos.ts:412-429`](src/utils/calculos.ts#L412-L429) (`calcularImprevistosSugeridosAnual`): manter inalterado se imprevistos seguem ignorando modo, ou estender para usar M.O. do modo ativo (decisão a registrar na ADR).
-    - [`src/pages/PaginaMaoDeObra.tsx`](src/pages/PaginaMaoDeObra.tsx) e [`src/components/mao-de-obra/CardServico.tsx`](src/components/mao-de-obra/CardServico.tsx): aba Autorizada renderiza cards para serviços `!incluidoNaRevisaoAutorizada` ao lado das revisões Honda; input atualiza o campo correto via action.
-    - Action `SET_SERVICO_INDEPENDENTE` em [`src/types/perfil.ts:202`](src/types/perfil.ts#L202): payload já é `ServicoIndependente` completo → atualiza automaticamente. Se preferir granular, criar `SET_SERVICO_MO_AUTORIZADA` / `SET_SERVICO_MO_INDEPENDENTE`.
-    - [`src/fixtures/usuario_teste.json`](src/fixtures/usuario_teste.json): atualizar os 2 presets de fixture para o novo formato (migration cobre, mas fixture é fonte para devs).
-  - **Schema migration v14 → v15:** mapear cada `ServicoIndependente.precoMaoDeObra` antigo para `precoMaoDeObraIndependente`; preencher `precoMaoDeObraAutorizada` com defaults por id (ver tabela abaixo); preencher `incluidoNaRevisaoAutorizada` por id.
-  - **Defaults sugeridos (M.O. Autorizada Honda, RJ — valores estimados, devem ser validados):**
-    - troca-oleo / troca-vela / troca-filtro-ar: `incluidoNaRevisaoAutorizada=true`, M.O. autorizada = 0 (já no pacote)
-    - troca-kit-transmissao: `incluidoNaRevisaoAutorizada=false`, M.O. autorizada ≈ R$ 80
-    - troca-pneu-dianteiro / troca-pneu-traseiro: `incluidoNaRevisaoAutorizada=false`, M.O. autorizada ≈ R$ 40
-    - revisao-geral: `incluidoNaRevisaoAutorizada=true` (revisão geral é exatamente o pacote Honda no modo autorizado → não duplica)
-    - retifica-cabecote / retifica-completa: `incluidoNaRevisaoAutorizada=false`, mas `ehExcepcional=true` → continuam saindo via imprevistos sugeridos, não via cálculo regular de revisão
-  - **ADR obrigatória (Strict):** "Modelo de M.O. por modo de revisão para serviços fora do pacote Honda" — registrar a decisão de campo duplo + flag `incluidoNaRevisaoAutorizada` em serviços + comportamento do cálculo autorizada. Complementa ADR-006 (cálculo de manutenção).
-  - **Cuidados:**
-    - **Imprevistos sugeridos (retíficas):** hoje [`calculos.ts:417-418`](src/utils/calculos.ts#L417-L418) usa `precoMaoDeObra` único. Decidir na ADR se imprevistos sugeridos passam a respeitar o modo ou seguem com valor único — recomendação: respeitar o modo (consistência), mas requer ajuste no calculador.
-    - **Fixture e localStorage:** se a migration v14→v15 falhar, perfis salvos param de carregar. Teste de migration com fixture é obrigatório.
-    - **Não introduzir backward-compat sutil:** seguir convenção do agente — renomear `precoMaoDeObra` → `precoMaoDeObraIndependente` no tipo (não deixar campo legado coexistindo).
-    - **UI:** aba Autorizada hoje só lista revisões Honda; adicionar a seção de cards de serviços extras sem desorganizar a hierarquia visual. Cards podem ser agrupados em "Serviços fora do pacote Honda" para deixar claro ao usuário.
-    - **Testes em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts) e [`src/context/PerfilContext.test.ts`](src/context/PerfilContext.test.ts):** caso "modo autorizada com kit transmissão M.O.=80 → cálculo inclui R$ 80 × (kmAnual / 12000) acima do pacote Honda"; caso "migration v14→v15 mapeia campos corretamente".
-  - **Bloqueador para:** TASK-RF-6.14 (que adiciona bateria/embreagem/cilindro depende desse modelo estendido).
-
----
-
 ## TASK-RF-6.14 — Adicionar Bateria, Kit Embreagem, Kit Revisão 6000km e Kit Cilindro como itens de cálculo
 
 - **Status:** Pendente
@@ -77,8 +37,8 @@ Obedeça essa ordem:
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** M/M
 - **Data-hora origem:** 25/05/26 10:29
-- **Dependências:** TASK-RF-6.22
-- **REQ/ADR/DT:** ADR-004, ADR-006
+- **Dependências:** TASK-RF-6.22 (concluída 25/05/26 14:00 — modelo já disponível: `precoMaoDeObraIndependente`, `precoTotalAutorizada`, `incluidoNaRevisaoAutorizada`)
+- **REQ/ADR/DT:** ADR-004, ADR-006, ADR-007
 - **Observações:**
   - **Problema:** o cálculo de custo cíclico atual cobre óleo, vela, filtro ar, kit relação, sapatas e pneus, mas não cobre 4 itens recorrentes em uso real de motoboy RJ: Bateria, Kit Embreagem, Kit Revisão 6.000km, Kit Cilindro. Sem eles, o CPK fica subestimado.
   - **Itens e valores (fornecidos pelo usuário 25/05/26, fontes em links no histórico):**
@@ -89,22 +49,22 @@ Obedeça essa ordem:
   - **Local provável:**
     - [`src/presets/pop110i.json`](src/presets/pop110i.json) `pecas[]`: adicionar 4 entradas (`bateria`, `kit_embreagem`, `kit_revisao_6000`, `kit_cilindro`). Atualizar `revisaoAutorizada[1].precoPecas` 127.88 → 152.83. Bateria usa só `intervaloMeses: 24`, omite `intervaloKm`.
     - [`src/types/calculos.ts`](src/types/calculos.ts) `PecaPreset`: confirmar se `intervaloKm` é opcional; se não, tornar opcional (peças com driver mensal).
-    - [`src/context/PerfilContext.tsx`](src/context/PerfilContext.tsx) `SERVICOS_INDEPENDENTES_PADRAO`: adicionar 3 entradas (`troca-bateria`, `troca-kit-embreagem`, `troca-kit-cilindro`) usando o modelo expandido da TASK-RF-6.22 (`precoMaoDeObraIndependente` + `precoMaoDeObraAutorizada` + `incluidoNaRevisaoAutorizada: false`).
+    - [`src/context/PerfilContext.tsx`](src/context/PerfilContext.tsx) `SERVICOS_INDEPENDENTES_PADRAO`: adicionar 3 entradas (`troca-bateria`, `troca-kit-embreagem`, `troca-kit-cilindro`) usando o modelo da ADR-007 (`precoMaoDeObraIndependente` + `precoTotalAutorizada` (peça + M.O. juntos, como Honda cobra) + `incluidoNaRevisaoAutorizada: false`).
     - [`src/utils/calculos.ts:182-256`](src/utils/calculos.ts#L182-L256) `calcularCpkPorPeca`: estender para suportar peça com `intervaloMeses` sem `intervaloKm`. Fallback: `trocasNoAno = 12 / intervaloMeses`, `custoAnual = trocasNoAno * preco`, `cpk = kmAnual > 0 ? custoAnual / kmAnual : 0`. Não afetar peças existentes (todas têm `intervaloKm`).
     - [`src/pages/PaginaDetalhamento.tsx`](src/pages/PaginaDetalhamento.tsx): mutual exclusion entre `kit_cilindro` (peça regular ativada em Detalhamento) e `retifica-completa` (imprevisto sugerido excepcional). Quando usuário ativa um, o outro é desativado automaticamente com toast/aviso: *"Kit Cilindro e Retífica completa são caminhos alternativos para o mesmo serviço. Ativar um desativa o outro."*
-  - **Defaults de M.O. (RJ — estimativas a confirmar em uso real):**
-    - troca-bateria: independente R$ 20, autorizada R$ 30
-    - troca-kit-embreagem: independente R$ 250, autorizada R$ 400
-    - troca-kit-cilindro: independente R$ 200, autorizada — deixar 0 (concessionária Honda raramente faz em Pop 110i)
+  - **Defaults RJ (peça documentada + M.O. estimada — confirmar em uso real):**
+    - troca-bateria: `precoMaoDeObraIndependente` R$ 20; `precoTotalAutorizada` ≈ peça R$ 567,34 (valor Honda fornecido pelo usuário, total já inclui M.O.)
+    - troca-kit-embreagem: `precoMaoDeObraIndependente` R$ 250; `precoTotalAutorizada` ≈ peça R$ 300,33 + M.O. ~R$ 400 = R$ 700,33 (aprox.)
+    - troca-kit-cilindro: `precoMaoDeObraIndependente` R$ 200; `precoTotalAutorizada` ≈ peça R$ 360,83 + M.O. ~R$ 200 = R$ 560,83 (aprox., concessionária Honda raramente executa em Pop 110i)
   - **Schema migration v15 → v16** (encadeada após v14 → v15 da TASK-RF-6.22): adicionar overrides vazios para os 4 novos `id`s em `pecasOverrides`; garantir que perfis salvos sem os novos `servicosIndependentes` recebam os defaults.
   - **Testes em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts):**
     - Caso "bateria com intervaloMeses=24 entra no cálculo pelo tempo, não pelo km" (kmAnual=30000 → 2 trocas/4 anos = 0,5 trocas/ano).
     - Caso "Kit Revisão 6000km com `incluidoNaRevisaoAutorizada: true` não duplica no modo autorizada" (já coberto pela mecânica existente da flag, mas adicionar caso explícito).
     - Caso "Kit Cilindro entra no CPK regular com `intervaloKm: 100000`".
     - Caso "mutual exclusion": com `kit_cilindro` ativado e `retifica-completa` `ativo: false`, mudança para `retifica-completa.ativo: true` zera `kit_cilindro` nas categorias ativas (ou flag equivalente) e vice-versa.
-    - Caso "modo autorizada inclui M.O. autorizada de troca-kit-embreagem" (depende da TASK-RF-6.22 já mergeada).
+    - Caso "modo autorizado soma `precoTotalAutorizada` de troca-kit-embreagem ao ciclo Honda" (TASK-RF-6.22 já mergeada — mecânica idêntica ao teste de kit transmissão em [calculos.test.ts](../../src/utils/calculos.test.ts)).
   - **Cuidados:**
-    - **TASK-RF-6.22 é dependência forte.** Sem o modelo de M.O. por modo, M.O. dos serviços novos no autorizada não tem onde morar. Não iniciar a 6.14 antes da 6.22 estar concluída.
+    - ~~**TASK-RF-6.22 é dependência forte.**~~ Concluída em 25/05/26 14:00. Modelo disponível em [ADR-007](../arquitetura/ADR/ADR-007.md): cada novo serviço usa `precoMaoDeObraIndependente` + `precoTotalAutorizada` (peça + M.O. juntos) + `incluidoNaRevisaoAutorizada`.
     - **TASK-RF-6.13** (renomear card "Últimas manutenções" + adicionar Bateria) é independente desta. Bateria como peça de cálculo (aqui) ≠ Bateria como linha de km registrado (TASK-RF-6.13). Coordenar id `bateria` entre os dois para reuso futuro de `kmUltimaTrocas`.
     - **Bateria envelhece por tempo:** validar com testes que `kmAnual: 0` (ou usuário sem rodagem declarada) ainda gera `custoAnual` correto (preço da bateria a cada 24 meses). Cuidado com divisão por zero ao calcular `cpk` (`kmAnual > 0 ? ... : 0`).
     - **Kit Revisão 6000km no autorizada:** a atualização do `precoPecas` da revisão Honda 6k de 127.88 → 152.83 muda o cálculo do `custoCicloCompleto`. Recalcular o ciclo total Honda (7 revisões × preço) e ajustar default `custoCicloCompleto` em [`calculos.ts:317`](src/utils/calculos.ts#L317) (`3334.62` → novo valor) se houver constante hardcoded.

@@ -61,13 +61,20 @@ interface PropsListaServicos {
   dispatch: Dispatch<PerfilAction>;
   temOverrides: boolean;
   onRestaurarTudo: () => void;
+  modo?: 'independente' | 'autorizada';
 }
 
-function ListaServicos({ servicos, dispatch, temOverrides, onRestaurarTudo }: PropsListaServicos) {
+function ListaServicos({
+  servicos,
+  dispatch,
+  temOverrides,
+  onRestaurarTudo,
+  modo = 'independente',
+}: PropsListaServicos) {
   return (
     <div className="space-y-sm">
       {servicos.map((s) => (
-        <CardServico key={s.id} servico={s} dispatch={dispatch} />
+        <CardServico key={s.id} servico={s} dispatch={dispatch} modo={modo} />
       ))}
       {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
     </div>
@@ -99,6 +106,11 @@ export function PaginaMaoDeObra() {
 
   const servicosNormais = perfil.servicosIndependentes.filter((s) => !s.ehExcepcional);
   const servicosExcepcionais = perfil.servicosIndependentes.filter((s) => s.ehExcepcional);
+  // Aba Honda: serviços avulsos fora das revisões (ADR-007) — só os que a
+  // concessionária cobra à parte, com precoTotalAutorizada > 0 no preset.
+  const servicosAvulsosAutorizada = servicosNormais.filter(
+    (s) => !s.incluidoNaRevisaoAutorizada && (s.precoTotalAutorizada > 0 || ehAvulsoEditado(s)),
+  );
   const menorIntervaloExcepcional = servicosExcepcionais.reduce<number | null>(
     (menor, servico) => (menor === null ? servico.intervalKm : Math.min(menor, servico.intervalKm)),
     null,
@@ -109,14 +121,32 @@ export function PaginaMaoDeObra() {
 
   const temOverridesHonda = perfil.revisaoAutorizadaOverrides.length > 0;
 
-  function servicoDifereDopadrao(s: ServicoIndependente): boolean {
+  function ehAvulsoEditado(s: ServicoIndependente): boolean {
     const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
-    if (!p) return false;
-    return s.precoMaoDeObra !== p.precoMaoDeObra || s.intervalKm !== p.intervalKm;
+    return (
+      !!p && !p.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada !== p.precoTotalAutorizada
+    );
   }
 
-  const temOverridesNormais = servicosNormais.some(servicoDifereDopadrao);
-  const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadrao);
+  function servicoDifereDopadraoIndependente(s: ServicoIndependente): boolean {
+    const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
+    if (!p) return false;
+    return (
+      s.precoMaoDeObraIndependente !== p.precoMaoDeObraIndependente || s.intervalKm !== p.intervalKm
+    );
+  }
+
+  function servicoDifereDopadraoAutorizada(s: ServicoIndependente): boolean {
+    const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
+    if (!p) return false;
+    return s.precoTotalAutorizada !== p.precoTotalAutorizada || s.intervalKm !== p.intervalKm;
+  }
+
+  const temOverridesNormais = servicosNormais.some(servicoDifereDopadraoIndependente);
+  const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadraoIndependente);
+  const temOverridesAvulsosAutorizada = servicosAvulsosAutorizada.some(
+    servicoDifereDopadraoAutorizada,
+  );
 
   function restaurarGrupo(servicos: ServicoIndependente[]) {
     servicos.forEach((s) => {
@@ -166,6 +196,21 @@ export function PaginaMaoDeObra() {
                   );
                 })}
                 {temOverridesHonda && <BotaoRestaurarTudo onRestaurar={restaurarHonda} />}
+
+                {servicosAvulsosAutorizada.length > 0 && (
+                  <div className="space-y-sm pt-md">
+                    <h3 className="text-sm font-semibold text-foreground">
+                      Serviços avulsos da concessionária fora das revisões
+                    </h3>
+                    <ListaServicos
+                      servicos={servicosAvulsosAutorizada}
+                      dispatch={dispatch}
+                      temOverrides={temOverridesAvulsosAutorizada}
+                      onRestaurarTudo={() => restaurarGrupo(servicosAvulsosAutorizada)}
+                      modo="autorizada"
+                    />
+                  </div>
+                )}
               </div>
             )}
           </TabsContent>

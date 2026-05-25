@@ -339,7 +339,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV8) as unknown as Record<string, unknown>;
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(
       (migrado.perfilManutencao as Record<string, unknown>).precoMaoDeObraIndependente,
     ).toBeUndefined();
@@ -375,7 +375,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(1200);
     expect(seguro.empresa).toBe('Suhai');
@@ -400,7 +400,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(0);
   });
@@ -432,19 +432,23 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(ids).not.toContain('fazer-motor');
     expect(retificaCabecote).toMatchObject({
       nome: 'Retífica de cabeçote',
       intervalKm: 80000,
-      precoMaoDeObra: 800,
+      precoMaoDeObraIndependente: 800,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: false,
       ativo: false,
       ehExcepcional: true,
     });
     expect(retificaCompleta).toMatchObject({
       nome: 'Retífica completa',
       intervalKm: 120000,
-      precoMaoDeObra: 1800,
+      precoMaoDeObraIndependente: 1800,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: false,
       ativo: false,
       ehExcepcional: true,
     });
@@ -469,8 +473,8 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(14);
-    expect(retificaCabecote?.precoMaoDeObra).toBe(950);
+    expect(migrado.schemaVersion).toBe(16);
+    expect(retificaCabecote?.precoMaoDeObraIndependente).toBe(950);
     expect(retificaCabecote?.ativo).toBe(false);
     expect(retificaCompleta?.ativo).toBe(false);
   });
@@ -566,13 +570,13 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV12);
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
   });
 
   it('migrarPerfil é idempotente quando aplicada em perfil já na versão atual', () => {
     const migrado = migrarPerfil(perfilPadrao);
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
@@ -599,7 +603,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV13);
 
-    expect(migrado.schemaVersion).toBe(14);
+    expect(migrado.schemaVersion).toBe(16);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
   });
@@ -625,6 +629,81 @@ describe('perfilReducer', () => {
     const migrado = migrarPerfil(perfilV13);
 
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(false);
+  });
+
+  // ── TASK-RF-6.22 / ADR-007: M.O. por modo + precoTotalAutorizada ─────
+
+  it('migrarPerfil v14 → v15 preserva precoMaoDeObra editado como precoMaoDeObraIndependente e popula campos novos por id', () => {
+    // Perfil v14 com edição do usuário: kit transmissão com M.O. de 90 e
+    // troca-oleo com M.O. de 28 (acima do default 25). Após v14→v15, esses
+    // valores devem virar precoMaoDeObraIndependente; precoTotalAutorizada e
+    // incluidoNaRevisaoAutorizada vêm dos defaults por id.
+    const servicosV14 = [
+      {
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 3000,
+        precoMaoDeObra: 28,
+        ativo: true,
+        ehExcepcional: false,
+      },
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObra: 90,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const perfilV14 = {
+      ...perfilPadrao,
+      schemaVersion: 14,
+      servicosIndependentes: servicosV14,
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV14);
+    const oleo = migrado.servicosIndependentes.find((s) => s.id === 'troca-oleo');
+    const kit = migrado.servicosIndependentes.find((s) => s.id === 'troca-kit-transmissao');
+
+    expect(migrado.schemaVersion).toBe(16);
+    expect(oleo).toMatchObject({
+      precoMaoDeObraIndependente: 28,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: true,
+    });
+    expect(kit).toMatchObject({
+      precoMaoDeObraIndependente: 90,
+      precoTotalAutorizada: 313.56,
+      incluidoNaRevisaoAutorizada: false,
+    });
+  });
+
+  it('migrarPerfil v14 → v15 usa defaults do padrão para id desconhecido (precoTotalAutorizada=0, incluidoNaRevisaoAutorizada=false)', () => {
+    const servicosV14 = [
+      {
+        id: 'servico-custom-futuro',
+        nome: 'Custom',
+        intervalKm: 5000,
+        precoMaoDeObra: 42,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const perfilV14 = {
+      ...perfilPadrao,
+      schemaVersion: 14,
+      servicosIndependentes: servicosV14,
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV14);
+    const custom = migrado.servicosIndependentes.find((s) => s.id === 'servico-custom-futuro');
+
+    expect(custom).toMatchObject({
+      precoMaoDeObraIndependente: 42,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: false,
+    });
   });
 
   it('SET_KM_POR_DIA sincroniza a alteracao com o preset ativo', () => {

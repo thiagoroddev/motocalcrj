@@ -86,6 +86,22 @@
       }
     },
     {
+      "id": "sapata_freio_dianteiro",
+      "nome": "Sapata de freio dianteiro",
+      "intervaloKm": 20000,
+      "intervaloKmEntrega": 12000,
+      "intervaloMeses": 0,
+      "precoOriginal": 82,
+      "precoParalela": 17,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i básica usa freio a tambor nas duas rodas.",
+        "intervaloKmEntregaNota": "Mesma estimativa da traseira para uso urbano RJ. Mock: 12.000 km.",
+        "precoOriginalNota": "Par HAMP Nissin R$ 163,64 (informado pelo usuário 25/05/26); valor individual ≈ R$ 82.",
+        "precoParalelaNota": "Par paralela ≈ R$ 34 (informado pelo usuário 25/05/26); valor individual ≈ R$ 17."
+      }
+    },
+    {
       "id": "sapata_freio_traseiro",
       "nome": "Sapata de freio traseiro",
       "intervaloKm": 20000,

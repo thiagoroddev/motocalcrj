@@ -216,7 +216,9 @@ describe('resolverIntervaloPeca', () => {
         id: 'pneu_traseiro',
         nome: 'Pneu traseiro',
         intervalKm: 9000,
-        precoMaoDeObra: 125,
+        precoMaoDeObraIndependente: 125,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: false,
         ativo: true,
         ehExcepcional: false,
       },
@@ -230,7 +232,9 @@ describe('resolverIntervaloPeca', () => {
         id: 'pneu_traseiro',
         nome: 'Pneu traseiro',
         intervalKm: 9000,
-        precoMaoDeObra: 125,
+        precoMaoDeObraIndependente: 125,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: false,
         ativo: false,
         ehExcepcional: false,
       },
@@ -402,7 +406,9 @@ describe('calcularCustoRevisaoAnual', () => {
       id: 'troca-oleo',
       nome: 'Troca de óleo',
       intervalKm: 3000,
-      precoMaoDeObra: 25,
+      precoMaoDeObraIndependente: 25,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: true,
       ativo: true,
       ehExcepcional: false,
     },
@@ -410,7 +416,9 @@ describe('calcularCustoRevisaoAnual', () => {
       id: 'revisao-geral',
       nome: 'Revisão geral',
       intervalKm: 6000,
-      precoMaoDeObra: 80,
+      precoMaoDeObraIndependente: 80,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: true,
       ativo: true,
       ehExcepcional: false,
     },
@@ -418,7 +426,9 @@ describe('calcularCustoRevisaoAnual', () => {
       id: 'retifica-cabecote',
       nome: 'Retífica de cabeçote',
       intervalKm: 80000,
-      precoMaoDeObra: 800,
+      precoMaoDeObraIndependente: 800,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: false,
       ativo: true,
       ehExcepcional: true,
     },
@@ -426,7 +436,9 @@ describe('calcularCustoRevisaoAnual', () => {
       id: 'retifica-completa',
       nome: 'Retífica completa',
       intervalKm: 120000,
-      precoMaoDeObra: 1500,
+      precoMaoDeObraIndependente: 1500,
+      precoTotalAutorizada: 0,
+      incluidoNaRevisaoAutorizada: false,
       ativo: true,
       ehExcepcional: true,
     },
@@ -488,6 +500,79 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(calcularCustoRevisaoAnual('independentes', 10000, { servicosIndependentes: [] })).toBe(
       0,
     );
+  });
+
+  // ── TASK-RF-6.22 / ADR-007: M.O. por modo + precoTotalAutorizada ─────
+
+  it('modo autorizadas: soma precoTotalAutorizada de serviços fora do pacote Honda acima do ciclo', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicosComKit: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObraIndependente: 60,
+        precoTotalAutorizada: 313.56,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicosComKit,
+    });
+    // Pacote Honda escalado + kit transmissão (1 troca/ano × 313.56)
+    const esperado = (cicloHonda / 36000) * kmAnual + 313.56;
+    expect(total).toBeCloseTo(esperado, 2);
+  });
+
+  it('modo autorizadas: NÃO soma serviço com incluidoNaRevisaoAutorizada=true (já no pacote)', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicosComOleo: ServicoIndependente[] = [
+      {
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 3000,
+        precoMaoDeObraIndependente: 25,
+        // Mesmo com precoTotalAutorizada > 0, a flag impede dupla contagem.
+        precoTotalAutorizada: 999,
+        incluidoNaRevisaoAutorizada: true,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicosComOleo,
+    });
+    const esperado = (cicloHonda / 36000) * kmAnual;
+    expect(total).toBeCloseTo(esperado, 2);
+  });
+
+  it('modo autorizadas: serviço com precoTotalAutorizada=0 não soma (Honda não executa)', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicosComRetifica: ServicoIndependente[] = [
+      {
+        id: 'retifica-completa',
+        nome: 'Retífica completa',
+        intervalKm: 120000,
+        precoMaoDeObraIndependente: 1500,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false, // mesmo como não-excepcional, valor 0 zera a soma
+      },
+    ];
+    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicosComRetifica,
+    });
+    const esperado = (cicloHonda / 36000) * kmAnual;
+    expect(total).toBeCloseTo(esperado, 2);
   });
 });
 
@@ -898,27 +983,49 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
     );
   });
 
-  it('sem overrides usa precoTotal original do preset', () => {
+  it('sem overrides usa precoTotal original do preset + serviços avulsos autorizada (ADR-007)', () => {
     const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
     const cicloEsperado = presetMock.revisaoAutorizada.reduce((s, r) => s + r.precoTotal, 0);
     const kmAnual = calcularKmAnual(
       perfilPadrao.trabalho.kmPorDia,
       perfilPadrao.trabalho.diasPorSemana,
     );
-    expect(resultado.revisao.total).toBeCloseTo((cicloEsperado / 36000) * kmAnual, 2);
+    // Pacote Honda escalado + extras dos serviços avulsos do perfilPadrao com
+    // precoTotalAutorizada > 0 (ADR-007). Serviços excepcionais e os incluídos
+    // no pacote (incluidoNaRevisaoAutorizada=true) não somam.
+    const extraServicosAvulsos = perfilAutorizadas.servicosIndependentes
+      .filter(
+        (s) =>
+          !s.ehExcepcional &&
+          !s.incluidoNaRevisaoAutorizada &&
+          s.precoTotalAutorizada > 0 &&
+          s.ativo,
+      )
+      .reduce((sum, s) => sum + (s.precoTotalAutorizada / s.intervalKm) * kmAnual, 0);
+    expect(resultado.revisao.total).toBeCloseTo(
+      (cicloEsperado / 36000) * kmAnual + extraServicosAvulsos,
+      2,
+    );
   });
 
-  it('retíficas ficam em imprevistos sugeridos e sincronizam com Mão de Obra', () => {
-    const resultado = calcularCustosPorCategoria(
-      {
-        ...perfilAutorizadas,
-        servicosIndependentes: perfilAutorizadas.servicosIndependentes.map((servico) =>
-          servico.id === 'retifica-cabecote' ? { ...servico, precoMaoDeObra: 900 } : servico,
-        ),
+  it('retíficas no modo independente: ficam em imprevistos sugeridos e sincronizam com Mão de Obra', () => {
+    // Cenário convertido para modo independente (ADR-007): no autorizado,
+    // retífica tem precoTotalAutorizada=0 e some do mapa de imprevistos
+    // (Honda não executa retífica — substitui por kit cilindro). Coberto por
+    // teste dedicado abaixo.
+    const perfilIndependente = {
+      ...perfilAutorizadas,
+      perfilManutencao: {
+        ...perfilAutorizadas.perfilManutencao,
+        modoRevisao: 'independentes' as const,
       },
-      presetMock,
-      dadosRJMock,
-    );
+      servicosIndependentes: perfilAutorizadas.servicosIndependentes.map((servico) =>
+        servico.id === 'retifica-cabecote'
+          ? { ...servico, precoMaoDeObraIndependente: 900 }
+          : servico,
+      ),
+    };
+    const resultado = calcularCustosPorCategoria(perfilIndependente, presetMock, dadosRJMock);
     const kmAnual = calcularKmAnual(
       perfilPadrao.trabalho.kmPorDia,
       perfilPadrao.trabalho.diasPorSemana,
@@ -928,6 +1035,12 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
     expect(resultado.revisao.detalhes.servicos.has('retifica-cabecote')).toBe(false);
     expect(retifica?.precoServico).toBe(900);
     expect(retifica?.custoAnual).toBeCloseTo((900 / 80000) * kmAnual, 2);
+  });
+
+  it('retífica no modo autorizado some dos imprevistos (precoTotalAutorizada=0 — Honda não executa)', () => {
+    const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
+    expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-cabecote')).toBe(false);
+    expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-completa')).toBe(false);
   });
 });
 
@@ -974,6 +1087,63 @@ describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => 
     expect(resultado.has('kit_relacao')).toBe(true);
     expect(resultado.has('pneu_traseiro')).toBe(true);
   });
+
+  // ── TASK-RF-6.22 / ADR-007: exclusão por serviço com precoTotalAutorizada ─────
+
+  it('modo autorizado: exclui peça associada a serviço com precoTotalAutorizada > 0 (evita dupla contagem)', () => {
+    // troca-kit-transmissao cobre peça kit_relacao no modo autorizado: o
+    // valor total Honda já contém a peça, então não pode ser contada de novo
+    // pelo CPK.
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObraIndependente: 60,
+        precoTotalAutorizada: 313.56,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const resultado = calcularCpkPorPeca({
+      preset: presetMock,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'autorizadas',
+      kmAtual: 0,
+      kmAnual: 7280,
+      servicosIndependentes: servicos,
+    });
+    expect(resultado.has('kit_relacao')).toBe(false);
+    // Pneu segue presente: nenhum serviço o cobre no autorizado neste cenário.
+    expect(resultado.has('pneu_traseiro')).toBe(true);
+  });
+
+  it('modo autorizado: mantém peça quando serviço associado está inativo', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObraIndependente: 60,
+        precoTotalAutorizada: 313.56,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: false,
+        ehExcepcional: false,
+      },
+    ];
+    const resultado = calcularCpkPorPeca({
+      preset: presetMock,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'autorizadas',
+      kmAtual: 0,
+      kmAnual: 7280,
+      servicosIndependentes: servicos,
+    });
+    expect(resultado.has('kit_relacao')).toBe(true);
+  });
 });
 
 describe('calcularCustosPorCategoria — modo autorizado não duplica peças da revisão', () => {
@@ -989,16 +1159,19 @@ describe('calcularCustosPorCategoria — modo autorizado não duplica peças da 
     };
   }
 
-  it('modo autorizado: manutenção exclui óleo e vela (cobertos pela revisão)', () => {
+  it('modo autorizado: manutenção exclui óleo e vela (cobertos pela revisão) e exclui kit_relacao/pneus quando serviço associado tem precoTotalAutorizada > 0 (ADR-007)', () => {
     const resultado = calcularCustosPorCategoria(
       perfilComModo('autorizadas'),
       presetMock,
       dadosRJBG003,
     );
+    // ADR-006: óleo e vela são pacote Honda.
     expect(resultado.manutencao.detalhes.has('oleo_motor')).toBe(false);
     expect(resultado.manutencao.detalhes.has('vela_ignicao')).toBe(false);
-    expect(resultado.manutencao.detalhes.has('kit_relacao')).toBe(true);
-    expect(resultado.manutencao.detalhes.has('pneu_traseiro')).toBe(true);
+    // ADR-007: kit_relacao e pneus saem do CPK quando o serviço associado
+    // tem precoTotalAutorizada > 0 e está ativo (perfilPadrao v15 satisfaz).
+    expect(resultado.manutencao.detalhes.has('kit_relacao')).toBe(false);
+    expect(resultado.manutencao.detalhes.has('pneu_traseiro')).toBe(false);
   });
 
   it('modo independente: manutenção inclui óleo e vela', () => {
@@ -1176,8 +1349,9 @@ describe('MAPA_PECA_PARA_SERVICO', () => {
     }
   });
 
-  it('sapata_freio_traseiro não tem serviço cadastrado (popup mostra só preço da peça)', () => {
-    expect(MAPA_PECA_PARA_SERVICO['sapata_freio_traseiro']).toBeUndefined();
+  it('mapeia sapatas dianteira e traseira para os serviços de troca correspondentes (ADR-007)', () => {
+    expect(MAPA_PECA_PARA_SERVICO['sapata_freio_dianteiro']).toBe('troca-sapata-dianteira');
+    expect(MAPA_PECA_PARA_SERVICO['sapata_freio_traseiro']).toBe('troca-sapata-traseira');
   });
 
   it('mapeia oleo_motor para troca-oleo (caminho feliz)', () => {

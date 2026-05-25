@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 14,
+        "schemaVersion": 16,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -93,15 +93,17 @@
         ],
 
         "servicosIndependentes": [
-          { "id": "troca-oleo",            "nome": "Troca de óleo",               "intervalKm": 3000,  "precoMaoDeObra": 25,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",       "intervalKm": 12000, "precoMaoDeObra": 60,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",        "intervalKm": 25000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
-          { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,   "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",        "intervalKm": 80000,  "precoMaoDeObra": 800,  "ativo": false, "ehExcepcional": true  },
-          { "id": "retifica-completa",     "nome": "Retífica completa",           "intervalKm": 120000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-oleo",            "nome": "Troca de óleo",                "intervalKm": 3000,   "precoMaoDeObraIndependente": 25,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",        "intervalKm": 12000,  "precoMaoDeObraIndependente": 60,   "precoTotalAutorizada": 313.56, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",         "intervalKm": 25000,  "precoMaoDeObraIndependente": 30,   "precoTotalAutorizada": 249.0,  "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",          "intervalKm": 15000,  "precoMaoDeObraIndependente": 30,   "precoTotalAutorizada": 285.0,  "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-sapata-dianteira","nome": "Troca sapata de freio dianteira","intervalKm": 20000, "precoMaoDeObraIndependente": 40,   "precoTotalAutorizada": 268.65, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-sapata-traseira", "nome": "Troca sapata de freio traseira", "intervalKm": 20000, "precoMaoDeObraIndependente": 40,   "precoTotalAutorizada": 191.65, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "revisao-geral",         "nome": "Revisão geral (independente)", "intervalKm": 6000,   "precoMaoDeObraIndependente": 80,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-vela",            "nome": "Troca de vela",                "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoMaoDeObraIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
+          { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoMaoDeObraIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
         ],
 
         "revisaoAutorizadaOverrides": [],
@@ -120,7 +122,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 14,
+        "schemaVersion": 16,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -193,15 +195,17 @@
 
         "pecasOverrides": [],
         "servicosIndependentes": [
-          { "id": "troca-oleo",            "nome": "Troca de óleo",               "intervalKm": 3000,  "precoMaoDeObra": 25,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",       "intervalKm": 12000, "precoMaoDeObra": 60,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",        "intervalKm": 25000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",         "intervalKm": 15000, "precoMaoDeObra": 30,   "ativo": true,  "ehExcepcional": false },
-          { "id": "revisao-geral",         "nome": "Revisão geral (independente)","intervalKm": 6000,  "precoMaoDeObra": 80,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-vela",            "nome": "Troca de vela",               "intervalKm": 6000,  "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",          "intervalKm": 6000,   "precoMaoDeObra": 15,   "ativo": true,  "ehExcepcional": false },
-          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",        "intervalKm": 80000,  "precoMaoDeObra": 800,  "ativo": false, "ehExcepcional": true  },
-          { "id": "retifica-completa",     "nome": "Retífica completa",           "intervalKm": 120000, "precoMaoDeObra": 1500, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-oleo",            "nome": "Troca de óleo",                "intervalKm": 3000,   "precoMaoDeObraIndependente": 25,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-transmissao", "nome": "Troca kit transmissão",        "intervalKm": 12000,  "precoMaoDeObraIndependente": 60,   "precoTotalAutorizada": 313.56, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-dianteiro",  "nome": "Troca pneu dianteiro",         "intervalKm": 25000,  "precoMaoDeObraIndependente": 30,   "precoTotalAutorizada": 249.0,  "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-pneu-traseiro",   "nome": "Troca pneu traseiro",          "intervalKm": 15000,  "precoMaoDeObraIndependente": 30,   "precoTotalAutorizada": 285.0,  "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-sapata-dianteira","nome": "Troca sapata de freio dianteira","intervalKm": 20000, "precoMaoDeObraIndependente": 40,   "precoTotalAutorizada": 268.65, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-sapata-traseira", "nome": "Troca sapata de freio traseira", "intervalKm": 20000, "precoMaoDeObraIndependente": 40,   "precoTotalAutorizada": 191.65, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "revisao-geral",         "nome": "Revisão geral (independente)", "intervalKm": 6000,   "precoMaoDeObraIndependente": 80,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-vela",            "nome": "Troca de vela",                "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoMaoDeObraIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
+          { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoMaoDeObraIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
         ],
         "revisaoAutorizadaOverrides": [],
         "fipeCache": {
