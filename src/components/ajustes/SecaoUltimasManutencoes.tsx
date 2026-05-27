@@ -1,6 +1,8 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction, KmUltimaTrocas } from '../../types/perfil';
+import { DialogConfirmacao } from '../DialogConfirmacao';
+import { IconTrocar } from '../icons';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BotaoReset } from '../BotaoReset';
@@ -10,6 +12,15 @@ const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'pneuDianteiro', label: 'Pneu dianteiro' },
   { key: 'pneuTraseiro', label: 'Pneu traseiro' },
   { key: 'kitRelacao', label: 'Kit relação' },
+  { key: 'velaIgnicao', label: 'Vela de ignição' },
+  { key: 'filtroAr', label: 'Filtro de ar' },
+  { key: 'sapataFreioDianteiro', label: 'Sapata de freio dianteiro' },
+  { key: 'sapataFreioTraseiro', label: 'Sapata de freio traseiro' },
+  { key: 'bateria', label: 'Bateria' },
+  { key: 'kitEmbreagem', label: 'Kit embreagem' },
+  { key: 'kitCilindro', label: 'Kit cilindro' },
+  { key: 'retificaCabecote', label: 'Retífica de cabeçote' },
+  { key: 'retificaCompleta', label: 'Retífica completa' },
 ];
 
 interface Props {
@@ -20,6 +31,13 @@ interface Props {
 export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
   const idMotor = useId();
   const idPrefix = useId();
+  const [replicaPendente, setReplicaPendente] = useState<{
+    key: keyof KmUltimaTrocas;
+    label: string;
+    valorAtual: number;
+  } | null>(null);
+  const kmUltimaRevisao = moto.kmUltimaRevisao ?? 0;
+  const podeReplicarKmRevisao = kmUltimaRevisao > 0;
   const temAlteracao =
     COMPONENTES_TROCA.some(({ key }) => moto.kmUltimaTrocas[key] > 0) ||
     moto.kmMotorRefeito != null;
@@ -31,61 +49,117 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
     dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
   }
 
+  function aplicarKmUltimaRevisao(key: keyof KmUltimaTrocas) {
+    if (!podeReplicarKmRevisao) return;
+    dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: kmUltimaRevisao });
+  }
+
+  function prepararReplicaKmRevisao(key: keyof KmUltimaTrocas, label: string) {
+    if (!podeReplicarKmRevisao) return;
+    const valorAtual = moto.kmUltimaTrocas[key];
+    if (valorAtual > 0 && valorAtual !== kmUltimaRevisao) {
+      setReplicaPendente({ key, label, valorAtual });
+      return;
+    }
+    aplicarKmUltimaRevisao(key);
+  }
+
   return (
-    <section className="bg-card rounded-lg p-md space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="label-neutro">Últimas manutenções</p>
-        <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {COMPONENTES_TROCA.map(({ key, label }) => {
-          const inputId = `${idPrefix}-${key}`;
-          return (
-            <div key={key} className="space-y-1">
-              <Label htmlFor={inputId} className="text-xs text-muted-foreground font-normal">
-                {label}
-              </Label>
-              <Input
-                id={inputId}
-                type="number"
-                inputMode="numeric"
-                value={moto.kmUltimaTrocas[key] || ''}
-                min={0}
-                placeholder="0"
-                onChange={(e) => {
-                  const raw = e.target.value;
-                  const v = parseInt(raw, 10);
-                  dispatch({
-                    type: 'SET_KM_ULTIMA_TROCA',
-                    componente: key,
-                    km: raw === '' || isNaN(v) ? 0 : v,
-                  });
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
-      {moto.kmAtual >= 60_000 && (
-        <div className="space-y-1">
-          <Label htmlFor={idMotor} className="text-xs text-muted-foreground font-normal">
-            Retífica do motor (KM)
-          </Label>
-          <Input
-            id={idMotor}
-            type="number"
-            inputMode="numeric"
-            value={moto.kmMotorRefeito ?? ''}
-            min={0}
-            placeholder="0"
-            onChange={(e) => {
-              const raw = e.target.value;
-              const v = parseInt(raw, 10);
-              dispatch({ type: 'SET_MOTOR_REFEITO', km: raw === '' ? null : isNaN(v) ? null : v });
-            }}
-          />
+    <>
+      <section className="bg-card rounded-lg p-md space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="label-neutro">Quilometragem das últimas trocas/manutenções</p>
+          <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
         </div>
-      )}
-    </section>
+        <div className="grid grid-cols-2 gap-2">
+          {COMPONENTES_TROCA.map(({ key, label }) => {
+            const inputId = `${idPrefix}-${key}`;
+            return (
+              <div key={key} className="space-y-1">
+                <Label htmlFor={inputId} className="text-xs text-muted-foreground font-normal">
+                  {label}
+                </Label>
+                <Input
+                  id={inputId}
+                  type="number"
+                  inputMode="numeric"
+                  value={moto.kmUltimaTrocas[key] || ''}
+                  min={0}
+                  placeholder="0"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    const v = parseInt(raw, 10);
+                    dispatch({
+                      type: 'SET_KM_ULTIMA_TROCA',
+                      componente: key,
+                      km: raw === '' || isNaN(v) ? 0 : v,
+                    });
+                  }}
+                />
+                <button
+                  type="button"
+                  disabled={!podeReplicarKmRevisao}
+                  onClick={() => prepararReplicaKmRevisao(key, label)}
+                  className="inline-flex min-h-7 w-full items-center gap-1.5 rounded-md px-1 text-left text-[11px] leading-tight text-muted-foreground transition-colors hover:text-primary disabled:opacity-40 disabled:hover:text-muted-foreground"
+                  aria-label={`Usar km da última revisão em ${label}`}
+                  title={
+                    podeReplicarKmRevisao
+                      ? `Usar ${kmUltimaRevisao.toLocaleString('pt-BR')} km`
+                      : 'Informe o km da última revisão'
+                  }
+                >
+                  <IconTrocar className="h-3.5 w-3.5 shrink-0" />
+                  <span>Km da última revisão</span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        {moto.kmAtual >= 60_000 && (
+          <div className="space-y-1">
+            <Label htmlFor={idMotor} className="text-xs text-muted-foreground font-normal">
+              Retífica do motor (KM)
+            </Label>
+            <Input
+              id={idMotor}
+              type="number"
+              inputMode="numeric"
+              value={moto.kmMotorRefeito ?? ''}
+              min={0}
+              placeholder="0"
+              onChange={(e) => {
+                const raw = e.target.value;
+                const v = parseInt(raw, 10);
+                dispatch({
+                  type: 'SET_MOTOR_REFEITO',
+                  km: raw === '' ? null : isNaN(v) ? null : v,
+                });
+              }}
+            />
+          </div>
+        )}
+      </section>
+      <DialogConfirmacao
+        aberto={replicaPendente != null}
+        onOpenChange={(aberto) => {
+          if (!aberto) setReplicaPendente(null);
+        }}
+        onConfirmar={() => {
+          if (replicaPendente) aplicarKmUltimaRevisao(replicaPendente.key);
+          setReplicaPendente(null);
+        }}
+        titulo="Substituir km registrado?"
+        descricao={
+          replicaPendente
+            ? `${replicaPendente.label} já está com ${replicaPendente.valorAtual.toLocaleString(
+                'pt-BR',
+              )} km. Ao confirmar, o valor será substituído por ${kmUltimaRevisao.toLocaleString(
+                'pt-BR',
+              )} km da última revisão. Esta ação não pode ser desfeita.`
+            : ''
+        }
+        rotuloConfirmar="Substituir"
+      />
+    </>
   );
 }

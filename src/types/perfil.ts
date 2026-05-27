@@ -107,6 +107,15 @@ export interface KmUltimaTrocas {
   pneuDianteiro: number;
   pneuTraseiro: number;
   kitRelacao: number;
+  velaIgnicao: number;
+  filtroAr: number;
+  sapataFreioDianteiro: number;
+  sapataFreioTraseiro: number;
+  bateria: number;
+  kitEmbreagem: number;
+  kitCilindro: number;
+  retificaCabecote: number;
+  retificaCompleta: number;
 }
 
 // ──────────────────────────────────────────────

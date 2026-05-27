@@ -7,8 +7,11 @@ import type { ModoRevisao } from './perfil';
 export interface PecaPreset {
   id: string;
   nome: string;
-  intervaloKm: number;
-  intervaloKmEntrega: number;
+  // Peças com driver temporal (ex.: bateria) omitem `intervaloKm` e usam
+  // apenas `intervaloMeses`. Sem nenhum dos dois, a peça é ignorada no cálculo.
+  intervaloKm?: number;
+  intervaloKmEntrega?: number;
+  intervaloMeses?: number;
   precoOriginal: number;
   precoParalela: number;
   // true = peça trocada nas revisões periódicas Honda. No modo de revisão
@@ -80,9 +83,13 @@ export interface CustoPeca {
   cpk: number;
   custoAnual: number;
   intervaloKm: number;
+  intervaloMeses?: number;
   preco: number;
   fonte: 'preset' | 'registro';
   proximaTrocaKm: number;
+  modo: 'amortizado' | 'ancorado';
+  kmUltimaTroca: number;
+  kmDasProximasTrocas: number[];
   // Trocas projetadas para os próximos 12 meses. Com km da última troca
   // informado, é a contagem cíclica ancorada nele; senão, valor amortizado
   // (kmAnual / intervalo). Ver ADR-006 / RF-6.7.

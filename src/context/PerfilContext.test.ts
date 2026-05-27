@@ -415,7 +415,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV8) as unknown as Record<string, unknown>;
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(
       (migrado.perfilManutencao as Record<string, unknown>).precoMaoDeObraIndependente,
     ).toBeUndefined();
@@ -451,7 +451,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(1200);
     expect(seguro.empresa).toBe('Suhai');
@@ -476,7 +476,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(0);
   });
@@ -508,7 +508,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(ids).not.toContain('fazer-motor');
     expect(retificaCabecote).toMatchObject({
       nome: 'Retífica de cabeçote',
@@ -549,7 +549,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(retificaCabecote?.precoMaoDeObraIndependente).toBe(950);
     expect(retificaCabecote?.ativo).toBe(false);
     expect(retificaCompleta?.ativo).toBe(false);
@@ -646,13 +646,13 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV12);
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
   });
 
   it('migrarPerfil é idempotente quando aplicada em perfil já na versão atual', () => {
     const migrado = migrarPerfil(perfilPadrao);
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
@@ -675,7 +675,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV16);
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
       revisao: true,
       manutencaoPorPeca: {},
@@ -699,7 +699,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV16);
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
       revisao: false,
       manutencaoPorPeca: { oleo_motor: false },
@@ -728,7 +728,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV13);
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
   });
@@ -791,7 +791,7 @@ describe('perfilReducer', () => {
     const oleo = migrado.servicosIndependentes.find((s) => s.id === 'troca-oleo');
     const kit = migrado.servicosIndependentes.find((s) => s.id === 'troca-kit-transmissao');
 
-    expect(migrado.schemaVersion).toBe(17);
+    expect(migrado.schemaVersion).toBe(20);
     expect(oleo).toMatchObject({
       precoMaoDeObraIndependente: 28,
       precoTotalAutorizada: 0,
@@ -899,5 +899,134 @@ describe('perfilReducer', () => {
       manutencao: 'eu',
       seguro: 'dividido',
     });
+  });
+
+  // ── TASK-RF-6.14: mutual exclusion kit_cilindro ↔ retifica-completa ─
+
+  it('TOGGLE_IMPREVISTO_SUGERIDO ativar retifica-completa zera kit_cilindro em manutencaoPorPeca', () => {
+    // Estado inicial: kit_cilindro ativo (default), retifica-completa desativada.
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
+      id: 'retifica-completa',
+    });
+
+    expect(
+      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-completa'],
+    ).toBe(true);
+    expect(
+      resultado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca['kit_cilindro'],
+    ).toBe(false);
+  });
+
+  it('TOGGLE_MANUTENCAO_POR_PECA reativar kit_cilindro zera retifica-completa em imprevistosSugeridosAtivos', () => {
+    // Cenário: retifica-completa ativa e kit_cilindro desligado explicitamente.
+    const estadoComRetifica: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        configuracaoDisplay: {
+          ...perfilPadrao.configuracaoDisplay,
+          imprevistosSugeridosAtivos: { 'retifica-completa': true },
+          filtrosManutencao: {
+            ...perfilPadrao.configuracaoDisplay.filtrosManutencao,
+            manutencaoPorPeca: { kit_cilindro: false },
+          },
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estadoComRetifica, {
+      type: 'TOGGLE_MANUTENCAO_POR_PECA',
+      id: 'kit_cilindro',
+    });
+
+    expect(
+      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-completa'],
+    ).toBe(false);
+    expect(
+      resultado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca['kit_cilindro'],
+    ).toBeUndefined();
+  });
+
+  // ── TASK-RF-6.14: migration v17 → v18 ─
+
+  it('migrarPerfil v17 → v18 adiciona troca-bateria, troca-kit-embreagem e troca-kit-cilindro', () => {
+    // Perfil v17: sem os 3 serviços novos da v18.
+    const servicosV17 = SERVICOS_INDEPENDENTES_PADRAO.filter(
+      (s) => !['troca-bateria', 'troca-kit-embreagem', 'troca-kit-cilindro'].includes(s.id),
+    );
+    const perfilV17 = {
+      ...perfilPadrao,
+      schemaVersion: 17,
+      servicosIndependentes: servicosV17,
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV17);
+    const idsServicos = migrado.servicosIndependentes.map((s) => s.id);
+
+    expect(migrado.schemaVersion).toBe(20);
+    expect(idsServicos).toContain('troca-bateria');
+    expect(idsServicos).toContain('troca-kit-embreagem');
+    expect(idsServicos).toContain('troca-kit-cilindro');
+    // Preserva serviços anteriores intactos (idempotente, sem duplicar ids).
+    expect(new Set(idsServicos).size).toBe(idsServicos.length);
+  });
+
+  // ── TASK-RF-6.13 / TASK-RF-6.24: migrations v18 → v20 ─
+
+  it('migrarPerfil v18 → v20 adiciona campos rastreáveis sem kitRevisao', () => {
+    const perfilV18 = {
+      ...perfilPadrao,
+      schemaVersion: 18,
+      moto: {
+        ...perfilPadrao.moto,
+        kmUltimaTrocas: {
+          oleo: 12000,
+          pneuDianteiro: 25000,
+          pneuTraseiro: 18000,
+          kitRelacao: 20000,
+        },
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV18);
+
+    expect(migrado.schemaVersion).toBe(20);
+    expect(migrado.moto.kmUltimaTrocas).toEqual({
+      oleo: 12000,
+      pneuDianteiro: 25000,
+      pneuTraseiro: 18000,
+      kitRelacao: 20000,
+      velaIgnicao: 0,
+      filtroAr: 0,
+      sapataFreioDianteiro: 0,
+      sapataFreioTraseiro: 0,
+      bateria: 0,
+      kitEmbreagem: 0,
+      kitCilindro: 0,
+      retificaCabecote: 0,
+      retificaCompleta: 0,
+    });
+  });
+
+  it('migrarPerfil v19 → v20 remove kitRevisao legado sem perder demais campos', () => {
+    const perfilV19 = {
+      ...perfilPadrao,
+      schemaVersion: 19,
+      moto: {
+        ...perfilPadrao.moto,
+        kmUltimaTrocas: {
+          ...perfilPadrao.moto.kmUltimaTrocas,
+          kitRevisao: 84000,
+          kitCilindro: 1000,
+        },
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV19);
+
+    expect(migrado.schemaVersion).toBe(20);
+    expect('kitRevisao' in migrado.moto.kmUltimaTrocas).toBe(false);
+    expect(migrado.moto.kmUltimaTrocas.kitCilindro).toBe(1000);
   });
 });

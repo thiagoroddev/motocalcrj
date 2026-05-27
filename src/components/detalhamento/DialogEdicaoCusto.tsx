@@ -256,7 +256,7 @@ function ConteudoPecaComMO({
         precoParalela: peca.precoParalela,
         intervaloKm: resolverIntervalo(
           peca.id,
-          usaComBau ? peca.intervaloKmEntrega : peca.intervaloKm,
+          (usaComBau ? peca.intervaloKmEntrega : peca.intervaloKm) ?? 0,
         ),
       }
     : {

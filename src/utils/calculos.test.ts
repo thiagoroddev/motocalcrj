@@ -9,6 +9,7 @@ import {
   resolverPrecoPeca,
   calcularCpkPorPeca,
   calcularCicloPeca,
+  calcularKmDasProximasTrocas,
   calcularCpkPecasTotal,
   calcularIPVA,
   calcularLicenciamento,
@@ -28,7 +29,12 @@ import {
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import pop110i from '../presets/pop110i.json';
-import type { CategoriaDisplay, PecaOverride, ServicoIndependente } from '../types/perfil';
+import type {
+  CategoriaDisplay,
+  KmUltimaTrocas,
+  PecaOverride,
+  ServicoIndependente,
+} from '../types/perfil';
 import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from '../types/calculos';
 
 // ─── Fixtures ────────────────────────────────────────────────────
@@ -142,6 +148,22 @@ const presetMock: PresetMoto = {
       servicosExecutados: servicosExecutadosMock,
     },
   ],
+};
+
+const kmUltimaTrocasVazio: KmUltimaTrocas = {
+  oleo: 0,
+  pneuDianteiro: 0,
+  pneuTraseiro: 0,
+  kitRelacao: 0,
+  velaIgnicao: 0,
+  filtroAr: 0,
+  sapataFreioDianteiro: 0,
+  sapataFreioTraseiro: 0,
+  bateria: 0,
+  kitEmbreagem: 0,
+  kitCilindro: 0,
+  retificaCabecote: 0,
+  retificaCompleta: 0,
 };
 
 // ─── I. Rodagem ──────────────────────────────────────────────────
@@ -712,6 +734,9 @@ const custosMock: CustosPorCategoria = {
           preco: 40,
           fonte: 'preset',
           proximaTrocaKm: 2500,
+          modo: 'amortizado',
+          kmUltimaTroca: 0,
+          kmDasProximasTrocas: [],
           trocasNoAno: 12,
         },
       ],
@@ -726,6 +751,9 @@ const custosMock: CustosPorCategoria = {
           preco: 245,
           fonte: 'preset',
           proximaTrocaKm: 16000,
+          modo: 'amortizado',
+          kmUltimaTroca: 0,
+          kmDasProximasTrocas: [],
           trocasNoAno: 4,
         },
       ],
@@ -1097,6 +1125,7 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
           !s.ehExcepcional &&
           !s.incluidoNaRevisaoAutorizada &&
           s.precoTotalAutorizada > 0 &&
+          s.intervalKm > 0 &&
           s.ativo,
       )
       .reduce((sum, s) => sum + (s.precoTotalAutorizada / s.intervalKm) * kmAnual, 0);
@@ -1364,6 +1393,10 @@ describe('calcularCicloPeca', () => {
     const { trocasNoAno } = calcularCicloPeca(1000, 3000, 1000, 18000);
     expect(trocasNoAno).toBe(6);
   });
+
+  it('lista todas as próximas trocas dentro da janela', () => {
+    expect(calcularKmDasProximasTrocas(60000, 16000, 90000, 18200)).toEqual([92000, 108000]);
+  });
 });
 
 describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => {
@@ -1376,12 +1409,15 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       modoRevisao: 'independentes',
       kmAtual: 13000,
       kmAnual: 18200,
-      kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 10000, kitRelacao: 0 },
+      kmUltimaTrocas: { ...kmUltimaTrocasVazio, pneuTraseiro: 10000 },
     });
     const pneu = resultado.get('pneu_traseiro')!;
     expect(pneu.trocasNoAno).toBe(1);
     expect(pneu.custoAnual).toBeCloseTo(137, 2);
     expect(pneu.proximaTrocaKm).toBe(26000);
+    expect(pneu.modo).toBe('ancorado');
+    expect(pneu.kmUltimaTroca).toBe(10000);
+    expect(pneu.kmDasProximasTrocas).toEqual([26000]);
   });
 
   it('peça sem km informado mantém custo amortizado', () => {
@@ -1392,10 +1428,13 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       modoRevisao: 'independentes',
       kmAtual: 13000,
       kmAnual: 18200,
-      kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 0, kitRelacao: 0 },
+      kmUltimaTrocas: kmUltimaTrocasVazio,
     });
     const pneu = resultado.get('pneu_traseiro')!;
     expect(pneu.custoAnual).toBeCloseTo((137 / 16000) * 18200, 2);
+    expect(pneu.modo).toBe('amortizado');
+    expect(pneu.kmUltimaTroca).toBe(0);
+    expect(pneu.kmDasProximasTrocas).toEqual([]);
   });
 
   it('kmUltimaTrocas omitido equivale a tudo zero (fallback amortizado)', () => {
@@ -1420,12 +1459,325 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
       moto: {
         ...perfilPadrao.moto,
         kmAtual: 13000,
-        kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 10000, kitRelacao: 0 },
+        kmUltimaTrocas: { ...kmUltimaTrocasVazio, pneuTraseiro: 10000 },
       },
     };
     // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano
     const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ);
     expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(26000);
+  });
+});
+
+// ─── TASK-RF-6.14: peças temporais + kit embreagem/revisão/cilindro ──
+
+describe('TASK-RF-6.14 — bateria com driver temporal', () => {
+  const presetComBateria: PresetMoto = {
+    ...presetMock,
+    pecas: [
+      ...presetMock.pecas,
+      {
+        id: 'bateria',
+        nome: 'Bateria',
+        intervaloMeses: 24,
+        precoOriginal: 329.8,
+        precoParalela: 163.2,
+        incluidoNaRevisaoAutorizada: false,
+      },
+    ],
+  };
+
+  it('bateria com intervaloMeses=24 deriva trocasNoAno do tempo (0,5/ano)', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: presetComBateria,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual: 0,
+      kmAnual: 30000,
+    });
+    const bateria = resultado.get('bateria')!;
+    expect(bateria.trocasNoAno).toBeCloseTo(0.5, 5);
+    expect(bateria.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
+    expect(bateria.cpk).toBeCloseTo((163.2 * 0.5) / 30000, 6);
+    expect(bateria.modo).toBe('amortizado');
+    expect(bateria.intervaloMeses).toBe(24);
+  });
+
+  it('bateria com kmAnual=0 ainda gera custoAnual e cpk=0 (sem divisão por zero)', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: presetComBateria,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual: 0,
+      kmAnual: 0,
+    });
+    const bateria = resultado.get('bateria')!;
+    expect(bateria.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
+    expect(bateria.cpk).toBe(0);
+  });
+});
+
+describe('TASK-RF-6.14 — kit revisão (incluido na revisão autorizada)', () => {
+  const presetComKitRevisao: PresetMoto = {
+    ...presetMock,
+    pecas: [
+      ...presetMock.pecas,
+      {
+        id: 'kit_revisao',
+        nome: 'Kit revisão',
+        intervaloKm: 6000,
+        intervaloKmEntrega: 6000,
+        precoOriginal: 152.83,
+        precoParalela: 102.93,
+        incluidoNaRevisaoAutorizada: true,
+      },
+    ],
+  };
+
+  it('modo autorizado: kit_revisao não aparece (já no pacote Honda)', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: presetComKitRevisao,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'autorizadas',
+      kmAtual: 0,
+      kmAnual: 18000,
+    });
+    expect(resultado.has('kit_revisao')).toBe(false);
+  });
+
+  it('modo independente: kit_revisao entra no CPK como peça cíclica regular', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: presetComKitRevisao,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual: 0,
+      kmAnual: 18000,
+    });
+    expect(resultado.has('kit_revisao')).toBe(true);
+    const kit = resultado.get('kit_revisao')!;
+    expect(kit.cpk).toBeCloseTo(102.93 / 6000, 5);
+    expect(kit.modo).toBe('amortizado');
+  });
+});
+
+describe('TASK-RF-6.14 — kit cilindro como peça cíclica regular', () => {
+  const presetComKitCilindro: PresetMoto = {
+    ...presetMock,
+    pecas: [
+      ...presetMock.pecas,
+      {
+        id: 'kit_cilindro',
+        nome: 'Kit cilindro',
+        intervaloKm: 100000,
+        intervaloKmEntrega: 100000,
+        precoOriginal: 360.83,
+        precoParalela: 163.31,
+        incluidoNaRevisaoAutorizada: false,
+      },
+    ],
+  };
+
+  it('kit_cilindro entra no CPK com intervaloKm=100000', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: presetComKitCilindro,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual: 0,
+      kmAnual: 18000,
+    });
+    const kit = resultado.get('kit_cilindro')!;
+    expect(kit.intervaloKm).toBe(100000);
+    expect(kit.cpk).toBeCloseTo(163.31 / 100000, 6);
+  });
+});
+
+describe('TASK-RF-6.14 — modo autorizado soma precoTotalAutorizada de troca-kit-embreagem', () => {
+  it('modo autorizado: serviço troca-kit-embreagem com precoTotalAutorizada exclui peça kit_embreagem', () => {
+    const presetComKitEmbreagem: PresetMoto = {
+      ...presetMock,
+      pecas: [
+        ...presetMock.pecas,
+        {
+          id: 'kit_embreagem',
+          nome: 'Kit embreagem',
+          intervaloKm: 40000,
+          intervaloKmEntrega: 40000,
+          precoOriginal: 300.33,
+          precoParalela: 68,
+          incluidoNaRevisaoAutorizada: false,
+        },
+      ],
+    };
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-embreagem',
+        nome: 'Troca kit embreagem',
+        intervalKm: 40000,
+        precoMaoDeObraIndependente: 50,
+        precoTotalAutorizada: 450.33,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const resultado = calcularCpkPorPeca({
+      preset: presetComKitEmbreagem,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'autorizadas',
+      kmAtual: 0,
+      kmAnual: 18000,
+      servicosIndependentes: servicos,
+    });
+    // ADR-007: peça é coberta pelo serviço autorizado (peça + M.O. juntos).
+    expect(resultado.has('kit_embreagem')).toBe(false);
+  });
+});
+
+describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () => {
+  const kmAtual = 90000;
+  const kmAnual = 18200;
+
+  it('campos zerados mantêm custo amortizado para peças de vida útil longa', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: pop110i,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual,
+      kmAnual,
+      kmUltimaTrocas: kmUltimaTrocasVazio,
+    });
+
+    expect(resultado.get('kit_embreagem')?.custoAnual).toBeCloseTo((68 / 40000) * kmAnual, 2);
+    expect(resultado.get('kit_cilindro')?.custoAnual).toBeCloseTo((163.31 / 100000) * kmAnual, 2);
+    expect(resultado.get('kit_revisao')?.custoAnual).toBeCloseTo((102.93 / 6000) * kmAnual, 2);
+    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo((29 / 12000) * kmAnual, 2);
+    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo((19 / 12000) * kmAnual, 2);
+    expect(resultado.get('sapata_freio_dianteiro')?.custoAnual).toBeCloseTo(
+      (17 / 12000) * kmAnual,
+      2,
+    );
+    expect(resultado.get('sapata_freio_traseiro')?.custoAnual).toBeCloseTo(
+      (47 / 12000) * kmAnual,
+      2,
+    );
+  });
+
+  it('campos preenchidos usam eventos inteiros na janela de 12 meses', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: pop110i,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual,
+      kmAnual,
+      kmUltimaTrocas: {
+        ...kmUltimaTrocasVazio,
+        kitEmbreagem: 60000,
+        kitCilindro: 1000,
+        velaIgnicao: 84000,
+        filtroAr: 84000,
+        sapataFreioDianteiro: 84000,
+        sapataFreioTraseiro: 84000,
+      },
+    });
+
+    expect(resultado.get('kit_embreagem')?.trocasNoAno).toBe(1);
+    expect(resultado.get('kit_embreagem')?.custoAnual).toBeCloseTo(68, 2);
+    expect(resultado.get('kit_cilindro')?.trocasNoAno).toBe(1);
+    expect(resultado.get('kit_cilindro')?.custoAnual).toBeCloseTo(163.31, 2);
+    expect(resultado.get('vela_ignicao')?.trocasNoAno).toBe(2);
+    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo(29 * 2, 2);
+    expect(resultado.get('vela_ignicao')?.modo).toBe('ancorado');
+    expect(resultado.get('vela_ignicao')?.kmDasProximasTrocas).toEqual([96000, 108000]);
+    expect(resultado.get('filtro_ar')?.trocasNoAno).toBe(2);
+    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo(19 * 2, 2);
+    expect(resultado.get('sapata_freio_dianteiro')?.trocasNoAno).toBe(2);
+    expect(resultado.get('sapata_freio_dianteiro')?.custoAnual).toBeCloseTo(17 * 2, 2);
+    expect(resultado.get('sapata_freio_traseiro')?.trocasNoAno).toBe(2);
+    expect(resultado.get('sapata_freio_traseiro')?.custoAnual).toBeCloseTo(47 * 2, 2);
+  });
+
+  it('kit_revisao ignora kmUltimaTrocas legado e segue automático no ciclo independente', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: pop110i,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual,
+      kmAnual,
+      kmUltimaTrocas: {
+        ...kmUltimaTrocasVazio,
+        kitRevisao: 84000,
+      } as unknown as KmUltimaTrocas,
+    });
+
+    const kitRevisao = resultado.get('kit_revisao');
+    expect(kitRevisao?.trocasNoAno).toBeCloseTo(kmAnual / 6000, 5);
+    expect(kitRevisao?.custoAnual).toBeCloseTo((102.93 / 6000) * kmAnual, 2);
+  });
+
+  it('bateria com km informado continua usando driver temporal', () => {
+    const resultado = calcularCpkPorPeca({
+      preset: pop110i,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'independentes',
+      kmAtual,
+      kmAnual,
+      kmUltimaTrocas: { ...kmUltimaTrocasVazio, bateria: 50000 },
+    });
+
+    const bateria = resultado.get('bateria');
+    expect(bateria?.trocasNoAno).toBeCloseTo(0.5, 5);
+    expect(bateria?.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
+    expect(bateria?.proximaTrocaKm).toBe(0);
+  });
+});
+
+describe('TASK-RF-6.13 — retíficas usam kmUltimaTrocas em Imprevistos', () => {
+  const dadosRJ: DadosRJ = {
+    ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
+    licenciamento: { tabela: {} },
+  };
+
+  it('retífica sem km informado mantém custo amortizado', () => {
+    const perfil = {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, kmAtual: 110000, kmUltimaTrocas: kmUltimaTrocasVazio },
+      trabalho: { ...perfilPadrao.trabalho, kmPorDia: 70, diasPorSemana: 5 },
+      perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
+    };
+
+    const resultado = calcularCustosPorCategoria(perfil, pop110i, dadosRJ);
+    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
+
+    expect(retifica?.eventosNoAno).toBeCloseTo(18200 / 120000, 5);
+    expect(retifica?.custoAnual).toBeCloseTo((1500 / 120000) * 18200, 2);
+  });
+
+  it('retífica com km informado usa custo cheio quando a troca cai na janela', () => {
+    const perfil = {
+      ...perfilPadrao,
+      moto: {
+        ...perfilPadrao.moto,
+        kmAtual: 110000,
+        kmUltimaTrocas: { ...kmUltimaTrocasVazio, retificaCompleta: 1 },
+      },
+      trabalho: { ...perfilPadrao.trabalho, kmPorDia: 70, diasPorSemana: 5 },
+      perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
+    };
+
+    const resultado = calcularCustosPorCategoria(perfil, pop110i, dadosRJ);
+    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
+
+    expect(retifica?.eventosNoAno).toBe(1);
+    expect(retifica?.custoAnual).toBeCloseTo(1500, 2);
   });
 });
 

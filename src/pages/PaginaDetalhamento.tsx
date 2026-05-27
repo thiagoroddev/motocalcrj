@@ -180,6 +180,8 @@ export function PaginaDetalhamento() {
           totalRevisao={custos.revisao.detalhes.base}
           eventosRevisaoNoAno={custos.revisao.detalhes.eventosNoAno}
           modoRevisao={custos.revisao.detalhes.modo}
+          kmAtual={perfil.moto.kmAtual}
+          kmAnual={kmAnual}
           servicosRevisao={[...custos.revisao.detalhes.servicos.entries()]}
           pecas={[...custos.manutencao.detalhes.entries()]}
           filtroAtivo={filtros.manutencao}

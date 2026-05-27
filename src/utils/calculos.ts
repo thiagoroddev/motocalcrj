@@ -71,7 +71,10 @@ export function resolverIntervaloPeca(
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
   if (peca) {
-    return tipoUso === 'entrega' ? peca.intervaloKmEntrega : peca.intervaloKm;
+    // Peças com driver temporal (ex.: bateria) podem omitir intervalo em km.
+    // Caller (calcularCpkPorPeca) trata 0 como sinal para usar intervaloMeses.
+    const intervaloPorTipo = tipoUso === 'entrega' ? peca.intervaloKmEntrega : peca.intervaloKm;
+    return intervaloPorTipo ?? 0;
   }
 
   const pneu = preset.pneus.find((p) => p.id === pecaId);
@@ -109,12 +112,23 @@ export function resolverPrecoPeca(
 }
 
 // Liga o id de Peça/Pneu do Preset à chave correspondente em KmUltimaTrocas.
-// Peças sem entrada (vela, filtro, sapata) não têm km de última troca registrável.
 const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   oleo_motor: 'oleo',
+  vela_ignicao: 'velaIgnicao',
+  filtro_ar: 'filtroAr',
   pneu_dianteiro: 'pneuDianteiro',
   pneu_traseiro: 'pneuTraseiro',
   kit_relacao: 'kitRelacao',
+  sapata_freio_dianteiro: 'sapataFreioDianteiro',
+  sapata_freio_traseiro: 'sapataFreioTraseiro',
+  bateria: 'bateria',
+  kit_embreagem: 'kitEmbreagem',
+  kit_cilindro: 'kitCilindro',
+};
+
+const MAPA_SERVICO_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
+  'retifica-cabecote': 'retificaCabecote',
+  'retifica-completa': 'retificaCompleta',
 };
 
 // Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
@@ -131,6 +145,9 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   pneu_traseiro: 'troca-pneu-traseiro',
   sapata_freio_dianteiro: 'troca-sapata-dianteira',
   sapata_freio_traseiro: 'troca-sapata-traseira',
+  bateria: 'troca-bateria',
+  kit_embreagem: 'troca-kit-embreagem',
+  kit_cilindro: 'troca-kit-cilindro',
 };
 
 const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
@@ -138,6 +155,15 @@ const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   pneuDianteiro: 0,
   pneuTraseiro: 0,
   kitRelacao: 0,
+  velaIgnicao: 0,
+  filtroAr: 0,
+  sapataFreioDianteiro: 0,
+  sapataFreioTraseiro: 0,
+  bateria: 0,
+  kitEmbreagem: 0,
+  kitCilindro: 0,
+  retificaCabecote: 0,
+  retificaCompleta: 0,
 };
 
 /**
@@ -172,6 +198,27 @@ export function calcularCicloPeca(
     proximaTrocaKm > fimDaJanela ? 0 : Math.floor((fimDaJanela - proximaTrocaKm) / intervalo) + 1;
 
   return { proximaTrocaKm, trocasNoAno };
+}
+
+export function calcularKmDasProximasTrocas(
+  kmUltimaTroca: number,
+  intervalo: number,
+  kmAtual: number,
+  kmAnual: number,
+): number[] {
+  if (kmUltimaTroca <= 0 || intervalo <= 0) {
+    return [];
+  }
+
+  const { proximaTrocaKm, trocasNoAno } = calcularCicloPeca(
+    kmUltimaTroca,
+    intervalo,
+    kmAtual,
+    kmAnual,
+  );
+  const quantidadeTrocas = Math.max(0, Math.floor(trocasNoAno));
+
+  return Array.from({ length: quantidadeTrocas }, (_, index) => proximaTrocaKm + index * intervalo);
 }
 
 export interface OpcoesCpkPorPeca {
@@ -242,16 +289,36 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     );
     const preco = resolverPrecoPeca(id, preset, perfilPecas, pecasOverrides);
 
-    // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
-    const chaveKmUltimaTroca = MAPA_PECA_PARA_KM_ULTIMA_TROCA[id];
-    const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+    const pecaPreset = preset.pecas.find((p) => p.id === id);
+    const intervaloMeses = pecaPreset?.intervaloMeses ?? 0;
 
-    const { proximaTrocaKm, trocasNoAno } = calcularCicloPeca(
-      kmUltimaTroca,
-      intervalo,
-      kmAtual,
-      kmAnual,
-    );
+    let proximaTrocaKm: number;
+    let trocasNoAno: number;
+    let modo: CustoPeca['modo'];
+    let kmUltimaTroca = 0;
+    let kmDasProximasTrocas: number[] = [];
+
+    if (intervalo <= 0 && intervaloMeses > 0) {
+      // Peça com driver temporal (ex.: bateria): trocas/ano derivam do tempo,
+      // não do km. Sem `proximaTrocaKm` previsível em km.
+      proximaTrocaKm = 0;
+      trocasNoAno = 12 / intervaloMeses;
+      modo = 'amortizado';
+    } else {
+      // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
+      const chaveKmUltimaTroca = MAPA_PECA_PARA_KM_ULTIMA_TROCA[id];
+      kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+
+      const ciclo = calcularCicloPeca(kmUltimaTroca, intervalo, kmAtual, kmAnual);
+      proximaTrocaKm = ciclo.proximaTrocaKm;
+      trocasNoAno = ciclo.trocasNoAno;
+      modo = kmUltimaTroca > 0 && !!chaveKmUltimaTroca ? 'ancorado' : 'amortizado';
+      kmDasProximasTrocas =
+        modo === 'ancorado'
+          ? calcularKmDasProximasTrocas(kmUltimaTroca, intervalo, kmAtual, kmAnual)
+          : [];
+    }
+
     const custoAnual = trocasNoAno * preco;
     const cpk = kmAnual > 0 ? custoAnual / kmAnual : 0;
 
@@ -268,9 +335,13 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
       cpk,
       custoAnual,
       intervaloKm: intervalo,
+      intervaloMeses: intervaloMeses > 0 ? intervaloMeses : undefined,
       preco,
       fonte,
       proximaTrocaKm,
+      modo,
+      kmUltimaTroca,
+      kmDasProximasTrocas,
       trocasNoAno,
     });
   }
@@ -383,10 +454,13 @@ export function calcularDetalhesRevisaoAnual(
     };
   }
 
-  const base = servicosNormaisAtivos.reduce(
-    (sum, s) => sum + (s.precoMaoDeObraIndependente / s.intervalKm) * kmAnual,
-    0,
-  );
+  // Serviços com intervalKm <= 0 (ex.: troca-bateria, driver temporal puro)
+  // ficam fora do cálculo de revisão — o custo da peça já entra via
+  // `calcularCpkPorPeca` no caminho de manutenção. M.O. dessas trocas
+  // (~R$ 25/ano para bateria) é débito técnico assumido pela TASK-RF-6.14.
+  const base = servicosNormaisAtivos
+    .filter((s) => s.intervalKm > 0)
+    .reduce((sum, s) => sum + (s.precoMaoDeObraIndependente / s.intervalKm) * kmAnual, 0);
   return {
     total: base,
     detalhes: {
@@ -464,6 +538,8 @@ function calcularImprevistosSugeridosAnual(
   servicosIndependentes: ServicoIndependente[],
   kmAnual: number,
   modoRevisao: ModoRevisao,
+  kmAtual: number,
+  kmUltimaTrocas: KmUltimaTrocas,
 ): Map<string, CustoImprevistoSugerido> {
   // ADR-007: imprevistos sugeridos respeitam o modo. No autorizado, o preço é
   // o total Honda (peça + M.O.); valor 0 indica que a Honda não executa o
@@ -478,15 +554,20 @@ function calcularImprevistosSugeridosAnual(
             ? servico.precoTotalAutorizada
             : servico.precoMaoDeObraIndependente;
         if (modoRevisao === 'autorizadas' && preco <= 0) return null;
+
+        const chaveKmUltimaTroca = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
+        const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+        const ciclo = calcularCicloPeca(kmUltimaTroca, servico.intervalKm, kmAtual, kmAnual);
+
         return [
           servico.id,
           {
             id: servico.id,
             label: servico.nome,
-            custoAnual: (preco / servico.intervalKm) * kmAnual,
+            custoAnual: preco * ciclo.trocasNoAno,
             intervalKm: servico.intervalKm,
             precoServico: preco,
-            eventosNoAno: kmAnual / servico.intervalKm,
+            eventosNoAno: ciclo.trocasNoAno,
           },
         ];
       })
@@ -585,6 +666,8 @@ export function calcularCustosPorCategoria(
         perfil.servicosIndependentes,
         kmAnual,
         perfil.perfilManutencao.modoRevisao,
+        perfil.moto.kmAtual,
+        perfil.moto.kmUltimaTrocas,
       ).entries(),
     ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [
       id,

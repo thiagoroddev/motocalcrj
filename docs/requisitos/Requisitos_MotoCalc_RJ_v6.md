@@ -935,7 +935,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 > - **Modelagem conceitual e invariantes:** [`docs/dominio/modelagem/`](../dominio/modelagem/) e [`docs/dominio/invariantes.md`](../dominio/invariantes.md).
 >
 > **O que mudou em relação ao snapshot v6.0 original (resumo, não exaustivo):**
-> - `schemaVersion` evoluiu de 5 (literal) → `number` aberto, em 17 atualmente (ver tabela em `estado_inicial.md`).
+> - `schemaVersion` evoluiu de 5 (literal) → `number` aberto, em 20 atualmente (ver tabela em `estado_inicial.md`).
 > - **Removidos** (ADIADO via ADR-003 + REF-18/19/21): `PerfilUsuario.historicoManutencao`, `PerfilUsuario.diarioTrabalho`, `ManutencaoConfig.precoMaoDeObraIndependente`, `ManutencaoConfig.frequenciaRevisaoKm`, `SeguroConfig.tem`, `DisplayConfig.modoExibicao`, `DisplayConfig.modoOficinDisplay`, e as interfaces `HistoricoManutencao`, `DiarioEntry`, `TrocaOleo`, `RevisaoGeral`, `TrocaPneu`, `TrocaKitRelacao`, `Abastecimento`.
 > - **Renomeados/reescritos:** `servicosMaoDeObra` (objeto) → `servicosIndependentes` (`ServicoIndependente[]`); `CategoriaDisplay` ganhou `imprevistos` e o perfil ganhou `configuracaoDisplay.imprevistosSugeridosAtivos`; `PecaOverride` agora tem `precoEditadoOriginal` + `precoEditadaParalela` (override por perfil) em vez de `precoEditado` único; `FatorResponsabilidade` virou `ResponsabilidadeCusto`; `MotoPreset` virou `PresetMoto`; `Granularidades`/`DistribuicaoCustos` migraram para `GranularidadesCusto`/`CustosPorCategoria`/`ResultadoCalculo`; o perfil ganhou `moto.kmUltimaTrocas` (`KmUltimaTrocas`) e `moto.kmMotorRefeito`.
 >
@@ -945,7 +945,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 
 ### XII.2- Schema do Arquivo de Export
 
-> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 17 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
+> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 20 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
 
 ```typescript
 export interface ExportFile {

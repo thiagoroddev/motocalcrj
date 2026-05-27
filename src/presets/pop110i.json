@@ -116,6 +116,64 @@
         "precoOriginalNota": "Patim/lona HAMP Nissin (par, dianteiro + traseiro).",
         "precoParalelaNota": "Lona compatível Cobreq ou similar (par)."
       }
+    },
+    {
+      "id": "bateria",
+      "nome": "Bateria",
+      "intervaloMeses": 24,
+      "precoOriginal": 329.80,
+      "precoParalela": 163.20,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloMesesNota": "Driver temporal: bateria envelhece por tempo, não por km. Vida útil típica 18–30 meses em uso urbano RJ. Adotado: 24 meses.",
+        "precoOriginalNota": "Original Honda (Luz Motos, informado pelo usuário 25/05/26).",
+        "precoParalelaNota": "Heliar HTZ5L (Mercado Livre, informado pelo usuário 25/05/26)."
+      }
+    },
+    {
+      "id": "kit_embreagem",
+      "nome": "Kit embreagem",
+      "intervaloKm": 40000,
+      "intervaloKmEntrega": 40000,
+      "intervaloMeses": 0,
+      "precoOriginal": 300.33,
+      "precoParalela": 68.00,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Vida útil estimada em uso de entrega RJ: 40.000 km. Pop 110i é embreagem centrífuga (sem disco manual).",
+        "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
+        "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
+      }
+    },
+    {
+      "id": "kit_revisao",
+      "nome": "Kit revisão",
+      "intervaloKm": 6000,
+      "intervaloKmEntrega": 6000,
+      "intervaloMeses": 0,
+      "precoOriginal": 152.83,
+      "precoParalela": 102.93,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Consumíveis recorrentes de revisão regular (juntas, anéis e vedações) usados quando há verificação/regulagem de válvulas. A primeira revisão de 1.000 km é exceção fora do ciclo regular; no modo autorizado já vem no pacote revisaoAutorizada.",
+        "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26). Base de juntas/vedações da revisão; vela e filtro de ar permanecem itens separados para evitar dupla contagem.",
+        "precoParalelaNota": "Kit equivalente (Mercado Livre, informado pelo usuário 25/05/26). Base de juntas/vedações; não inclui vela nem filtro de ar no modelo do app."
+      }
+    },
+    {
+      "id": "kit_cilindro",
+      "nome": "Kit cilindro",
+      "intervaloKm": 100000,
+      "intervaloKmEntrega": 100000,
+      "intervaloMeses": 0,
+      "precoOriginal": 360.83,
+      "precoParalela": 163.31,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Caminho alternativo à Retífica completa. Vida útil ≈ 100.000 km. Concessionária Honda raramente executa em Pop 110i — serviço típico de oficina independente.",
+        "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
+        "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
+      }
     }
   ],
 
@@ -175,9 +233,9 @@
     {
       "intervaloKm": 6000,
       "intervaloMeses": 12,
-      "precoPecas": 127.88,
+      "precoPecas": 152.83,
       "precoMaoDeObra": 0,
-      "precoTotal": 127.88,
+      "precoTotal": 152.83,
       "itensSubstituidos": [
         "Óleo Pro Honda 10w30",
         "Kit Revisão",

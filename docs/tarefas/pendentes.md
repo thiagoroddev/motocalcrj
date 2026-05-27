@@ -7,68 +7,7 @@ Obedeça essa ordem:
 
 ### Tarefas Prioritárias
 
-**Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 — se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo); adicionar sapata de freio ao card "Últimas manutenções" (bateria absorvida pela TASK-RF-6.13).
-
----
-
-## TASK-RF-6.13 — Renomear card "Últimas manutenções" e adicionar Bateria, Retífica de cabeçote ,Retífica completa, kit transmissão, kit embreagem,
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** RF-6.3.3, ADR-006
-- **Observações:**
-  - **Problema:** o card "Últimas manutenções" em Ajustes (`SecaoUltimasManutencoes`) registra km da última troca por componente, mas (a) o título não comunica que se trata de quilometragem, e (b) faltam linhas para Bateria, Retífica de cabeçote e Retífica completa — itens que aparecem em outras telas mas não têm registro de km aqui.
-  - **Local provável:** `src/components/ajustes/SecaoUltimasManutencoes.tsx` (label do título) e `src/types/perfil.ts` (`kmUltimaTrocas` + `kmMotorRefeito` — pode precisar expandir para `kmBateria`, `kmRetificaCabecote`, `kmRetificaCompleta`).
-  - **Fix proposto:** renomear título do card para **"Quilometragem das últimas trocas/manutenções"**; adicionar 3 linhas (Bateria, Retífica de cabeçote, Retífica completa) ao mesmo accordion/lista; estender o modelo de dados via schema migration (próxima versão, atualmente v17).
-  - **Cuidados:** TASK-RF-6.10 já substituiu "fazer motor" por retíficas no cálculo — alinhar os nomes exatos com o que está em `calculos.ts`. Confirmar com `[[project_estima_moto]]` se Bateria já tem campo de km registrado em algum lugar antes de adicionar (evitar duplicação). Nota "Escopo futuro" ainda lista sapata de freio como pendente — não absorver agora, é tarefa separada. Migration precisa de teste de retrocompatibilidade.
-
----
-
-## TASK-RF-6.14 — Adicionar Bateria, Kit Embreagem, Kit Revisão 6000km e Kit Cilindro como itens de cálculo
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 25/05/26 10:29
-- **Dependências:** TASK-RF-6.22 (concluída 25/05/26 14:00 — modelo já disponível: `precoMaoDeObraIndependente`, `precoTotalAutorizada`, `incluidoNaRevisaoAutorizada`)
-- **REQ/ADR/DT:** ADR-004, ADR-006, ADR-007
-- **Observações:**
-  - **Problema:** o cálculo de custo cíclico atual cobre óleo, vela, filtro ar, kit relação, sapatas e pneus, mas não cobre 4 itens recorrentes em uso real de motoboy RJ: Bateria, Kit Embreagem, Kit Revisão 6.000km, Kit Cilindro. Sem eles, o CPK fica subestimado.
-  - **Itens e valores (fornecidos pelo usuário 25/05/26, fontes em links no histórico):**
-    - **Bateria** — original R$ 329,80 (Luz Motos); paralela R$ 163,20 (Heliar HTZ5L, ML); driver: tempo (`intervaloMeses: 24`), sem `intervaloKm`; `incluidoNaRevisaoAutorizada: false`.
-    - **Kit Embreagem** — original R$ 300,33 (Moto Clube Honda); paralela R$ 68,00 (Shopee); `intervaloKm: 40000`; `incluidoNaRevisaoAutorizada: false`.
-    - **Kit Revisão 6000km** — original R$ 152,83 (Moto Clube Honda); paralela R$ 102,93 (ML); `intervaloKm: 6000`; `incluidoNaRevisaoAutorizada: true` (Honda 6k subsidia M.O. e este kit é o consumível dela — ver atualização de [`pop110i.json:163`](src/presets/pop110i.json#L163) `revisaoAutorizada[1].precoPecas` 127.88 → 152.83 para refletir preço real).
-    - **Kit Cilindro** — original R$ 360,83 (Moto Clube Honda); paralela R$ 163,31 (Shopee); `intervaloKm: 100000`; `incluidoNaRevisaoAutorizada: false`. Tratado como peça cíclica regular + serviço de troca próprio (M.O. ~R$ 200 independente). Caminho **alternativo** à Retífica completa.
-  - **Local provável:**
-    - [`src/presets/pop110i.json`](src/presets/pop110i.json) `pecas[]`: adicionar 4 entradas (`bateria`, `kit_embreagem`, `kit_revisao_6000`, `kit_cilindro`). Atualizar `revisaoAutorizada[1].precoPecas` 127.88 → 152.83. Bateria usa só `intervaloMeses: 24`, omite `intervaloKm`.
-    - [`src/types/calculos.ts`](src/types/calculos.ts) `PecaPreset`: confirmar se `intervaloKm` é opcional; se não, tornar opcional (peças com driver mensal).
-    - [`src/context/PerfilContext.tsx`](src/context/PerfilContext.tsx) `SERVICOS_INDEPENDENTES_PADRAO`: adicionar 3 entradas (`troca-bateria`, `troca-kit-embreagem`, `troca-kit-cilindro`) usando o modelo da ADR-007 (`precoMaoDeObraIndependente` + `precoTotalAutorizada` (peça + M.O. juntos, como Honda cobra) + `incluidoNaRevisaoAutorizada: false`).
-    - [`src/utils/calculos.ts:182-256`](src/utils/calculos.ts#L182-L256) `calcularCpkPorPeca`: estender para suportar peça com `intervaloMeses` sem `intervaloKm`. Fallback: `trocasNoAno = 12 / intervaloMeses`, `custoAnual = trocasNoAno * preco`, `cpk = kmAnual > 0 ? custoAnual / kmAnual : 0`. Não afetar peças existentes (todas têm `intervaloKm`).
-    - [`src/pages/PaginaDetalhamento.tsx`](src/pages/PaginaDetalhamento.tsx): mutual exclusion entre `kit_cilindro` (peça regular ativada em Detalhamento) e `retifica-completa` (imprevisto sugerido excepcional). Quando usuário ativa um, o outro é desativado automaticamente com toast/aviso: *"Kit Cilindro e Retífica completa são caminhos alternativos para o mesmo serviço. Ativar um desativa o outro."*
-  - **Defaults RJ (peça documentada + M.O. estimada — confirmar em uso real):**
-    - troca-bateria: `precoMaoDeObraIndependente` R$ 20; `precoTotalAutorizada` ≈ peça R$ 567,34 (valor Honda fornecido pelo usuário, total já inclui M.O.)
-    - troca-kit-embreagem: `precoMaoDeObraIndependente` R$ 250; `precoTotalAutorizada` ≈ peça R$ 300,33 + M.O. ~R$ 400 = R$ 700,33 (aprox.)
-    - troca-kit-cilindro: `precoMaoDeObraIndependente` R$ 200; `precoTotalAutorizada` ≈ peça R$ 360,83 + M.O. ~R$ 200 = R$ 560,83 (aprox., concessionária Honda raramente executa em Pop 110i)
-  - **Schema migration v17 → v18:** adicionar overrides vazios para os 4 novos `id`s em `pecasOverrides`; garantir que perfis salvos sem os novos `servicosIndependentes` recebam os defaults.
-  - **Testes em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts):**
-    - Caso "bateria com intervaloMeses=24 entra no cálculo pelo tempo, não pelo km" (kmAnual=30000 → 2 trocas/4 anos = 0,5 trocas/ano).
-    - Caso "Kit Revisão 6000km com `incluidoNaRevisaoAutorizada: true` não duplica no modo autorizada" (já coberto pela mecânica existente da flag, mas adicionar caso explícito).
-    - Caso "Kit Cilindro entra no CPK regular com `intervaloKm: 100000`".
-    - Caso "mutual exclusion": com `kit_cilindro` ativado e `retifica-completa` `ativo: false`, mudança para `retifica-completa.ativo: true` zera `kit_cilindro` nas categorias ativas (ou flag equivalente) e vice-versa.
-    - Caso "modo autorizado soma `precoTotalAutorizada` de troca-kit-embreagem ao ciclo Honda" (TASK-RF-6.22 já mergeada — mecânica idêntica ao teste de kit transmissão em [calculos.test.ts](../../src/utils/calculos.test.ts)).
-  - **Cuidados:**
-    - ~~**TASK-RF-6.22 é dependência forte.**~~ Concluída em 25/05/26 14:00. Modelo disponível em [ADR-007](../arquitetura/ADR/ADR-007.md): cada novo serviço usa `precoMaoDeObraIndependente` + `precoTotalAutorizada` (peça + M.O. juntos) + `incluidoNaRevisaoAutorizada`.
-    - **TASK-RF-6.13** (renomear card "Últimas manutenções" + adicionar Bateria) é independente desta. Bateria como peça de cálculo (aqui) ≠ Bateria como linha de km registrado (TASK-RF-6.13). Coordenar id `bateria` entre os dois para reuso futuro de `kmUltimaTrocas`.
-    - **Bateria envelhece por tempo:** validar com testes que `kmAnual: 0` (ou usuário sem rodagem declarada) ainda gera `custoAnual` correto (preço da bateria a cada 24 meses). Cuidado com divisão por zero ao calcular `cpk` (`kmAnual > 0 ? ... : 0`).
-    - **Kit Revisão 6000km no autorizada:** a atualização do `precoPecas` da revisão Honda 6k de 127.88 → 152.83 muda o cálculo do `custoCicloCompleto`. Recalcular o ciclo total Honda (7 revisões × preço) e ajustar default `custoCicloCompleto` em [`calculos.ts:317`](src/utils/calculos.ts#L317) (`3334.62` → novo valor) se houver constante hardcoded.
-    - **Mutual exclusion:** decidir onde mora a lógica (handler do toggle em PaginaDetalhamento vs. invariante no reducer). Recomendação: no reducer (`TOGGLE_IMPREVISTO_SUGERIDO` para `retifica-completa` zera `kit_cilindro` na lista de categorias ativas; toggle de kit cilindro zera o imprevisto sugerido de retifica completa). Aviso (toast) fica na UI.
+**Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 — se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" — vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas — absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 
 ---
 

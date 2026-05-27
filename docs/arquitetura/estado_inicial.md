@@ -1,9 +1,9 @@
 # MotoCalc RJ — Estado Inicial e Arquitetura de Persistência
 
 > **Status:** Engenharia reversa validada contra código real.
-> **Última atualização:** 2026-05-25 (TASK-BG-014).
+> **Última atualização:** 2026-05-27 (TASK-RF-6.24).
 > **Verdade primária:** `src/context/PerfilContext.tsx` (`perfilPadrao`, reducer, migrações) e `src/services/perfilStorage.ts` (acesso ao localStorage).
-> **Schema atual:** v17.
+> **Schema atual:** v20.
 
 ---
 
@@ -20,7 +20,7 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-
 | `motocalc:v5:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
 | `motocalc:v5:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v17**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
+> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v20**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
 
 ### I.2 — Envelope: `PresetEntry`
 
@@ -43,7 +43,7 @@ export interface PresetEntry {
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
-3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 17`.
+3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 20`.
 4. Se não há preset ativo OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
@@ -55,7 +55,7 @@ O objeto inicial criado quando o usuário começa um onboarding novo. Valores re
 
 ```typescript
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 17,
+  schemaVersion: 20,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -68,7 +68,21 @@ export const perfilPadrao: PerfilUsuario = {
     perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
-    kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 0, kitRelacao: 0 },
+    kmUltimaTrocas: {
+      oleo: 0,
+      pneuDianteiro: 0,
+      pneuTraseiro: 0,
+      kitRelacao: 0,
+      velaIgnicao: 0,
+      filtroAr: 0,
+      sapataFreioDianteiro: 0,
+      sapataFreioTraseiro: 0,
+      bateria: 0,
+      kitEmbreagem: 0,
+      kitCilindro: 0,
+      retificaCabecote: 0,
+      retificaCompleta: 0,
+    },
     kmMotorRefeito: null,
   },
 
@@ -238,7 +252,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 | Action                  | Efeito                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------- |
-| `SET_KM_ULTIMA_TROCA`   | Atualiza `moto.kmUltimaTrocas[componente]` (oleo, pneuDianteiro, pneuTraseiro, kitRelacao) |
+| `SET_KM_ULTIMA_TROCA`   | Atualiza `moto.kmUltimaTrocas[componente]` (óleo, pneus, kit relação, bateria, kit embreagem, kit cilindro, retíficas) |
 | `SET_MOTOR_REFEITO`     | Define ou limpa `moto.kmMotorRefeito` (`number \| null`)                        |
 | `MARCAR_TROCAS_REVISAO` | Aplica `kmRevisao` em vários componentes de uma vez (checkpoint do Onboarding) |
 
@@ -264,7 +278,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ## VI — Migrações de Schema
 
-Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 endereçada parcialmente — `migrarPerfil.ts` ainda não foi extraído para arquivo próprio). Cascata: v5 → v6 → ... → v17.
+Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 endereçada parcialmente — `migrarPerfil.ts` ainda não foi extraído para arquivo próprio). Cascata: v5 → v6 → ... → v20.
 
 | Migração         | TASK que introduziu | Mudança principal |
 | ---------------- | ------------------- | ----------------- |
@@ -277,6 +291,9 @@ Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 en
 | v14 → v15        | TASK-RF-6.22      | `ServicoIndependente` passa a separar M.O. independente e total autorizado |
 | v15 → v16        | TASK-RF-6.22      | Mescla serviços independentes default que faltavam em perfis já v15 |
 | v16 → v17        | TASK-BG-014       | Filtros finos persistidos de Manutenção (`filtrosManutencao`) |
+| v17 → v18        | TASK-RF-6.14      | Adiciona serviços default de bateria, kit embreagem e kit cilindro |
+| v18 → v19        | TASK-RF-6.13      | Amplia `moto.kmUltimaTrocas` para todas as peças com troca rastreável e retíficas |
+| v19 → v20        | TASK-RF-6.24      | Remove `kitRevisao` de `moto.kmUltimaTrocas`; kit revisão vira custo automático de revisão independente |
 
 **Regra de ouro das migrações:** ordem ascendente (v8→v9 antes de v9→v10). Adicionar nova migração v(N)→v(N+1) sempre **depois** dos ifs com M < N. Lição reforçada em REF-19 e REF-21.
 
@@ -284,7 +301,7 @@ Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 en
 
 ## VII — Fixture de dev (`src/fixtures/usuario_teste.json`)
 
-Fixture em `schemaVersion: 17`, acompanhando o schema atual. A retrocompatibilidade das versões antigas é coberta por testes unitários explícitos de `migrarPerfil`.
+Fixture em `schemaVersion: 20`, acompanhando o schema atual. A retrocompatibilidade das versões antigas é coberta por testes unitários explícitos de `migrarPerfil`.
 
 ---
 
@@ -294,3 +311,5 @@ Fixture em `schemaVersion: 17`, acompanhando o schema atual. A retrocompatibilid
 | ---------- | ------- |
 | 2026-05-05 | Especificação pré-implementação original (v5) |
 | 2026-05-24 | Reescrita completa (TASK-DOC-009) — sincronizado com schema 14, perfilPadrao real, actions reais, migrações documentadas |
+| 2026-05-27 | TASK-RF-6.13 — sincronizado com schema 19 e `kmUltimaTrocas` ampliado para peças rastreáveis e retíficas |
+| 2026-05-27 | TASK-RF-6.24 — sincronizado com schema 20; `kitRevisao` removido de `kmUltimaTrocas` |

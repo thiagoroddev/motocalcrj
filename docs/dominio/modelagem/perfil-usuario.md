@@ -52,7 +52,7 @@ export interface PerfilUsuario {
 
 | Atributo              | Tipo             | Descrição                                                                            |
 | --------------------- | ---------------- | ------------------------------------------------------------------------------------ |
-| `schemaVersion`       | number           | Versão do schema. **Atual: 17.** Migrações em cascata aplicadas inline em `criarEstadoInicial` (PerfilContext.tsx) ao carregar |
+| `schemaVersion`       | number           | Versão do schema. **Atual: 20.** Migrações em cascata aplicadas inline em `criarEstadoInicial` (PerfilContext.tsx) ao carregar |
 | `userId`              | `string \| null` | Login-ready (RNF-LR-02). Sempre `null` em V1. UUID do backend em V2                  |
 | `onboardingConcluido` | boolean          | Gatilho de `RotaProtegida` se `false`, app redireciona para `/onboarding/1`          |
 | `apelido`             | `string \| null` | Apelido do Motoboy. Opcional. Aparece no header se preenchido                        |

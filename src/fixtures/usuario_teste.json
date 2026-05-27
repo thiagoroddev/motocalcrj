@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 17,
+        "schemaVersion": 20,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -24,7 +24,23 @@
           "ano": 2024,
           "perfilUso": "entrega",
           "kmAtual": 18500,
-          "kmUltimaRevisao": 12000
+          "kmUltimaRevisao": 12000,
+          "kmUltimaTrocas": {
+            "oleo": 0,
+            "pneuDianteiro": 0,
+            "pneuTraseiro": 0,
+            "kitRelacao": 0,
+            "velaIgnicao": 0,
+            "filtroAr": 0,
+            "sapataFreioDianteiro": 0,
+            "sapataFreioTraseiro": 0,
+            "bateria": 0,
+            "kitEmbreagem": 0,
+            "kitCilindro": 0,
+            "retificaCabecote": 0,
+            "retificaCompleta": 0
+          },
+          "kmMotorRefeito": null
         },
 
         "perfilManutencao": {
@@ -107,6 +123,9 @@
           { "id": "revisao-geral",         "nome": "Revisão geral (independente)", "intervalKm": 6000,   "precoMaoDeObraIndependente": 80,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-vela",            "nome": "Troca de vela",                "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-bateria",         "nome": "Troca de bateria",             "intervalKm": 0,      "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 567.34, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-embreagem",   "nome": "Troca kit embreagem",          "intervalKm": 40000,  "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 450.33, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
           { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoMaoDeObraIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
           { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoMaoDeObraIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
         ],
@@ -127,7 +146,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 17,
+        "schemaVersion": 20,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -139,7 +158,23 @@
           "ano": 2024,
           "perfilUso": "passageiro",
           "kmAtual": 18500,
-          "kmUltimaRevisao": 12000
+          "kmUltimaRevisao": 12000,
+          "kmUltimaTrocas": {
+            "oleo": 0,
+            "pneuDianteiro": 0,
+            "pneuTraseiro": 0,
+            "kitRelacao": 0,
+            "velaIgnicao": 0,
+            "filtroAr": 0,
+            "sapataFreioDianteiro": 0,
+            "sapataFreioTraseiro": 0,
+            "bateria": 0,
+            "kitEmbreagem": 0,
+            "kitCilindro": 0,
+            "retificaCabecote": 0,
+            "retificaCompleta": 0
+          },
+          "kmMotorRefeito": null
         },
 
         "perfilManutencao": {
@@ -214,6 +249,9 @@
           { "id": "revisao-geral",         "nome": "Revisão geral (independente)", "intervalKm": 6000,   "precoMaoDeObraIndependente": 80,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-vela",            "nome": "Troca de vela",                "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoMaoDeObraIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-bateria",         "nome": "Troca de bateria",             "intervalKm": 0,      "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 567.34, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-embreagem",   "nome": "Troca kit embreagem",          "intervalKm": 40000,  "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 450.33, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
+          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoMaoDeObraIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
           { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoMaoDeObraIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
           { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoMaoDeObraIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
         ],

@@ -61,7 +61,10 @@ export function PaginaInsumos() {
           nome: p.nome,
           precoOriginal: p.precoOriginal,
           precoParalela: p.precoParalela,
-          intervaloKm: resolverIntervalo(p.id, usaComBau ? p.intervaloKmEntrega : p.intervaloKm),
+          intervaloKm: resolverIntervalo(
+            p.id,
+            (usaComBau ? p.intervaloKmEntrega : p.intervaloKm) ?? 0,
+          ),
         })),
         ...preset.pneus.map((p) => ({
           id: p.id,

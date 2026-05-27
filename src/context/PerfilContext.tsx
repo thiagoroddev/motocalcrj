@@ -7,6 +7,7 @@ import type {
   ServicoIndependente,
   GastoCustom,
   FiltrosManutencaoDisplay,
+  KmUltimaTrocas,
 } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
@@ -53,6 +54,22 @@ const FILTROS_MANUTENCAO_PADRAO: FiltrosManutencaoDisplay = {
   revisao: true,
   manutencaoPorPeca: {},
   revisaoPorServico: {},
+};
+
+const KM_ULTIMA_TROCAS_PADRAO: KmUltimaTrocas = {
+  oleo: 0,
+  pneuDianteiro: 0,
+  pneuTraseiro: 0,
+  kitRelacao: 0,
+  velaIgnicao: 0,
+  filtroAr: 0,
+  sapataFreioDianteiro: 0,
+  sapataFreioTraseiro: 0,
+  bateria: 0,
+  kitEmbreagem: 0,
+  kitCilindro: 0,
+  retificaCabecote: 0,
+  retificaCompleta: 0,
 };
 
 // Valores de precoTotalAutorizada são "peça documentada Honda + M.O. estimada"
@@ -150,6 +167,37 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     ativo: true,
     ehExcepcional: false,
   },
+  {
+    id: 'troca-bateria',
+    nome: 'Troca de bateria',
+    // Driver temporal — não há intervalo em km. Bateria envelhece por tempo.
+    intervalKm: 0,
+    precoMaoDeObraIndependente: 50,
+    precoTotalAutorizada: 567.34,
+    incluidoNaRevisaoAutorizada: false,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-kit-embreagem',
+    nome: 'Troca kit embreagem',
+    intervalKm: 40000,
+    precoMaoDeObraIndependente: 50,
+    precoTotalAutorizada: 450.33,
+    incluidoNaRevisaoAutorizada: false,
+    ativo: true,
+    ehExcepcional: false,
+  },
+  {
+    id: 'troca-kit-cilindro',
+    nome: 'Troca kit cilindro',
+    intervalKm: 100000,
+    precoMaoDeObraIndependente: 50,
+    precoTotalAutorizada: 510.83,
+    incluidoNaRevisaoAutorizada: false,
+    ativo: true,
+    ehExcepcional: false,
+  },
   SERVICO_RETIFICA_CABECOTE_PADRAO,
   SERVICO_RETIFICA_COMPLETA_PADRAO,
 ];
@@ -159,7 +207,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 17,
+  schemaVersion: 20,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -172,7 +220,7 @@ export const perfilPadrao: PerfilUsuario = {
     perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
-    kmUltimaTrocas: { oleo: 0, pneuDianteiro: 0, pneuTraseiro: 0, kitRelacao: 0 },
+    kmUltimaTrocas: KM_ULTIMA_TROCAS_PADRAO,
     kmMotorRefeito: null,
   },
 
@@ -394,13 +442,27 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
     case 'TOGGLE_IMPREVISTO_SUGERIDO': {
       const atual = state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos[action.id] ?? false;
+      const novoValor = !atual;
+
+      // Mutual exclusion kit_cilindro ↔ retifica-completa (TASK-RF-6.14):
+      // ativar retífica completa desativa kit cilindro como peça regular.
+      const filtrosManutencao = state.perfil.configuracaoDisplay.filtrosManutencao;
+      const manutencaoPorPecaAtualizada =
+        action.id === 'retifica-completa' && novoValor
+          ? { ...filtrosManutencao.manutencaoPorPeca, kit_cilindro: false }
+          : filtrosManutencao.manutencaoPorPeca;
+
       return comPerfil({
         ...state.perfil,
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
           imprevistosSugeridosAtivos: {
             ...state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
-            [action.id]: !atual,
+            [action.id]: novoValor,
+          },
+          filtrosManutencao: {
+            ...filtrosManutencao,
+            manutencaoPorPeca: manutencaoPorPecaAtualizada,
           },
         },
       });
@@ -418,20 +480,34 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
-    case 'TOGGLE_MANUTENCAO_POR_PECA':
+    case 'TOGGLE_MANUTENCAO_POR_PECA': {
+      const manutencaoPorPeca =
+        state.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca;
+      const ativoAtual = manutencaoPorPeca[action.id] ?? true;
+      const novoEstado = !ativoAtual;
+
+      // Mutual exclusion kit_cilindro ↔ retifica-completa (TASK-RF-6.14):
+      // ativar kit cilindro como peça desativa retífica completa nos imprevistos.
+      const imprevistosAtualizados =
+        action.id === 'kit_cilindro' && novoEstado
+          ? {
+              ...state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+              'retifica-completa': false,
+            }
+          : state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos;
+
       return comPerfil({
         ...state.perfil,
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
+          imprevistosSugeridosAtivos: imprevistosAtualizados,
           filtrosManutencao: {
             ...state.perfil.configuracaoDisplay.filtrosManutencao,
-            manutencaoPorPeca: alternarFiltroDefaultAtivo(
-              state.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca,
-              action.id,
-            ),
+            manutencaoPorPeca: alternarFiltroDefaultAtivo(manutencaoPorPeca, action.id),
           },
         },
       });
+    }
 
     case 'TOGGLE_REVISAO_POR_SERVICO':
       return comPerfil({
@@ -1065,6 +1141,60 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
             typeof filtrosExistentes?.revisao === 'boolean' ? filtrosExistentes.revisao : true,
           manutencaoPorPeca: filtrosExistentes?.manutencaoPorPeca ?? {},
           revisaoPorServico: filtrosExistentes?.revisaoPorServico ?? {},
+        },
+      },
+    };
+  }
+
+  if (dados.schemaVersion === 17) {
+    // v17 → v18: TASK-RF-6.14 adiciona 3 novos ServicoIndependente defaults
+    // (troca-bateria, troca-kit-embreagem, troca-kit-cilindro). Idempotente:
+    // só inclui ids ainda ausentes para preservar edições do usuário.
+    const servicos = Array.isArray(dados.servicosIndependentes)
+      ? (dados.servicosIndependentes as ServicoIndependente[])
+      : SERVICOS_INDEPENDENTES_PADRAO;
+    const idsExistentes = new Set(servicos.map((s) => s.id));
+    const defaultsFaltantes = SERVICOS_INDEPENDENTES_PADRAO.filter((p) => !idsExistentes.has(p.id));
+    dados = {
+      ...dados,
+      schemaVersion: 18,
+      servicosIndependentes: [...servicos, ...defaultsFaltantes],
+    };
+  }
+
+  if (dados.schemaVersion === 18) {
+    // v18 → v19: TASK-RF-6.13 amplia o histórico de km da última troca para
+    // peças de vida útil longa e retíficas. Preserva os 4 campos existentes.
+    const kmUltimaTrocasExistente = (dados.moto?.kmUltimaTrocas ?? {}) as Partial<KmUltimaTrocas>;
+    dados = {
+      ...dados,
+      schemaVersion: 19,
+      moto: {
+        ...dados.moto,
+        kmUltimaTrocas: {
+          ...KM_ULTIMA_TROCAS_PADRAO,
+          ...kmUltimaTrocasExistente,
+        },
+      },
+    };
+  }
+
+  if (dados.schemaVersion === 19) {
+    // v19 → v20: TASK-RF-6.24 remove kitRevisao do histórico editável. O item
+    // continua automático no cálculo independente e incluso no pacote Honda.
+    const kmUltimaTrocasLegado = (dados.moto?.kmUltimaTrocas ?? {}) as Partial<KmUltimaTrocas> & {
+      kitRevisao?: number;
+    };
+    const kmUltimaTrocasSemKitRevisao = { ...kmUltimaTrocasLegado };
+    delete kmUltimaTrocasSemKitRevisao.kitRevisao;
+    dados = {
+      ...dados,
+      schemaVersion: 20,
+      moto: {
+        ...dados.moto,
+        kmUltimaTrocas: {
+          ...KM_ULTIMA_TROCAS_PADRAO,
+          ...kmUltimaTrocasSemKitRevisao,
         },
       },
     };
