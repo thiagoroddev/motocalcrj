@@ -102,8 +102,12 @@ export interface CustoServicoRevisao {
   custoAnual: number;
   intervalKm: number;
   precoMaoDeObra: number;
+  precoServico: number;
   eventosNoAno: number;
   ehExcepcional: boolean;
+  modo: 'amortizado' | 'ancorado';
+  kmUltimaTroca: number;
+  kmDasProximasTrocas: number[];
 }
 
 export interface CustoImprevistoSugerido {

@@ -140,6 +140,14 @@ export function SecaoImprevistos({
         </div>
         {expandido && (
           <div className="px-md pb-md space-y-2 border-t border-muted pt-3">
+            <div className="rounded-md border border-border/70 bg-background/25 px-2 py-2 space-y-1">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground/60 text-xs">Valor anual ativo</span>
+                <span className="text-muted-foreground text-xs font-medium tabular-nums">
+                  {moeda(valorTotal)}
+                </span>
+              </div>
+            </div>
             {imprevistosSugeridos.map(([id, imprevisto]) => {
               const ativo = filtrosImprevistosSugeridos[id] === true;
               return (

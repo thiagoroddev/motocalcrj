@@ -1,9 +1,11 @@
-import type { CustoPeca } from '../../types/calculos';
+import type { CustoPeca, CustoServicoRevisao } from '../../types/calculos';
 import { kmFormatado, moeda } from '../../utils/formatters';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 
+type ItemDetalheManutencao = CustoPeca | CustoServicoRevisao;
+
 type Props = {
-  peca: CustoPeca | null;
+  item: ItemDetalheManutencao | null;
   aberto: boolean;
   kmAtual: number;
   kmAnual: number;
@@ -17,12 +19,13 @@ function numeroDecimal(valor: number): string {
   });
 }
 
-function intervaloFormatado(peca: CustoPeca): string {
-  if (peca.intervaloKm > 0) {
-    return kmFormatado(peca.intervaloKm);
+function intervaloFormatado(item: ItemDetalheManutencao): string {
+  const intervaloKm = resolverIntervaloKm(item);
+  if (intervaloKm > 0) {
+    return kmFormatado(intervaloKm);
   }
-  if (peca.intervaloMeses) {
-    return `${peca.intervaloMeses} meses`;
+  if ('intervaloMeses' in item && item.intervaloMeses) {
+    return `${item.intervaloMeses} meses`;
   }
   return '-';
 }
@@ -31,14 +34,32 @@ function kmOuVazio(valor: number): string {
   return valor > 0 ? kmFormatado(valor) : 'Nao informada';
 }
 
-export function PopoverDetalhesPeca({ peca, aberto, kmAtual, kmAnual, onOpenChange }: Props) {
-  const ehAncorada = peca?.modo === 'ancorado';
+function eventosNoAno(item: ItemDetalheManutencao): number {
+  return 'trocasNoAno' in item ? item.trocasNoAno : item.eventosNoAno;
+}
+
+function resolverIntervaloKm(item: ItemDetalheManutencao): number {
+  return 'intervaloKm' in item ? item.intervaloKm : item.intervalKm;
+}
+
+function precoUnitario(item: ItemDetalheManutencao): number {
+  return 'preco' in item ? item.preco : item.precoServico;
+}
+
+function intervaloMeses(item: ItemDetalheManutencao): number | undefined {
+  return 'intervaloMeses' in item ? item.intervaloMeses : undefined;
+}
+
+export function PopoverDetalhesPeca({ item, aberto, kmAtual, kmAnual, onOpenChange }: Props) {
+  const ehAncorada = item?.modo === 'ancorado';
+  const quantidadeEventos = item ? eventosNoAno(item) : 0;
+  const intervaloKm = item ? resolverIntervaloKm(item) : 0;
 
   return (
     <Dialog open={aberto} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{peca?.label ?? 'Detalhes da peça'}</DialogTitle>
+          <DialogTitle>{item?.label ?? 'Detalhes do item'}</DialogTitle>
           <DialogDescription>
             {ehAncorada
               ? 'Projeção real baseada no km da última manutenção informado em Ajustes.'
@@ -46,7 +67,7 @@ export function PopoverDetalhesPeca({ peca, aberto, kmAtual, kmAnual, onOpenChan
           </DialogDescription>
         </DialogHeader>
 
-        {peca && (
+        {item && (
           <div className="space-y-4">
             <div className="space-y-2">
               <p className="label-neutro">Item</p>
@@ -62,15 +83,15 @@ export function PopoverDetalhesPeca({ peca, aberto, kmAtual, kmAnual, onOpenChan
                   </thead>
                   <tbody>
                     <tr className="border-t border-border">
-                      <td className="px-2 py-2 tabular-nums">{intervaloFormatado(peca)}</td>
-                      <td className="px-2 py-2 tabular-nums">{kmOuVazio(peca.kmUltimaTroca)}</td>
+                      <td className="px-2 py-2 tabular-nums">{intervaloFormatado(item)}</td>
+                      <td className="px-2 py-2 tabular-nums">{kmOuVazio(item.kmUltimaTroca)}</td>
                       <td className="px-2 py-2 tabular-nums">
                         {ehAncorada
-                          ? `${peca.trocasNoAno.toLocaleString('pt-BR')} real${peca.trocasNoAno === 1 ? '' : 's'}`
-                          : `≈${numeroDecimal(peca.trocasNoAno)}`}
+                          ? `${quantidadeEventos.toLocaleString('pt-BR')} real${quantidadeEventos === 1 ? '' : 's'}`
+                          : `≈${numeroDecimal(quantidadeEventos)}`}
                       </td>
                       <td className="px-2 py-2 text-right tabular-nums">
-                        {moeda(peca.custoAnual)}
+                        {moeda(item.custoAnual)}
                       </td>
                     </tr>
                   </tbody>
@@ -91,13 +112,13 @@ export function PopoverDetalhesPeca({ peca, aberto, kmAtual, kmAnual, onOpenChan
                       </tr>
                     </thead>
                     <tbody>
-                      {peca.kmDasProximasTrocas.length > 0 ? (
-                        peca.kmDasProximasTrocas.map((km, index) => (
+                      {item.kmDasProximasTrocas.length > 0 ? (
+                        item.kmDasProximasTrocas.map((km, index) => (
                           <tr key={km} className="border-t border-border">
                             <td className="px-2 py-2">{index + 1}o</td>
                             <td className="px-2 py-2 tabular-nums">{kmFormatado(km)}</td>
                             <td className="px-2 py-2 text-right tabular-nums">
-                              {moeda(peca.preco)}
+                              {moeda(precoUnitario(item))}
                             </td>
                           </tr>
                         ))
@@ -129,12 +150,12 @@ export function PopoverDetalhesPeca({ peca, aberto, kmAtual, kmAnual, onOpenChan
                       <tr className="border-t border-border">
                         <td className="px-2 py-2 tabular-nums">{kmFormatado(kmAnual)}</td>
                         <td className="px-2 py-2 font-mono text-[11px]">
-                          {peca.intervaloKm > 0
-                            ? `${kmAnual.toLocaleString('pt-BR')} / ${peca.intervaloKm.toLocaleString('pt-BR')} = ≈${numeroDecimal(peca.trocasNoAno)}x`
-                            : `12 / ${peca.intervaloMeses ?? 1} = ≈${numeroDecimal(peca.trocasNoAno)}x`}
+                          {intervaloKm > 0
+                            ? `${kmAnual.toLocaleString('pt-BR')} / ${intervaloKm.toLocaleString('pt-BR')} = ≈${numeroDecimal(quantidadeEventos)}x`
+                            : `12 / ${intervaloMeses(item) ?? 1} = ≈${numeroDecimal(quantidadeEventos)}x`}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
-                          {moeda(peca.custoAnual)}
+                          {moeda(item.custoAnual)}
                         </td>
                       </tr>
                     </tbody>

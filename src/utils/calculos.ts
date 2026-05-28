@@ -150,6 +150,16 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   kit_cilindro: 'troca-kit-cilindro',
 };
 
+function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTrocas | undefined {
+  const chaveServico = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servicoId];
+  if (chaveServico) return chaveServico;
+
+  const pecaAssociada = Object.entries(MAPA_PECA_PARA_SERVICO).find(
+    ([, idServico]) => idServico === servicoId,
+  )?.[0];
+  return pecaAssociada ? MAPA_PECA_PARA_KM_ULTIMA_TROCA[pecaAssociada] : undefined;
+}
+
 const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   oleo: 0,
   pneuDianteiro: 0,
@@ -402,10 +412,14 @@ export function calcularDetalhesRevisaoAnual(
     custoCicloCompleto?: number;
     quantidadeRevisoesCicloHonda?: number;
     servicosIndependentes?: ServicoIndependente[];
+    kmAtual?: number;
+    kmUltimaTrocas?: KmUltimaTrocas;
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
   const servicosNormaisAtivos = servicos.filter((s) => s.ativo && !s.ehExcepcional);
+  const kmAtual = opcoes.kmAtual ?? 0;
+  const kmUltimaTrocas = opcoes.kmUltimaTrocas ?? KM_ULTIMA_TROCAS_VAZIO;
 
   if (modoRevisao === 'autorizadas') {
     const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
@@ -419,7 +433,16 @@ export function calcularDetalhesRevisaoAnual(
     );
     const detalhesServicos = new Map<string, CustoServicoRevisao>(
       servicosForaDoPacote.map((s): [string, CustoServicoRevisao] => {
-        const custoAnual = (s.precoTotalAutorizada / s.intervalKm) * kmAnual;
+        const chaveKmUltimaTroca = resolverChaveKmUltimaTrocaServico(s.id);
+        const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+        const ciclo = calcularCicloPeca(kmUltimaTroca, s.intervalKm, kmAtual, kmAnual);
+        const modo =
+          kmUltimaTroca > 0 && chaveKmUltimaTroca !== undefined ? 'ancorado' : 'amortizado';
+        const kmDasProximasTrocas =
+          modo === 'ancorado'
+            ? calcularKmDasProximasTrocas(kmUltimaTroca, s.intervalKm, kmAtual, kmAnual)
+            : [];
+        const custoAnual = s.precoTotalAutorizada * ciclo.trocasNoAno;
         return [
           s.id,
           {
@@ -428,8 +451,12 @@ export function calcularDetalhesRevisaoAnual(
             custoAnual,
             intervalKm: s.intervalKm,
             precoMaoDeObra: s.precoTotalAutorizada,
-            eventosNoAno: kmAnual > 0 ? kmAnual / s.intervalKm : 0,
+            precoServico: s.precoTotalAutorizada,
+            eventosNoAno: ciclo.trocasNoAno,
             ehExcepcional: s.ehExcepcional,
+            modo,
+            kmUltimaTroca,
+            kmDasProximasTrocas,
           },
         ];
       }),
@@ -618,6 +645,8 @@ export function calcularCustosPorCategoria(
     custoCicloCompleto,
     quantidadeRevisoesCicloHonda: preset.revisaoAutorizada.length,
     servicosIndependentes: perfil.servicosIndependentes,
+    kmAtual: perfil.moto.kmAtual,
+    kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
   });
 
   // Manutenção por peça

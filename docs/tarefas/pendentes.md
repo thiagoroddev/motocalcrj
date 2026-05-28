@@ -11,24 +11,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.15 — Detalhamento: mostrar nº de abastecimentos calculados conforme período do toggle
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** na PaginaDetalhamento, a categoria Combustível mostra valor total, mas não comunica quantos abastecimentos compõem aquele número no período selecionado pelo toggle (dia/semana/mês/ano).
-  - **Local provável:** `src/pages/PaginaDetalhamento.tsx` (renderização da seção combustível), `src/utils/calculos.ts` (provavelmente já calcula litros/km e tem tanque → dividir litros do período pelo tamanho do tanque para inferir abastecimentos).
-  - **Fix proposto:** calcular `abastecimentos = litrosNoPeriodo / capacidadeTanque` (arredondar conforme convenção) e exibir como sub-label ("12 abastecimentos no ano") junto ao valor da categoria. Reagir ao toggle de período.
-  - **Cuidados:** capacidade do tanque vem do preset/perfil — verificar onde está armazenada antes (`presets/pop110i.json` tem tanque para Pop 110i). Arredondar de modo que faça sentido pro usuário (inteiro ou 1 casa decimal?). Definir comportamento se km/mês for 0.
-
----
-
 ## TASK-RF-6.16 — Ícone "?" no cabeçalho de cada tela com conteúdo explicativo
 
 - **Status:** Pendente
@@ -80,24 +62,6 @@ Obedeça essa ordem:
   - **Local provável:** Grep por `"Gastos Extras"` — provavelmente em `src/pages/PaginaDetalhamento.tsx` ou componente de distribuição. TASK-RF-6.9 padronizou Imprevistos como nome canônico (presets editáveis: Multa, Sinistros, Outros).
   - **Fix proposto:** substituir o literal `"Gastos Extras"` por `"Imprevistos"` no único ponto que ainda usa. Conferir se há mais ocorrências em outras telas.
   - **Cuidados:** confirmar que o label novo ainda cabe no layout (Imprevistos é 1 caractere maior). Verificar se há teste que asserta o label antigo.
-
----
-
-## TASK-BG-008 — Detalhamento: categoria Financiamento com nome fixo (deveria variar com situacaoMoto)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-005
-- **Observações:**
-  - **Problema:** em PaginaDetalhamento, a categoria "Financiamento" aparece com esse nome fixo, independente da `situacaoMoto` do perfil (alugada, financiada, quitada). Para moto alugada, deveria ser "Aluguel"; para quitada, a categoria provavelmente não deveria aparecer.
-  - **Local provável:** `src/pages/PaginaDetalhamento.tsx`, função de render das categorias. Lógica de `situacaoMoto` já existe em `CampoFinanciamento` (ver TASK-BG-006: card só renderiza quando `situacaoMoto === 'alugada'`).
-  - **Fix proposto:** derivar o label da categoria do `situacaoMoto`: `'financiada'` → "Financiamento", `'alugada'` → "Aluguel", `'quitada'` → não renderizar. Reaproveitar a lógica do `CampoFinanciamento` se já houver helper.
-  - **Cuidados:** confirmar que o cálculo já usa o campo certo (`parcelaMensal` vs `aluguelMensal`) — se sim, é só a label da UI. Se o cálculo também trata como "financiamento" indistintamente, escopo aumenta. Validar com testes em `calculos.test.ts`.
 
 ---
 

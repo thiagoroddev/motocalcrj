@@ -19,14 +19,14 @@ import { SeletorPeriodo, type Periodo } from '../components/detalhamento/Seletor
 import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { DialogEdicaoCusto, type EdicaoAlvo } from '../components/detalhamento/DialogEdicaoCusto';
 
-type ChaveCategoriaSemExpansao = 'internet' | 'seguro' | 'alimentacao' | 'financiamento';
+type ChaveCategoriaSimples = 'internet' | 'seguro' | 'alimentacao' | 'financiamento';
 type ChaveFiltroCategoria = keyof Omit<
   FiltrosCategorias,
   'manutencaoPorPeca' | 'revisaoPorServico' | 'imprevistosSugeridos'
 >;
 
-const CATEGORIAS_SEM_EXPANSAO: {
-  chave: ChaveCategoriaSemExpansao;
+const CATEGORIAS_SIMPLES: {
+  chave: ChaveCategoriaSimples;
   label: string;
   cor: string;
   edicao: EdicaoAlvo;
@@ -73,6 +73,72 @@ function converterParaPeriodo(
   return anual / d[periodo];
 }
 
+const ROTULO_PERIODO_CURTO: Record<Periodo, string> = {
+  ano: 'ano',
+  mes: 'mês',
+  sem: 'semana',
+  dia: 'dia',
+  hora: 'hora',
+};
+
+function formatarNumeroPtBr(
+  valor: number,
+  minimumFractionDigits: number,
+  maximumFractionDigits: number,
+) {
+  return valor.toLocaleString('pt-BR', { minimumFractionDigits, maximumFractionDigits });
+}
+
+function formatarKm(valor: number): string {
+  const casasDecimais = Number.isInteger(valor) || valor >= 100 ? 0 : 1;
+  return `${formatarNumeroPtBr(valor, casasDecimais, casasDecimais)} km`;
+}
+
+function formatarKmNoPeriodo(valor: number, periodo: Periodo): string {
+  return `${formatarKm(valor)}/${ROTULO_PERIODO_CURTO[periodo]}`;
+}
+
+function formatarQuantidade(valor: number, unidade: string): string {
+  const casasDecimais = Number.isInteger(valor) ? 0 : 1;
+  return `${formatarNumeroPtBr(valor, casasDecimais, casasDecimais)} ${unidade}`;
+}
+
+function formatarLitros(valor: number): string {
+  return `${formatarNumeroPtBr(valor, 2, 2)} L`;
+}
+
+function formatarPrecoLitro(valor: number): string {
+  return `${moeda(valor)}/L`;
+}
+
+function montarFormulaCombustivel(
+  kmPeriodo: number,
+  consumoEfetivo: number,
+  precoLitro: number,
+  totalPeriodo: string,
+): string {
+  if (consumoEfetivo <= 0) {
+    return 'Informe consumo efetivo para calcular.';
+  }
+
+  return `${formatarKm(kmPeriodo)} / ${formatarNumeroPtBr(
+    consumoEfetivo,
+    1,
+    1,
+  )} km/L x ${formatarPrecoLitro(precoLitro)} = ${totalPeriodo}`;
+}
+
+function LinhaDetalheTexto({ label, valor }: { label: string; valor: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <span className="shrink-0 text-muted-foreground/60 text-xs">{label}</span>
+      <span className="min-w-0 text-right text-muted-foreground text-xs font-medium tabular-nums break-words">
+        {valor}
+      </span>
+    </div>
+  );
+}
+
 export function PaginaDetalhamento() {
   const navigate = useNavigate();
   const { perfil, dispatch } = usePerfil();
@@ -112,6 +178,20 @@ export function PaginaDetalhamento() {
     !ativo || totalFiltrado <= 0 ? '0%' : `${Math.round((valor / totalFiltrado) * 100)}%`;
   const pp = (anual: number) => moeda(converterParaPeriodo(anual, periodo, diasAno, horasDia));
   const cvt = (anual: number) => converterParaPeriodo(anual, periodo, diasAno, horasDia);
+  const totalFiltradoNoPeriodo = cvt(totalFiltrado);
+  const kmNoPeriodo = cvt(kmAnual);
+  const diasTrabalhadosNoPeriodo = cvt(diasAno);
+  const tipoUsoLabel = perfil.moto.perfilUso === 'entrega' ? 'Entrega' : 'Passageiro';
+  const modoRevisaoLabel =
+    perfil.perfilManutencao.modoRevisao === 'autorizadas' ? 'Autorizada' : 'Independente';
+  const precoCombustivel =
+    perfil.financeiro.combustiveis[perfil.financeiro.tipoGasolinaPreferida].preco;
+  const kmCombustivelNoPeriodo = cvt(custos.combustivel.detalhes.kmAnual);
+  const litrosCombustivelNoPeriodo =
+    custos.combustivel.detalhes.consumoEfetivo > 0
+      ? kmCombustivelNoPeriodo / custos.combustivel.detalhes.consumoEfetivo
+      : 0;
+  const totalCombustivelPeriodo = pp(custos.combustivel.total);
 
   function toggleFiltro(cat: ChaveFiltroCategoria) {
     if (cat === 'revisao') {
@@ -144,12 +224,149 @@ export function PaginaDetalhamento() {
     navigate('/mao-de-obra', { state: { abaInicial: 'honda', destaqueIndex } });
   }
 
+  function labelCategoriaSimples(label: string, chave: ChaveCategoriaSimples): string {
+    if (chave === 'financiamento' && perfil.financeiro.situacaoMoto === 'alugada') {
+      return 'Aluguel';
+    }
+    return label;
+  }
+
+  function renderizarDetalhesCategoriaSimples(chave: ChaveCategoriaSimples) {
+    if (chave === 'internet') {
+      return (
+        <>
+          <LinhaDetalheTexto
+            label="Mensalidade"
+            valor={`${moeda(perfil.financeiro.internet)}/mês`}
+          />
+          <LinhaDetalheTexto
+            label="Cálculo anual"
+            valor={`${moeda(perfil.financeiro.internet)} x 12 = ${moeda(custos.internet.total)}`}
+          />
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            Valor fixo mensal rateado pelo período selecionado.
+          </p>
+        </>
+      );
+    }
+
+    if (chave === 'seguro') {
+      const seguradora = perfil.financeiro.seguro.empresa?.trim() || 'Não informada';
+      return (
+        <>
+          <LinhaDetalheTexto
+            label="Valor anual"
+            valor={moeda(perfil.financeiro.seguro.valorAnual)}
+          />
+          <LinhaDetalheTexto
+            label="Periodicidade"
+            valor={perfil.financeiro.seguro.periodicidade === 'mensal' ? 'Mensal' : 'Anual'}
+          />
+          <LinhaDetalheTexto label="Seguradora" valor={seguradora} />
+          {custos.seguro.total !== perfil.financeiro.seguro.valorAnual && (
+            <LinhaDetalheTexto label="Custo considerado" valor={moeda(custos.seguro.total)} />
+          )}
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            Valor anual rateado pelo período selecionado.
+          </p>
+        </>
+      );
+    }
+
+    if (chave === 'alimentacao') {
+      return (
+        <>
+          <LinhaDetalheTexto
+            label="Valor por dia"
+            valor={`${moeda(perfil.financeiro.alimentacaoDia)}/dia`}
+          />
+          <LinhaDetalheTexto
+            label="Dias no período"
+            valor={`${formatarQuantidade(diasTrabalhadosNoPeriodo, 'dias')}/${ROTULO_PERIODO_CURTO[periodo]}`}
+          />
+          <LinhaDetalheTexto
+            label="Dias/semana"
+            valor={`${perfil.trabalho.diasPorSemana} dias/semana`}
+          />
+          <LinhaDetalheTexto
+            label="Cálculo"
+            valor={`${moeda(perfil.financeiro.alimentacaoDia)} x ${formatarQuantidade(
+              diasTrabalhadosNoPeriodo,
+              'dias',
+            )} = ${pp(custos.alimentacao.total)}`}
+          />
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            {`Os dias vêm da configuração de trabalho na Estimativa: ${perfil.trabalho.diasPorSemana} dias/semana x 52 semanas.`}
+          </p>
+        </>
+      );
+    }
+
+    if (perfil.financeiro.situacaoMoto === 'alugada') {
+      const aluguel = perfil.financeiro.aluguelMensal ?? 0;
+      const periodicidade = perfil.financeiro.aluguelPeriodicidade ?? 'mensal';
+      const multiplicador = periodicidade === 'semanal' ? 52 : 12;
+      return (
+        <>
+          <LinhaDetalheTexto
+            label="Aluguel"
+            valor={`${moeda(aluguel)}/${periodicidade === 'semanal' ? 'semana' : 'mês'}`}
+          />
+          <LinhaDetalheTexto
+            label="Cálculo anual"
+            valor={`${moeda(aluguel)} x ${multiplicador} = ${moeda(custos.financiamento.total)}`}
+          />
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            Valor recorrente rateado pelo período selecionado.
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <LinhaDetalheTexto
+          label="Parcela"
+          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)}/mês`}
+        />
+        <LinhaDetalheTexto
+          label="Parcelas restantes"
+          valor={
+            perfil.financeiro.parcelasRestantes != null
+              ? String(perfil.financeiro.parcelasRestantes)
+              : 'Não informado'
+          }
+        />
+        <LinhaDetalheTexto
+          label="Cálculo anual"
+          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)} x 12 = ${moeda(
+            custos.financiamento.total,
+          )}`}
+        />
+        <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          Valor recorrente rateado pelo período selecionado.
+        </p>
+      </>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <CabecalhoVoltar titulo="Detalhamento" />
 
       <div className="px-md py-md space-y-3">
-        <CardTotalAnual totalFiltrado={totalFiltrado} mensal={gran.mensal} porKm={gran.porKm} />
+        <CardTotalAnual
+          periodo={periodo}
+          totalPeriodo={totalFiltradoNoPeriodo}
+          kmPeriodo={formatarKmNoPeriodo(kmNoPeriodo, periodo)}
+          porKm={gran.porKm}
+          detalhesFixos={[
+            `${formatarKm(perfil.trabalho.kmPorDia)}/dia`,
+            `${perfil.trabalho.diasPorSemana} dias/semana`,
+            tipoUsoLabel,
+            `Revisão ${modoRevisaoLabel}`,
+          ]}
+        />
         <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />
         {perfil.trabalho.diasPorSemana === 1 && (
           <p className="text-muted-foreground/60 text-xs px-xs">
@@ -173,6 +390,10 @@ export function PaginaDetalhamento() {
             label="Licenciamento"
             valor={cvt(custos.documentos.detalhes.licenciamento)}
           />
+          <LinhaDetalheTexto label="Base anual" valor={moeda(custos.documentos.total)} />
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            Custo legal anual rateado pelo período selecionado.
+          </p>
         </CategoriaAccordion>
 
         <SecaoManutencao
@@ -206,7 +427,7 @@ export function PaginaDetalhamento() {
         <CategoriaAccordion
           label="Combustível"
           corClasse="bg-green-500"
-          valorExibido={pp(custos.combustivel.total)}
+          valorExibido={totalCombustivelPeriodo}
           porcentagem={pct(custos.combustivel.total, filtros.combustivel)}
           ativo={filtros.combustivel}
           expandido={!!expandido['combustivel']}
@@ -224,22 +445,47 @@ export function PaginaDetalhamento() {
             valor={custos.combustivel.detalhes.consumoEfetivo}
             suffix="km/L"
           />
+          <LinhaDetalheTexto
+            label="Km no período"
+            valor={formatarKmNoPeriodo(kmCombustivelNoPeriodo, periodo)}
+          />
+          <LinhaDetalheTexto
+            label="Litros estimados"
+            valor={formatarLitros(litrosCombustivelNoPeriodo)}
+          />
+          <LinhaDetalheTexto
+            label="Preço do combustível"
+            valor={formatarPrecoLitro(precoCombustivel)}
+          />
+          <LinhaDetalheTexto
+            label="Cálculo"
+            valor={montarFormulaCombustivel(
+              kmCombustivelNoPeriodo,
+              custos.combustivel.detalhes.consumoEfetivo,
+              precoCombustivel,
+              totalCombustivelPeriodo,
+            )}
+          />
+          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+            Projeção por km rodado. Não soma lançamentos reais de combustível.
+          </p>
         </CategoriaAccordion>
 
-        {CATEGORIAS_SEM_EXPANSAO.filter((c) => custos[c.chave].ativo).map((c) => (
+        {CATEGORIAS_SIMPLES.filter((c) => custos[c.chave].ativo).map((c) => (
           <CategoriaAccordion
             key={c.chave}
-            label={c.label}
+            label={labelCategoriaSimples(c.label, c.chave)}
             corClasse={c.cor}
             valorExibido={pp(custos[c.chave].total)}
             porcentagem={pct(custos[c.chave].total, filtros[c.chave])}
             ativo={filtros[c.chave]}
-            expandido={false}
+            expandido={!!expandido[c.chave]}
             onToggleAtivo={() => toggleFiltro(c.chave)}
-            onToggleExpandido={() => {}}
+            onToggleExpandido={() => toggleAcordeao(c.chave)}
             onEditar={() => setEdicao(c.edicao)}
-            semExpansao
-          />
+          >
+            {renderizarDetalhesCategoriaSimples(c.chave)}
+          </CategoriaAccordion>
         ))}
 
         <SecaoImprevistos

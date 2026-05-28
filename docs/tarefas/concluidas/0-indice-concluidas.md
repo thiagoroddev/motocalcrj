@@ -75,3 +75,6 @@
 | TASK-RF-6.13 | Quilometragem das últimas trocas/manutenções: amplia `KmUltimaTrocas` para 14 campos, ancoragem de peças/retíficas e ação individual "Km da última revisão" | [2026-05-27--17h21--TASK-RF-6.13.md](./2026-05-27--17h21--TASK-RF-6.13.md) |
 | TASK-RF-6.24 | Kit revisão vira consumível recorrente automático no modo independente; sai de `kmUltimaTrocas`/Ajustes; migration v19→v20 remove legado | [2026-05-27--17h49--TASK-RF-6.24.md](./2026-05-27--17h49--TASK-RF-6.24.md) |
 | TASK-RF-6.23 | Seção Manutenção agrupada em Ancorados/Amortizados; amortizados exibem `≈`; olho abre dialog com tabelas individuais de item e previsão/provisão | [2026-05-27--18h46--TASK-RF-6.23.md](./2026-05-27--18h46--TASK-RF-6.23.md) |
+| TASK-BG-015 | Detalhamento autorizado usa Ancorados/Amortizados e dialog de detalhes para avulsos Honda | [2026-05-28--15h48--TASK-BG-015.md](./2026-05-28--15h48--TASK-BG-015.md) |
+| TASK-RF-6.15 | Detalhamento: explicar cálculo do combustível no período | [2026-05-28--17h51--TASK-RF-6.15.md](./2026-05-28--17h51--TASK-RF-6.15.md) |
+| TASK-RF-6.25 | Detalhamento: card resumo dinâmico e explicação de origem por categoria | [2026-05-28--19h24--TASK-RF-6.25.md](./2026-05-28--19h24--TASK-RF-6.25.md) |

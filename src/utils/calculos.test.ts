@@ -599,8 +599,45 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(kit?.label).toBe('Troca kit transmissão');
     expect(kit?.custoAnual).toBeCloseTo(313.56, 2);
     expect(kit?.eventosNoAno).toBe(1);
+    expect(kit?.modo).toBe('amortizado');
+    expect(kit?.kmUltimaTroca).toBe(0);
+    expect(kit?.kmDasProximasTrocas).toEqual([]);
     expect(resultado.detalhes.servicos.has('troca-oleo')).toBe(false);
     expect(resultado.detalhes.servicos.has('retifica-completa')).toBe(false);
+  });
+
+  it('modo autorizadas: serviço avulso usa km da última troca para projetar eventos reais', () => {
+    const kmAtual = 18000;
+    const kmAnual = 18200;
+    const cicloHonda = 3334.62;
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoMaoDeObraIndependente: 60,
+        precoTotalAutorizada: 313.56,
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicos,
+      kmAtual,
+      kmUltimaTrocas: { ...kmUltimaTrocasVazio, kitRelacao: 12000 },
+    });
+    const kit = resultado.detalhes.servicos.get('troca-kit-transmissao');
+    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+
+    expect(kit?.modo).toBe('ancorado');
+    expect(kit?.eventosNoAno).toBe(2);
+    expect(kit?.kmUltimaTroca).toBe(12000);
+    expect(kit?.kmDasProximasTrocas).toEqual([24000, 36000]);
+    expect(kit?.custoAnual).toBeCloseTo(313.56 * 2, 2);
+    expect(resultado.total).toBeCloseTo(baseEsperada + 313.56 * 2, 2);
   });
 
   it('modo independentes: mantém serviços agregados em Revisão Geral', () => {
@@ -713,8 +750,12 @@ const custosMock: CustosPorCategoria = {
             custoAnual: 53,
             intervalKm: 12000,
             precoMaoDeObra: 53,
+            precoServico: 53,
             eventosNoAno: 0.2,
             ehExcepcional: false,
+            modo: 'amortizado',
+            kmUltimaTroca: 0,
+            kmDasProximasTrocas: [],
           },
         ],
       ]),
