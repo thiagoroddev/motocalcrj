@@ -1,11 +1,22 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { usePerfil } from '../../hooks/usePerfil';
 import { getNomeModelo } from '../../data/catalogoModelos';
 import { kmFormatado } from '../../utils/formatters';
 import { NavBar } from './NavBar';
+import { PopupAjuda } from '../PopupAjuda';
+import type { ChaveAjuda } from '../../data/conteudoAjuda';
+
+function resolverChaveAjuda(pathname: string): ChaveAjuda {
+  if (pathname.startsWith('/mao-de-obra')) return 'maoDeObra';
+  if (pathname.startsWith('/insumos')) return 'insumos';
+  if (pathname.startsWith('/ajustes')) return 'ajustes';
+  return 'estimativa';
+}
 
 export function LayoutApp() {
   const { perfil } = usePerfil();
+  const { pathname } = useLocation();
+  const chaveAjuda = resolverChaveAjuda(pathname);
   const nomeModelo = getNomeModelo(perfil.moto.modelo);
   const tipoComb = perfil.financeiro.tipoGasolinaPreferida;
   const consumo = perfil.financeiro.combustiveis[tipoComb].autonomia;
@@ -56,6 +67,7 @@ export function LayoutApp() {
             </span>
           </Link>
         </div>
+        <PopupAjuda chave={chaveAjuda} className="mt-0.5" />
         <button
           type="button"
           aria-label="Exportar dados"

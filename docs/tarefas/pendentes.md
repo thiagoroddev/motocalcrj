@@ -11,24 +11,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.16 — Ícone "?" no cabeçalho de cada tela com conteúdo explicativo
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** TASK-RF-6.4 (conteúdo dos pop-ups — atualmente em "Decisões UI/UX Pendentes")
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** o app não tem ajuda contextual. Usuário entra em telas como Detalhamento, Mão de Obra, Insumos sem saber exatamente o que cada número significa.
-  - **Local provável:** `src/layouts/LayoutApp.tsx` ou `src/components/CabecalhoVoltar.tsx` (componente do header — adicionar slot de ícone "?"), criar `src/components/PopupAjuda.tsx` (modal/sheet shadcn com conteúdo por rota).
-  - **Fix proposto:** componente único de ajuda parametrizado por rota; ícone "?" aparece no header de cada tela; clique abre modal/sheet com texto explicativo. Conteúdo definido pela RF-6.4 (depende dela).
-  - **Cuidados:** RF-6.4 ainda está como "Quando Der" e "Desejável" — confirmar com humano se o conteúdo de cada tela já existe antes de implementar o container, ou se a UI vem primeiro com texto placeholder. Manter o ícone fora da NavBar inferior (header da tela, não navbar). Acessibilidade: `aria-label="Ajuda"`.
-
----
-
 ## TASK-RF-6.17 — Distribuição de custos: melhorar UI e mostrar R$ por categoria
 
 - **Status:** Pendente
@@ -212,6 +194,24 @@ Obedeça essa ordem:
 
 ---
 
+## TASK-BG-016 — Fixtures de teste quebram `tsc --noEmit` (`posicao: string` vs union)
+
+- **Status:** Pendente
+- **Modo:** Light
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data origem:** 29/05/26 11:09
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:**
+  - **Problema:** `npx tsc --noEmit` falha com vários erros em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts) (linhas ~1688, 1714, 1749, 1768, 1798, 1817). As fixtures inline declaram `posicao` como `string`, mas `PneuPreset.posicao` é o union `'dianteiro' | 'traseiro'`. O typecheck não passa, embora `npm run test` e `npm run lint` fiquem verdes.
+  - **Local:** fixtures de preset inline em `src/utils/calculos.test.ts`.
+  - **Fix proposto:** tipar o objeto da fixture como `PresetMoto` (ou usar `as const` / `satisfies`) para que `posicao` infira o union, ou extrair um helper de fixture já tipado.
+  - **Cuidados:** mudança só de teste; não tocar no cálculo. Identificada durante a TASK-RF-6.16 (pré-existente, confirmada via `git stash`).
+
+---
+
 ### Tarefas Normais
 
 ---
@@ -220,7 +220,7 @@ Obedeça essa ordem:
 
 | ID          | Título                                           | Valor      | Urgência   | Esforço | Dependências | Status |
 | ----------- | ------------------------------------------------ | ---------- | ---------- | ------- | ------------ | ------ |
-| TASK-RF-6.4 | Conteúdo dos pop-ups de ajuda (ícone "?")        | Desejável  | Quando Der | P       | -            | [ ]    |
+| ~~TASK-RF-6.4~~ | ~~Conteúdo dos pop-ups de ajuda (ícone "?")~~ **ABSORVIDA pela TASK-RF-6.16** (conteúdo escrito e aprovado em 29/05/26) | Desejável  | Quando Der | P       | -            | [x]    |
 | TASK-RF-6.5 | Seletor rápido de presets (ícone moto no header) | Desejável  | Quando Der | M       | -            | [ ]    |
 | TASK-RF-6.6 | Decisão: hamburguer vs nav sempre visível        | Importante | Normal     | P       | -            | [ ]    |
 

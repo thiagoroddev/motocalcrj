@@ -10,7 +10,8 @@
       "PowerShell(npm config get userconfig)",
       "Bash(xargs sed -i 's/rounded-card/rounded-lg/g')",
       "Bash(npm run *)",
-      "Bash(Get-Date -Format \"yyyy-MM-dd HH:mm\")"
+      "Bash(Get-Date -Format \"yyyy-MM-dd HH:mm\")",
+      "PowerShell(npx tsc --noEmit)"
     ]
   }
 }

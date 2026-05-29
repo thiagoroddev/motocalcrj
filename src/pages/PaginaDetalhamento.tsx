@@ -352,7 +352,7 @@ export function PaginaDetalhamento() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <CabecalhoVoltar titulo="Detalhamento" />
+      <CabecalhoVoltar titulo="Detalhamento" chaveAjuda="detalhamento" />
 
       <div className="px-md py-md space-y-3">
         <CardTotalAnual
