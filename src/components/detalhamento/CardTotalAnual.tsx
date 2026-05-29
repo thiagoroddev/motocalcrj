@@ -1,12 +1,18 @@
 import { moeda, cpkFormatado } from '../../utils/formatters';
 import type { Periodo } from './SeletorPeriodo';
 
+export type ChipDetalhe = {
+  label: string;
+  onClick?: () => void;
+  ariaLabel?: string;
+};
+
 type Props = {
   periodo: Periodo;
   totalPeriodo: number;
   kmPeriodo: string;
   porKm: number;
-  detalhesFixos: string[];
+  detalhesFixos: ChipDetalhe[];
 };
 
 const ROTULO_PERIODO: Record<Periodo, string> = {
@@ -28,15 +34,28 @@ export function CardTotalAnual({ periodo, totalPeriodo, kmPeriodo, porKm, detalh
         <span>{kmPeriodo}</span>
         <span>{cpkFormatado(porKm)}</span>
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-2 gap-y-1 border-t border-primary/15 pt-2">
-        {detalhesFixos.map((detalhe) => (
-          <span
-            key={detalhe}
-            className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-muted-foreground/70"
-          >
-            {detalhe}
-          </span>
-        ))}
+      <div className="mt-3 flex flex-wrap gap-2 border-t border-primary/15 pt-2">
+        {detalhesFixos.map((chip) =>
+          chip.onClick ? (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={chip.onClick}
+              aria-label={chip.ariaLabel ?? chip.label}
+              aria-haspopup="dialog"
+              className="inline-flex items-center min-h-touch rounded bg-primary/10 px-2 text-[10px] text-muted-foreground/80 hover:bg-primary/20 hover:text-foreground transition-colors"
+            >
+              {chip.label}
+            </button>
+          ) : (
+            <span
+              key={chip.label}
+              className="inline-flex items-center rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-muted-foreground/70"
+            >
+              {chip.label}
+            </span>
+          ),
+        )}
       </div>
     </div>
   );

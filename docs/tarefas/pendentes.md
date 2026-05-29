@@ -137,28 +137,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.21 — Header do veículo: mostrar km atual + km da última revisão, e tornar labels clicáveis
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** o header do veículo mostra apenas marca/modelo/ano/autonomia (ex.: "2024 - 50 km/L"). Falta o km atual e o km da última revisão para o usuário saber se está atualizado. Além disso, os labels não são clicáveis — usuário precisa navegar manualmente até as telas de edição.
-  - **Local provável:** `src/layouts/LayoutApp.tsx` (provável local do header da moto, inserido pela TASK-REF-15) ou componente `HeaderMoto`/`HeaderVeiculo`.
-  - **Fix proposto:**
-    - Exibir adicionalmente: **km atual** e **km da última revisão**.
-    - **"50 km/L"** → clicável, navega para tela de **Insumos** (consumo é editado lá).
-    - **Nome do modelo** → clicável, navega para **Perfil** (onde se troca o modelo).
-    - **Km (atual/última revisão)** → clicável, navega para a tela de edição correspondente (Ajustes → seção de km).
-  - **Cuidados:** todos os elementos clicáveis precisam de área de toque ≥ 48px (toque mínimo do design system). Indicar visualmente que são clicáveis (underline, hover). Validar layout em 375px com os campos adicionais (km atual + km revisão podem espremer demais). Acessibilidade: usar `<Link>` do react-router-dom, não `<div onClick>`.
-
----
-
 ## TASK-BG-009 — Pop-ups bugam quando largura da janela ≠ largura mínima (PC/notebook/tablet)
 
 - **Status:** Pendente

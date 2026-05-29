@@ -8,6 +8,8 @@ import { CampoSeguro } from '../ajustes/campos/CampoSeguro';
 import { CampoAlimentacao } from '../ajustes/campos/CampoAlimentacao';
 import { CampoInternet } from '../ajustes/campos/CampoInternet';
 import { CampoFinanciamento } from '../ajustes/campos/CampoFinanciamento';
+import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
+import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
 import { MAPA_PECA_PARA_SERVICO } from '../../utils/calculos';
@@ -33,6 +35,8 @@ export type EdicaoAlvo =
   | { tipo: 'alimentacao' }
   | { tipo: 'seguro' }
   | { tipo: 'financiamento' }
+  | { tipo: 'usoDiario' }
+  | { tipo: 'preferencias' }
   | { tipo: 'pecaComMO'; pecaId: string }
   | { tipo: 'servicoAutorizada'; servicoId: string }
   | { tipo: 'servicoExcepcional'; servicoId: string };
@@ -56,6 +60,10 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
       return 'Seguro';
     case 'financiamento':
       return perfil.financeiro.situacaoMoto === 'alugada' ? 'Aluguel' : 'Financiamento';
+    case 'usoDiario':
+      return 'Uso diário';
+    case 'preferencias':
+      return 'Modo de revisão';
     case 'pecaComMO': {
       const preset = PRESETS[perfil.moto.modelo];
       const peca = preset?.pecas.find((p) => p.id === alvo.pecaId);
@@ -113,6 +121,10 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
     return <CampoSeguro financeiro={perfil.financeiro} dispatch={dispatch} />;
   if (alvo.tipo === 'financiamento')
     return <CampoFinanciamento financeiro={perfil.financeiro} dispatch={dispatch} />;
+  if (alvo.tipo === 'usoDiario')
+    return <SecaoUsoDiario moto={perfil.moto} trabalho={perfil.trabalho} dispatch={dispatch} />;
+  if (alvo.tipo === 'preferencias')
+    return <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />;
   if (alvo.tipo === 'servicoExcepcional')
     return (
       <ConteudoServicoExcepcional servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />

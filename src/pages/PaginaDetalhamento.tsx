@@ -361,10 +361,26 @@ export function PaginaDetalhamento() {
           kmPeriodo={formatarKmNoPeriodo(kmNoPeriodo, periodo)}
           porKm={gran.porKm}
           detalhesFixos={[
-            `${formatarKm(perfil.trabalho.kmPorDia)}/dia`,
-            `${perfil.trabalho.diasPorSemana} dias/semana`,
-            tipoUsoLabel,
-            `Revisão ${modoRevisaoLabel}`,
+            {
+              label: `${formatarKm(perfil.trabalho.kmPorDia)}/dia`,
+              onClick: () => setEdicao({ tipo: 'usoDiario' }),
+              ariaLabel: 'Editar km por dia',
+            },
+            {
+              label: `${perfil.trabalho.diasPorSemana} dias/semana`,
+              onClick: () => setEdicao({ tipo: 'usoDiario' }),
+              ariaLabel: 'Editar dias por semana',
+            },
+            {
+              label: tipoUsoLabel,
+              onClick: () => setEdicao({ tipo: 'usoDiario' }),
+              ariaLabel: 'Editar perfil de uso',
+            },
+            {
+              label: `Revisão ${modoRevisaoLabel}`,
+              onClick: () => setEdicao({ tipo: 'preferencias' }),
+              ariaLabel: 'Editar modo de revisão',
+            },
           ]}
         />
         <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />

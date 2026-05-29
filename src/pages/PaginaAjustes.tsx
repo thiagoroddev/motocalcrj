@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { Button } from '../components/ui/button';
 import {
@@ -17,14 +18,39 @@ import { SecaoFinanceiro } from '../components/ajustes/SecaoFinanceiro';
 import { SecaoSituacaoLegal } from '../components/ajustes/SecaoSituacaoLegal';
 import { CampoResponsabilidadeAluguel } from '../components/ajustes/CampoResponsabilidadeAluguel';
 
+type LocationStateAjustes = {
+  focoSecao?: 'veiculo';
+};
+
+const DURACAO_DESTAQUE_MS = 2000;
+
 export function PaginaAjustes() {
   const { perfil, dispatch } = usePerfil();
   const [dialogReset, setDialogReset] = useState(false);
+  const location = useLocation();
+  const focoSecao = (location.state as LocationStateAjustes | null)?.focoSecao ?? null;
+  const refVeiculo = useRef<HTMLDivElement | null>(null);
+  const [secaoDestacada, setSecaoDestacada] = useState<'veiculo' | null>(null);
+
+  useEffect(() => {
+    if (focoSecao !== 'veiculo') return;
+    setSecaoDestacada('veiculo');
+    refVeiculo.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const timer = setTimeout(() => setSecaoDestacada(null), DURACAO_DESTAQUE_MS);
+    return () => clearTimeout(timer);
+  }, [focoSecao]);
 
   return (
     <>
       <div className="p-md space-y-3">
-        <SecaoVeiculo moto={perfil.moto} dispatch={dispatch} />
+        <div
+          ref={refVeiculo}
+          className={`rounded-lg transition-shadow${
+            secaoDestacada === 'veiculo' ? ' ring-2 ring-primary' : ''
+          }`}
+        >
+          <SecaoVeiculo moto={perfil.moto} dispatch={dispatch} />
+        </div>
         <SecaoUltimasManutencoes moto={perfil.moto} dispatch={dispatch} />
         <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />
         <SecaoUsoDiario moto={perfil.moto} trabalho={perfil.trabalho} dispatch={dispatch} />

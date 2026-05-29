@@ -78,3 +78,5 @@
 | TASK-BG-015 | Detalhamento autorizado usa Ancorados/Amortizados e dialog de detalhes para avulsos Honda | [2026-05-28--15h48--TASK-BG-015.md](./2026-05-28--15h48--TASK-BG-015.md) |
 | TASK-RF-6.15 | Detalhamento: explicar cálculo do combustível no período | [2026-05-28--17h51--TASK-RF-6.15.md](./2026-05-28--17h51--TASK-RF-6.15.md) |
 | TASK-RF-6.25 | Detalhamento: card resumo dinâmico e explicação de origem por categoria | [2026-05-28--19h24--TASK-RF-6.25.md](./2026-05-28--19h24--TASK-RF-6.25.md) |
+| TASK-RF-6.21 | Header do veículo: pílulas com km atual + última revisão; modelo, "km/L" e km clicáveis com navegação para Perfil/Insumos/Ajustes | [2026-05-28--21h00--TASK-RF-6.21.md](./2026-05-28--21h00--TASK-RF-6.21.md) |
+| TASK-RF-6.26 | Detalhamento: chips do card de total clicáveis abrindo pop-up inline com `SecaoUsoDiario` / `SecaoPreferencias` | [2026-05-28--21h30--TASK-RF-6.26.md](./2026-05-28--21h30--TASK-RF-6.26.md) |
