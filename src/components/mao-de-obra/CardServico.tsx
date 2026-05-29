@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Dispatch } from 'react';
 import { Input } from '@/components/ui/input';
 import { BotaoReset } from '@/components/BotaoReset';
+import { iconePeca } from '../icons/pecas';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
 import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
 
@@ -26,6 +27,8 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
       : servico.ehExcepcional
         ? 'Peças + MO (R$)'
         : 'Preço MO (R$)';
+
+  const IconePeca = iconePeca(servico.id);
 
   const [preco, setPreco] = useState(valorAtual.toFixed(2));
   const [intervalo, setIntervalo] = useState(String(servico.intervalKm));
@@ -66,8 +69,13 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
 
   return (
     <div className="bg-card rounded-lg p-md space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium truncate min-w-0 text-foreground">{servico.nome}</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 min-w-0">
+          <IconePeca className="w-6 h-6 text-primary shrink-0" />
+          <span className="text-sm font-medium truncate min-w-0 text-foreground">
+            {servico.nome}
+          </span>
+        </span>
         <BotaoReset
           desabilitado={!temOverride}
           onReset={() => {

@@ -84,3 +84,7 @@
 | TASK-RF-6.17 | Distribuição de custos: card reformado (donut + seletor Ano/Mês/Sem + R$ por categoria); absorve BG-007 | [2026-05-29--14h44--TASK-RF-6.17.md](./2026-05-29--14h44--TASK-RF-6.17.md) |
 | TASK-BG-007 | "Gastos Extras" → "Imprevistos" em Distribuição de custos (absorvida pela RF-6.17) | [2026-05-29--14h44--TASK-RF-6.17.md](./2026-05-29--14h44--TASK-RF-6.17.md) |
 | TASK-REF-25 | Trocar DonutChart manual por react-minimal-pie-chart (ordem por %, total no centro) | [2026-05-29--15h13--TASK-REF-25.md](./2026-05-29--15h13--TASK-REF-25.md) |
+| TASK-CHORE-011 | `.npmrc` com `include=dev` p/ evitar poda de devDependencies (NODE_ENV=production) | [2026-05-29--15h29--TASK-CHORE-011.md](./2026-05-29--15h29--TASK-CHORE-011.md) |
+| TASK-BG-016 | Fix `tsc --noEmit`: cast tipado do preset pop110i nos testes (`posicao` union) | [2026-05-29--15h29--TASK-BG-016.md](./2026-05-29--15h29--TASK-BG-016.md) |
+| TASK-RF-6.20.1 | Ícones nos cards: Estimativa + Detalhamento (tiles de categoria, mapa único, lápis no rodapé) | [2026-05-29--16h50--TASK-RF-6.20.1.md](./2026-05-29--16h50--TASK-RF-6.20.1.md) |
+| TASK-RF-6.20.2 | Ícones na Mão de Obra: títulos de modo (TituloSecao), ícone+ordinal+reset nas revisões Honda, ícone de peça (unplugin-icons/mdi) | [2026-05-29--18h36--TASK-RF-6.20.2.md](./2026-05-29--18h36--TASK-RF-6.20.2.md) |

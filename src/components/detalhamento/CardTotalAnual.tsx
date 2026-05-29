@@ -1,3 +1,4 @@
+import { Wallet } from 'lucide-react';
 import { moeda, cpkFormatado } from '../../utils/formatters';
 import type { Periodo } from '../SeletorPeriodo';
 
@@ -26,7 +27,8 @@ const ROTULO_PERIODO: Record<Periodo, string> = {
 export function CardTotalAnual({ periodo, totalPeriodo, kmPeriodo, porKm, detalhesFixos }: Props) {
   return (
     <div className="bg-primary/10 border border-primary/20 rounded-lg p-md">
-      <p className="text-muted-foreground/60 text-[10px] uppercase tracking-wider mb-1">
+      <p className="text-muted-foreground/60 text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+        <Wallet className="w-4 h-4 text-primary" aria-hidden="true" />
         Total estimado no {ROTULO_PERIODO[periodo]}
       </p>
       <p className="text-foreground font-bold text-3xl">{moeda(totalPeriodo)}</p>

@@ -49,6 +49,8 @@ export default [
       // eslint-plugin-import produz falsos positivos com React/TypeScript para default exports
       'import/default': 'off',
       'import/no-named-as-default-member': 'off',
+      // Módulos virtuais do unplugin-icons (resolvidos pelo Vite, não pelo eslint)
+      'import/no-unresolved': ['error', { ignore: ['^~icons/'] }],
       'import/first': 'error',
       'import/newline-after-import': 'error',
       'import/no-duplicates': 'error',

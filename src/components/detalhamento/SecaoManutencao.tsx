@@ -202,6 +202,7 @@ export function SecaoManutencao({
     <>
       <CategoriaAccordion
         label="Manutenção"
+        categoriaId="manutencao"
         corClasse="bg-amber-400"
         valorExibido={pp(totalManutencaoComRevisao)}
         porcentagem={pct(totalManutencaoComRevisao, filtroAtivo)}

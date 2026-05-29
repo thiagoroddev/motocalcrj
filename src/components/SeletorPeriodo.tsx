@@ -1,4 +1,5 @@
 import { Card } from './ui/card';
+import { cn } from '@/lib/utils';
 import type { Periodo } from '../types/calculos';
 
 export type { Periodo };
@@ -18,11 +19,17 @@ type Props = {
   onChange: (p: Periodo) => void;
   // Subconjunto/ordem de períodos a exibir. Default: os cinco.
   periodos?: Periodo[];
+  className?: string;
 };
 
-export function SeletorPeriodo({ periodo, onChange, periodos = PERIODOS_PADRAO }: Props) {
+export function SeletorPeriodo({
+  periodo,
+  onChange,
+  periodos = PERIODOS_PADRAO,
+  className,
+}: Props) {
   return (
-    <Card className="flex gap-1.5 shadow-none border-0 p-1">
+    <Card className={cn('flex gap-1.5 shadow-none border-0 p-1', className)}>
       {periodos.map((id) => (
         <button
           key={id}

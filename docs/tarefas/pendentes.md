@@ -65,21 +65,24 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.20 — Adicionar ícones nos cards do projeto que precisam
+## TASK-RF-6.20 — Adicionar ícones nos cards do projeto (fatiada por tela)
 
-- **Status:** Pendente
+- **Status:** Em desmembramento — uma sub-task por tela (decisão do humano em 29/05/26, pois cruza o app todo).
 - **Modo:** Standard
 - **Valor:** Desejável
 - **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
 - **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** muitos cards do projeto (Insumos, Mão de Obra, Detalhamento, Ajustes) não têm ícone de identificação visual, prejudicando varredura rápida.
-  - **Local provável:** `src/components/insumos/*`, `src/components/maoDeObra/*`, `src/components/ajustes/*`, `src/components/detalhamento/*`. Sistema de ícones centralizado já existe (TASK-CHORE-009).
-  - **Fix proposto:** **levantar antes** quais cards precisam de ícone (escopo vago no enunciado) — pedir confirmação ao humano sobre a lista exata. Usar ícones do sistema centralizado já existente.
-  - **Cuidados:** **escopo aberto** — sem lista explícita do humano, o risco é trocar tudo ou nada. Pedir lista antes de implementar. Manter consistência visual com cards que já têm ícone.
+- **Regras gerais (valem para todas as sub-tasks):**
+  - Todo label de card tem ícone; cards de período usam relógio. Tamanho padronizado ~24×24.
+  - Todo título de seção tem ícone.
+  - Toda categoria do card "Distribuição de custos" tem ícone — o mesmo da tela de Detalhamento (mapa único categoria→ícone).
+  - Ícones de categoria em **tile colorido** (fundo na cor da categoria, ícone branco), estilo do mock.
+  - Ícones novos vêm do `lucide-react` (já é dependência; evita transcrever paths do Material à mão).
+- **Sub-tasks:**
+  - ~~**TASK-RF-6.20.1** — Estimativa + Detalhamento~~ **CONCLUÍDA** (29/05/26 16:50). Criou `icons/categorias.tsx` (mapa `ICONE_CATEGORIA` + `TileCategoria`) e `SeletorPeriodo` ganhou prop `className` — reusar nas próximas.
+  - ~~**TASK-RF-6.20.2** — Mão de Obra~~ **CONCLUÍDA** (29/05/26 18:36). Criou `TituloSecao` e `icons/pecas.tsx` (`iconePeca`, mdi via unplugin-icons) — reusar nas próximas.
+  - **TASK-RF-6.20.3** — Insumos (pendente).
+  - **TASK-RF-6.20.4** — Ajustes (pendente).
 
 ---
 
@@ -155,42 +158,6 @@ Obedeça essa ordem:
     - **(B)** Quebrar `revisao-geral` em 3 ou 4 serviços com intervalos diferentes (6k, 12k, 18k, 24k+) e M.O. proporcional ao escopo. Mais fiel à realidade Honda. Requer migration e revisão de testes.
   - Decisão fica com o usuário ao iniciar a task. Recomendação inicial: **A** agora (pequeno), abrir nova task se quiser **B** depois.
   - **Cuidados:** valor afeta diretamente o cálculo no modo independente. Se TASK-RF-6.22 já tiver sido executada, atualizar `precoMaoDeObraIndependente`. M.O. autorizada do `revisao-geral` deve ser 0 (já no pacote Honda) — flag `incluidoNaRevisaoAutorizada: true`. Spin-off identificada durante o planejamento da TASK-RF-6.14 (25/05/26) — usuário relatou caso real.
-
----
-
-## TASK-BG-016 — Fixtures de teste quebram `tsc --noEmit` (`posicao: string` vs union)
-
-- **Status:** Pendente
-- **Modo:** Light
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 29/05/26 11:09
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** `npx tsc --noEmit` falha com vários erros em [`src/utils/calculos.test.ts`](src/utils/calculos.test.ts) (linhas ~1688, 1714, 1749, 1768, 1798, 1817). As fixtures inline declaram `posicao` como `string`, mas `PneuPreset.posicao` é o union `'dianteiro' | 'traseiro'`. O typecheck não passa, embora `npm run test` e `npm run lint` fiquem verdes.
-  - **Local:** fixtures de preset inline em `src/utils/calculos.test.ts`.
-  - **Fix proposto:** tipar o objeto da fixture como `PresetMoto` (ou usar `as const` / `satisfies`) para que `posicao` infira o union, ou extrair um helper de fixture já tipado.
-  - **Cuidados:** mudança só de teste; não tocar no cálculo. Identificada durante a TASK-RF-6.16 (pré-existente, confirmada via `git stash`).
-
----
-
-## TASK-CHORE-011 — `npm install` poda devDependencies neste ambiente (NODE_ENV=production)
-
-- **Status:** Pendente
-- **Modo:** Light
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 29/05/26 15:13
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** o ambiente tem `NODE_ENV=production` e `npm config omit=dev`. Qualquer `npm install <pkg>` poda as devDependencies do `node_modules` (vite, vitest, eslint, typescript, tailwind) — observado na TASK-REF-25 ("removed 366 packages"), quebrando build/lint/test até reinstalar. O `package.json`/`package-lock.json` não são afetados, só o `node_modules`.
-  - **Local:** ambiente/shell (não código). Avaliar `.npmrc` do projeto com `omit=` vazio, ou doc no README.
-  - **Fix proposto:** decidir entre (A) `.npmrc` versionado forçando `include=dev` em dev, (B) nota no README ("use `npm install --include=dev`"), ou (C) ajustar o ambiente do dev (remover `NODE_ENV=production` global). Recomendação: confirmar com humano qual abordagem; provavelmente B + ajuste de ambiente.
-  - **Cuidados:** não forçar `production=false` versionado de um jeito que afete deploy/CI. Mudança de ambiente, não de runtime do app.
 
 ---
 

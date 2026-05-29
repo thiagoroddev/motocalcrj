@@ -1,6 +1,8 @@
+import { Route } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
+import { TituloSecao } from '../TituloSecao';
 
 interface PropsSecaoRodagem {
   kmDiaInput: string;
@@ -19,6 +21,7 @@ export function SecaoRodagem({
 }: PropsSecaoRodagem) {
   return (
     <section className="bg-card rounded-lg p-md space-y-md">
+      <TituloSecao icone={Route}>Rodagem</TituloSecao>
       <div>
         <Label
           htmlFor="km-dia"

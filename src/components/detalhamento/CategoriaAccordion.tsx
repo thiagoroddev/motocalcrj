@@ -1,9 +1,11 @@
 import { Card } from '../ui/card';
 import { Toggle } from './Toggle';
 import { BotaoLapisEdicao } from './BotaoLapisEdicao';
+import { TileCategoria } from '../icons/categorias';
 
 type Props = {
   label: string;
+  categoriaId: string;
   corClasse: string;
   valorExibido: string;
   porcentagem: string;
@@ -18,6 +20,7 @@ type Props = {
 
 export function CategoriaAccordion({
   label,
+  categoriaId,
   corClasse,
   valorExibido,
   porcentagem,
@@ -35,7 +38,7 @@ export function CategoriaAccordion({
         className={`flex items-center gap-3 p-md ${!semExpansao ? 'cursor-pointer' : ''}`}
         onClick={!semExpansao ? onToggleExpandido : undefined}
       >
-        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${corClasse}`} />
+        <TileCategoria categoriaId={categoriaId} corClasse={corClasse} />
         <span className="flex-1 text-foreground text-sm font-medium">
           {label}
           <span className="ml-1.5 text-[10px] font-normal text-muted-foreground/40">

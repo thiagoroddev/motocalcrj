@@ -1,5 +1,6 @@
 import { useState, useEffect, forwardRef } from 'react';
 import type { Dispatch } from 'react';
+import { Wrench } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -101,9 +102,17 @@ export const LinhaRevisaoHonda = forwardRef<HTMLDivElement, Props>(function Linh
       ref={ref}
       className={`bg-card rounded-lg p-md space-y-1.5 transition-shadow${destacado ? ' ring-2 ring-primary' : ''}`}
     >
-      <span className="label-neutro block">
-        {revisao.intervaloKm.toLocaleString('pt-BR')} km · {revisao.intervaloMeses} meses
-      </span>
+      <div className="flex items-start justify-between gap-2">
+        <span className="label-neutro flex items-center gap-1.5">
+          <Wrench className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+          {index + 1}ª revisão · {revisao.intervaloKm.toLocaleString('pt-BR')} km ·{' '}
+          {revisao.intervaloMeses} meses
+        </span>
+        <BotaoReset
+          desabilitado={!temOverride}
+          onReset={() => dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index })}
+        />
+      </div>
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-1">
           <span className="label-neutro block">Peças (R$)</span>
@@ -130,22 +139,16 @@ export const LinhaRevisaoHonda = forwardRef<HTMLDivElement, Props>(function Linh
           />
         </div>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          Total:{' '}
-          <span className={temOverride ? 'text-foreground' : ''}>
-            R${' '}
-            {totalEfetivo.toLocaleString('pt-BR', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </span>
+      <span className="text-sm text-muted-foreground">
+        Total:{' '}
+        <span className={temOverride ? 'text-foreground' : ''}>
+          R${' '}
+          {totalEfetivo.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </span>
-        <BotaoReset
-          desabilitado={!temOverride}
-          onReset={() => dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index })}
-        />
-      </div>
+      </span>
       <Accordion
         type="single"
         collapsible

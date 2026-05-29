@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { ChartPie } from 'lucide-react';
 import { DonutChart } from './DonutChart';
 import type { SegmentoDonut } from './DonutChart';
 import { SeletorPeriodo, type Periodo } from '../SeletorPeriodo';
+import { TileCategoria } from '../icons/categorias';
+import { TituloSecao } from '../TituloSecao';
 import { converterAnualParaPeriodo } from '../../utils/calculos';
 import { moeda } from '../../utils/formatters';
 
@@ -54,21 +57,23 @@ export function DistribuicaoCustos({ segmentos, diasAno, horasDia }: PropsDistri
 
   return (
     <section className="bg-card rounded-lg p-md space-y-md">
-      <p className="text-foreground text-sm font-semibold">Distribuição de custos</p>
+      <TituloSecao icone={ChartPie}>Distribuição de custos</TituloSecao>
 
       <div className="flex justify-center">
         <DonutChart segmentos={visiveis} tamanho={150} centro={centro} />
       </div>
 
-      <SeletorPeriodo periodo={periodo} onChange={setPeriodo} periodos={PERIODOS_CARD} />
+      <SeletorPeriodo
+        periodo={periodo}
+        onChange={setPeriodo}
+        periodos={PERIODOS_CARD}
+        className="bg-muted/40"
+      />
 
-      <div className="space-y-1.5">
+      <div className="divide-y divide-muted/50">
         {visiveis.map((s) => (
-          <div key={s.id} className="flex items-center gap-2">
-            <span
-              className="w-2.5 h-2.5 rounded-full shrink-0"
-              style={{ backgroundColor: s.cor }}
-            />
+          <div key={s.id} className="flex items-center gap-2 py-2.5 first:pt-0 last:pb-0">
+            <TileCategoria categoriaId={s.id} corHex={s.cor} />
             <span className="flex-1 truncate text-muted-foreground/70 text-xs">{s.label}</span>
             <span className="text-foreground text-xs font-medium tabular-nums">
               {moeda(converterAnualParaPeriodo(s.valorAnual, periodo, diasAno, horasDia))}

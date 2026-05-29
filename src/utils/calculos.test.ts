@@ -39,6 +39,11 @@ import type {
 } from '../types/perfil';
 import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from '../types/calculos';
 
+// O JSON infere `pneus[].posicao` como `string`; o preset real usa o union
+// 'dianteiro' | 'traseiro'. Cast único aqui (mesmo padrão da produção, que
+// tipa os presets carregados via import.meta.glob). Ver TASK-BG-016.
+const presetPop110i = pop110i as PresetMoto;
+
 // ─── Fixtures ────────────────────────────────────────────────────
 
 const itensSubstituidosMock = ['Óleo Pro Honda 10w30'];
@@ -1735,7 +1740,7 @@ describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () =>
 
   it('campos zerados mantêm custo amortizado para peças de vida útil longa', () => {
     const resultado = calcularCpkPorPeca({
-      preset: pop110i,
+      preset: presetPop110i,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
@@ -1761,7 +1766,7 @@ describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () =>
 
   it('campos preenchidos usam eventos inteiros na janela de 12 meses', () => {
     const resultado = calcularCpkPorPeca({
-      preset: pop110i,
+      preset: presetPop110i,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
@@ -1796,7 +1801,7 @@ describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () =>
 
   it('kit_revisao ignora kmUltimaTrocas legado e segue automático no ciclo independente', () => {
     const resultado = calcularCpkPorPeca({
-      preset: pop110i,
+      preset: presetPop110i,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
@@ -1815,7 +1820,7 @@ describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () =>
 
   it('bateria com km informado continua usando driver temporal', () => {
     const resultado = calcularCpkPorPeca({
-      preset: pop110i,
+      preset: presetPop110i,
       tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
@@ -1845,7 +1850,7 @@ describe('TASK-RF-6.13 — retíficas usam kmUltimaTrocas em Imprevistos', () =>
       perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
     };
 
-    const resultado = calcularCustosPorCategoria(perfil, pop110i, dadosRJ);
+    const resultado = calcularCustosPorCategoria(perfil, presetPop110i, dadosRJ);
     const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
 
     expect(retifica?.eventosNoAno).toBeCloseTo(18200 / 120000, 5);
@@ -1864,7 +1869,7 @@ describe('TASK-RF-6.13 — retíficas usam kmUltimaTrocas em Imprevistos', () =>
       perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
     };
 
-    const resultado = calcularCustosPorCategoria(perfil, pop110i, dadosRJ);
+    const resultado = calcularCustosPorCategoria(perfil, presetPop110i, dadosRJ);
     const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
 
     expect(retifica?.eventosNoAno).toBe(1);

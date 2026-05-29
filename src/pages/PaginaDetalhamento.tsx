@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
@@ -13,6 +13,7 @@ import type { CategoriaDisplay } from '../types/perfil';
 import { moeda, cpkFormatado } from '../utils/formatters';
 import { CardTotalAnual } from '../components/detalhamento/CardTotalAnual';
 import { CategoriaAccordion } from '../components/detalhamento/CategoriaAccordion';
+import { BotaoLapisEdicao } from '../components/detalhamento/BotaoLapisEdicao';
 import { LinhaDetalhe } from '../components/detalhamento/LinhaDetalhe';
 import { SecaoImprevistos } from '../components/detalhamento/SecaoImprevistos';
 import { SecaoManutencao } from '../components/detalhamento/SecaoManutencao';
@@ -111,6 +112,28 @@ function montarFormulaCombustivel(
     1,
     1,
   )} km/L x ${formatarPrecoLitro(precoLitro)} = ${totalPeriodo}`;
+}
+
+// Nota explicativa no rodapé do conteúdo expandido. Quando editável, o lápis
+// fica aqui (não no header do card), para os toggles de todas as categorias
+// permanecerem alinhados. O texto quebra linha respeitando o espaço do lápis.
+function NotaRodape({
+  children,
+  onEditar,
+  ariaLabel,
+}: {
+  children: ReactNode;
+  onEditar?: () => void;
+  ariaLabel?: string;
+}) {
+  return (
+    <div className="flex items-start gap-2 border-t border-muted/70 pt-2">
+      <p className="flex-1 min-w-0 text-[11px] leading-relaxed text-muted-foreground/45">
+        {children}
+      </p>
+      {onEditar && <BotaoLapisEdicao onClick={onEditar} ariaLabel={ariaLabel ?? 'Editar'} />}
+    </div>
+  );
 }
 
 function LinhaDetalheTexto({ label, valor }: { label: string; valor: string }) {
@@ -216,7 +239,11 @@ export function PaginaDetalhamento() {
     return label;
   }
 
-  function renderizarDetalhesCategoriaSimples(chave: ChaveCategoriaSimples) {
+  function renderizarDetalhesCategoriaSimples(
+    chave: ChaveCategoriaSimples,
+    onEditar: () => void,
+    ariaLabel: string,
+  ) {
     if (chave === 'internet') {
       return (
         <>
@@ -228,9 +255,9 @@ export function PaginaDetalhamento() {
             label="Cálculo anual"
             valor={`${moeda(perfil.financeiro.internet)} x 12 = ${moeda(custos.internet.total)}`}
           />
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
             Valor fixo mensal rateado pelo período selecionado.
-          </p>
+          </NotaRodape>
         </>
       );
     }
@@ -251,9 +278,9 @@ export function PaginaDetalhamento() {
           {custos.seguro.total !== perfil.financeiro.seguro.valorAnual && (
             <LinhaDetalheTexto label="Custo considerado" valor={moeda(custos.seguro.total)} />
           )}
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
             Valor anual rateado pelo período selecionado.
-          </p>
+          </NotaRodape>
         </>
       );
     }
@@ -280,9 +307,9 @@ export function PaginaDetalhamento() {
               'dias',
             )} = ${pp(custos.alimentacao.total)}`}
           />
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
             {`Os dias vêm da configuração de trabalho na Estimativa: ${perfil.trabalho.diasPorSemana} dias/semana x 52 semanas.`}
-          </p>
+          </NotaRodape>
         </>
       );
     }
@@ -301,9 +328,9 @@ export function PaginaDetalhamento() {
             label="Cálculo anual"
             valor={`${moeda(aluguel)} x ${multiplicador} = ${moeda(custos.financiamento.total)}`}
           />
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
             Valor recorrente rateado pelo período selecionado.
-          </p>
+          </NotaRodape>
         </>
       );
     }
@@ -378,6 +405,7 @@ export function PaginaDetalhamento() {
 
         <CategoriaAccordion
           label="Documentos"
+          categoriaId="documentos"
           corClasse="bg-blue-400"
           valorExibido={pp(custos.documentos.total)}
           porcentagem={pct(custos.documentos.total, filtros.documentos)}
@@ -392,9 +420,7 @@ export function PaginaDetalhamento() {
             valor={cvt(custos.documentos.detalhes.licenciamento)}
           />
           <LinhaDetalheTexto label="Base anual" valor={moeda(custos.documentos.total)} />
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
-            Custo legal anual rateado pelo período selecionado.
-          </p>
+          <NotaRodape>Custo legal anual rateado pelo período selecionado.</NotaRodape>
         </CategoriaAccordion>
 
         <SecaoManutencao
@@ -427,6 +453,7 @@ export function PaginaDetalhamento() {
 
         <CategoriaAccordion
           label="Combustível"
+          categoriaId="combustivel"
           corClasse="bg-green-500"
           valorExibido={totalCombustivelPeriodo}
           porcentagem={pct(custos.combustivel.total, filtros.combustivel)}
@@ -434,7 +461,6 @@ export function PaginaDetalhamento() {
           expandido={!!expandido['combustivel']}
           onToggleAtivo={() => toggleFiltro('combustivel')}
           onToggleExpandido={() => toggleAcordeao('combustivel')}
-          onEditar={() => setEdicao({ tipo: 'combustivel' })}
         >
           <LinhaDetalhe
             label="Custo por km"
@@ -467,15 +493,19 @@ export function PaginaDetalhamento() {
               totalCombustivelPeriodo,
             )}
           />
-          <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
+          <NotaRodape
+            onEditar={() => setEdicao({ tipo: 'combustivel' })}
+            ariaLabel="Editar combustível"
+          >
             Projeção por km rodado. Não soma lançamentos reais de combustível.
-          </p>
+          </NotaRodape>
         </CategoriaAccordion>
 
         {CATEGORIAS_SIMPLES.filter((c) => custos[c.chave].ativo).map((c) => (
           <CategoriaAccordion
             key={c.chave}
             label={labelCategoriaSimples(c.label, c.chave)}
+            categoriaId={c.chave}
             corClasse={c.cor}
             valorExibido={pp(custos[c.chave].total)}
             porcentagem={pct(custos[c.chave].total, filtros[c.chave])}
@@ -483,9 +513,12 @@ export function PaginaDetalhamento() {
             expandido={!!expandido[c.chave]}
             onToggleAtivo={() => toggleFiltro(c.chave)}
             onToggleExpandido={() => toggleAcordeao(c.chave)}
-            onEditar={() => setEdicao(c.edicao)}
           >
-            {renderizarDetalhesCategoriaSimples(c.chave)}
+            {renderizarDetalhesCategoriaSimples(
+              c.chave,
+              () => setEdicao(c.edicao),
+              `Editar ${labelCategoriaSimples(c.label, c.chave)}`,
+            )}
           </CategoriaAccordion>
         ))}
 

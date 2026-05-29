@@ -15,6 +15,7 @@ import { Input } from '../ui/input';
 import { moeda } from '../../utils/formatters';
 import { Toggle } from './Toggle';
 import { BotaoLapisEdicao } from './BotaoLapisEdicao';
+import { TileCategoria } from '../icons/categorias';
 
 type Props = {
   gastosCustom: GastoCustom[];
@@ -85,7 +86,7 @@ export function SecaoImprevistos({
     <>
       <Card className="shadow-none border-0 overflow-hidden">
         <div className="flex items-center gap-3 p-md cursor-pointer" onClick={onToggleExpandido}>
-          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-warning/60" />
+          <TileCategoria categoriaId="gastosCustom" corClasse="bg-warning/60" />
           <span className="flex-1 text-foreground text-sm font-medium flex items-center gap-1.5">
             Imprevistos
             <button

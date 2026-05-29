@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Store, Wrench, TriangleAlert, Tag } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { TituloSecao } from '@/components/TituloSecao';
 import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { CardServico } from '@/components/mao-de-obra/CardServico';
 import { LinhaRevisaoHonda } from '@/components/mao-de-obra/LinhaRevisaoHonda';
@@ -180,6 +182,7 @@ export function PaginaMaoDeObra() {
               </p>
             ) : (
               <div className="space-y-sm">
+                <TituloSecao icone={Store}>Mão de Obra de Oficina Autorizada</TituloSecao>
                 {preset.revisaoAutorizada.map((revisao, idx) => {
                   const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
                   const ehDestacado = indiceDestacado === idx;
@@ -199,9 +202,7 @@ export function PaginaMaoDeObra() {
 
                 {servicosAvulsosAutorizada.length > 0 && (
                   <div className="space-y-sm pt-md">
-                    <h3 className="text-sm font-semibold text-foreground">
-                      Serviços avulsos da concessionária fora das revisões
-                    </h3>
+                    <TituloSecao icone={Tag}>Serviços avulsos</TituloSecao>
                     <ListaServicos
                       servicos={servicosAvulsosAutorizada}
                       dispatch={dispatch}
@@ -216,16 +217,20 @@ export function PaginaMaoDeObra() {
           </TabsContent>
 
           <TabsContent value="independente" className="px-md pb-md pt-3">
-            <ListaServicos
-              servicos={servicosNormais}
-              dispatch={dispatch}
-              temOverrides={temOverridesNormais}
-              onRestaurarTudo={() => restaurarGrupo(servicosNormais)}
-            />
+            <div className="space-y-sm">
+              <TituloSecao icone={Wrench}>Mão de Obra de Oficina Independente</TituloSecao>
+              <ListaServicos
+                servicos={servicosNormais}
+                dispatch={dispatch}
+                temOverrides={temOverridesNormais}
+                onRestaurarTudo={() => restaurarGrupo(servicosNormais)}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="excepcional" className="px-md pb-md pt-3">
             <div className="space-y-sm">
+              <TituloSecao icone={TriangleAlert}>Serviços Excepcionais</TituloSecao>
               {deveAlertarExcepcional && (
                 <div className="rounded-lg border px-md py-sm bg-warning/10 border-warning/30 text-warning text-sm">
                   Atenção: sua moto está próxima ou acima de {limiteExcepcionalFormatado} km.
