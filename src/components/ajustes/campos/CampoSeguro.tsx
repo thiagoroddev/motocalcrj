@@ -5,6 +5,8 @@ import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { BotaoReset } from '../../BotaoReset';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Shield } from 'lucide-react';
+import { TituloSecao } from '@/components/TituloSecao';
 
 interface Props {
   financeiro: PerfilUsuario['financeiro'];
@@ -18,7 +20,7 @@ export function CampoSeguro({ financeiro, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Seguro</p>
+        <TituloSecao icone={Shield}>Seguro</TituloSecao>
         <BotaoReset
           desabilitado={seguro.valorAnual === 0 && seguro.periodicidade === 'anual'}
           onReset={() =>

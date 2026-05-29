@@ -1,5 +1,6 @@
 import { useState, useEffect, useId } from 'react';
 import type { Dispatch } from 'react';
+import { Fuel } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -63,10 +64,13 @@ export function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }:
   return (
     <div className="bg-card rounded-lg p-md space-y-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-sm">
+        <div className="flex items-center gap-sm min-w-0">
+          <Fuel className="w-6 h-6 text-primary shrink-0" aria-hidden="true" />
           {ehPreferido && <span className="text-xs text-primary">●</span>}
-          <span className="text-sm font-medium">{NOME_COMBUSTIVEL[tipo]}</span>
-          {ehPreferido && <span className="text-xs text-primary font-medium">Preferido</span>}
+          <span className="text-sm font-medium truncate">{NOME_COMBUSTIVEL[tipo]}</span>
+          {ehPreferido && (
+            <span className="text-xs text-primary font-medium shrink-0">Preferido</span>
+          )}
         </div>
         <div className="flex items-center gap-1">
           {!ehPreferido && (

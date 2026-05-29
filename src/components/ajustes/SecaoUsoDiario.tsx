@@ -1,26 +1,24 @@
 import { useId } from 'react';
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, PerfilUso } from '../../types/perfil';
+import type { PerfilUsuario, PerfilAction } from '../../types/perfil';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Segmentado } from '../Segmentado';
 import { Stepper } from '../Stepper';
 import { Linha } from '../Linha';
 import { BotaoReset } from '../BotaoReset';
+import { Route } from 'lucide-react';
+import { TituloSecao } from '@/components/TituloSecao';
 
 interface Props {
-  moto: PerfilUsuario['moto'];
   trabalho: PerfilUsuario['trabalho'];
   dispatch: Dispatch<PerfilAction>;
 }
 
-export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
+export function SecaoUsoDiario({ trabalho, dispatch }: Props) {
   const idKmPorDia = useId();
-  const temAlteracao =
-    moto.perfilUso !== 'entrega' || trabalho.diasPorSemana !== 5 || trabalho.kmPorDia !== 70;
+  const temAlteracao = trabalho.diasPorSemana !== 5 || trabalho.kmPorDia !== 70;
 
   function resetar() {
-    dispatch({ type: 'SET_PERFIL_USO', perfilUso: 'entrega' });
     dispatch({ type: 'SET_DIAS_POR_SEMANA', valor: 5 });
     dispatch({ type: 'SET_KM_POR_DIA', valor: 70 });
   }
@@ -28,29 +26,12 @@ export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Uso Diário</p>
+        <TituloSecao icone={Route}>Rodagem</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
       </div>
-      <p className="text-sm text-foreground">Perfil de trabalho</p>
-      <Segmentado
-        opcoes={[
-          { label: 'Entrega', valor: 'entrega' },
-          { label: 'Passageiro', valor: 'passageiro' },
-        ]}
-        valor={moto.perfilUso}
-        onChange={(v) => dispatch({ type: 'SET_PERFIL_USO', perfilUso: v as PerfilUso })}
-      />
-      <Linha label="Dias na semana">
-        <Stepper
-          valor={trabalho.diasPorSemana}
-          min={1}
-          max={7}
-          onChange={(v) => dispatch({ type: 'SET_DIAS_POR_SEMANA', valor: v })}
-        />
-      </Linha>
       <div className="space-y-1">
         <Label htmlFor={idKmPorDia} className="text-xs text-muted-foreground font-normal">
-          KM por dia (média)
+          Média de KM rodados por dia
         </Label>
         <Input
           id={idKmPorDia}
@@ -64,6 +45,14 @@ export function SecaoUsoDiario({ moto, trabalho, dispatch }: Props) {
           }}
           className="text-right"
         />
+        <Linha label="Dias na semana">
+          <Stepper
+            valor={trabalho.diasPorSemana}
+            min={1}
+            max={7}
+            onChange={(v) => dispatch({ type: 'SET_DIAS_POR_SEMANA', valor: v })}
+          />
+        </Linha>
       </div>
     </section>
   );

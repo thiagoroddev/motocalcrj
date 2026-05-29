@@ -4,6 +4,8 @@ import type { PerfilUsuario, PerfilAction } from '../../../types/perfil';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { BotaoReset } from '../../BotaoReset';
+import { Utensils } from 'lucide-react';
+import { TituloSecao } from '@/components/TituloSecao';
 
 interface Props {
   financeiro: PerfilUsuario['financeiro'];
@@ -15,7 +17,7 @@ export function CampoAlimentacao({ financeiro, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Alimentação</p>
+        <TituloSecao icone={Utensils}>Alimentação</TituloSecao>
         <BotaoReset
           desabilitado={financeiro.alimentacaoDia === 0}
           onReset={() => dispatch({ type: 'SET_ALIMENTACAO', valorDia: 0 })}

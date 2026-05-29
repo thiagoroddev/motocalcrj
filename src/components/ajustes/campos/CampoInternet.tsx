@@ -4,6 +4,8 @@ import type { PerfilUsuario, PerfilAction } from '../../../types/perfil';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { BotaoReset } from '../../BotaoReset';
+import { Wifi } from 'lucide-react';
+import { TituloSecao } from '@/components/TituloSecao';
 
 interface Props {
   financeiro: PerfilUsuario['financeiro'];
@@ -15,7 +17,7 @@ export function CampoInternet({ financeiro, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Internet</p>
+        <TituloSecao icone={Wifi}>Internet</TituloSecao>
         <BotaoReset
           desabilitado={financeiro.internet === 0}
           onReset={() => dispatch({ type: 'SET_INTERNET', valor: 0 })}

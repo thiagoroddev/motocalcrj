@@ -1,7 +1,9 @@
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction, SituacaoMoto } from '../../types/perfil';
+import { Scale } from 'lucide-react';
 import { Segmentado } from '../Segmentado';
 import { BotaoReset } from '../BotaoReset';
+import { TituloSecao } from '@/components/TituloSecao';
 import { CampoFinanciamento } from './campos/CampoFinanciamento';
 
 interface Props {
@@ -15,7 +17,7 @@ export function SecaoSituacaoLegal({ financeiro, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Situação Legal</p>
+        <TituloSecao icone={Scale}>Situação Legal</TituloSecao>
         <BotaoReset
           desabilitado={situacaoMoto === 'quitada'}
           onReset={() => dispatch({ type: 'SET_SITUACAO_MOTO', situacao: 'quitada' })}

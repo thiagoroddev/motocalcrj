@@ -4,6 +4,8 @@ import type { PerfilUsuario, PerfilAction } from '../../types/perfil';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Bike } from 'lucide-react';
+import { TituloSecao } from '@/components/TituloSecao';
 
 const ANO_ATUAL = new Date().getFullYear();
 const ANOS = Array.from({ length: ANO_ATUAL - 1989 }, (_, i) => ANO_ATUAL + 1 - i);
@@ -18,7 +20,7 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
   const idKmUltimaRevisao = useId();
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
-      <p className="label-neutro">Veículo</p>
+      <TituloSecao icone={Bike}>Veículo</TituloSecao>
       <p className="text-xs text-muted-foreground/60">
         {moto.marca} · {moto.modelo}
       </p>

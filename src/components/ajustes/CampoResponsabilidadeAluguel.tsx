@@ -5,8 +5,10 @@ import type {
   ResponsabilidadeAluguel,
   ResponsabilidadeCusto,
 } from '../../types/perfil';
+import { Banknote } from 'lucide-react';
 import { Segmentado } from '../Segmentado';
 import { BotaoReset } from '../BotaoReset';
+import { TituloSecao } from '@/components/TituloSecao';
 
 const CAMPOS: { key: keyof ResponsabilidadeAluguel; label: string }[] = [
   { key: 'documentos', label: 'Documentação (IPVA, licenciamento)' },
@@ -41,7 +43,7 @@ export function CampoResponsabilidadeAluguel({ financeiro, dispatch }: Props) {
   return (
     <section className="bg-card rounded-lg p-md space-y-3">
       <div className="flex items-center justify-between">
-        <p className="label-neutro">Responsabilidade do aluguel</p>
+        <TituloSecao icone={Banknote}>Responsabilidade do aluguel</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
       </div>
       {CAMPOS.map(({ key, label }) => (

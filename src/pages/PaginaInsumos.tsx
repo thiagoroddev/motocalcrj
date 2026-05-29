@@ -1,8 +1,10 @@
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import { CATALOGO } from '../data/catalogoModelos';
+import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
+import { TituloSecao } from '@/components/TituloSecao';
 import type { PresetMoto } from '../types/calculos';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
 
@@ -79,9 +81,7 @@ export function PaginaInsumos() {
   return (
     <div className="overflow-y-auto h-full px-md pb-md pt-sm space-y-lg">
       <section className="space-y-sm">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-px">
-          Combustível
-        </h2>
+        <TituloSecao icone={Fuel}>Combustível</TituloSecao>
         {tiposCombustivel.map((tipo) => (
           <CardCombustivel
             key={tipo}
@@ -96,9 +96,7 @@ export function PaginaInsumos() {
 
       {preset ? (
         <section className="space-y-sm">
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-px">
-            Peças e Pneus
-          </h2>
+          <TituloSecao icone={Cog}>Peças e Pneus</TituloSecao>
           {itensPecas.map((item) => (
             <CardItemPreco
               key={item.id}

@@ -122,9 +122,15 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
   if (alvo.tipo === 'financiamento')
     return <CampoFinanciamento financeiro={perfil.financeiro} dispatch={dispatch} />;
   if (alvo.tipo === 'usoDiario')
-    return <SecaoUsoDiario moto={perfil.moto} trabalho={perfil.trabalho} dispatch={dispatch} />;
+    return <SecaoUsoDiario trabalho={perfil.trabalho} dispatch={dispatch} />;
   if (alvo.tipo === 'preferencias')
-    return <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />;
+    return (
+      <SecaoPreferencias
+        perfilManutencao={perfil.perfilManutencao}
+        moto={perfil.moto}
+        dispatch={dispatch}
+      />
+    );
   if (alvo.tipo === 'servicoExcepcional')
     return (
       <ConteudoServicoExcepcional servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />

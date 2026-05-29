@@ -1,8 +1,11 @@
 import { useId, useState } from 'react';
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction, KmUltimaTrocas } from '../../types/perfil';
+import { Wrench } from 'lucide-react';
 import { DialogConfirmacao } from '../DialogConfirmacao';
 import { IconTrocar } from '../icons';
+import { iconePeca } from '../icons/pecas';
+import { TituloSecao } from '@/components/TituloSecao';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BotaoReset } from '../BotaoReset';
@@ -68,15 +71,20 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
     <>
       <section className="bg-card rounded-lg p-md space-y-3">
         <div className="flex items-center justify-between">
-          <p className="label-neutro">Quilometragem das últimas trocas/manutenções</p>
+          <TituloSecao icone={Wrench}>KM - últimas trocas/manutenções</TituloSecao>
           <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-4">
           {COMPONENTES_TROCA.map(({ key, label }) => {
             const inputId = `${idPrefix}-${key}`;
+            const IconePeca = iconePeca(key);
             return (
               <div key={key} className="space-y-1">
-                <Label htmlFor={inputId} className="text-xs text-muted-foreground font-normal">
+                <Label
+                  htmlFor={inputId}
+                  className="flex items-center gap-1.5 text-xs text-foreground font-medium"
+                >
+                  <IconePeca className="w-4 h-4 text-primary shrink-0" />
                   {label}
                 </Label>
                 <Input
@@ -100,7 +108,7 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
                   type="button"
                   disabled={!podeReplicarKmRevisao}
                   onClick={() => prepararReplicaKmRevisao(key, label)}
-                  className="inline-flex min-h-7 w-full items-center gap-1.5 rounded-md px-1 text-left text-[11px] leading-tight text-muted-foreground transition-colors hover:text-primary disabled:opacity-40 disabled:hover:text-muted-foreground"
+                  className="inline-flex min-h-6 w-full items-center gap-1.5 rounded-md px-1 text-left text-[10px] leading-tight text-muted-foreground/70 transition-colors hover:text-primary disabled:opacity-40 disabled:hover:text-muted-foreground/70"
                   aria-label={`Usar km da última revisão em ${label}`}
                   title={
                     podeReplicarKmRevisao

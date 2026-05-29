@@ -385,7 +385,7 @@ export function PaginaDetalhamento() {
             },
             {
               label: tipoUsoLabel,
-              onClick: () => setEdicao({ tipo: 'usoDiario' }),
+              onClick: () => setEdicao({ tipo: 'preferencias' }),
               ariaLabel: 'Editar perfil de uso',
             },
             {

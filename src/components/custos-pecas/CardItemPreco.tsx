@@ -3,6 +3,7 @@ import type { Dispatch } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BotaoReset } from '@/components/BotaoReset';
+import { iconePeca } from '../icons/pecas';
 import type { PerfilAction, PecaOverride } from '../../types/perfil';
 
 interface Props {
@@ -28,6 +29,7 @@ export function CardItemPreco({
 }: Props) {
   const idOriginal = useId();
   const idParalela = useId();
+  const IconePeca = iconePeca(id);
 
   const originalEfetivo = override?.precoEditadoOriginal ?? precoOriginal;
   const paralelaEfetiva = override?.precoEditadaParalela ?? precoParalela;
@@ -75,8 +77,11 @@ export function CardItemPreco({
 
   return (
     <div className="bg-card rounded-lg p-md space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{nome}</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 min-w-0">
+          <IconePeca className="w-6 h-6 text-primary shrink-0" />
+          <span className="text-sm font-medium truncate">{nome}</span>
+        </span>
         <BotaoReset
           desabilitado={!temOverride}
           onReset={() => dispatch({ type: 'RESET_PECA_OVERRIDE', id })}

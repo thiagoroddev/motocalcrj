@@ -65,24 +65,9 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.20 — Adicionar ícones nos cards do projeto (fatiada por tela)
+## ~~TASK-RF-6.20 — Adicionar ícones nos cards do projeto (fatiada por tela)~~ — **CONCLUÍDA** (29/05/26)
 
-- **Status:** Em desmembramento — uma sub-task por tela (decisão do humano em 29/05/26, pois cruza o app todo).
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Data origem:** 25/05/26 08:33
-- **Regras gerais (valem para todas as sub-tasks):**
-  - Todo label de card tem ícone; cards de período usam relógio. Tamanho padronizado ~24×24.
-  - Todo título de seção tem ícone.
-  - Toda categoria do card "Distribuição de custos" tem ícone — o mesmo da tela de Detalhamento (mapa único categoria→ícone).
-  - Ícones de categoria em **tile colorido** (fundo na cor da categoria, ícone branco), estilo do mock.
-  - Ícones novos vêm do `lucide-react` (já é dependência; evita transcrever paths do Material à mão).
-- **Sub-tasks:**
-  - ~~**TASK-RF-6.20.1** — Estimativa + Detalhamento~~ **CONCLUÍDA** (29/05/26 16:50). Criou `icons/categorias.tsx` (mapa `ICONE_CATEGORIA` + `TileCategoria`) e `SeletorPeriodo` ganhou prop `className` — reusar nas próximas.
-  - ~~**TASK-RF-6.20.2** — Mão de Obra~~ **CONCLUÍDA** (29/05/26 18:36). Criou `TituloSecao` e `icons/pecas.tsx` (`iconePeca`, mdi via unplugin-icons) — reusar nas próximas.
-  - **TASK-RF-6.20.3** — Insumos (pendente).
-  - **TASK-RF-6.20.4** — Ajustes (pendente).
+Fatiada em 4 sub-tasks, todas concluídas: 6.20.1 (Estimativa+Detalhamento, 16:50), 6.20.2 (Mão de Obra, 18:36), 6.20.3 (Insumos, 18:57), 6.20.4 (Ajustes, 19:59). Infra criada: `icons/categorias.tsx` (`ICONE_CATEGORIA` + `TileCategoria`), `icons/pecas.tsx` (`iconePeca`, mdi via unplugin-icons), `TituloSecao`. Ver índice de concluídas.
 
 ---
 
