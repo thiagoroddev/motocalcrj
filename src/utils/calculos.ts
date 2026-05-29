@@ -21,6 +21,7 @@ import type {
   CustosPorCategoria,
   FiltrosCategorias,
   ResultadoCalculo,
+  Periodo,
 } from '../types/calculos';
 
 // ─── I. Rodagem ──────────────────────────────────────────────────
@@ -814,25 +815,12 @@ export function calcularGranularidades(
   };
 }
 
-export function calcularBreakdownPercentual(
+// Valor anual em R$ por categoria, respeitando os filtros ativos. É a fonte
+// única dos numeradores: a versão percentual (abaixo) deriva daqui.
+export function calcularBreakdownValores(
   custos: CustosPorCategoria,
   filtros: FiltrosCategorias,
 ): Record<string, number> {
-  const total = calcularTotalFiltrado(custos, filtros);
-  if (total === 0) {
-    return {
-      documentos: 0,
-      revisao: 0,
-      manutencao: 0,
-      combustivel: 0,
-      internet: 0,
-      seguro: 0,
-      alimentacao: 0,
-      financiamento: 0,
-      gastosCustom: 0,
-    };
-  }
-  const pct = (valor: number) => (valor / total) * 100;
   const totalRevisaoFiltrado = filtros.manutencao
     ? (filtros.revisao ? custos.revisao.detalhes.base : 0) +
       [...custos.revisao.detalhes.servicos.entries()].reduce(
@@ -849,16 +837,58 @@ export function calcularBreakdownPercentual(
       )
     : 0;
   return {
-    documentos: filtros.documentos ? pct(custos.documentos.total) : 0,
-    revisao: pct(totalRevisaoFiltrado),
-    manutencao: pct(totalManutencaoFiltrado),
-    combustivel: filtros.combustivel ? pct(custos.combustivel.total) : 0,
-    internet: filtros.internet ? pct(custos.internet.total) : 0,
-    seguro: filtros.seguro ? pct(custos.seguro.total) : 0,
-    alimentacao: filtros.alimentacao ? pct(custos.alimentacao.total) : 0,
-    financiamento: filtros.financiamento ? pct(custos.financiamento.total) : 0,
-    gastosCustom: pct(calcularTotalImprevistosFiltrado(custos, filtros)),
+    documentos: filtros.documentos ? custos.documentos.total : 0,
+    revisao: totalRevisaoFiltrado,
+    manutencao: totalManutencaoFiltrado,
+    combustivel: filtros.combustivel ? custos.combustivel.total : 0,
+    internet: filtros.internet ? custos.internet.total : 0,
+    seguro: filtros.seguro ? custos.seguro.total : 0,
+    alimentacao: filtros.alimentacao ? custos.alimentacao.total : 0,
+    financiamento: filtros.financiamento ? custos.financiamento.total : 0,
+    gastosCustom: calcularTotalImprevistosFiltrado(custos, filtros),
   };
+}
+
+export function calcularBreakdownPercentual(
+  custos: CustosPorCategoria,
+  filtros: FiltrosCategorias,
+): Record<string, number> {
+  const valores = calcularBreakdownValores(custos, filtros);
+  const total = calcularTotalFiltrado(custos, filtros);
+  if (total === 0) {
+    return {
+      documentos: 0,
+      revisao: 0,
+      manutencao: 0,
+      combustivel: 0,
+      internet: 0,
+      seguro: 0,
+      alimentacao: 0,
+      financiamento: 0,
+      gastosCustom: 0,
+    };
+  }
+  return Object.fromEntries(
+    Object.entries(valores).map(([categoria, valor]) => [categoria, (valor / total) * 100]),
+  );
+}
+
+// Rateia um custo anual para a janela de tempo escolhida no seletor de período.
+export function converterAnualParaPeriodo(
+  anual: number,
+  periodo: Periodo,
+  diasAno: number,
+  horasDia: number,
+): number {
+  const divisor: Record<Periodo, number> = {
+    ano: 1,
+    mes: 12,
+    sem: 52,
+    dia: diasAno,
+    hora: diasAno * horasDia,
+  };
+  const d = divisor[periodo];
+  return d > 0 ? anual / d : 0;
 }
 
 export function calcularCustoMotoAnual(

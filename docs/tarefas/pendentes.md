@@ -11,42 +11,6 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.17 — Distribuição de custos: melhorar UI e mostrar R$ por categoria
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** a seção "Distribuição de custos" mostra apenas a porcentagem de cada categoria. Falta o valor em R$, e a UI atual não está clara o suficiente.
-  - **Local provável:** `src/pages/PaginaDetalhamento.tsx` ou componente extraído (`src/components/detalhamento/DistribuicaoCustos.tsx` ou similar — confirmar pelo Grep).
-  - **Fix proposto:** ao lado (ou abaixo) do `%`, exibir o valor absoluto em R$ no mesmo período do toggle ativo. Revisar visual (espaçamentos, hierarquia tipográfica, contraste das barras).
-  - **Cuidados:** valores em R$ já são calculados em algum lugar do `calculos.ts` (a porcentagem deriva deles) — reaproveitar. Manter `toFixed(2)` e símbolo `R$ ` consistentes com o resto do app. Não quebrar responsividade em 375px.
-
----
-
-## TASK-BG-007 — Padronizar "Gastos Extras" → "Imprevistos" em Distribuição de custos
-
-- **Status:** Pendente
-- **Modo:** Light
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** na seção "Distribuição de custos", a categoria que em todo o resto do app se chama "Imprevistos" aparece como "Gastos Extras". Inconsistência de label para o mesmo conceito.
-  - **Local provável:** Grep por `"Gastos Extras"` — provavelmente em `src/pages/PaginaDetalhamento.tsx` ou componente de distribuição. TASK-RF-6.9 padronizou Imprevistos como nome canônico (presets editáveis: Multa, Sinistros, Outros).
-  - **Fix proposto:** substituir o literal `"Gastos Extras"` por `"Imprevistos"` no único ponto que ainda usa. Conferir se há mais ocorrências em outras telas.
-  - **Cuidados:** confirmar que o label novo ainda cabe no layout (Imprevistos é 1 caractere maior). Verificar se há teste que asserta o label antigo.
-
----
-
 ## TASK-RF-6.18 — Decrementar parcelas restantes de financiamento automaticamente a cada mês
 
 - **Status:** Pendente
@@ -209,6 +173,24 @@ Obedeça essa ordem:
   - **Local:** fixtures de preset inline em `src/utils/calculos.test.ts`.
   - **Fix proposto:** tipar o objeto da fixture como `PresetMoto` (ou usar `as const` / `satisfies`) para que `posicao` infira o union, ou extrair um helper de fixture já tipado.
   - **Cuidados:** mudança só de teste; não tocar no cálculo. Identificada durante a TASK-RF-6.16 (pré-existente, confirmada via `git stash`).
+
+---
+
+## TASK-CHORE-011 — `npm install` poda devDependencies neste ambiente (NODE_ENV=production)
+
+- **Status:** Pendente
+- **Modo:** Light
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data origem:** 29/05/26 15:13
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:**
+  - **Problema:** o ambiente tem `NODE_ENV=production` e `npm config omit=dev`. Qualquer `npm install <pkg>` poda as devDependencies do `node_modules` (vite, vitest, eslint, typescript, tailwind) — observado na TASK-REF-25 ("removed 366 packages"), quebrando build/lint/test até reinstalar. O `package.json`/`package-lock.json` não são afetados, só o `node_modules`.
+  - **Local:** ambiente/shell (não código). Avaliar `.npmrc` do projeto com `omit=` vazio, ou doc no README.
+  - **Fix proposto:** decidir entre (A) `.npmrc` versionado forçando `include=dev` em dev, (B) nota no README ("use `npm install --include=dev`"), ou (C) ajustar o ambiente do dev (remover `NODE_ENV=production` global). Recomendação: confirmar com humano qual abordagem; provavelmente B + ajuste de ambiente.
+  - **Cuidados:** não forçar `production=false` versionado de um jeito que afete deploy/CI. Mudança de ambiente, não de runtime do app.
 
 ---
 

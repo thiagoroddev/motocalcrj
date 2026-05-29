@@ -81,3 +81,6 @@
 | TASK-RF-6.21 | Header do veículo: pílulas com km atual + última revisão; modelo, "km/L" e km clicáveis com navegação para Perfil/Insumos/Ajustes | [2026-05-28--21h00--TASK-RF-6.21.md](./2026-05-28--21h00--TASK-RF-6.21.md) |
 | TASK-RF-6.26 | Detalhamento: chips do card de total clicáveis abrindo pop-up inline com `SecaoUsoDiario` / `SecaoPreferencias` | [2026-05-28--21h30--TASK-RF-6.26.md](./2026-05-28--21h30--TASK-RF-6.26.md) |
 | TASK-RF-6.16 | Ícone "?" no header com ajuda contextual por rota (Sheet inferior); absorve o conteúdo da RF-6.4 | [2026-05-29--11h09--TASK-RF-6.16.md](./2026-05-29--11h09--TASK-RF-6.16.md) |
+| TASK-RF-6.17 | Distribuição de custos: card reformado (donut + seletor Ano/Mês/Sem + R$ por categoria); absorve BG-007 | [2026-05-29--14h44--TASK-RF-6.17.md](./2026-05-29--14h44--TASK-RF-6.17.md) |
+| TASK-BG-007 | "Gastos Extras" → "Imprevistos" em Distribuição de custos (absorvida pela RF-6.17) | [2026-05-29--14h44--TASK-RF-6.17.md](./2026-05-29--14h44--TASK-RF-6.17.md) |
+| TASK-REF-25 | Trocar DonutChart manual por react-minimal-pie-chart (ordem por %, total no centro) | [2026-05-29--15h13--TASK-REF-25.md](./2026-05-29--15h13--TASK-REF-25.md) |

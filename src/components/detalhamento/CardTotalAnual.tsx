@@ -1,5 +1,5 @@
 import { moeda, cpkFormatado } from '../../utils/formatters';
-import type { Periodo } from './SeletorPeriodo';
+import type { Periodo } from '../SeletorPeriodo';
 
 export type ChipDetalhe = {
   label: string;

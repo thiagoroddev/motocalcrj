@@ -6,6 +6,7 @@ import {
   calcularTotalFiltrado,
   calcularGranularidades,
   categoriasParaFiltros,
+  converterAnualParaPeriodo,
 } from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
 import type { CategoriaDisplay } from '../types/perfil';
@@ -15,7 +16,7 @@ import { CategoriaAccordion } from '../components/detalhamento/CategoriaAccordio
 import { LinhaDetalhe } from '../components/detalhamento/LinhaDetalhe';
 import { SecaoImprevistos } from '../components/detalhamento/SecaoImprevistos';
 import { SecaoManutencao } from '../components/detalhamento/SecaoManutencao';
-import { SeletorPeriodo, type Periodo } from '../components/detalhamento/SeletorPeriodo';
+import { SeletorPeriodo, type Periodo } from '../components/SeletorPeriodo';
 import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { DialogEdicaoCusto, type EdicaoAlvo } from '../components/detalhamento/DialogEdicaoCusto';
 
@@ -56,22 +57,6 @@ const FILTRO_PARA_CATEGORIA: Partial<Record<ChaveFiltroCategoria, keyof Categori
   alimentacao: 'alimentacao',
   financiamento: 'financiamento',
 };
-
-function converterParaPeriodo(
-  anual: number,
-  periodo: Periodo,
-  diasAno: number,
-  horasDia: number,
-): number {
-  const d: Record<Periodo, number> = {
-    ano: 1,
-    mes: 12,
-    sem: 52,
-    dia: diasAno,
-    hora: diasAno * horasDia,
-  };
-  return anual / d[periodo];
-}
 
 const ROTULO_PERIODO_CURTO: Record<Periodo, string> = {
   ano: 'ano',
@@ -176,8 +161,8 @@ export function PaginaDetalhamento() {
 
   const pct = (valor: number, ativo: boolean = true) =>
     !ativo || totalFiltrado <= 0 ? '0%' : `${Math.round((valor / totalFiltrado) * 100)}%`;
-  const pp = (anual: number) => moeda(converterParaPeriodo(anual, periodo, diasAno, horasDia));
-  const cvt = (anual: number) => converterParaPeriodo(anual, periodo, diasAno, horasDia);
+  const pp = (anual: number) => moeda(converterAnualParaPeriodo(anual, periodo, diasAno, horasDia));
+  const cvt = (anual: number) => converterAnualParaPeriodo(anual, periodo, diasAno, horasDia);
   const totalFiltradoNoPeriodo = cvt(totalFiltrado);
   const kmNoPeriodo = cvt(kmAnual);
   const diasTrabalhadosNoPeriodo = cvt(diasAno);

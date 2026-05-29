@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
-import { calcularBreakdownPercentual, categoriasParaFiltros } from '../utils/calculos';
+import {
+  calcularBreakdownPercentual,
+  calcularBreakdownValores,
+  categoriasParaFiltros,
+} from '../utils/calculos';
 import { Button } from '../components/ui/button';
 import { CardCpk } from '../components/estimativa/CardCpk';
 import { CardPeriodo } from '../components/estimativa/CardPeriodo';
@@ -18,7 +22,7 @@ const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   seguro: { label: 'Seguro', cor: '#0078FF' },
   alimentacao: { label: 'Alimentação', cor: '#FBBF24' },
   financiamento: { label: 'Financiamento', cor: '#F97316' },
-  gastosCustom: { label: 'Gastos extras', cor: '#EC4899' },
+  gastosCustom: { label: 'Imprevistos', cor: '#EC4899' },
 };
 
 export function PaginaEstimativa() {
@@ -53,6 +57,7 @@ export function PaginaEstimativa() {
     perfil.configuracaoDisplay.filtrosManutencao,
   );
   const breakdown = calcularBreakdownPercentual(custos, filtrosAtivos);
+  const valores = calcularBreakdownValores(custos, filtrosAtivos);
   const segmentos: SegmentoDonut[] = Object.entries(CATEG_CONFIG)
     .map(([id, cfg]) => ({
       id,
@@ -62,6 +67,10 @@ export function PaginaEstimativa() {
         id === 'manutencao'
           ? (breakdown.manutencao ?? 0) + (breakdown.revisao ?? 0)
           : (breakdown[id] ?? 0),
+      valorAnual:
+        id === 'manutencao'
+          ? (valores.manutencao ?? 0) + (valores.revisao ?? 0)
+          : (valores[id] ?? 0),
       cor: cfg.cor,
     }))
     .filter((s) => s.porcentagem > 0);
@@ -100,15 +109,15 @@ export function PaginaEstimativa() {
       <div className="grid grid-cols-2 gap-sm">
         <CardPeriodo label="Por Hora" valor={porHora} />
         <CardPeriodo label="Por Dia" valor={granularidades.diario} />
+        <CardPeriodo label="Estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
+        <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
       </div>
 
       <div className="space-y-sm">
-        <CardPeriodo label="Estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
-        <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
         <CardPeriodo label="Estimado por ano" valor={granularidades.anual} km={kmAnual} />
       </div>
 
-      <DistribuicaoCustos segmentos={segmentos} />
+      <DistribuicaoCustos segmentos={segmentos} diasAno={diasAno} horasDia={horas} />
 
       <Button
         type="button"

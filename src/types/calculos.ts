@@ -191,3 +191,6 @@ export interface ResultadoCalculo {
   kmAnual: number;
   diasAno: number;
 }
+
+// Janela de tempo usada para ratear custos anuais (seletor de período).
+export type Periodo = 'ano' | 'mes' | 'sem' | 'dia' | 'hora';

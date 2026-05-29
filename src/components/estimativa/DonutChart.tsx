@@ -1,81 +1,52 @@
-﻿export interface SegmentoDonut {
+import type { ReactNode } from 'react';
+import { PieChart } from 'react-minimal-pie-chart';
+
+export interface SegmentoDonut {
   id: string;
   label: string;
   porcentagem: number;
+  // Valor anual em R$ da categoria; a legenda converte para o período escolhido.
+  valorAnual: number;
   cor: string;
 }
 
 interface Props {
+  // Já vem filtrado e ordenado pelo chamador — a ordem dos segmentos no anel
+  // espelha a ordem da legenda.
   segmentos: SegmentoDonut[];
   tamanho?: number;
+  // Conteúdo sobreposto no furo do donut (ex.: total do período).
+  centro?: ReactNode;
 }
 
-export function DonutChart({ segmentos, tamanho = 160 }: Props) {
-  const r = tamanho * 0.36;
-  const c = tamanho / 2;
-  const espessura = tamanho * 0.14;
-  const circum = 2 * Math.PI * r;
+// Espessura do anel em % do raio. Menor = furo maior (mais espaço pro centro).
+const ESPESSURA_ANEL = 20;
+// Gap entre fatias, em graus.
+const GAP_FATIAS = 2;
 
-  const ativos = segmentos.filter((s) => s.porcentagem > 0.5);
-  const maior = [...ativos].sort((a, b) => b.porcentagem - a.porcentagem)[0];
-
-  let acumulado = 0;
+export function DonutChart({ segmentos, tamanho = 160, centro }: Props) {
+  const temDados = segmentos.length > 0;
 
   return (
     <div
       className="relative flex items-center justify-center shrink-0"
       style={{ width: tamanho, height: tamanho }}
     >
-      <svg
-        width={tamanho}
-        height={tamanho}
-        viewBox={`0 0 ${tamanho} ${tamanho}`}
-        className="-rotate-90"
-      >
-        <circle
-          cx={c}
-          cy={c}
-          r={r}
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth={espessura}
+      {temDados ? (
+        <PieChart
+          data={segmentos.map((s) => ({ title: s.label, value: s.porcentagem, color: s.cor }))}
+          lineWidth={ESPESSURA_ANEL}
+          paddingAngle={GAP_FATIAS}
+          startAngle={-90}
+          background="rgba(255,255,255,0.06)"
         />
-
-        {ativos.map((seg) => {
-          const dashLen = (seg.porcentagem / 100) * circum;
-          const offset = circum - (acumulado / 100) * circum;
-          acumulado += seg.porcentagem;
-          return (
-            <circle
-              key={seg.id}
-              cx={c}
-              cy={c}
-              r={r}
-              fill="none"
-              stroke={seg.cor}
-              strokeWidth={espessura}
-              strokeDasharray={`${dashLen} ${circum - dashLen}`}
-              strokeDashoffset={offset}
-              strokeLinecap="butt"
-            />
-          );
-        })}
-      </svg>
-
-      {maior && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-          <span className="text-foreground font-bold text-2xl leading-tight">
-            {Math.round(maior.porcentagem)}%
-          </span>
-          <span className="text-muted-foreground/60 text-[10px] uppercase tracking-wide leading-tight max-w-17.5 text-center">
-            {maior.label}
-          </span>
-        </div>
+      ) : (
+        <span className="text-muted-foreground/40 text-xs">Sem dados</span>
       )}
 
-      {!maior && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-muted-foreground/40 text-xs">Sem dados</span>
+      {temDados && centro && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3 pointer-events-none">
+          {centro}
         </div>
       )}
     </div>

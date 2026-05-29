@@ -21,6 +21,8 @@ import {
   calcularTotalFiltrado,
   calcularGranularidades,
   calcularBreakdownPercentual,
+  calcularBreakdownValores,
+  converterAnualParaPeriodo,
   calcularCustoMotoAnual,
   calcularCustosPorCategoria,
   calcularCustoGastosCustomAnual,
@@ -1104,6 +1106,54 @@ describe('calcularBreakdownPercentual', () => {
     const resultado = calcularBreakdownPercentual(custosMock, filtroSoDoc);
     expect(resultado.documentos).toBeCloseTo(100, 1);
     expect(resultado.manutencao).toBe(0);
+  });
+});
+
+describe('calcularBreakdownValores', () => {
+  it('retorna o valor anual em R$ por categoria respeitando os filtros', () => {
+    const resultado = calcularBreakdownValores(custosMock, filtrosTudo);
+    expect(resultado.documentos).toBe(600);
+    expect(resultado.combustivel).toBe(1460);
+    expect(resultado.seguro).toBe(800);
+    // manutencao = soma das peças filtradas (500 + 1000)
+    expect(resultado.manutencao).toBe(1500);
+    // revisao = base (900) + serviços filtrados (53)
+    expect(resultado.revisao).toBe(953);
+  });
+
+  it('zera a categoria desativada mesmo com custo > 0', () => {
+    const resultado = calcularBreakdownValores(custosMock, {
+      ...filtrosTudo,
+      combustivel: false,
+      seguro: false,
+    });
+    expect(resultado.combustivel).toBe(0);
+    expect(resultado.seguro).toBe(0);
+    expect(resultado.documentos).toBe(600);
+  });
+
+  it('é a base coerente do percentual: valor/total*100 == percentual', () => {
+    const valores = calcularBreakdownValores(custosMock, filtrosTudo);
+    const percentual = calcularBreakdownPercentual(custosMock, filtrosTudo);
+    const total = calcularTotalFiltrado(custosMock, filtrosTudo);
+    Object.keys(valores).forEach((cat) => {
+      expect(percentual[cat]).toBeCloseTo((valores[cat] / total) * 100, 5);
+    });
+  });
+});
+
+describe('converterAnualParaPeriodo', () => {
+  it('divide pelo divisor de cada período', () => {
+    expect(converterAnualParaPeriodo(1200, 'ano', 312, 8)).toBe(1200);
+    expect(converterAnualParaPeriodo(1200, 'mes', 312, 8)).toBe(100);
+    expect(converterAnualParaPeriodo(5200, 'sem', 312, 8)).toBe(100);
+    expect(converterAnualParaPeriodo(3120, 'dia', 312, 8)).toBe(10);
+    expect(converterAnualParaPeriodo(2496, 'hora', 312, 8)).toBe(1);
+  });
+
+  it('retorna 0 quando o divisor é 0 (evita Infinity com diasAno=0)', () => {
+    expect(converterAnualParaPeriodo(1200, 'dia', 0, 8)).toBe(0);
+    expect(converterAnualParaPeriodo(1200, 'hora', 0, 8)).toBe(0);
   });
 });
 

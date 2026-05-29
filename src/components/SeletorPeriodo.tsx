@@ -1,24 +1,29 @@
-import { Card } from '../ui/card';
+import { Card } from './ui/card';
+import type { Periodo } from '../types/calculos';
 
-export type Periodo = 'ano' | 'mes' | 'sem' | 'dia' | 'hora';
+export type { Periodo };
 
-const PERIODOS: { id: Periodo; label: string }[] = [
-  { id: 'ano', label: 'Ano' },
-  { id: 'mes', label: 'Mês' },
-  { id: 'sem', label: 'Sem' },
-  { id: 'dia', label: 'Dia' },
-  { id: 'hora', label: 'Hora' },
-];
+const ROTULOS: Record<Periodo, string> = {
+  ano: 'Ano',
+  mes: 'Mês',
+  sem: 'Sem',
+  dia: 'Dia',
+  hora: 'Hora',
+};
+
+const PERIODOS_PADRAO: Periodo[] = ['ano', 'mes', 'sem', 'dia', 'hora'];
 
 type Props = {
   periodo: Periodo;
   onChange: (p: Periodo) => void;
+  // Subconjunto/ordem de períodos a exibir. Default: os cinco.
+  periodos?: Periodo[];
 };
 
-export function SeletorPeriodo({ periodo, onChange }: Props) {
+export function SeletorPeriodo({ periodo, onChange, periodos = PERIODOS_PADRAO }: Props) {
   return (
     <Card className="flex gap-1.5 shadow-none border-0 p-1">
-      {PERIODOS.map(({ id, label }) => (
+      {periodos.map((id) => (
         <button
           key={id}
           type="button"
@@ -29,7 +34,7 @@ export function SeletorPeriodo({ periodo, onChange }: Props) {
               : 'text-muted-foreground/60 hover:text-foreground'
           }`}
         >
-          {label}
+          {ROTULOS[id]}
         </button>
       ))}
     </Card>
