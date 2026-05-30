@@ -11,6 +11,7 @@ import type {
 } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
+import { presetEntrySchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
 
 // ──────────────────────────────────────────────
@@ -1279,17 +1280,29 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
   return dados as PerfilUsuario;
 }
 
-function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
-  const presetsRaw = storage.carregarPresets();
-  const ativoId = storage.getPresetAtivo();
+export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
+  try {
+    const presetsRaw = storage.carregarPresets();
+    const ativoId = storage.getPresetAtivo();
 
-  if (presetsRaw.length === 0 || !ativoId) {
+    if (presetsRaw.length === 0 || !ativoId) {
+      return estadoPadrao;
+    }
+
+    // Carregar → migrar → validar (ADR-010). A migração leva qualquer versão
+    // antiga até o shape atual; o schema confere o resultado final. Qualquer
+    // preset inválido (ou exceção na migração) cai no catch abaixo.
+    const presets = presetsRaw.map((p) =>
+      presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) }),
+    );
+    const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
+    return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
+  } catch {
+    // Dado persistido inválido/corrompido: preserva o blob para diagnóstico e
+    // cai para o estado padrão — o app nunca trava (ADR-010, decisão 2).
+    storage.preservarCorrompido();
     return estadoPadrao;
   }
-
-  const presets = presetsRaw.map((p) => ({ ...p, perfil: migrarPerfil(p.perfil) }));
-  const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
-  return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
 }
 
 export function PerfilProvider({ children, storage }: PerfilProviderProps) {

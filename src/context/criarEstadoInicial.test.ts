@@ -1,0 +1,88 @@
+import { describe, it, expect, vi } from 'vitest';
+import { criarEstadoInicial, perfilPadrao } from './PerfilContext';
+import type { IPerfilStorage } from '../services/perfilStorage';
+import type { PresetEntry, PerfilUsuario } from '../types/perfil';
+
+// Storage falso configurável — o ciclo de tarefa pede injeção de storage para
+// testar a montagem sem tocar no localStorage real.
+function criarStorageFalso(presets: unknown[], ativoId: string | null): IPerfilStorage {
+  return {
+    carregarPresets: () => presets as PresetEntry[],
+    getPresetAtivo: () => ativoId,
+    salvarPresets: vi.fn(),
+    setPresetAtivo: vi.fn(),
+    limpar: vi.fn(),
+    preservarCorrompido: vi.fn(),
+  };
+}
+
+function presetValido(presetId: string): PresetEntry {
+  return {
+    presetId,
+    nome: 'Teste',
+    criadoEm: '2026-05-30T00:00:00.000Z',
+    atualizadoEm: '2026-05-30T00:00:00.000Z',
+    perfil: perfilPadrao,
+  };
+}
+
+describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)', () => {
+  it('sem presets ou sem ativo → estado padrão (sem marcar corrompido)', () => {
+    const storage = criarStorageFalso([], null);
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('preset válido → carrega o perfil e o presetAtivoId', () => {
+    const storage = criarStorageFalso([presetValido('p1')], 'p1');
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(estado.presets).toHaveLength(1);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('blob corrompido (perfil sem `moto`) → estado padrão e preserva o blob', () => {
+    const perfilSemMoto: Record<string, unknown> = { ...perfilPadrao };
+    delete perfilSemMoto.moto;
+    const presetCorrompido = {
+      ...presetValido('p1'),
+      perfil: perfilSemMoto as unknown as PerfilUsuario,
+    };
+    const storage = criarStorageFalso([presetCorrompido], 'p1');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
+  });
+
+  it('versão futura desconhecida não quebra → cai para padrão e preserva', () => {
+    // schemaVersion acima do conhecido: nenhuma migração casa, mas o shape pode
+    // não bater com o schema atual. Em vez de brickar, recupera.
+    const presetFuturo = {
+      ...presetValido('p1'),
+      perfil: {
+        ...perfilPadrao,
+        schemaVersion: 999,
+        campoDoFuturo: true,
+      } as unknown as PerfilUsuario,
+    };
+    const storage = criarStorageFalso([presetFuturo], 'p1');
+
+    // Não deve lançar em nenhuma hipótese.
+    expect(() => criarEstadoInicial(storage)).not.toThrow();
+  });
+
+  it('nunca lança mesmo com lixo total no storage', () => {
+    const storage = criarStorageFalso([{ qualquer: 'lixo' }], 'p1');
+    expect(() => criarEstadoInicial(storage)).not.toThrow();
+    expect(storage.preservarCorrompido).toHaveBeenCalled();
+  });
+});
