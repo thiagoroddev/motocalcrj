@@ -11,21 +11,11 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RF-6.18 — Decrementar parcelas restantes de financiamento automaticamente a cada mês
+~~**TASK-REF-27**~~ — **EM ANDAMENTO** desde 30/05/26 (ver `docs/tarefas/em-andamento.md`).
 
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-005
-- **Observações:**
-  - **Problema:** quando o usuário tem financiamento ativo (`situacaoMoto === 'financiada'` com `parcelaMensal > 0` e nº de parcelas > 0), o contador de parcelas restantes não diminui automaticamente conforme passam os meses — o usuário precisa editar manualmente.
-  - **Local provável:** `src/types/perfil.ts` (modelo de financiamento — confirmar se tem `dataInicio` + `parcelasTotais` ou só `parcelasRestantes`), `src/context/PerfilContext.tsx` (lógica de "tick" mensal), `src/utils/calculos.ts` (uso do valor para custo do período).
-  - **Fix proposto:** armazenar `dataInicio` + `parcelasTotais` em vez de só `parcelasRestantes`; derivar `parcelasRestantes = parcelasTotais - mesesDecorridosDesde(dataInicio)`. Quando chegar a 0, parar de contar como custo. Schema migration necessária.
-  - **Cuidados:** decisão importante — derivar do cálculo (passive, sem mutar perfil) vs. mutar o perfil periodicamente. Recomendação: derivar, evita escrita silenciosa no perfil. Confirmar com humano antes da implementação. Validar edge cases: `mesesDecorridos > parcelasTotais`, `dataInicio` no futuro, mudança de fuso horário.
+---
+
+~~**TASK-RF-6.18**~~ — **CONCLUÍDA** em 30/05/26 (decrementar parcelas restantes de financiamento; modelagem Snapshot, cálculo Afunilar, Strict + ADR-009). Ver `concluidas/2026-05-30--10h19--TASK-RF-6.18.md`.
 
 ---
 

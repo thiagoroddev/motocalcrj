@@ -20,7 +20,7 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-
 | `motocalc:v5:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
 | `motocalc:v5:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v20**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
+> **Nota sobre `:v5:` no namespace:** ficou congelado como string opaca por razões históricas (era a versão quando o storage foi definido). A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atualmente **v23**. Migrações em cascata em `criarEstadoInicial` normalizam perfis antigos ao carregar, sem mexer no namespace. Para mudar o namespace seria preciso migrar todos os usuários de uma vez (custo alto sem benefício).
 
 ### I.2 — Envelope: `PresetEntry`
 
@@ -43,7 +43,7 @@ export interface PresetEntry {
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
-3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 20`.
+3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 23`.
 4. Se não há preset ativo OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
@@ -55,7 +55,7 @@ O objeto inicial criado quando o usuário começa um onboarding novo. Valores re
 
 ```typescript
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 20,
+  schemaVersion: 23,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -113,6 +113,7 @@ export const perfilPadrao: PerfilUsuario = {
     situacaoMoto: 'quitada',
     parcelaMensal: null,
     parcelasRestantes: null,
+    dataReferenciaParcelas: null,        // mês ISO do snapshot de parcelas (ADR-009)
     aluguelMensal: null,
     aluguelPeriodicidade: null,
     alimentacaoDia: 20,
@@ -301,7 +302,7 @@ Implementadas **inline** em `criarEstadoInicial` em `PerfilContext.tsx` (DT-6 en
 
 ## VII — Fixture de dev (`src/fixtures/usuario_teste.json`)
 
-Fixture em `schemaVersion: 20`, acompanhando o schema atual. A retrocompatibilidade das versões antigas é coberta por testes unitários explícitos de `migrarPerfil`.
+Fixture em `schemaVersion: 23`, acompanhando o schema atual. A retrocompatibilidade das versões antigas é coberta por testes unitários explícitos de `migrarPerfil`.
 
 ---
 

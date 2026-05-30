@@ -543,14 +543,50 @@ export function fatorResponsabilidade(resp: ResponsabilidadeCusto): number {
   return 1;
 }
 
-export function calcularCustoFinanciamentoAnual(
-  situacaoMoto: string,
-  parcelaMensal: number | null,
-  aluguelMensal: number | null,
-  aluguelPeriodicidade: string | null,
+// Deriva quantas parcelas faltam HOJE a partir do valor informado e do mês de
+// referência, sem mutar o perfil (modelagem Snapshot — TASK-RF-6.18 / ADR-009).
+// Granularidade de mês (ano*12+mês) evita ruído de fuso. Edge cases: meses
+// decorridos > restantes → 0; dataReferencia no futuro → não infla (clamp ao
+// informado). `agora` é injetável para testes determinísticos.
+export function calcularParcelasRestantesAtuais(
+  parcelasRestantes: number | null,
+  dataReferenciaParcelas: string | null,
+  agora: Date = new Date(),
 ): number {
+  if (parcelasRestantes == null || parcelasRestantes <= 0) {
+    return 0;
+  }
+  if (!dataReferenciaParcelas) {
+    return parcelasRestantes;
+  }
+  const ref = new Date(dataReferenciaParcelas);
+  if (isNaN(ref.getTime())) {
+    return parcelasRestantes;
+  }
+  const mesesDecorridos =
+    (agora.getFullYear() - ref.getFullYear()) * 12 + (agora.getMonth() - ref.getMonth());
+  return Math.max(0, parcelasRestantes - Math.max(0, mesesDecorridos));
+}
+
+export interface ParamsCustoFinanciamentoAnual {
+  situacaoMoto: string;
+  parcelaMensal: number | null;
+  parcelasRestantesAtuais: number;
+  aluguelMensal: number | null;
+  aluguelPeriodicidade: string | null;
+}
+
+export function calcularCustoFinanciamentoAnual({
+  situacaoMoto,
+  parcelaMensal,
+  parcelasRestantesAtuais,
+  aluguelMensal,
+  aluguelPeriodicidade,
+}: ParamsCustoFinanciamentoAnual): number {
   if (situacaoMoto === 'financiada' && parcelaMensal != null) {
-    return parcelaMensal * 12;
+    // Afunila no último ano: projeta só as parcelas que ainda faltam (máx. 12);
+    // quando zera, o financiamento sai do total automaticamente (RF-6.18).
+    return parcelaMensal * Math.min(12, Math.max(0, parcelasRestantesAtuais));
   }
   if (situacaoMoto === 'alugada' && aluguelMensal != null) {
     return aluguelPeriodicidade === 'semanal' ? aluguelMensal * 52 : aluguelMensal * 12;
@@ -681,12 +717,17 @@ export function calcularCustosPorCategoria(
   const fatorSeg =
     situacaoMoto === 'alugada' ? fatorResponsabilidade(responsabilidadeAluguel.seguro) : 1;
 
-  const totalFinanciamento = calcularCustoFinanciamentoAnual(
-    situacaoMoto,
-    perfil.financeiro.parcelaMensal,
-    perfil.financeiro.aluguelMensal,
-    perfil.financeiro.aluguelPeriodicidade,
+  const parcelasRestantesAtuais = calcularParcelasRestantesAtuais(
+    perfil.financeiro.parcelasRestantes,
+    perfil.financeiro.dataReferenciaParcelas,
   );
+  const totalFinanciamento = calcularCustoFinanciamentoAnual({
+    situacaoMoto,
+    parcelaMensal: perfil.financeiro.parcelaMensal,
+    parcelasRestantesAtuais,
+    aluguelMensal: perfil.financeiro.aluguelMensal,
+    aluguelPeriodicidade: perfil.financeiro.aluguelPeriodicidade,
+  });
   const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);
   const imprevistosSugeridos = new Map<string, CustoImprevistoSugerido>(
     [

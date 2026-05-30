@@ -7,6 +7,7 @@ import {
   calcularGranularidades,
   categoriasParaFiltros,
   converterAnualParaPeriodo,
+  calcularParcelasRestantesAtuais,
 } from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
 import type { CategoriaDisplay } from '../types/perfil';
@@ -335,6 +336,11 @@ export function PaginaDetalhamento() {
       );
     }
 
+    const restantesHoje = calcularParcelasRestantesAtuais(
+      perfil.financeiro.parcelasRestantes,
+      perfil.financeiro.dataReferenciaParcelas,
+    );
+    const parcelasNoAno = Math.min(12, restantesHoje);
     return (
       <>
         <LinhaDetalheTexto
@@ -344,19 +350,19 @@ export function PaginaDetalhamento() {
         <LinhaDetalheTexto
           label="Parcelas restantes"
           valor={
-            perfil.financeiro.parcelasRestantes != null
-              ? String(perfil.financeiro.parcelasRestantes)
-              : 'Não informado'
+            perfil.financeiro.parcelasRestantes != null ? String(restantesHoje) : 'Não informado'
           }
         />
         <LinhaDetalheTexto
           label="Cálculo anual"
-          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)} x 12 = ${moeda(
+          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)} x ${parcelasNoAno} = ${moeda(
             custos.financiamento.total,
           )}`}
         />
         <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
-          Valor recorrente rateado pelo período selecionado.
+          {restantesHoje > 0
+            ? 'Projeta apenas as parcelas que ainda faltam nos próximos 12 meses.'
+            : 'Financiamento quitado — não entra mais no custo.'}
         </p>
       </>
     );

@@ -159,7 +159,13 @@ export interface PerfilUsuario {
     seguro: SeguroConfig;
     situacaoMoto: SituacaoMoto;
     parcelaMensal: number | null;
+    // Parcelas restantes informadas pelo usuário na dataReferenciaParcelas.
+    // O valor "de hoje" é DERIVADO (não mutado): ver calcularParcelasRestantesAtuais.
     parcelasRestantes: number | null;
+    // Mês de referência (ISO) em que parcelasRestantes foi informado. Permite
+    // decrementar as parcelas pelo tempo sem escrever no perfil periodicamente
+    // (modelagem Snapshot — TASK-RF-6.18 / ADR-009).
+    dataReferenciaParcelas: string | null;
     aluguelMensal: number | null;
     aluguelPeriodicidade: PeriodicidadeAluguel | null;
     alimentacaoDia: number;

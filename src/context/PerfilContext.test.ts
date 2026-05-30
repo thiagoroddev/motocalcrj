@@ -246,6 +246,7 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.financeiro.situacaoMoto).toBe('quitada');
     expect(resultado.perfil.financeiro.parcelaMensal).toBeNull();
     expect(resultado.perfil.financeiro.parcelasRestantes).toBeNull();
+    expect(resultado.perfil.financeiro.dataReferenciaParcelas).toBeNull();
     expect(resultado.perfil.financeiro.aluguelMensal).toBeNull();
     expect(resultado.perfil.financeiro.aluguelPeriodicidade).toBeNull();
 
@@ -274,6 +275,92 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.servicosIndependentes).toBe(
       estadoComCustos.perfil.servicosIndependentes,
     );
+  });
+
+  // ── SET_PARCELA: snapshot e re-ancoragem (TASK-RF-6.18) ─
+
+  it('SET_PARCELA re-ancora dataReferenciaParcelas quando parcelasRestantes muda', () => {
+    const refAntiga = '2026-01-01T00:00:00.000Z';
+    const estado: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          situacaoMoto: 'financiada',
+          parcelaMensal: 500,
+          parcelasRestantes: 24,
+          dataReferenciaParcelas: refAntiga,
+        },
+      },
+    };
+
+    const antes = Date.now();
+    const resultado = perfilReducer(estado, {
+      type: 'SET_PARCELA',
+      parcelaMensal: 500,
+      parcelasRestantes: 20,
+    });
+    const depois = Date.now();
+
+    expect(resultado.perfil.financeiro.parcelasRestantes).toBe(20);
+    // âncora re-stampada para "agora" — o relógio reinicia a partir do novo valor
+    expect(resultado.perfil.financeiro.dataReferenciaParcelas).not.toBe(refAntiga);
+    const novaRef = new Date(resultado.perfil.financeiro.dataReferenciaParcelas!).getTime();
+    expect(novaRef).toBeGreaterThanOrEqual(antes);
+    expect(novaRef).toBeLessThanOrEqual(depois);
+  });
+
+  it('SET_PARCELA preserva dataReferenciaParcelas quando só a parcela mensal muda', () => {
+    const refAntiga = '2026-01-01T00:00:00.000Z';
+    const estado: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          situacaoMoto: 'financiada',
+          parcelaMensal: 500,
+          parcelasRestantes: 24,
+          dataReferenciaParcelas: refAntiga,
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estado, {
+      type: 'SET_PARCELA',
+      parcelaMensal: 600,
+      parcelasRestantes: 24,
+    });
+
+    // editar só o valor da parcela não pode resetar o decremento (RF-6.18)
+    expect(resultado.perfil.financeiro.parcelaMensal).toBe(600);
+    expect(resultado.perfil.financeiro.dataReferenciaParcelas).toBe(refAntiga);
+  });
+
+  it('SET_PARCELA zera dataReferenciaParcelas quando parcelasRestantes vira null', () => {
+    const estado: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          situacaoMoto: 'financiada',
+          parcelaMensal: 500,
+          parcelasRestantes: 24,
+          dataReferenciaParcelas: '2026-01-01T00:00:00.000Z',
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estado, {
+      type: 'SET_PARCELA',
+      parcelaMensal: 500,
+      parcelasRestantes: null,
+    });
+
+    expect(resultado.perfil.financeiro.parcelasRestantes).toBeNull();
+    expect(resultado.perfil.financeiro.dataReferenciaParcelas).toBeNull();
   });
 
   // ── TOGGLE_IMPREVISTO_SUGERIDO (TASK-RF-6.11 cleanup) ─
@@ -415,7 +502,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV8) as unknown as Record<string, unknown>;
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(
       (migrado.perfilManutencao as Record<string, unknown>).precoMaoDeObraIndependente,
     ).toBeUndefined();
@@ -451,7 +538,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(1200);
     expect(seguro.empresa).toBe('Suhai');
@@ -476,7 +563,7 @@ describe('perfilReducer', () => {
       unknown
     >;
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(seguro.tem).toBeUndefined();
     expect(seguro.valorAnual).toBe(0);
   });
@@ -508,7 +595,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(ids).not.toContain('fazer-motor');
     expect(retificaCabecote).toMatchObject({
       nome: 'Retífica de cabeçote',
@@ -549,7 +636,7 @@ describe('perfilReducer', () => {
       (s) => s.id === 'retifica-completa',
     );
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(retificaCabecote?.precoIndependente).toBe(950);
     expect(retificaCabecote?.ativo).toBe(false);
     expect(retificaCompleta?.ativo).toBe(false);
@@ -646,13 +733,13 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV12);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
   });
 
   it('migrarPerfil é idempotente quando aplicada em perfil já na versão atual', () => {
     const migrado = migrarPerfil(perfilPadrao);
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.financeiro.gastosCustom).toEqual(PRESETS_GASTOS_PADRAO);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
@@ -675,7 +762,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV16);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
       revisao: true,
       manutencaoPorPeca: {},
@@ -699,7 +786,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV16);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.configuracaoDisplay.filtrosManutencao).toEqual({
       revisao: false,
       manutencaoPorPeca: { oleo_motor: false },
@@ -728,7 +815,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV13);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.configuracaoDisplay.categoriasAtivas.imprevistos).toBe(true);
     expect(migrado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
   });
@@ -791,7 +878,7 @@ describe('perfilReducer', () => {
     const oleo = migrado.servicosIndependentes.find((s) => s.id === 'troca-oleo');
     const kit = migrado.servicosIndependentes.find((s) => s.id === 'troca-kit-transmissao');
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(oleo).toMatchObject({
       precoIndependente: 28,
       precoTotalAutorizada: 0,
@@ -964,7 +1051,7 @@ describe('perfilReducer', () => {
     const migrado = migrarPerfil(perfilV17);
     const idsServicos = migrado.servicosIndependentes.map((s) => s.id);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(idsServicos).toContain('troca-bateria');
     expect(idsServicos).toContain('troca-kit-embreagem');
     expect(idsServicos).toContain('troca-kit-cilindro');
@@ -991,7 +1078,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV18);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(migrado.moto.kmUltimaTrocas).toEqual({
       oleo: 12000,
       pneuDianteiro: 25000,
@@ -1025,7 +1112,7 @@ describe('perfilReducer', () => {
 
     const migrado = migrarPerfil(perfilV19);
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect('kitRevisao' in migrado.moto.kmUltimaTrocas).toBe(false);
     expect(migrado.moto.kmUltimaTrocas.kitCilindro).toBe(1000);
   });
@@ -1052,7 +1139,7 @@ describe('perfilReducer', () => {
     const migrado = migrarPerfil(perfilV20);
     const retifica = migrado.servicosIndependentes.find((s) => s.id === 'retifica-completa');
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(retifica?.precoIndependente).toBe(1500);
     expect(
       (retifica as unknown as Record<string, unknown>).precoMaoDeObraIndependente,
@@ -1080,7 +1167,7 @@ describe('perfilReducer', () => {
     const revisao = migrado.servicosIndependentes.find((s) => s.id === 'revisao-geral');
     const oleo = migrado.servicosIndependentes.find((s) => s.id === 'troca-oleo');
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(revisao?.precoIndependente).toBe(400);
     // edição do usuário em outro serviço é preservada
     expect(oleo?.precoIndependente).toBe(99);
@@ -1101,7 +1188,61 @@ describe('perfilReducer', () => {
     const migrado = migrarPerfil(perfilV21);
     const revisao = migrado.servicosIndependentes.find((s) => s.id === 'revisao-geral');
 
-    expect(migrado.schemaVersion).toBe(22);
+    expect(migrado.schemaVersion).toBe(23);
     expect(revisao?.precoIndependente).toBe(250);
+  });
+
+  // ── TASK-RF-6.18: migration v22 → v23 (dataReferenciaParcelas) ─
+  it('migrarPerfil v22 → v23 ancora dataReferenciaParcelas em financiada com parcelas e deixa null nos demais', () => {
+    const financiada = {
+      ...perfilPadrao,
+      schemaVersion: 22,
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        situacaoMoto: 'financiada',
+        parcelaMensal: 500,
+        parcelasRestantes: 24,
+        dataReferenciaParcelas: undefined, // v22 não tinha o campo
+      },
+    } as unknown as PerfilUsuario;
+    const quitada = {
+      ...perfilPadrao,
+      schemaVersion: 22,
+      financeiro: { ...perfilPadrao.financeiro, dataReferenciaParcelas: undefined },
+    } as unknown as PerfilUsuario;
+
+    const antes = Date.now();
+    const migFinanciada = migrarPerfil(financiada);
+    const depois = Date.now();
+    const migQuitada = migrarPerfil(quitada);
+
+    expect(migFinanciada.schemaVersion).toBe(23);
+    expect(migFinanciada.financeiro.dataReferenciaParcelas).not.toBeNull();
+    const ref = new Date(migFinanciada.financeiro.dataReferenciaParcelas!).getTime();
+    expect(ref).toBeGreaterThanOrEqual(antes);
+    expect(ref).toBeLessThanOrEqual(depois);
+
+    expect(migQuitada.schemaVersion).toBe(23);
+    expect(migQuitada.financeiro.dataReferenciaParcelas).toBeNull();
+  });
+
+  it('migrarPerfil v22 → v23 preserva dataReferenciaParcelas já existente (idempotência do snapshot)', () => {
+    const refExistente = '2026-03-15T12:00:00.000Z';
+    const perfilV22 = {
+      ...perfilPadrao,
+      schemaVersion: 22,
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        situacaoMoto: 'financiada',
+        parcelaMensal: 500,
+        parcelasRestantes: 24,
+        dataReferenciaParcelas: refExistente,
+      },
+    } as unknown as PerfilUsuario;
+
+    const migrado = migrarPerfil(perfilV22);
+
+    expect(migrado.schemaVersion).toBe(23);
+    expect(migrado.financeiro.dataReferenciaParcelas).toBe(refExistente);
   });
 });

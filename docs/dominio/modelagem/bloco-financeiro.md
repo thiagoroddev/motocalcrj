@@ -33,7 +33,8 @@ financeiro: {
   // Situação da moto e financiamento/aluguel
   situacaoMoto: SituacaoMoto;                                        // 'quitada' | 'financiada' | 'alugada'
   parcelaMensal: number | null;                                      // só financiada
-  parcelasRestantes: number | null;                                  // só financiada
+  parcelasRestantes: number | null;                                  // só financiada (snapshot informado)
+  dataReferenciaParcelas: string | null;                             // só financiada (mês ISO do snapshot — ADR-009)
   aluguelMensal: number | null;                                      // só alugada
   aluguelPeriodicidade: PeriodicidadeAluguel | null;                 // só alugada
   responsabilidadeAluguel: ResponsabilidadeAluguel;                  // só alugada (mas sempre presente)
@@ -131,7 +132,7 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 | `TOGGLE_GASTO_CUSTOM`            | Liga/desliga um preset (Multa, Sinistros, Outros) sem zerar o valor                 |
 | `SET_GASTO_CUSTOM_VALOR`         | Atualiza `valorAnual` do preset; ativa o toggle se passar de 0 para >0              |
 | `SET_SITUACAO_MOTO`              | Define `situacaoMoto` (quitada/financiada/alugada)                                  |
-| `SET_PARCELA`                    | Define `parcelaMensal` + `parcelasRestantes`                                        |
+| `SET_PARCELA`                    | Define `parcelaMensal` + `parcelasRestantes`; re-ancora `dataReferenciaParcelas` só quando `parcelasRestantes` muda (RF-6.18 / ADR-009) |
 | `SET_ALUGUEL`                    | Define `aluguelMensal` + `aluguelPeriodicidade`                                     |
 | `SET_RESPONSABILIDADE_ALUGUEL`   | Atualiza `responsabilidadeAluguel` (Partial — campos documentos/manutencao/seguro). Adicionado pela BG-006 |
 
@@ -180,9 +181,19 @@ documentos: {
 ### Cálculo de Financiamento/Aluguel
 
 ```typescript
-// utils/calculos.ts
-function calcularCustoFinanciamentoAnual(situacao, parcela, aluguel, periodicidade) {
-  if (situacao === 'financiada' && parcela != null) return parcela * 12;
+// utils/calculos.ts (TASK-RF-6.18 / ADR-009)
+
+// Deriva quantas parcelas faltam HOJE sem mutar o perfil (modelagem snapshot).
+function calcularParcelasRestantesAtuais(parcelasRestantes, dataReferencia, agora = new Date()) {
+  if (parcelasRestantes == null || parcelasRestantes <= 0) return 0;
+  if (!dataReferencia) return parcelasRestantes;
+  const mesesDecorridos = (agora.ano - ref.ano) * 12 + (agora.mes - ref.mes); // granularidade de mês
+  return Math.max(0, parcelasRestantes - Math.max(0, mesesDecorridos));
+}
+
+function calcularCustoFinanciamentoAnual(situacao, parcela, restantesAtuais, aluguel, periodicidade) {
+  // Afunila no último ano: projeta só as parcelas que ainda faltam (máx. 12).
+  if (situacao === 'financiada' && parcela != null) return parcela * Math.min(12, Math.max(0, restantesAtuais));
   if (situacao === 'alugada' && aluguel != null) {
     return periodicidade === 'semanal' ? aluguel * 52 : aluguel * 12;
   }
@@ -190,7 +201,7 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, aluguel, periodicida
 }
 ```
 
-⚠️ **Importante:** quitada → custo de financiamento é 0. Aluguel semanal → multiplica por 52, não 4.33×12. Detalhe que se errado quebra o cálculo.
+⚠️ **Importante:** quitada → custo de financiamento é 0. Aluguel semanal → multiplica por 52, não 4.33×12. Financiamento **afunila**: quando as parcelas zeram, o custo vai a 0 automaticamente (não é mais `parcela * 12` fixo). `parcelasRestantes` é o valor informado; o número exibido/usado é o **derivado de hoje** por `calcularParcelasRestantesAtuais`.
 
 ---
 
@@ -200,7 +211,7 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, aluguel, periodicida
 
 **Regra:**
 
-- Se `situacaoMoto === 'financiada'`, então `parcelaMensal !== null` e `parcelasRestantes !== null`.
+- Se `situacaoMoto === 'financiada'`, então `parcelaMensal !== null`, `parcelasRestantes !== null` e `dataReferenciaParcelas !== null` (ADR-009).
 - Se `situacaoMoto === 'alugada'`, então `aluguelMensal !== null` e `aluguelPeriodicidade !== null`.
 - Se `situacaoMoto === 'quitada'`, todos esses campos podem ser `null`.
 

@@ -26,6 +26,8 @@ import {
   calcularCustoMotoAnual,
   calcularCustosPorCategoria,
   calcularCustoGastosCustomAnual,
+  calcularCustoFinanciamentoAnual,
+  calcularParcelasRestantesAtuais,
   categoriasParaFiltros,
   MAPA_PECA_PARA_SERVICO,
 } from './calculos';
@@ -1900,5 +1902,115 @@ describe('MAPA_PECA_PARA_SERVICO', () => {
 
   it('mapeia oleo_motor para troca-oleo (caminho feliz)', () => {
     expect(MAPA_PECA_PARA_SERVICO['oleo_motor']).toBe('troca-oleo');
+  });
+});
+
+describe('calcularCustoFinanciamentoAnual (RF-6.18 — afunila no último ano)', () => {
+  it('retorna parcela * 12 quando restam >= 12 parcelas', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'financiada',
+        parcelaMensal: 500,
+        parcelasRestantesAtuais: 24,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(6000);
+  });
+
+  it('projeta só as parcelas que faltam no último ano', () => {
+    // faltam 5 parcelas de R$350 → R$1.750 no ano (não R$4.200)
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'financiada',
+        parcelaMensal: 350,
+        parcelasRestantesAtuais: 5,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(1750);
+  });
+
+  it('zera o custo quando não restam parcelas', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'financiada',
+        parcelaMensal: 500,
+        parcelasRestantesAtuais: 0,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(0);
+  });
+
+  it('limita a 12 parcelas no ano mesmo com muitas restantes', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'financiada',
+        parcelaMensal: 500,
+        parcelasRestantesAtuais: 36,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(6000);
+  });
+
+  it('retorna aluguel * 12 quando alugada mensal', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'alugada',
+        parcelaMensal: null,
+        parcelasRestantesAtuais: 0,
+        aluguelMensal: 800,
+        aluguelPeriodicidade: 'mensal',
+      }),
+    ).toBe(9600);
+  });
+
+  it('retorna aluguel * 52 quando alugada semanal', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'alugada',
+        parcelaMensal: null,
+        parcelasRestantesAtuais: 0,
+        aluguelMensal: 200,
+        aluguelPeriodicidade: 'semanal',
+      }),
+    ).toBe(10400);
+  });
+
+  it('retorna 0 quando quitada', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'quitada',
+        parcelaMensal: null,
+        parcelasRestantesAtuais: 0,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(0);
+  });
+});
+
+describe('calcularParcelasRestantesAtuais (RF-6.18 — derivação por snapshot)', () => {
+  it('retorna 0 quando parcelasRestantes é null', () => {
+    expect(calcularParcelasRestantesAtuais(null, '2026-01-01', new Date('2026-05-01'))).toBe(0);
+  });
+
+  it('retorna o valor informado quando não há dataReferencia', () => {
+    expect(calcularParcelasRestantesAtuais(24, null, new Date('2026-05-01'))).toBe(24);
+  });
+
+  it('decrementa pelos meses decorridos desde a referência', () => {
+    // jan/2026 → abr/2026 = 3 meses → 24 - 3 = 21
+    expect(calcularParcelasRestantesAtuais(24, '2026-01-15', new Date('2026-04-10'))).toBe(21);
+  });
+
+  it('clampa em 0 quando os meses decorridos passam das parcelas', () => {
+    expect(calcularParcelasRestantesAtuais(3, '2026-01-01', new Date('2026-08-01'))).toBe(0);
+  });
+
+  it('não infla quando a dataReferencia está no futuro', () => {
+    expect(calcularParcelasRestantesAtuais(10, '2026-09-01', new Date('2026-05-01'))).toBe(10);
   });
 });

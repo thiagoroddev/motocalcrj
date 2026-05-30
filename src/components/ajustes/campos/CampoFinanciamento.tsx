@@ -4,6 +4,7 @@ import type { PerfilUsuario, PerfilAction, PeriodicidadeAluguel } from '../../..
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Segmentado } from '../../Segmentado';
+import { calcularParcelasRestantesAtuais } from '../../../utils/calculos';
 
 interface Props {
   financeiro: PerfilUsuario['financeiro'];
@@ -22,6 +23,12 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
   const { situacaoMoto } = financeiro;
 
   if (situacaoMoto === 'financiada') {
+    // Mostra as parcelas que faltam HOJE (derivado pelo tempo). Ao editar, o
+    // valor digitado vira o novo snapshot — o reducer re-ancora a referência.
+    const restantesHoje = calcularParcelasRestantesAtuais(
+      financeiro.parcelasRestantes,
+      financeiro.dataReferenciaParcelas,
+    );
     return (
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
@@ -54,7 +61,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             id={idRestantes}
             type="number"
             inputMode="numeric"
-            value={financeiro.parcelasRestantes ?? ''}
+            value={financeiro.parcelasRestantes == null ? '' : restantesHoje}
             min={0}
             placeholder="0"
             onChange={(e) => {

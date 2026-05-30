@@ -24,7 +24,13 @@ export function Passo6Financiamento() {
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'financeiro',
-      valor: { ...fin, parcelaMensal: parcelaNum, parcelasRestantes: restantesNum },
+      valor: {
+        ...fin,
+        parcelaMensal: parcelaNum,
+        parcelasRestantes: restantesNum,
+        // Ancora o mês de referência para o decremento automático (RF-6.18).
+        dataReferenciaParcelas: new Date().toISOString(),
+      },
     });
     irParaProximo();
   }

@@ -207,7 +207,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 22,
+  schemaVersion: 23,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -251,6 +251,7 @@ export const perfilPadrao: PerfilUsuario = {
     situacaoMoto: 'quitada',
     parcelaMensal: null,
     parcelasRestantes: null,
+    dataReferenciaParcelas: null,
     aluguelMensal: null,
     aluguelPeriodicidade: null,
     alimentacaoDia: 20,
@@ -714,6 +715,10 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
             action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelaMensal,
           parcelasRestantes:
             action.situacao !== 'financiada' ? null : state.perfil.financeiro.parcelasRestantes,
+          dataReferenciaParcelas:
+            action.situacao !== 'financiada'
+              ? null
+              : state.perfil.financeiro.dataReferenciaParcelas,
           aluguelMensal:
             action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelMensal,
           aluguelPeriodicidade:
@@ -728,15 +733,26 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
-    case 'SET_PARCELA':
+    case 'SET_PARCELA': {
+      // Re-stampa a dataReferenciaParcelas SÓ quando parcelasRestantes muda — editar
+      // apenas o valor da parcela não pode resetar o relógio de decremento (RF-6.18).
+      const restantesMudou = action.parcelasRestantes !== state.perfil.financeiro.parcelasRestantes;
+      const dataReferenciaParcelas =
+        action.parcelasRestantes == null
+          ? null
+          : restantesMudou
+            ? new Date().toISOString()
+            : state.perfil.financeiro.dataReferenciaParcelas;
       return comPerfil({
         ...state.perfil,
         financeiro: {
           ...state.perfil.financeiro,
           parcelaMensal: action.parcelaMensal,
           parcelasRestantes: action.parcelasRestantes,
+          dataReferenciaParcelas,
         },
       });
+    }
 
     case 'SET_ALUGUEL':
       return comPerfil({
@@ -804,6 +820,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           situacaoMoto: 'quitada',
           parcelaMensal: null,
           parcelasRestantes: null,
+          dataReferenciaParcelas: null,
           aluguelMensal: null,
           aluguelPeriodicidade: null,
           gastosCustom: PRESETS_GASTOS_PADRAO,
@@ -1235,6 +1252,27 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
           ? { ...s, precoIndependente: 400 }
           : s,
       ),
+    };
+  }
+
+  if (dados.schemaVersion === 22) {
+    // v22 → v23: TASK-RF-6.18 — financiamento passa a decrementar pelo tempo.
+    // Adiciona financeiro.dataReferenciaParcelas (modelagem Snapshot). Para perfis
+    // financiados com parcelas informadas, ancora a referência na data da migração
+    // (hoje): preserva o valor atual e começa a decrementar a partir daqui. Demais
+    // casos ficam null. Idempotente.
+    const financeiro = dados.financeiro ?? {};
+    const ehFinanciadaComParcelas =
+      financeiro.situacaoMoto === 'financiada' && financeiro.parcelasRestantes != null;
+    dados = {
+      ...dados,
+      schemaVersion: 23,
+      financeiro: {
+        ...financeiro,
+        dataReferenciaParcelas:
+          financeiro.dataReferenciaParcelas ??
+          (ehFinanciadaComParcelas ? new Date().toISOString() : null),
+      },
     };
   }
 
