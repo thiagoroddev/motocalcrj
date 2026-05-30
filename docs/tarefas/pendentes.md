@@ -15,43 +15,11 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-RNF-11 — ErrorBoundary na raiz com escape hatch (resetar / exportar dados)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data origem:** 30/05/26 (gerada por revisão geral de tech lead)
-- **Dependências:** relaciona-se com TASK-RNF-10 (não bloqueia)
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** busca em `src` não encontrou **nenhum** ErrorBoundary (`ErrorBoundary` / `componentDidCatch` / `getDerivedStateFromError`). Qualquer erro de render em qualquer tela = app em branco, sem mensagem e **sem saída** para o usuário se recuperar. Combinado com a fragilidade de dados da RNF-10, um perfil corrompido pode deixar o usuário preso sem nem conseguir limpar os dados.
-  - **Local no código:**
-    - Raiz de render: [`src/main.tsx`](../../src/main.tsx) e [`src/App.tsx`](../../src/App.tsx) (onde envolver com o boundary).
-    - Reset de dados já existe em infra: [`LocalStoragePerfilStorage.limpar()`](../../src/services/perfilStorage.ts#L40) — o escape hatch pode reusar isso.
-  - **Fix proposto:** criar `src/components/ErrorBoundary.tsx` (class component, é o único caso onde class é exigida no React) e envolver o `App`/rotas na raiz. Fallback UI com: mensagem amigável, botão **"Resetar dados"** (chama `storage.limpar()` + reload) e, se a TASK-RF-7.1 existir, botão **"Exportar dados"** antes de resetar (não perder o que dá pra salvar). Logar o erro no console (e futuramente em analytics — TASK-RNF-8.1).
-  - **Cuidados:** Standard (componente novo na raiz, sem mudança de regra). Não engolir o erro em dev — relançar ou logar para não mascarar bugs durante desenvolvimento. Testar que o fallback renderiza ao lançar erro num filho e que "Resetar" limpa o storage e recarrega. Manter baseline 186 verdes.
+~~**TASK-RNF-11**~~ — **CONCLUÍDA** em 30/05/26 (ErrorBoundary na raiz + escape hatch "Recarregar/Resetar"; Standard; 198→200 verdes). Ver `concluidas/2026-05-30--18h31--TASK-RNF-11.md`.
 
 ---
 
-## TASK-CHORE-010 — CI mínima (GitHub Action: test + tsc + lint) gateando PR
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data origem:** 30/05/26 (gerada por revisão geral de tech lead)
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** não há `.github/workflows` (confirmado). Os gates de qualidade — `npm test` (186 verdes), `npx tsc --noEmit`, `npm run lint` (eslint + `check-spacing-tokens.mjs`) — só rodam na máquina do dev. Nada impede um PR/commit regredir o baseline silenciosamente. Num projeto que preza ciclo formal de tarefas, a CI é a rede que trava esse rigor.
-  - **Local no código:**
-    - Scripts já prontos em [`package.json`](../../package.json) (`test`, `lint`, `build`); a Action só os orquestra.
-    - **Atenção ao ambiente:** o projeto roda com `NODE_ENV=production` e tem `.npmrc` — `npm install` poda devDeps. Na Action, garantir `npm ci --include=dev` (ou equivalente) senão vitest/eslint/tsc somem. (Ver TASK-CHORE-004 e a convenção de poda de devDeps do projeto.)
-  - **Fix proposto:** criar `.github/workflows/ci.yml` disparando em `push`/`pull_request`: checkout → setup-node (versão do projeto) → `npm ci --include=dev` → `npx tsc --noEmit` → `npm run lint` → `npm test`. Opcional: `npm run build` como job final. Cache de `~/.npm` para velocidade.
-  - **Cuidados:** Standard (infra, sem tocar código de produção). Confirmar a versão do Node usada localmente para espelhar na Action. Validar que `check-spacing-tokens.mjs` roda no runner. Sem segredos necessários (projeto é client-side).
+~~**TASK-CHORE-012**~~ — **CONCLUÍDA** em 30/05/26 (CI mínima: GitHub Action `npm ci`→tsc→lint→test→build em Node 22; Standard). Ver `concluidas/2026-05-30--18h42--TASK-CHORE-012.md`.
 
 ---
 
@@ -84,6 +52,24 @@ Obedeça essa ordem:
 ---
 
 ### Tarefas Normais
+
+## TASK-CHORE-013 — Infra de teste de render (jsdom + @testing-library/react)
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Desejável
+- **Urgência:** Normal
+- **Esforço-H/IA:** P/M
+- **Data origem:** 30/05/26 (gerada pela revisão da TASK-RNF-11)
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:**
+  - **Problema:** o projeto **não tem nenhum teste de render** — o vitest roda em `environment: 'node'` (ver [`vite.config.ts:15`](../../vite.config.ts#L15)), sem DOM, e não há `@testing-library/react`/`jsdom`. Por isso componentes como [`ErrorBoundary.tsx`](../../src/components/ErrorBoundary.tsx) só puderam ser testados na lógica pura (método estático + helper), sem assertar o fallback renderizado. Conforme a UI cresce, faltará rede para regressões visuais/de comportamento de componente.
+  - **Local no código:**
+    - Config de teste: [`vite.config.ts`](../../vite.config.ts) (bloco `test`, hoje `environment: 'node'`).
+    - Primeiro candidato a ganhar render-test: [`src/components/ErrorBoundary.tsx`](../../src/components/ErrorBoundary.tsx) (assertar que o fallback aparece ao lançar erro num filho; que "Resetar" dispara o reset).
+  - **Fix proposto:** adicionar devDeps `jsdom` (ou `happy-dom`) + `@testing-library/react` + `@testing-library/jest-dom`; configurar `environment: 'jsdom'` (por arquivo via comentário `// @vitest-environment jsdom` para não forçar DOM nos testes puros existentes, OU global com setup). Escrever um render-test piloto do `ErrorBoundary`. Confirmar que os 200 testes atuais (node) seguem verdes.
+  - **Cuidados:** Standard (infra de teste + devDeps, sem tocar produção). Preferir `environment` por-arquivo para não tornar os testes de cálculo/contexto dependentes de DOM à toa (mais lentos). Lembrar da poda de devDeps do ambiente (`--include=dev`). Sem mudança de regra de negócio.
 
 ---
 
