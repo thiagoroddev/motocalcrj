@@ -23,23 +23,7 @@ Obedeça essa ordem:
 
 ---
 
-## TASK-REF-28 — Extrair cadeia de migração de `PerfilContext.tsx` para `services/migracoes.ts`
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 30/05/26 (gerada por revisão geral de tech lead)
-- **Dependências:** idealmente **após** TASK-RNF-10 (validação) para não retrabalhar a fronteira duas vezes
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** [`PerfilContext.tsx`](../../src/context/PerfilContext.tsx) tem **1.317 linhas** — arquivo-Deus que concentra reducer + defaults + context + **~370 linhas de migração** (`migrarPerfil`, v5 → v23). A migração é um subdomínio coeso, com lógica densa e `as any`, que merece módulo e teste próprios. Hoje cada passo é um `if (dados.schemaVersion === N)` sequencial inline, difícil de auditar e crescer.
-  - **Local no código:**
-    - Origem: [`src/context/PerfilContext.tsx:906-1280`](../../src/context/PerfilContext.tsx#L906) (`migrarPerfil`) + constante `SCHEMA_VERSION`/defaults usados por ela ([`linha 210`](../../src/context/PerfilContext.tsx#L210)).
-    - Testes de migração presumivelmente em [`src/context/PerfilContext.test.ts`](../../src/context/PerfilContext.test.ts) (1248 linhas) — mover/ajustar imports junto.
-  - **Fix proposto:** criar `src/services/migracoes.ts` exportando `migrarPerfil` (e, se ajudar, uma tabela por versão `{ 6: migra5para6, 7: migra6para7, ... }` aplicada em loop até `SCHEMA_VERSION`). `PerfilContext` passa a só importar. Refatoração pura — comportamento idêntico, mesmos resultados de migração.
-  - **Cuidados:** Standard (refatoração com escopo claro, sem mudança de regra). **Não** alterar a lógica/valores de nenhuma migração — só mover e, opcionalmente, reorganizar em tabela. Mover os testes de migração junto e garantir que continuam verdes (baseline 186). Sequência: idealmente depois da RNF-10 para a validação já nascer no lugar certo e evitar mexer na mesma fronteira duas vezes (registrado como dependência preferencial, não rígida).
+~~**TASK-REF-28**~~ — **CONCLUÍDA** em 30/05/26 (split de PerfilContext em 3 módulos: defaults + migração extraídos, sem ciclo; 1318→688 linhas; refatoração pura, 200 verdes). Ver `concluidas/2026-05-30--19h42--TASK-REF-28.md`.
 
 ---
 

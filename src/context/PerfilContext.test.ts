@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import {
   perfilReducer,
   perfilPadrao,
-  migrarPerfil,
   SERVICOS_INDEPENDENTES_PADRAO,
   PRESETS_GASTOS_PADRAO,
 } from './PerfilContext';
+import { migrarPerfil } from '../services/migracoes';
 import type { EstadoApp } from './PerfilContext';
 import type { PerfilUsuario } from '../types/perfil';
 
