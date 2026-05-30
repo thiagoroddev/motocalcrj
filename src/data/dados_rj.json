@@ -47,19 +47,6 @@
     }
   },
 
-  "manutencao": {
-    "precoRevisaoIndependentePadrao": 150,
-    "notaPrecoRevisao": "Média de oficinas independentes no Município do Rio de Janeiro (pesquisa abr/2026). Editável pelo usuário.",
-    "servicosPadrao": {
-      "trocaOleo": 30,
-      "trocaKitTransmissao": 50,
-      "trocaPneu": 30,
-      "revisaoGeral": 150,
-      "avulso": 80
-    },
-    "notaServicos": "Valores de mão de obra pura, sem peças. Média de mercado RJ. Editáveis na aba Mão de Obra."
-  },
-
   "autonomiaEtanolFatorReducao": 0.78,
   "notaAutonomiaEtanol": "Autonomia com etanol ≈ 78% da autonomia com gasolina (menor poder calorífico). Aplica-se ao consumoKmL do preset."
 }

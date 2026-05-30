@@ -24,7 +24,7 @@ const SERVICO_RETIFICA_CABECOTE_PADRAO: ServicoIndependente = {
   id: 'retifica-cabecote',
   nome: 'Retífica de cabeçote',
   intervalKm: 80000,
-  precoMaoDeObraIndependente: 800,
+  precoIndependente: 800,
   precoTotalAutorizada: 0,
   incluidoNaRevisaoAutorizada: false,
   ativo: false,
@@ -35,7 +35,7 @@ const SERVICO_RETIFICA_COMPLETA_PADRAO: ServicoIndependente = {
   id: 'retifica-completa',
   nome: 'Retífica completa',
   intervalKm: 120000,
-  precoMaoDeObraIndependente: 1500,
+  precoIndependente: 1500,
   precoTotalAutorizada: 0,
   incluidoNaRevisaoAutorizada: false,
   ativo: false,
@@ -81,7 +81,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-oleo',
     nome: 'Troca de óleo',
     intervalKm: 3000,
-    precoMaoDeObraIndependente: 25,
+    precoIndependente: 25,
     precoTotalAutorizada: 0,
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
@@ -91,7 +91,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-kit-transmissao',
     nome: 'Troca kit transmissão',
     intervalKm: 12000,
-    precoMaoDeObraIndependente: 60,
+    precoIndependente: 60,
     precoTotalAutorizada: 313.56,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -101,7 +101,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-pneu-dianteiro',
     nome: 'Troca pneu dianteiro',
     intervalKm: 25000,
-    precoMaoDeObraIndependente: 30,
+    precoIndependente: 30,
     precoTotalAutorizada: 249.0,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -111,7 +111,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-pneu-traseiro',
     nome: 'Troca pneu traseiro',
     intervalKm: 15000,
-    precoMaoDeObraIndependente: 30,
+    precoIndependente: 30,
     precoTotalAutorizada: 285.0,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -121,7 +121,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-sapata-dianteira',
     nome: 'Troca sapata de freio dianteira',
     intervalKm: 20000,
-    precoMaoDeObraIndependente: 40,
+    precoIndependente: 40,
     precoTotalAutorizada: 268.65,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -131,7 +131,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-sapata-traseira',
     nome: 'Troca sapata de freio traseira',
     intervalKm: 20000,
-    precoMaoDeObraIndependente: 40,
+    precoIndependente: 40,
     precoTotalAutorizada: 191.65,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -141,7 +141,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'revisao-geral',
     nome: 'Revisão geral (independente)',
     intervalKm: 6000,
-    precoMaoDeObraIndependente: 80,
+    precoIndependente: 400,
     precoTotalAutorizada: 0,
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
@@ -151,7 +151,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-vela',
     nome: 'Troca de vela',
     intervalKm: 6000,
-    precoMaoDeObraIndependente: 15,
+    precoIndependente: 15,
     precoTotalAutorizada: 0,
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
@@ -161,7 +161,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-filtro-ar',
     nome: 'Troca filtro de ar',
     intervalKm: 6000,
-    precoMaoDeObraIndependente: 15,
+    precoIndependente: 15,
     precoTotalAutorizada: 0,
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
@@ -172,7 +172,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca de bateria',
     // Driver temporal — não há intervalo em km. Bateria envelhece por tempo.
     intervalKm: 0,
-    precoMaoDeObraIndependente: 50,
+    precoIndependente: 50,
     precoTotalAutorizada: 567.34,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -182,7 +182,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-kit-embreagem',
     nome: 'Troca kit embreagem',
     intervalKm: 40000,
-    precoMaoDeObraIndependente: 50,
+    precoIndependente: 50,
     precoTotalAutorizada: 450.33,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -192,7 +192,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     id: 'troca-kit-cilindro',
     nome: 'Troca kit cilindro',
     intervalKm: 100000,
-    precoMaoDeObraIndependente: 50,
+    precoIndependente: 50,
     precoTotalAutorizada: 510.83,
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
@@ -207,7 +207,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 20,
+  schemaVersion: 22,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -963,7 +963,7 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
     // Se o usuário já tinha editado o item legado, a retífica completa herda
     // preço, ativação e intervalo customizado (exceto o intervalo padrão antigo).
     // Dados v10 ainda tinham o campo legado `precoMaoDeObra` (renomeado para
-    // `precoMaoDeObraIndependente` apenas na v14→v15) — daí o cast estendido.
+    // `precoIndependente` apenas na v14→v15) — daí o cast estendido.
     type ServicoLegadoV10 = { id: string; precoMaoDeObra?: number; intervalKm: number };
     const servicos = Array.isArray(dados.servicosIndependentes)
       ? (dados.servicosIndependentes as ServicoLegadoV10[])
@@ -981,8 +981,7 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
         ? {
             ...(SERVICO_RETIFICA_COMPLETA_PADRAO as unknown as ServicoLegadoV10),
             precoMaoDeObra:
-              fazerMotorLegado.precoMaoDeObra ??
-              SERVICO_RETIFICA_COMPLETA_PADRAO.precoMaoDeObraIndependente,
+              fazerMotorLegado.precoMaoDeObra ?? SERVICO_RETIFICA_COMPLETA_PADRAO.precoIndependente,
             intervalKm:
               fazerMotorLegado.intervalKm === 70000
                 ? SERVICO_RETIFICA_COMPLETA_PADRAO.intervalKm
@@ -1063,7 +1062,7 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
   }
 
   if (dados.schemaVersion === 14) {
-    // v14 → v15: ServicoIndependente ganha precoMaoDeObraIndependente (rename
+    // v14 → v15: ServicoIndependente ganha precoIndependente (rename
     // de precoMaoDeObra), precoTotalAutorizada e incluidoNaRevisaoAutorizada
     // (ADR-007). Além disso, mescla defaults novos que apareceram após v14
     // (sapatas dianteira/traseira) — perfis salvos em v14 não os tinham.
@@ -1083,7 +1082,7 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
       ? (dados.servicosIndependentes as ServicoLegadoV14[])
       : (SERVICOS_INDEPENDENTES_PADRAO as ServicoIndependente[]).map((s) => ({
           ...s,
-          precoMaoDeObra: s.precoMaoDeObraIndependente,
+          precoMaoDeObra: s.precoIndependente,
         }));
     const servicosMigrados: ServicoIndependente[] = servicosLegados.map((s) => {
       const padrao = SERVICOS_INDEPENDENTES_PADRAO.find((p) => p.id === s.id);
@@ -1091,7 +1090,7 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
         id: s.id,
         nome: s.nome,
         intervalKm: s.intervalKm,
-        precoMaoDeObraIndependente: s.precoMaoDeObra ?? padrao?.precoMaoDeObraIndependente ?? 0,
+        precoIndependente: s.precoMaoDeObra ?? padrao?.precoIndependente ?? 0,
         precoTotalAutorizada: padrao?.precoTotalAutorizada ?? 0,
         incluidoNaRevisaoAutorizada: padrao?.incluidoNaRevisaoAutorizada ?? false,
         ativo: s.ativo,
@@ -1197,6 +1196,45 @@ export function migrarPerfil(perfil: PerfilUsuario): PerfilUsuario {
           ...kmUltimaTrocasSemKitRevisao,
         },
       },
+    };
+  }
+
+  if (dados.schemaVersion === 20) {
+    // v20 → v21: TASK-BG-011 — renomeia precoMaoDeObraIndependente → precoIndependente.
+    // O campo era sobrecarregado (M.O. p/ serviços normais, peças+M.O. p/
+    // excepcionais); o novo nome neutro evita a confusão. Preserva o valor.
+    const servicos = Array.isArray(dados.servicosIndependentes)
+      ? dados.servicosIndependentes
+      : SERVICOS_INDEPENDENTES_PADRAO;
+    dados = {
+      ...dados,
+      schemaVersion: 21,
+      servicosIndependentes: servicos.map((s: Record<string, unknown>) => {
+        const { precoMaoDeObraIndependente, precoIndependente, ...resto } = s;
+        return {
+          ...resto,
+          precoIndependente: precoIndependente ?? precoMaoDeObraIndependente ?? 0,
+        };
+      }),
+    };
+  }
+
+  if (dados.schemaVersion === 21) {
+    // v21 → v22: TASK-BG-012 — sobe o default da Revisão Geral Independente de
+    // R$80 para R$400 (R$80 estava muito abaixo do mercado RJ; caso real: 12k
+    // custou R$400). Bumpa apenas perfis que ainda têm o default antigo (80),
+    // preservando qualquer edição do usuário.
+    const servicos = Array.isArray(dados.servicosIndependentes)
+      ? dados.servicosIndependentes
+      : SERVICOS_INDEPENDENTES_PADRAO;
+    dados = {
+      ...dados,
+      schemaVersion: 22,
+      servicosIndependentes: servicos.map((s: Record<string, unknown>) =>
+        s.id === 'revisao-geral' && s.precoIndependente === 80
+          ? { ...s, precoIndependente: 400 }
+          : s,
+      ),
     };
   }
 

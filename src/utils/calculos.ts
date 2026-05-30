@@ -488,7 +488,7 @@ export function calcularDetalhesRevisaoAnual(
   // (~R$ 25/ano para bateria) é débito técnico assumido pela TASK-RF-6.14.
   const base = servicosNormaisAtivos
     .filter((s) => s.intervalKm > 0)
-    .reduce((sum, s) => sum + (s.precoMaoDeObraIndependente / s.intervalKm) * kmAnual, 0);
+    .reduce((sum, s) => sum + (s.precoIndependente / s.intervalKm) * kmAnual, 0);
   return {
     total: base,
     detalhes: {
@@ -578,9 +578,7 @@ function calcularImprevistosSugeridosAnual(
       .filter((servico) => servico.ehExcepcional && servico.intervalKm > 0)
       .map((servico): [string, CustoImprevistoSugerido] | null => {
         const preco =
-          modoRevisao === 'autorizadas'
-            ? servico.precoTotalAutorizada
-            : servico.precoMaoDeObraIndependente;
+          modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;
         if (modoRevisao === 'autorizadas' && preco <= 0) return null;
 
         const chaveKmUltimaTroca = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];

@@ -133,9 +133,7 @@ export function PaginaMaoDeObra() {
   function servicoDifereDopadraoIndependente(s: ServicoIndependente): boolean {
     const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
     if (!p) return false;
-    return (
-      s.precoMaoDeObraIndependente !== p.precoMaoDeObraIndependente || s.intervalKm !== p.intervalKm
-    );
+    return s.precoIndependente !== p.precoIndependente || s.intervalKm !== p.intervalKm;
   }
 
   function servicoDifereDopadraoAutorizada(s: ServicoIndependente): boolean {
@@ -182,7 +180,7 @@ export function PaginaMaoDeObra() {
               </p>
             ) : (
               <div className="space-y-sm">
-                <TituloSecao icone={Store}>Mão de Obra de Oficina Autorizada</TituloSecao>
+                <TituloSecao icone={Store}>Mão de Obra - Oficina Autorizada</TituloSecao>
                 {preset.revisaoAutorizada.map((revisao, idx) => {
                   const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
                   const ehDestacado = indiceDestacado === idx;
@@ -218,7 +216,7 @@ export function PaginaMaoDeObra() {
 
           <TabsContent value="independente" className="px-md pb-md pt-3">
             <div className="space-y-sm">
-              <TituloSecao icone={Wrench}>Mão de Obra de Oficina Independente</TituloSecao>
+              <TituloSecao icone={Wrench}>Mão de Obra - Oficina Independente</TituloSecao>
               <ListaServicos
                 servicos={servicosNormais}
                 dispatch={dispatch}

@@ -18,15 +18,15 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
   const padrao = SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
 
   const valorAtual =
-    modo === 'autorizada' ? servico.precoTotalAutorizada : servico.precoMaoDeObraIndependente;
+    modo === 'autorizada' ? servico.precoTotalAutorizada : servico.precoIndependente;
   const valorPadrao =
-    modo === 'autorizada' ? padrao?.precoTotalAutorizada : padrao?.precoMaoDeObraIndependente;
+    modo === 'autorizada' ? padrao?.precoTotalAutorizada : padrao?.precoIndependente;
   const rotuloPreco =
     modo === 'autorizada'
       ? 'Preço total Honda (R$)'
       : servico.ehExcepcional
-        ? 'Peças + MO (R$)'
-        : 'Preço MO (R$)';
+        ? 'Peças + Mão de Obra (R$)'
+        : 'Preço Mão de Obra (R$)';
 
   const IconePeca = iconePeca(servico.id);
 
@@ -54,7 +54,7 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
     const payload: ServicoIndependente =
       modo === 'autorizada'
         ? { ...servico, precoTotalAutorizada: num }
-        : { ...servico, precoMaoDeObraIndependente: num };
+        : { ...servico, precoIndependente: num };
     dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload });
   }
 

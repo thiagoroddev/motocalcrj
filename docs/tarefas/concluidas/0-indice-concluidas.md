@@ -90,3 +90,5 @@
 | TASK-RF-6.20.2 | Ícones na Mão de Obra: títulos de modo (TituloSecao), ícone+ordinal+reset nas revisões Honda, ícone de peça (unplugin-icons/mdi) | [2026-05-29--18h36--TASK-RF-6.20.2.md](./2026-05-29--18h36--TASK-RF-6.20.2.md) |
 | TASK-RF-6.20.3 | Ícones nos Insumos: títulos de seção + ícone por combustível/peça (reuso de TituloSecao e iconePeca) | [2026-05-29--18h57--TASK-RF-6.20.3.md](./2026-05-29--18h57--TASK-RF-6.20.3.md) |
 | TASK-RF-6.20.4 | Ícones no Ajustes + fix hierarquia card KMs + mover toggle p/ Preferências + "Uso Diário"→"Rodagem" (conclui RF-6.20) | [2026-05-29--19h59--TASK-RF-6.20.4.md](./2026-05-29--19h59--TASK-RF-6.20.4.md) |
+| TASK-BG-011 | Rename `precoMaoDeObraIndependente`→`precoIndependente` (campo sobrecarregado; retífica=peças+M.O.); migração v20→v21; valores mantidos | [2026-05-29--20h31--TASK-BG-011.md](./2026-05-29--20h31--TASK-BG-011.md) |
+| TASK-BG-012 | Revisão Geral Independente default R$80→R$400 (migração v21→v22, sobe só quem está em 80); remove bloco morto `manutencao` do dados_rj.json | [2026-05-29--20h48--TASK-BG-012.md](./2026-05-29--20h48--TASK-BG-012.md) |

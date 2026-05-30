@@ -71,10 +71,11 @@ export interface ServicoIndependente {
   id: string;
   nome: string;
   intervalKm: number;
-  // M.O. cobrada por oficina independente. Em serviços excepcionais
-  // (ehExcepcional=true), representa o preço total (peças + M.O.) — convenção
-  // anterior ao split por modo (ADR-007).
-  precoMaoDeObraIndependente: number;
+  // Preço cobrado por oficina independente. Para serviços NORMAIS é só a M.O.
+  // (a peça é precificada à parte nos Insumos). Para serviços EXCEPCIONAIS
+  // (ehExcepcional=true, ex.: retíficas) é o valor ÚNICO peças + M.O., pois a
+  // retífica não é orçada separando peça de mão de obra (ADR-007).
+  precoIndependente: number;
   // Preço total Honda (peça + M.O., como o orçamento da concessionária é
   // apresentado). 0 = não aplicável (ex.: serviços incluídos no pacote ou
   // serviços que Honda não executa, como retíficas). ADR-007.
