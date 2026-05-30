@@ -15,7 +15,7 @@ export function SecaoSituacaoLegal({ financeiro, dispatch }: Props) {
   const { situacaoMoto } = financeiro;
 
   return (
-    <section className="bg-card rounded-lg p-md space-y-3">
+    <section className="bg-card rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <TituloSecao icone={Scale}>Situação Legal</TituloSecao>
         <BotaoReset

@@ -42,11 +42,11 @@ export function PaginaPerfil() {
     <div className="flex flex-col min-h-screen bg-background">
       <CabecalhoVoltar titulo="Perfil" />
 
-      <main className="flex-1 overflow-y-auto pb-20 p-md flex flex-col gap-md">
+      <main className="flex-1 overflow-y-auto pb-20 p-4 flex flex-col gap-4">
         {/* Predefinição Atual */}
-        <div className="bg-card rounded-lg p-md">
-          <p className="label-neutro mb-sm">Predefinição Atual</p>
-          <div className="flex items-start justify-between mb-md">
+        <div className="bg-card rounded-lg p-4">
+          <p className="label-neutro mb-2">Predefinição Atual</p>
+          <div className="flex items-start justify-between mb-4">
             <div>
               <h2 className="text-foreground text-lg font-bold">{nomePreset}</h2>
               <p className="text-muted-foreground text-sm">Ano: {perfil.moto.ano}</p>
@@ -57,7 +57,7 @@ export function PaginaPerfil() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-sm">
+          <div className="flex flex-col gap-2">
             <Button
               variant="outline"
               className="w-full justify-between"
@@ -93,15 +93,15 @@ export function PaginaPerfil() {
         </div>
 
         {/* Exportar & Importar */}
-        <div className="bg-card rounded-lg p-md">
-          <div className="flex items-center gap-sm mb-md">
+        <div className="bg-card rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-4">
             <IcNuvemBaixar className="text-muted-foreground" />
             <p className="text-foreground text-sm font-semibold">Exportar &amp; Importar</p>
           </div>
 
-          <div className="mb-md">
-            <p className="label-neutro mb-xs">Salvar Dados</p>
-            <p className="text-muted-foreground text-xs mb-sm">
+          <div className="mb-4">
+            <p className="label-neutro mb-1">Salvar Dados</p>
+            <p className="text-muted-foreground text-xs mb-2">
               Gere um arquivo de backup com todas as suas configurações e histórico.
             </p>
             <Button variant="outline" className="w-full gap-2" disabled>
@@ -110,11 +110,11 @@ export function PaginaPerfil() {
             </Button>
           </div>
 
-          <Separator className="mb-md" />
+          <Separator className="mb-4" />
 
           <div>
-            <p className="label-neutro mb-xs">Restaurar</p>
-            <p className="text-muted-foreground text-xs mb-sm">
+            <p className="label-neutro mb-1">Restaurar</p>
+            <p className="text-muted-foreground text-xs mb-2">
               Importe seus dados de um arquivo MotoCalc anterior.
             </p>
             <Button variant="outline" className="w-full gap-2" disabled>
@@ -190,7 +190,7 @@ export function PaginaPerfil() {
 
 function LinhaConfig({ icone, label, valor }: { icone: ReactNode; label: string; valor: string }) {
   return (
-    <div className="flex items-center gap-md px-md py-3">
+    <div className="flex items-center gap-4 px-4 py-3">
       <span className="text-muted-foreground flex-shrink-0">{icone}</span>
       <div className="flex-1 min-w-0">
         <p className="text-foreground text-sm font-medium">{label}</p>

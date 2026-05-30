@@ -76,7 +76,7 @@ export function CardItemPreco({
   }
 
   return (
-    <div className="bg-card rounded-lg p-md space-y-2">
+    <div className="bg-card rounded-lg p-4 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-2 min-w-0">
           <IconePeca className="w-6 h-6 text-primary shrink-0" />
@@ -88,7 +88,7 @@ export function CardItemPreco({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-sm">
+      <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
           <Label htmlFor={idOriginal} className="label-neutro block font-normal">
             Original (R$)

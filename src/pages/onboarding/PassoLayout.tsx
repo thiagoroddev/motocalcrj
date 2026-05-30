@@ -24,8 +24,8 @@ export function PassoLayout({
 
   return (
     <div className="min-h-screen bg-background flex flex-col ">
-      <div className="px-md pt-md pb-sm">
-        <div className="flex items-center justify-between mb-xs">
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-center justify-between mb-1">
           <span className="text-label-sm text-muted-foreground">{config.label}</span>
           <span className="text-label-sm text-muted-foreground">{config.percentual}%</span>
         </div>
@@ -37,13 +37,13 @@ export function PassoLayout({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-md py-lg">
-        <h1 className="text-foreground text-2xl font-semibold mb-xs">{titulo}</h1>
-        {subtitulo && <p className="text-muted-foreground text-sm mb-lg">{subtitulo}</p>}
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        <h1 className="text-foreground text-2xl font-semibold mb-1">{titulo}</h1>
+        {subtitulo && <p className="text-muted-foreground text-sm mb-6">{subtitulo}</p>}
         {children}
       </div>
 
-      <div className="p-md pt-md border-t border-muted flex gap-sm">
+      <div className="p-4 pt-4 border-t border-muted flex gap-2">
         {temAnterior && (
           <Button
             variant="outline"

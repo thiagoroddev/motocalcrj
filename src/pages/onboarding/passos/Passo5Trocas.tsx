@@ -56,9 +56,9 @@ export function Passo5Trocas() {
       aoProximo={aoProximo}
       podeContinuar
     >
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col gap-2">
         {kmUltimaRevisao == null && (
-          <p className="text-xs text-muted-foreground/60 px-xs pb-xs">
+          <p className="text-xs text-muted-foreground/60 px-1 pb-1">
             Sem km de referência — itens marcados serão salvos com km&nbsp;0.
           </p>
         )}
@@ -70,7 +70,7 @@ export function Passo5Trocas() {
               key={key}
               type="button"
               onClick={() => toggleItem(key)}
-              className={`flex items-center gap-3 w-full p-md min-h-touch rounded-lg border transition-colors text-left ${
+              className={`flex items-center gap-3 w-full p-4 min-h-touch rounded-lg border transition-colors text-left ${
                 checked ? 'border-primary bg-primary/20' : 'border-muted bg-card'
               }`}
             >
@@ -104,7 +104,7 @@ export function Passo5Trocas() {
           <button
             type="button"
             onClick={() => setMotorMarcado((v) => !v)}
-            className={`flex items-center gap-3 w-full p-md min-h-touch rounded-lg border transition-colors text-left ${
+            className={`flex items-center gap-3 w-full p-4 min-h-touch rounded-lg border transition-colors text-left ${
               motorMarcado ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >

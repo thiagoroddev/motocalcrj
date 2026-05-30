@@ -42,7 +42,7 @@ export function PaginaAjustes() {
 
   return (
     <>
-      <div className="p-md space-y-3">
+      <div className="p-4 space-y-3">
         <div
           ref={refVeiculo}
           className={`rounded-lg transition-shadow${

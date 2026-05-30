@@ -22,12 +22,7 @@ Tailwind v4 — a configuração de tema vai no próprio CSS, não em `tailwind.
   /* Tipografia */
   --font-sans: Inter, system-ui, sans-serif;
 
-  /* Espaçamento */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  /* Espaçamento: escala numérica padrão do Tailwind (NÃO redefinir --spacing-*) — ver ADR-008 */
 
   /* Border radius */
   --radius-btn: 4px;
@@ -55,13 +50,16 @@ Inter via `--font-sans` no `@theme inline`. Carregamento no `index.html` via Goo
 
 ## Tokens de espaçamento e tamanho
 
+**Spacing/sizing seguem a escala numérica padrão do Tailwind/shadcn** (`p-4`, `gap-2`, `space-y-4`…).
+**Proibido redefinir `--spacing-*` no `@theme`** — as chaves nomeadas `sm/md/lg/xl` colidem com a
+escala de container que `max-w-*` consome no Tailwind v4 (causou a TASK-BG-009). Ver **ADR-008**.
+Guard-rail: `scripts/check-spacing-tokens.mjs` (roda no `npm run lint`).
+
+Equivalência usada na conversão (TASK-REF-26): `xs→1` (4px), `sm→2` (8px), `md→4` (16px),
+`lg→6` (24px), `xl→8` (32px). A escala base do Tailwind é `1 = 0.25rem = 4px`.
+
 | Token | Valor | Classe Tailwind |
 |---|---|---|
-| `--spacing-xs` | 4px | `p-xs`, `m-xs`, etc. |
-| `--spacing-sm` | 8px | `p-sm`, `m-sm` |
-| `--spacing-md` | 16px | `p-md`, `m-md` |
-| `--spacing-lg` | 24px | `p-lg`, `m-lg` |
-| `--spacing-xl` | 32px | `p-xl`, `m-xl` |
 | `--size-touch` | 48px | `min-h-touch` |
 | `--radius` | 0.5rem | base do sistema de radius |
 | `--radius-lg` | = `--radius` | `rounded-lg` (cards) |

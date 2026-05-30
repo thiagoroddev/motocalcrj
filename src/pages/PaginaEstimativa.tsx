@@ -38,7 +38,7 @@ export function PaginaEstimativa() {
 
   if (!resultado) {
     return (
-      <div className="flex items-center justify-center h-64 px-md">
+      <div className="flex items-center justify-center h-64 px-4">
         <p className="text-muted-foreground/60 text-sm text-center">
           Modelo não encontrado. Refaça o onboarding.
         </p>
@@ -90,7 +90,7 @@ export function PaginaEstimativa() {
   }
 
   return (
-    <div className="px-md py-md space-y-md">
+    <div className="px-4 py-4 space-y-4">
       <SecaoRodagem
         kmDiaInput={kmDiaInput}
         onKmDiaChange={setKmDiaInput}
@@ -106,14 +106,14 @@ export function PaginaEstimativa() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-sm">
+      <div className="grid grid-cols-2 gap-2">
         <CardPeriodo label="Por Hora" valor={porHora} />
         <CardPeriodo label="Por Dia" valor={granularidades.diario} />
         <CardPeriodo label="Estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
         <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
       </div>
 
-      <div className="space-y-sm">
+      <div className="space-y-2">
         <CardPeriodo label="Estimado por ano" valor={granularidades.anual} km={kmAnual} />
       </div>
 

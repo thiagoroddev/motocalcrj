@@ -32,18 +32,18 @@ export function Passo6() {
 
   return (
     <PassoLayout titulo="Qual a situação da sua moto?" aoProximo={salvarEAvancar}>
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col gap-2">
         {OPCOES.map((op) => (
           <Button
             key={op.valor}
             variant="outline"
             onClick={() => setSituacao(op.valor)}
-            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
+            className={`w-full p-4 min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
               situacao === op.valor ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
             <p className="text-foreground font-semibold">{op.titulo}</p>
-            <p className="text-muted-foreground text-sm mt-xs">{op.descricao}</p>
+            <p className="text-muted-foreground text-sm mt-1">{op.descricao}</p>
           </Button>
         ))}
       </div>

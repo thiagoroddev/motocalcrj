@@ -62,9 +62,9 @@ export function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }:
   }
 
   return (
-    <div className="bg-card rounded-lg p-md space-y-2">
+    <div className="bg-card rounded-lg p-4 space-y-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-sm min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
           <Fuel className="w-6 h-6 text-primary shrink-0" aria-hidden="true" />
           {ehPreferido && <span className="text-xs text-primary">●</span>}
           <span className="text-sm font-medium truncate">{NOME_COMBUSTIVEL[tipo]}</span>
@@ -86,7 +86,7 @@ export function CardCombustivel({ tipo, config, padrao, ehPreferido, dispatch }:
           <BotaoReset desabilitado={!temOverride} onReset={resetar} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-sm">
+      <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
           <Label htmlFor={idPreco} className="label-neutro block font-normal">
             Preço (R$/L)

@@ -20,7 +20,7 @@ export function SecaoRodagem({
   onStepDias,
 }: PropsSecaoRodagem) {
   return (
-    <section className="bg-card rounded-lg p-md space-y-md">
+    <section className="bg-card rounded-lg p-4 space-y-4">
       <TituloSecao icone={Route}>Rodagem</TituloSecao>
       <div>
         <Label
@@ -46,7 +46,7 @@ export function SecaoRodagem({
 
       <div>
         <p className="label-neutro mb-1">Dias trabalhados / semana</p>
-        <div className="flex items-center gap-md">
+        <div className="flex items-center gap-4">
           <Button
             type="button"
             variant="outline"
@@ -70,7 +70,7 @@ export function SecaoRodagem({
           </Button>
         </div>
         {dias === 1 && (
-          <p className="text-muted-foreground/60 text-xs mt-xs">
+          <p className="text-muted-foreground/60 text-xs mt-1">
             Com 1 dia por semana, os valores diário e semanal serão iguais nos cálculos.
           </p>
         )}

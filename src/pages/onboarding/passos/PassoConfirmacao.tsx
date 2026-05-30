@@ -33,7 +33,7 @@ export function PassoConfirmacao() {
       aoProximo={concluir}
       textoBotao="Concluir configuração"
     >
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col gap-2">
         <SessaoResumo titulo="Moto" aoEditar={() => editarPasso('2')}>
           <LinhaResumo
             label="Marca / Modelo"
@@ -120,8 +120,8 @@ function SessaoResumo({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-card rounded-lg p-md">
-      <div className="flex items-center justify-between mb-sm">
+    <div className="bg-card rounded-lg p-4">
+      <div className="flex items-center justify-between mb-2">
         <p className="text-primary text-xs font-semibold uppercase tracking-wider">{titulo}</p>
         {aoEditar && (
           <Button
@@ -140,7 +140,7 @@ function SessaoResumo({
 
 function LinhaResumo({ label, valor }: { label: string; valor: string }) {
   return (
-    <div className="flex justify-between items-center py-xs border-b border-muted last:border-0">
+    <div className="flex justify-between items-center py-1 border-b border-muted last:border-0">
       <span className="text-muted-foreground text-sm">{label}</span>
       <span className="text-foreground text-sm font-medium">{valor}</span>
     </div>

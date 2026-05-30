@@ -24,7 +24,7 @@ export function SecaoUsoDiario({ trabalho, dispatch }: Props) {
   }
 
   return (
-    <section className="bg-card rounded-lg p-md space-y-3">
+    <section className="bg-card rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <TituloSecao icone={Route}>Rodagem</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />

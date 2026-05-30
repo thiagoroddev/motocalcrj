@@ -39,7 +39,7 @@ export function Passo7() {
     }`;
 
   const inputClassName =
-    'min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+    'min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
 
   return (
     <PassoLayout
@@ -48,8 +48,8 @@ export function Passo7() {
       aoProximo={salvarEAvancar}
       podeContinuar={valido}
     >
-      <div className="flex flex-col gap-lg">
-        <div className="flex gap-sm">
+      <div className="flex flex-col gap-6">
+        <div className="flex gap-2">
           {([false, true] as const).map((v) => (
             <Button
               key={String(v)}
@@ -62,8 +62,8 @@ export function Passo7() {
         </div>
 
         {tem && (
-          <div className="flex flex-col gap-md">
-            <label className="flex flex-col gap-xs">
+          <div className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1">
               <span className="text-muted-foreground text-sm font-medium">
                 {periodicidade === 'mensal' ? 'Valor mensal (R$)' : 'Valor anual (R$)'}
               </span>
@@ -78,9 +78,9 @@ export function Passo7() {
               />
             </label>
 
-            <div className="flex flex-col gap-xs">
+            <div className="flex flex-col gap-1">
               <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
-              <div className="flex gap-sm">
+              <div className="flex gap-2">
                 {(['anual', 'mensal'] as PeriodicidadeSeguro[]).map((p) => (
                   <Button
                     key={p}
@@ -93,7 +93,7 @@ export function Passo7() {
               </div>
             </div>
 
-            <label className="flex flex-col gap-xs">
+            <label className="flex flex-col gap-1">
               <span className="text-muted-foreground text-sm font-medium">
                 Seguradora (opcional)
               </span>

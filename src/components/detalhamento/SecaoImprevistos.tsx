@@ -85,7 +85,7 @@ export function SecaoImprevistos({
   return (
     <>
       <Card className="shadow-none border-0 overflow-hidden">
-        <div className="flex items-center gap-3 p-md cursor-pointer" onClick={onToggleExpandido}>
+        <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={onToggleExpandido}>
           <TileCategoria categoriaId="gastosCustom" corClasse="bg-warning/60" />
           <span className="flex-1 text-foreground text-sm font-medium flex items-center gap-1.5">
             Imprevistos
@@ -140,7 +140,7 @@ export function SecaoImprevistos({
           </svg>
         </div>
         {expandido && (
-          <div className="px-md pb-md space-y-2 border-t border-muted pt-3">
+          <div className="px-4 pb-4 space-y-2 border-t border-muted pt-3">
             <div className="rounded-md border border-border/70 bg-background/25 px-2 py-2 space-y-1">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground/60 text-xs">Valor anual ativo</span>

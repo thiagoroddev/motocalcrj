@@ -29,25 +29,6 @@ Obedeça essa ordem:
 
 ---
 
-
-## TASK-BG-009 — Pop-ups bugam quando largura da janela ≠ largura mínima (PC/notebook/tablet)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data origem:** 25/05/26 08:33
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** os pop-ups (modais/dialogs shadcn) ficam visualmente bugados em larguras de janela que não sejam a mínima (375px) ou tela cheia. Bug visível em PC/notebook/tablet — não aparece em celular onde a largura sempre é "mínima".
-  - **Local provável:** componentes `Dialog`/`Sheet` do shadcn em `src/components/ui/`, ou wrapper customizado. TASK-RF-6.11 introduziu vários pop-ups de edição em Detalhamento. TASK-RF-6.9 trouxe popup de Imprevistos.
-  - **Fix proposto:** reproduzir em janela de ~768px e ~1024px; inspecionar CSS dos modais; provavelmente falta `max-width` no container do dialog ou o overlay está com `width: 100vw` sem ancoragem. Garantir comportamento responsivo entre 375px e desktop.
-  - **Cuidados:** o app foi desenhado mobile-first (375px), mas precisa funcionar em larguras maiores sem quebrar. Não regredir em mobile. Testar em todos os pop-ups que existem (Imprevistos, edição por categoria em Detalhamento, confirmações de reset).
-
----
-
 ### Tarefas Normais
 
 ---

@@ -162,7 +162,7 @@ export function PaginaDetalhamento() {
 
   if (!resultado) {
     return (
-      <div className="flex items-center justify-center h-64 px-md">
+      <div className="flex items-center justify-center h-64 px-4">
         <p className="text-muted-foreground/60 text-sm text-center">Modelo não encontrado.</p>
       </div>
     );
@@ -366,7 +366,7 @@ export function PaginaDetalhamento() {
     <div className="flex flex-col min-h-screen bg-background">
       <CabecalhoVoltar titulo="Detalhamento" chaveAjuda="detalhamento" />
 
-      <div className="px-md py-md space-y-3">
+      <div className="px-4 py-4 space-y-3">
         <CardTotalAnual
           periodo={periodo}
           totalPeriodo={totalFiltradoNoPeriodo}
@@ -397,7 +397,7 @@ export function PaginaDetalhamento() {
         />
         <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />
         {perfil.trabalho.diasPorSemana === 1 && (
-          <p className="text-muted-foreground/60 text-xs px-xs">
+          <p className="text-muted-foreground/60 text-xs px-1">
             Com 1 dia/semana configurado, os modos Dia e Sem mostram o mesmo valor. Ajuste em
             Estimativa.
           </p>

@@ -11,7 +11,7 @@ interface PropsCardPeriodo {
 
 export function CardPeriodo({ label, valor, km }: PropsCardPeriodo) {
   return (
-    <Card className="shadow-none border-0 p-md flex flex-col gap-1">
+    <Card className="shadow-none border-0 p-4 flex flex-col gap-1">
       <p className="label-neutro flex items-center gap-1.5">
         <Clock className="w-4 h-4 text-muted-foreground/50" aria-hidden="true" />
         {label}

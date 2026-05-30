@@ -43,20 +43,20 @@ export function Passo2() {
       aoProximo={salvarEAvancar}
       podeContinuar={selecionado !== null}
     >
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col gap-2">
         {modelos.map((modelo) => (
           <Button
             key={modelo.id}
             variant="outline"
             onClick={() => setSelecionado(modelo)}
-            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
+            className={`w-full p-4 min-h-touch h-auto rounded-lg text-left justify-start flex-col items-start transition-colors ${
               selecionado?.id === modelo.id
                 ? 'border-primary bg-primary/20'
                 : 'border-muted bg-card'
             }`}
           >
             <p className="text-foreground font-semibold">{modelo.nome}</p>
-            <p className="text-muted-foreground text-xs mt-xs">
+            <p className="text-muted-foreground text-xs mt-1">
               {modelo.consumoKmL} km/L · {modelo.consumoKmLComBau} km/L com baú
             </p>
           </Button>
@@ -64,7 +64,7 @@ export function Passo2() {
       </div>
 
       {modelos.length === 0 && (
-        <p className="text-muted-foreground text-sm text-center mt-lg">
+        <p className="text-muted-foreground text-sm text-center mt-6">
           Nenhum modelo disponível para {perfil.moto.marca} ainda.
         </p>
       )}

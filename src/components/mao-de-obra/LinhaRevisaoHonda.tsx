@@ -100,7 +100,7 @@ export const LinhaRevisaoHonda = forwardRef<HTMLDivElement, Props>(function Linh
   return (
     <div
       ref={ref}
-      className={`bg-card rounded-lg p-md space-y-1.5 transition-shadow${destacado ? ' ring-2 ring-primary' : ''}`}
+      className={`bg-card rounded-lg p-4 space-y-1.5 transition-shadow${destacado ? ' ring-2 ring-primary' : ''}`}
     >
       <div className="flex items-start justify-between gap-2">
         <span className="label-neutro flex items-center gap-1.5">
@@ -113,7 +113,7 @@ export const LinhaRevisaoHonda = forwardRef<HTMLDivElement, Props>(function Linh
           onReset={() => dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-sm">
+      <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
           <span className="label-neutro block">Peças (R$)</span>
           <Input
@@ -155,10 +155,10 @@ export const LinhaRevisaoHonda = forwardRef<HTMLDivElement, Props>(function Linh
         className="rounded-md border border-border/70 bg-background/40"
       >
         <AccordionItem value={`detalhes-${index}`} className="border-0">
-          <AccordionTrigger className="px-sm py-2 text-xs font-medium text-muted-foreground hover:no-underline">
+          <AccordionTrigger className="px-2 py-2 text-xs font-medium text-muted-foreground hover:no-underline">
             O que entra nesta revisão
           </AccordionTrigger>
-          <AccordionContent className="px-sm pb-sm pt-0">
+          <AccordionContent className="px-2 pb-2 pt-0">
             <div className="space-y-3">
               <div>
                 <p className="text-xs font-medium text-foreground">Peças substituídas</p>

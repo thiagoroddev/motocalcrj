@@ -30,7 +30,7 @@ export function Passo6Financiamento() {
   }
 
   const inputClassName =
-    'min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+    'min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
 
   return (
     <PassoLayout
@@ -39,8 +39,8 @@ export function Passo6Financiamento() {
       aoProximo={salvarEAvancar}
       podeContinuar={valido}
     >
-      <div className="flex flex-col gap-md">
-        <label className="flex flex-col gap-xs">
+      <div className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">Parcela mensal (R$)</span>
           <Input
             type="number"
@@ -52,7 +52,7 @@ export function Passo6Financiamento() {
             className={inputClassName}
           />
         </label>
-        <label className="flex flex-col gap-xs">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">Parcelas restantes</span>
           <Input
             type="number"

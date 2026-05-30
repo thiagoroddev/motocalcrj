@@ -29,11 +29,11 @@ export function Passo6Responsabilidade() {
       subtitulo="Defina a responsabilidade de cada custo no aluguel"
       aoProximo={irParaProximo}
     >
-      <div className="flex flex-col gap-lg">
+      <div className="flex flex-col gap-6">
         {CAMPOS.map(({ id, titulo }) => (
           <div key={id}>
-            <p className="text-foreground text-sm font-medium mb-sm">{titulo}</p>
-            <div className="flex gap-xs">
+            <p className="text-foreground text-sm font-medium mb-2">{titulo}</p>
+            <div className="flex gap-1">
               {OPCOES.map(({ valor, label }) => (
                 <Button
                   key={valor}

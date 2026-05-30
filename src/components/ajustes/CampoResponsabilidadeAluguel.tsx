@@ -41,7 +41,7 @@ export function CampoResponsabilidadeAluguel({ financeiro, dispatch }: Props) {
   }
 
   return (
-    <section className="bg-card rounded-lg p-md space-y-3">
+    <section className="bg-card rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <TituloSecao icone={Banknote}>Responsabilidade do aluguel</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />

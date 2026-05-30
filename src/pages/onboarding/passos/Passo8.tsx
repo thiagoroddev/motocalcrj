@@ -30,8 +30,8 @@ export function Passo8() {
       subtitulo="Plano de dados para os apps de entrega"
       aoProximo={salvarEAvancar}
     >
-      <div className="flex flex-col gap-md">
-        <label className="flex flex-col gap-xs">
+      <div className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">Valor mensal (R$)</span>
           <Input
             type="number"
@@ -40,12 +40,12 @@ export function Passo8() {
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </label>
 
-        <div className="bg-primary/10 border border-primary/30 rounded-lg p-md">
-          <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-xs">Dica</p>
+        <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
+          <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-1">Dica</p>
           <p className="text-muted-foreground text-sm">
             Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro.
           </p>

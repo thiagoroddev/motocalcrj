@@ -74,7 +74,7 @@ function ListaServicos({
   modo = 'independente',
 }: PropsListaServicos) {
   return (
-    <div className="space-y-sm">
+    <div className="space-y-2">
       {servicos.map((s) => (
         <CardServico key={s.id} servico={s} dispatch={dispatch} modo={modo} />
       ))}
@@ -164,7 +164,7 @@ export function PaginaMaoDeObra() {
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue={abaInicial} className="flex flex-col flex-1">
-        <TabsList className="grid grid-cols-3 mx-md mt-md shrink-0">
+        <TabsList className="grid grid-cols-3 mx-4 mt-4 shrink-0">
           <TabsTrigger value="honda">{modoAtivo === 'autorizadas' ? '● ' : ''}Honda</TabsTrigger>
           <TabsTrigger value="independente">
             {modoAtivo === 'independentes' ? '● ' : ''}Independente
@@ -173,13 +173,13 @@ export function PaginaMaoDeObra() {
         </TabsList>
 
         <div className="flex-1 overflow-y-auto">
-          <TabsContent value="honda" className="px-md pb-md pt-3">
+          <TabsContent value="honda" className="px-4 pb-4 pt-3">
             {!preset ? (
               <p className="text-muted-foreground text-sm">
                 Preset não encontrado para este modelo.
               </p>
             ) : (
-              <div className="space-y-sm">
+              <div className="space-y-2">
                 <TituloSecao icone={Store}>Mão de Obra - Oficina Autorizada</TituloSecao>
                 {preset.revisaoAutorizada.map((revisao, idx) => {
                   const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
@@ -199,7 +199,7 @@ export function PaginaMaoDeObra() {
                 {temOverridesHonda && <BotaoRestaurarTudo onRestaurar={restaurarHonda} />}
 
                 {servicosAvulsosAutorizada.length > 0 && (
-                  <div className="space-y-sm pt-md">
+                  <div className="space-y-2 pt-4">
                     <TituloSecao icone={Tag}>Serviços avulsos</TituloSecao>
                     <ListaServicos
                       servicos={servicosAvulsosAutorizada}
@@ -214,8 +214,8 @@ export function PaginaMaoDeObra() {
             )}
           </TabsContent>
 
-          <TabsContent value="independente" className="px-md pb-md pt-3">
-            <div className="space-y-sm">
+          <TabsContent value="independente" className="px-4 pb-4 pt-3">
+            <div className="space-y-2">
               <TituloSecao icone={Wrench}>Mão de Obra - Oficina Independente</TituloSecao>
               <ListaServicos
                 servicos={servicosNormais}
@@ -226,11 +226,11 @@ export function PaginaMaoDeObra() {
             </div>
           </TabsContent>
 
-          <TabsContent value="excepcional" className="px-md pb-md pt-3">
-            <div className="space-y-sm">
+          <TabsContent value="excepcional" className="px-4 pb-4 pt-3">
+            <div className="space-y-2">
               <TituloSecao icone={TriangleAlert}>Serviços Excepcionais</TituloSecao>
               {deveAlertarExcepcional && (
-                <div className="rounded-lg border px-md py-sm bg-warning/10 border-warning/30 text-warning text-sm">
+                <div className="rounded-lg border px-4 py-2 bg-warning/10 border-warning/30 text-warning text-sm">
                   Atenção: sua moto está próxima ou acima de {limiteExcepcionalFormatado} km.
                   Considere revisar os serviços excepcionais.
                 </div>

@@ -61,6 +61,7 @@
 - **Registre cada ação no arquivo da tarefa** (`docs/tarefas/em-andamento.md` ou o arquivo em `concluidas/`) usando o formato padronizado (prefixo, data, revisão, testes).
 - **Se gerar novas tarefas a partir de uma revisão ou ADR, use os prefixos corretos** (RF, RN, RNF, BG, REF, DOC) e adicione em `docs/tarefas/pendentes.md`.
 - Toda leitura/escrita em `localStorage` usa as chaves e o fluxo definidos em `docs/arquitetura/estado_inicial.md`. Nunca acesse diretamente.
+- **Spacing/sizing seguem a escala numérica padrão do Tailwind** (`p-4`, `gap-2`, `space-y-4`…). **Nunca redefina `--spacing-*` no `@theme`** nem use chaves nomeadas (`p-md`, `gap-sm`): colidem com `max-w-*` no Tailwind v4 (ADR-008). O `npm run lint` barra via `scripts/check-spacing-tokens.mjs`.
 
 
 # Arquitetura Visão Geral do MotoCalc RJ

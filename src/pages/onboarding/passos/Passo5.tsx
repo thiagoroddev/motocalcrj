@@ -32,7 +32,7 @@ export function Passo5() {
   }
 
   const inputClassName =
-    'flex-1 min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+    'flex-1 min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
 
   return (
     <PassoLayout
@@ -41,15 +41,15 @@ export function Passo5() {
       aoProximo={salvarEAvancar}
       podeContinuar={valido}
     >
-      <div className="flex flex-col gap-lg">
-        <label className="flex flex-col gap-xs">
+      <div className="flex flex-col gap-6">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">
             KM atual do hodômetro <span className="text-destructive">*</span>
           </span>
           <span className="text-muted-foreground/60 text-xs">
             Essencial para prever as próximas manutenções
           </span>
-          <div className="flex items-center gap-xs">
+          <div className="flex items-center gap-1">
             <Input
               type="number"
               value={kmAtual}
@@ -62,12 +62,12 @@ export function Passo5() {
           </div>
         </label>
 
-        <label className="flex flex-col gap-xs">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">KM na última revisão</span>
           <span className="text-muted-foreground/60 text-xs">
             Ajuda a calcular o desgaste acumulado (opcional)
           </span>
-          <div className="flex items-center gap-xs">
+          <div className="flex items-center gap-1">
             <Input
               type="number"
               value={kmUltimaRevisao}

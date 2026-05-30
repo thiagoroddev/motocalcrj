@@ -56,7 +56,7 @@ export function DistribuicaoCustos({ segmentos, diasAno, horasDia }: PropsDistri
   );
 
   return (
-    <section className="bg-card rounded-lg p-md space-y-md">
+    <section className="bg-card rounded-lg p-4 space-y-4">
       <TituloSecao icone={ChartPie}>Distribuição de custos</TituloSecao>
 
       <div className="flex justify-center">

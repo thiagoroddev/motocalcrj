@@ -165,13 +165,13 @@ export function Passo3() {
       />
 
       {valido && ano.length >= 4 && (
-        <div className="mt-md">
+        <div className="mt-4">
           {fipeEstado === 'buscando' && (
             <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
           )}
           {mostraResultado && fipeInfo && (
-            <div className="space-y-xs">
-              <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
+            <div className="space-y-1">
+              <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
                 <div>
                   <span className="text-muted-foreground text-sm">Valor FIPE</span>
                   {fipeInfo.estimativa && (
@@ -188,14 +188,14 @@ export function Passo3() {
                 </div>
               </div>
               {new Date().getFullYear() - anoNum < 15 ? (
-                <div className="bg-card rounded-lg px-md py-sm flex justify-between items-center">
+                <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
                   <span className="text-muted-foreground text-sm">IPVA estimado (2% a.a.)</span>
                   <span className="text-foreground font-semibold">
                     {formatarMoeda(fipeInfo.valor * 0.02)}
                   </span>
                 </div>
               ) : (
-                <p className="text-muted-foreground/50 text-xs px-xs">
+                <p className="text-muted-foreground/50 text-xs px-1">
                   Moto com mais de 15 anos — isenta de IPVA no RJ.
                 </p>
               )}
@@ -210,7 +210,7 @@ export function Passo3() {
       )}
 
       {!valido && ano.length >= 4 && (
-        <p className="text-warning text-sm mt-sm">
+        <p className="text-warning text-sm mt-2">
           Use um ano entre {ANO_MIN} e {ANO_MAX}.
         </p>
       )}

@@ -12,7 +12,7 @@ interface PropsCabecalhoVoltar {
 export function CabecalhoVoltar({ titulo, chaveAjuda }: PropsCabecalhoVoltar) {
   const navigate = useNavigate();
   return (
-    <header className="flex items-center gap-3 px-md py-3 bg-card border-b border-muted shrink-0">
+    <header className="flex items-center gap-3 px-4 py-3 bg-card border-b border-muted shrink-0">
       <Button
         variant="ghost"
         size="icon"

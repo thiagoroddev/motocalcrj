@@ -19,7 +19,7 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
   const idKmAtual = useId();
   const idKmUltimaRevisao = useId();
   return (
-    <section className="bg-card rounded-lg p-md space-y-3">
+    <section className="bg-card rounded-lg p-4 space-y-3">
       <TituloSecao icone={Bike}>Veículo</TituloSecao>
       <p className="text-xs text-muted-foreground/60">
         {moto.marca} · {moto.modelo}

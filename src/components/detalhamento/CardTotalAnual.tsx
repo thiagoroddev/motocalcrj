@@ -26,13 +26,13 @@ const ROTULO_PERIODO: Record<Periodo, string> = {
 
 export function CardTotalAnual({ periodo, totalPeriodo, kmPeriodo, porKm, detalhesFixos }: Props) {
   return (
-    <div className="bg-primary/10 border border-primary/20 rounded-lg p-md">
+    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
       <p className="text-muted-foreground/60 text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
         <Wallet className="w-4 h-4 text-primary" aria-hidden="true" />
         Total estimado no {ROTULO_PERIODO[periodo]}
       </p>
       <p className="text-foreground font-bold text-3xl">{moeda(totalPeriodo)}</p>
-      <div className="flex flex-wrap gap-x-md gap-y-1 mt-2 text-xs text-muted-foreground/60">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-muted-foreground/60">
         <span>{kmPeriodo}</span>
         <span>{cpkFormatado(porKm)}</span>
       </div>

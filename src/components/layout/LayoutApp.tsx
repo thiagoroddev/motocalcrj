@@ -25,7 +25,7 @@ export function LayoutApp() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-start gap-3 px-md py-2 bg-card border-b border-muted shrink-0">
+      <header className="flex items-start gap-3 px-4 py-2 bg-card border-b border-muted shrink-0">
         <Link
           to="/perfil"
           className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-base font-bold shrink-0 mt-0.5"

@@ -30,13 +30,13 @@ export function Passo1() {
       aoProximo={salvarEAvancar}
       podeContinuar={marca.length > 0}
     >
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col gap-2">
         {MARCAS.map((m) => (
           <Button
             key={m}
             variant="outline"
             onClick={() => setMarca(m)}
-            className={`w-full p-md min-h-touch h-auto rounded-lg text-left justify-start transition-colors ${
+            className={`w-full p-4 min-h-touch h-auto rounded-lg text-left justify-start transition-colors ${
               marca === m ? 'border-primary bg-primary/20' : 'border-muted bg-card'
             }`}
           >
@@ -45,7 +45,7 @@ export function Passo1() {
         ))}
       </div>
 
-      <p className="text-muted-foreground/50 text-xs mt-lg text-center">
+      <p className="text-muted-foreground/50 text-xs mt-6 text-center">
         Mais modelos serão adicionados em breve
       </p>
     </PassoLayout>

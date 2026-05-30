@@ -35,7 +35,7 @@ export function CategoriaAccordion({
   return (
     <Card className="shadow-none border-0 overflow-hidden">
       <div
-        className={`flex items-center gap-3 p-md ${!semExpansao ? 'cursor-pointer' : ''}`}
+        className={`flex items-center gap-3 p-4 ${!semExpansao ? 'cursor-pointer' : ''}`}
         onClick={!semExpansao ? onToggleExpandido : undefined}
       >
         <TileCategoria categoriaId={categoriaId} corClasse={corClasse} />
@@ -66,7 +66,7 @@ export function CategoriaAccordion({
         )}
       </div>
       {expandido && children && (
-        <div className="px-md pb-md space-y-2 border-t border-muted pt-3">{children}</div>
+        <div className="px-4 pb-4 space-y-2 border-t border-muted pt-3">{children}</div>
       )}
     </Card>
   );

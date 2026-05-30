@@ -8,7 +8,7 @@ interface PropsCardCpk {
 
 export function CardCpk({ porKm, porKmSemAlimentacao }: PropsCardCpk) {
   return (
-    <div className="bg-primary/10 border border-primary/20 rounded-lg p-md">
+    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
       <p className="label-destaque mb-1 flex items-center gap-1.5">
         <Coins className="w-5 h-5 text-primary" aria-hidden="true" />
         Custo de operação por km

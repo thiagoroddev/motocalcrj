@@ -79,8 +79,8 @@ export function PaginaInsumos() {
     : [];
 
   return (
-    <div className="overflow-y-auto h-full px-md pb-md pt-sm space-y-lg">
-      <section className="space-y-sm">
+    <div className="overflow-y-auto h-full px-4 pb-4 pt-2 space-y-6">
+      <section className="space-y-2">
         <TituloSecao icone={Fuel}>Combustível</TituloSecao>
         {tiposCombustivel.map((tipo) => (
           <CardCombustivel
@@ -95,7 +95,7 @@ export function PaginaInsumos() {
       </section>
 
       {preset ? (
-        <section className="space-y-sm">
+        <section className="space-y-2">
           <TituloSecao icone={Cog}>Peças e Pneus</TituloSecao>
           {itensPecas.map((item) => (
             <CardItemPreco

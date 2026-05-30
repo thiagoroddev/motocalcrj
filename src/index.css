@@ -37,13 +37,6 @@
   --text-label-sm--letter-spacing: 0.05em;
   --text-label-sm--font-weight: 500;
 
-  /* ── Espaçamento customizado ── */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
   /* ── Border radius ── */
   --radius-btn: 4px;
   --radius-input: 4px;

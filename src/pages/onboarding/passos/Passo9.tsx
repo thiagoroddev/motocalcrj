@@ -27,7 +27,7 @@ export function Passo9() {
   }
 
   const cardClassName = (ativo: boolean) =>
-    `flex flex-col items-center gap-xs p-md min-h-touch h-auto rounded-lg border-2 transition-colors w-full ${
+    `flex flex-col items-center gap-1 p-4 min-h-touch h-auto rounded-lg border-2 transition-colors w-full ${
       ativo
         ? 'border-primary bg-primary/10 text-foreground hover:bg-primary/20'
         : 'border-muted bg-card text-muted-foreground hover:bg-muted/50'
@@ -40,8 +40,8 @@ export function Passo9() {
       aoProximo={salvarEAvancar}
       textoBotao="Próximo →"
     >
-      <div className="flex flex-col gap-md">
-        <div className="grid grid-cols-2 gap-sm">
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <Button onClick={() => setComeNaRua(true)} className={cardClassName(comeNaRua)}>
             <span className="text-2xl">🍴</span>
             <span className="text-sm font-medium text-center">Sim, como na rua</span>
@@ -54,7 +54,7 @@ export function Passo9() {
         </div>
 
         {comeNaRua && (
-          <label className="flex flex-col gap-xs">
+          <label className="flex flex-col gap-1">
             <span className="text-muted-foreground text-sm font-medium">
               Gasto médio por dia (R$)
             </span>
@@ -65,7 +65,7 @@ export function Passo9() {
               min={0}
               step={0.01}
               placeholder="20,00"
-              className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </label>
         )}

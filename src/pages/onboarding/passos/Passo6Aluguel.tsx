@@ -37,8 +37,8 @@ export function Passo6Aluguel() {
       aoProximo={salvarEAvancar}
       podeContinuar={valido}
     >
-      <div className="flex flex-col gap-md">
-        <label className="flex flex-col gap-xs">
+      <div className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">Valor do aluguel (R$)</span>
           <Input
             type="number"
@@ -47,13 +47,13 @@ export function Passo6Aluguel() {
             min={0}
             step={0.01}
             placeholder="0,00"
-            className="min-h-touch bg-card rounded-input border-muted text-foreground px-md placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </label>
 
-        <div className="flex flex-col gap-xs">
+        <div className="flex flex-col gap-1">
           <span className="text-muted-foreground text-sm font-medium">Periodicidade</span>
-          <div className="flex gap-sm">
+          <div className="flex gap-2">
             {(['mensal', 'semanal'] as PeriodicidadeAluguel[]).map((p) => (
               <Button
                 key={p}
