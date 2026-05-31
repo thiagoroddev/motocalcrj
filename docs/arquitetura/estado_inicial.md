@@ -44,7 +44,7 @@ export interface PresetEntry {
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
 3. Migra cada `PresetEntry.perfil` em cascata se `schemaVersion < 23`.
-4. Se não há preset ativo OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
+4. Se a chave de ativo estiver ausente mas houver presets válidos, seleciona `presets[0]` como recuperação; se não há preset recuperável OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
 ---
@@ -234,7 +234,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 | Action                                | Efeito                                                                       |
 | ------------------------------------- | ---------------------------------------------------------------------------- |
-| `SET_SERVICO_INDEPENDENTE`            | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` (INV-MANUT-1) |
+| `SET_SERVICO_INDEPENDENTE`            | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` para serviços km-driven; permite `0` só para temporal conhecido (INV-MANUT-1) |
 | `RESET_SERVICOS_INDEPENDENTES`        | Volta para `SERVICOS_INDEPENDENTES_PADRAO`                                   |
 | `SET_REVISAO_AUTORIZADA_OVERRIDE`     | Upsert por `index` em `revisaoAutorizadaOverrides[]`. Calcula `precoTotal = pecas + maoDeObra` |
 | `RESET_REVISAO_AUTORIZADA_OVERRIDE`   | Remove override por `index`                                                  |

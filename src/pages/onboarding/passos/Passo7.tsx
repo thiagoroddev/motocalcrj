@@ -5,6 +5,11 @@ import { PassoLayout } from '../PassoLayout';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import type { PeriodicidadeSeguro } from '../../../types/perfil';
+import {
+  formatarValorSeguroParaInput,
+  rotuloValorSeguro,
+  valorSeguroAnualizado,
+} from '../../../utils/seguro';
 
 export function Passo7() {
   const { perfil, dispatch } = usePerfil();
@@ -12,18 +17,30 @@ export function Passo7() {
 
   const seg = perfil.financeiro.seguro;
   const [tem, setTem] = useState(seg.valorAnual > 0);
-  const [valorAnual, setValorAnual] = useState(String(seg.valorAnual));
+  const [valorSeguro, setValorSeguro] = useState(() =>
+    formatarValorSeguroParaInput(seg.valorAnual, seg.periodicidade),
+  );
   const [empresa, setEmpresa] = useState(seg.empresa ?? '');
   const [periodicidade, setPeriodicidade] = useState<PeriodicidadeSeguro>(seg.periodicidade);
 
-  const valorNum = parseFloat(valorAnual);
+  const valorNum = parseFloat(valorSeguro);
   const valido = !tem || (!isNaN(valorNum) && valorNum > 0);
+
+  function alterarPeriodicidade(proximaPeriodicidade: PeriodicidadeSeguro) {
+    const valorAtual = parseFloat(valorSeguro);
+    if (!isNaN(valorAtual)) {
+      const valorAnualAtual = valorSeguroAnualizado(valorAtual, periodicidade);
+      setValorSeguro(formatarValorSeguroParaInput(valorAnualAtual, proximaPeriodicidade));
+    }
+
+    setPeriodicidade(proximaPeriodicidade);
+  }
 
   function salvarEAvancar() {
     dispatch({
       type: 'SET_SEGURO',
       config: {
-        valorAnual: tem ? (periodicidade === 'mensal' ? valorNum * 12 : valorNum) : 0,
+        valorAnual: tem ? valorSeguroAnualizado(valorNum, periodicidade) : 0,
         empresa: tem && empresa.trim() ? empresa.trim() : null,
         periodicidade,
       },
@@ -65,12 +82,12 @@ export function Passo7() {
           <div className="flex flex-col gap-4">
             <label className="flex flex-col gap-1">
               <span className="text-muted-foreground text-sm font-medium">
-                {periodicidade === 'mensal' ? 'Valor mensal (R$)' : 'Valor anual (R$)'}
+                {rotuloValorSeguro(periodicidade)}
               </span>
               <Input
                 type="number"
-                value={valorAnual}
-                onChange={(e) => setValorAnual(e.target.value)}
+                value={valorSeguro}
+                onChange={(e) => setValorSeguro(e.target.value)}
                 min={0}
                 step={0.01}
                 placeholder="0,00"
@@ -84,7 +101,7 @@ export function Passo7() {
                 {(['anual', 'mensal'] as PeriodicidadeSeguro[]).map((p) => (
                   <Button
                     key={p}
-                    onClick={() => setPeriodicidade(p)}
+                    onClick={() => alterarPeriodicidade(p)}
                     className={toggleClassName(periodicidade === p)}
                   >
                     {p === 'anual' ? 'Anual' : 'Mensal'}

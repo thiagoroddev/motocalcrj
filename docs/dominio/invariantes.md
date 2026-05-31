@@ -26,6 +26,7 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 
 **Onde é protegida:**
 - `PerfilReducer` actions que removem Preset cuidam para reposicionar `presetAtivoId`
+- `criarEstadoInicial` recupera storage parcial selecionando `presets[0]` quando a chave ativa está ausente ou aponta para id inexistente
 - `useEffect` de persistência tem guard: `if (!estado.presetAtivoId) return`
 
 **Como validar:** verificar que toda action que muda `presets` ou `presetAtivoId` mantém a propriedade.
@@ -158,14 +159,15 @@ if (filtros.imprevistosSugeridos[imprevistoId] !== false) {
 
 ### Invariantes de Manutenção
 
-#### INV-MANUT-1: intervalKm de ServicoIndependente sempre positivo
-**Regra:** `ServicoIndependente.intervalKm > 0` sempre.
+#### INV-MANUT-1: intervalKm de ServicoIndependente
+**Regra:** serviços de manutenção com driver por km usam `ServicoIndependente.intervalKm > 0`.
+Serviços temporais conhecidos, como `troca-bateria`, podem usar `intervalKm === 0` como marcador de "sem driver por km".
 
-**Por quê:** `intervalKm` é denominador do CPK por serviço (`precoMaoDeObra / intervalKm`). Zero ou negativo gera divisão por zero ou custo negativo — estado logicamente impossível.
+**Por quê:** para serviços km-driven, `intervalKm` é denominador do CPK por serviço (`precoMaoDeObra / intervalKm`). Zero ou negativo geraria divisão por zero ou custo negativo. Serviços temporais não entram nesse denominador e são tratados por caminho específico.
 
 **Onde é protegida:** Case `SET_SERVICO_INDEPENDENTE` no `perfilReducer` (`PerfilContext.tsx`):
 ```typescript
-if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
+if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV-MANUT-1
 ```
 
 ⚠️ **Cuidado:** a action não lança erro — ela silenciosamente ignora a atualização. Componentes de UI devem validar o campo antes de despachar para dar feedback ao usuário.

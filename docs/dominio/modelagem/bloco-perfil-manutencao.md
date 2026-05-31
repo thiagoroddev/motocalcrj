@@ -86,11 +86,11 @@ A comparação entre os dois modos é uma feature de produto: o Motoboy alterna 
 
 ## Invariantes
 
-### INV-MANUT-1: `intervalKm` positivo em `ServicoIndependente`
+### INV-MANUT-1: `intervalKm` em `ServicoIndependente`
 
-**Regra:** `ServicoIndependente.intervalKm > 0`. Divisão por zero quebra `(precoMaoDeObra / intervalKm) × kmAnual`.
+**Regra:** serviços km-driven usam `ServicoIndependente.intervalKm > 0`. Serviços temporais conhecidos, como `troca-bateria`, podem usar `intervalKm === 0` como marcador de "sem driver por km".
 
-**Onde é protegida:** Action `SET_SERVICO_INDEPENDENTE` no reducer rejeita `payload.intervalKm <= 0` (guard explícito em `PerfilContext.tsx`).
+**Onde é protegida:** Action `SET_SERVICO_INDEPENDENTE` no reducer aceita `intervalKm > 0` e só aceita `intervalKm === 0` quando o serviço padrão correspondente também é temporal.
 
 ### INV-MANUT-2: `perfilPecasGlobal` é padrão, não comando
 

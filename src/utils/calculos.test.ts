@@ -29,12 +29,14 @@ import {
   calcularCustoFinanciamentoAnual,
   calcularParcelasRestantesAtuais,
   categoriasParaFiltros,
+  calcularResultado,
   MAPA_PECA_PARA_SERVICO,
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import pop110i from '../presets/pop110i.json';
 import type {
   CategoriaDisplay,
+  PerfilUsuario,
   KmUltimaTrocas,
   PecaOverride,
   ServicoIndependente,
@@ -1167,6 +1169,57 @@ describe('converterAnualParaPeriodo', () => {
 describe('calcularCustoMotoAnual', () => {
   it('subtrai custo de alimentação do total', () => {
     expect(calcularCustoMotoAnual(10000, 2500)).toBe(7500);
+  });
+});
+
+describe('calcularResultado — CPK sem alimentação', () => {
+  const dadosRJMock: DadosRJ = {
+    ipva: { aliquotaMotos: 0, isencaoIdadeMinimaMeses: 0 },
+    licenciamento: { tabela: {} },
+  };
+
+  function criarPerfilComFiltroAlimentacao(alimentacaoAtiva: boolean): PerfilUsuario {
+    return {
+      ...perfilPadrao,
+      trabalho: {
+        ...perfilPadrao.trabalho,
+        kmPorDia: 100,
+        diasPorSemana: 5,
+      },
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        alimentacaoDia: 20,
+      },
+      configuracaoDisplay: {
+        ...perfilPadrao.configuracaoDisplay,
+        categoriasAtivas: {
+          ...perfilPadrao.configuracaoDisplay.categoriasAtivas,
+          alimentacao: alimentacaoAtiva,
+        },
+      },
+    };
+  }
+
+  it('mantém CPK sem alimentação abaixo do CPK total quando alimentação está ligada', () => {
+    const resultado = calcularResultado(
+      criarPerfilComFiltroAlimentacao(true),
+      presetMock,
+      dadosRJMock,
+    );
+
+    expect(resultado.custos.alimentacao.total).toBeGreaterThan(0);
+    expect(resultado.granularidadesMoto.porKm).toBeLessThan(resultado.granularidades.porKm);
+  });
+
+  it('não subtrai alimentação de novo quando alimentação está desligada no filtro', () => {
+    const resultado = calcularResultado(
+      criarPerfilComFiltroAlimentacao(false),
+      presetMock,
+      dadosRJMock,
+    );
+
+    expect(resultado.custos.alimentacao.total).toBeGreaterThan(0);
+    expect(resultado.granularidadesMoto.porKm).toBeCloseTo(resultado.granularidades.porKm, 8);
   });
 });
 

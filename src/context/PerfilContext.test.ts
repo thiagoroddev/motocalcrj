@@ -7,13 +7,45 @@ import {
 } from './PerfilContext';
 import { migrarPerfil } from '../services/migracoes';
 import type { EstadoApp } from './PerfilContext';
-import type { PerfilUsuario } from '../types/perfil';
+import type { PerfilUsuario, ServicoIndependente } from '../types/perfil';
 
 const estadoVazio: EstadoApp = {
   perfil: perfilPadrao,
   presets: [],
   presetAtivoId: null,
 };
+
+function criarPerfilValido({
+  moto = {},
+  financeiro = {},
+}: {
+  moto?: Partial<PerfilUsuario['moto']>;
+  financeiro?: Partial<PerfilUsuario['financeiro']>;
+} = {}): PerfilUsuario {
+  return {
+    ...perfilPadrao,
+    moto: {
+      ...perfilPadrao.moto,
+      marca: 'Honda',
+      modelo: 'pop110i',
+      ano: 2024,
+      kmAtual: 15000,
+      ...moto,
+    },
+    financeiro: {
+      ...perfilPadrao.financeiro,
+      ...financeiro,
+    },
+  };
+}
+
+function servicoPadrao(id: string): ServicoIndependente {
+  const servico = SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === id);
+  if (!servico) {
+    throw new Error(`Serviço padrão ausente: ${id}`);
+  }
+  return servico;
+}
 
 describe('perfilReducer', () => {
   // ── Rodagem ──────────────────────────────────
@@ -38,17 +70,14 @@ describe('perfilReducer', () => {
   it('COMMIT_ONBOARDING cria um preset e marca onboardingConcluido', () => {
     const estadoComDados: EstadoApp = {
       ...estadoVazio,
-      perfil: {
-        ...perfilPadrao,
-        moto: { ...perfilPadrao.moto, marca: 'Honda', modelo: 'pop110i', ano: 2024 },
+      perfil: criarPerfilValido({
         financeiro: {
-          ...perfilPadrao.financeiro,
           seguro: { ...perfilPadrao.financeiro.seguro, valorAnual: 929.96 },
           internet: 50,
           alimentacaoDia: 20,
           situacaoMoto: 'financiada',
         },
-      },
+      }),
     };
 
     const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
@@ -61,16 +90,14 @@ describe('perfilReducer', () => {
   it('COMMIT_ONBOARDING ativa categoriasAtivas com base nas respostas', () => {
     const estadoComDados: EstadoApp = {
       ...estadoVazio,
-      perfil: {
-        ...perfilPadrao,
+      perfil: criarPerfilValido({
         financeiro: {
-          ...perfilPadrao.financeiro,
           seguro: { ...perfilPadrao.financeiro.seguro, valorAnual: 929.96 },
           internet: 50,
           alimentacaoDia: 20,
           situacaoMoto: 'financiada',
         },
-      },
+      }),
     };
 
     const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
@@ -83,12 +110,37 @@ describe('perfilReducer', () => {
   });
 
   it('COMMIT_ONBOARDING nao ativa categorias quando nao aplicavel', () => {
-    const resultado = perfilReducer(estadoVazio, { type: 'COMMIT_ONBOARDING' });
+    const resultado = perfilReducer(
+      { ...estadoVazio, perfil: criarPerfilValido() },
+      { type: 'COMMIT_ONBOARDING' },
+    );
     const { categoriasAtivas } = resultado.perfil.configuracaoDisplay;
 
     expect(categoriasAtivas.seguro).toBe(false);
     expect(categoriasAtivas.internet).toBe(false);
     expect(categoriasAtivas.financiamento).toBe(false);
+  });
+
+  it('COMMIT_ONBOARDING com perfil vazio nao cria preset invalido', () => {
+    const resultado = perfilReducer(estadoVazio, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.perfil.onboardingConcluido).toBe(false);
+    expect(resultado.presets).toHaveLength(0);
+    expect(resultado.presetAtivoId).toBeNull();
+    expect(resultado.perfil.moto.modelo).toBe('');
+  });
+
+  it('COMMIT_ONBOARDING com modelo ausente do catalogo nao cria preset', () => {
+    const estadoComModeloInvalido: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({ moto: { modelo: 'modelo-inexistente' } }),
+    };
+
+    const resultado = perfilReducer(estadoComModeloInvalido, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.perfil.onboardingConcluido).toBe(false);
+    expect(resultado.presets).toHaveLength(0);
+    expect(resultado.presetAtivoId).toBeNull();
   });
 
   // ── Display ───────────────────────────────────
@@ -147,6 +199,58 @@ describe('perfilReducer', () => {
     });
     expect(resultado.perfil.pecasOverrides[0].precoEditadoOriginal).toBeNull();
     expect(resultado.perfil.pecasOverrides[0].intervaloKmEditado).toBe(800);
+  });
+
+  // ── Mão de obra ──────────────────────────────
+
+  it('SET_SERVICO_INDEPENDENTE aceita reset da bateria temporal com intervalKm 0', () => {
+    const bateriaPadrao = servicoPadrao('troca-bateria');
+    const estadoComBateriaEditada: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+          servico.id === 'troca-bateria'
+            ? { ...servico, intervalKm: 5000, precoIndependente: 99 }
+            : servico,
+        ),
+      },
+    };
+
+    const resultado = perfilReducer(estadoComBateriaEditada, {
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: { ...bateriaPadrao },
+    });
+    const bateria = resultado.perfil.servicosIndependentes.find((s) => s.id === 'troca-bateria');
+
+    expect(bateria?.intervalKm).toBe(0);
+    expect(bateria?.precoIndependente).toBe(bateriaPadrao.precoIndependente);
+  });
+
+  it('SET_SERVICO_INDEPENDENTE permite editar preço da bateria mantendo intervalKm 0', () => {
+    const bateriaPadrao = servicoPadrao('troca-bateria');
+
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: { ...bateriaPadrao, precoIndependente: 75 },
+    });
+    const bateria = resultado.perfil.servicosIndependentes.find((s) => s.id === 'troca-bateria');
+
+    expect(bateria?.intervalKm).toBe(0);
+    expect(bateria?.precoIndependente).toBe(75);
+  });
+
+  it('SET_SERVICO_INDEPENDENTE continua rejeitando intervalKm 0 em serviço normal', () => {
+    const oleoPadrao = servicoPadrao('troca-oleo');
+
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: { ...oleoPadrao, intervalKm: 0, precoIndependente: 999 },
+    });
+    const oleo = resultado.perfil.servicosIndependentes.find((s) => s.id === 'troca-oleo');
+
+    expect(oleo?.intervalKm).toBe(oleoPadrao.intervalKm);
+    expect(oleo?.precoIndependente).toBe(oleoPadrao.precoIndependente);
   });
 
   // ── Preset management ─────────────────────────

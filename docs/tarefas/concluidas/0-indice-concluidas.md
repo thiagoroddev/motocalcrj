@@ -101,3 +101,8 @@
 | TASK-CHORE-012 | CI mínima (GitHub Action): `npm ci` → tsc → lint → test → build em Node 22, gateando push/PR; renumerada de CHORE-010 (ID já usado) | [2026-05-30--18h42--TASK-CHORE-012.md](./2026-05-30--18h42--TASK-CHORE-012.md) |
 | TASK-REF-28 | Split de `PerfilContext.tsx` (1318→688 linhas): extrai defaults p/ `context/perfilDefaults.ts` (folha) e migração p/ `services/migracoes.ts`, sem import circular; API estável via re-export; refatoração pura, 200 verdes | [2026-05-30--19h42--TASK-REF-28.md](./2026-05-30--19h42--TASK-REF-28.md) |
 | TASK-CHORE-013 | Infra de teste de render (jsdom + testing-library), ambiente jsdom por-arquivo; fix do gotcha `React.act`/NODE_ENV=production via guarda VITEST no vite.config; piloto no ErrorBoundary; 200→202 verdes | [2026-05-30--21h27--TASK-CHORE-013.md](./2026-05-30--21h27--TASK-CHORE-013.md) |
+| TASK-BG-017 | Seguro: periodicidade mensal não remultiplica valor e resumo/edição coerentes | [2026-05-31--12h51--TASK-BG-017.md](./2026-05-31--12h51--TASK-BG-017.md) |
+| TASK-BG-018 | Estimativa: CPK sem alimentação respeita filtro de alimentação | [2026-05-31--13h29--TASK-BG-018.md](./2026-05-31--13h29--TASK-BG-018.md) |
+| TASK-BG-019 | Onboarding: commit inválido bloqueado no reducer e confirmação redireciona | [2026-05-31--13h56--TASK-BG-019.md](./2026-05-31--13h56--TASK-BG-019.md) |
+| TASK-BG-020 | Mão de Obra: reset e edição de preço da bateria temporal com intervalKm 0 | [2026-05-31--14h31--TASK-BG-020.md](./2026-05-31--14h31--TASK-BG-020.md) |
+| TASK-BG-021 | criarEstadoInicial recupera presets válidos quando presetAtivo está ausente | [2026-05-31--14h53--TASK-BG-021.md](./2026-05-31--14h53--TASK-BG-021.md) |

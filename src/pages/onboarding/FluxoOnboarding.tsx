@@ -8,6 +8,7 @@ import {
   type ConfigPasso,
 } from './onboardingUtils';
 import { usePerfil } from '../../hooks/usePerfil';
+import { perfilProntoParaCommit } from '../../utils/onboardingGuards';
 import { Passo1 } from './passos/Passo1';
 import { Passo2 } from './passos/Passo2';
 import { Passo3 } from './passos/Passo3';
@@ -48,6 +49,10 @@ export function FluxoOnboarding() {
 
   const passo = parsePasso(location.pathname);
   const config = CONFIG_PASSOS[passo] ?? CONFIG_PASSOS['1'];
+
+  if (passo === 'confirmacao' && !perfilProntoParaCommit(perfil)) {
+    return <Navigate to="/onboarding/1" replace />;
+  }
 
   function irParaProximo() {
     const proximo = getProximoPasso(passo, perfil.financeiro.situacaoMoto);

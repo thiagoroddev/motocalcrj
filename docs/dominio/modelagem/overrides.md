@@ -66,7 +66,7 @@ pecasOverrides: [
 interface ServicoIndependente {
   id: string;             // ex: 'troca-oleo', 'revisao-geral', 'retifica-cabecote'
   nome: string;
-  intervalKm: number;     // sempre > 0 (INV-MANUT-1)
+  intervalKm: number;     // > 0 para km-driven; 0 só para temporal conhecido (INV-MANUT-1)
   precoMaoDeObra: number; // em excepcionais, é o preço TOTAL (peças + MO)
   ativo: boolean;         // false = excluído do cálculo periódico
   ehExcepcional: boolean; // true = aparece em Imprevistos, desligado por padrão (BG-005)
@@ -182,7 +182,7 @@ return 1;  // evita divisão por zero
 | ----------------------------------- | ---------------------------------------------------------------------------- |
 | `SET_PECA_OVERRIDE`                 | Define um override de peça (`precoOriginal`, `precoParalela` ou `intervaloKm`) |
 | `RESET_PECA_OVERRIDE`               | Sem `campo`: remove o override inteiro do array. Com `campo`: zera só aquele atributo (= null) |
-| `SET_SERVICO_INDEPENDENTE`          | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` (INV-MANUT-1) |
+| `SET_SERVICO_INDEPENDENTE`          | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` para serviços km-driven; permite `0` só para temporal conhecido (INV-MANUT-1) |
 | `RESET_SERVICOS_INDEPENDENTES`      | Volta a lista inteira para `SERVICOS_INDEPENDENTES_PADRAO`                   |
 | `SET_REVISAO_AUTORIZADA_OVERRIDE`   | Upsert por `index` em `revisaoAutorizadaOverrides[]`. `precoTotal` calculado automaticamente |
 | `RESET_REVISAO_AUTORIZADA_OVERRIDE` | Apaga override de uma linha — volta ao Preset JSON                           |

@@ -70,6 +70,8 @@ export interface PecaOverride {
 export interface ServicoIndependente {
   id: string;
   nome: string;
+  // Serviços km-driven exigem valor > 0. Temporais conhecidos (ex.: bateria)
+  // usam 0 como marcador de "sem driver por km".
   intervalKm: number;
   // Preço cobrado por oficina independente. Para serviços NORMAIS é só a M.O.
   // (a peça é precificada à parte nos Insumos). Para serviços EXCEPCIONAIS

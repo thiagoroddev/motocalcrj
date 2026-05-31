@@ -16,10 +16,10 @@ function criarStorageFalso(presets: unknown[], ativoId: string | null): IPerfilS
   };
 }
 
-function presetValido(presetId: string): PresetEntry {
+function presetValido(presetId: string, nome = 'Teste'): PresetEntry {
   return {
     presetId,
-    nome: 'Teste',
+    nome,
     criadoEm: '2026-05-30T00:00:00.000Z',
     atualizadoEm: '2026-05-30T00:00:00.000Z',
     perfil: perfilPadrao,
@@ -27,12 +27,44 @@ function presetValido(presetId: string): PresetEntry {
 }
 
 describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)', () => {
-  it('sem presets ou sem ativo → estado padrão (sem marcar corrompido)', () => {
+  it('sem presets → estado padrão (sem marcar corrompido)', () => {
     const storage = criarStorageFalso([], null);
     const estado = criarEstadoInicial(storage);
 
     expect(estado.presetAtivoId).toBeNull();
     expect(estado.presets).toEqual([]);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('presets válidos sem ativo → carrega o primeiro preset', () => {
+    const storage = criarStorageFalso([presetValido('p1')], null);
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(estado.presets).toHaveLength(1);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('múltiplos presets válidos sem ativo → seleciona presets[0]', () => {
+    const storage = criarStorageFalso(
+      [presetValido('p1', 'Primeiro'), presetValido('p2', 'Segundo')],
+      null,
+    );
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(estado.presets).toHaveLength(2);
+    expect(estado.presets[0].nome).toBe('Primeiro');
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('ativo ausente da lista → cai para presets[0]', () => {
+    const storage = criarStorageFalso([presetValido('p1')], 'p-inexistente');
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(estado.presets).toHaveLength(1);
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
@@ -54,6 +86,23 @@ describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)',
       perfil: perfilSemMoto as unknown as PerfilUsuario,
     };
     const storage = criarStorageFalso([presetCorrompido], 'p1');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
+  });
+
+  it('preset corrompido sem ativo → estado padrão e preserva o blob', () => {
+    const perfilSemMoto: Record<string, unknown> = { ...perfilPadrao };
+    delete perfilSemMoto.moto;
+    const presetCorrompido = {
+      ...presetValido('p1'),
+      perfil: perfilSemMoto as unknown as PerfilUsuario,
+    };
+    const storage = criarStorageFalso([presetCorrompido], null);
 
     const estado = criarEstadoInicial(storage);
 

@@ -5,6 +5,8 @@ import { PassoLayout } from '../PassoLayout';
 import { getNomeModelo } from '../../../data/catalogoModelos';
 import { Button } from '../../../components/ui/button';
 import type { SituacaoMoto } from '../../../types/perfil';
+import { sufixoValorSeguro, valorSeguroNoPeriodo } from '../../../utils/seguro';
+import { perfilProntoParaCommit } from '../../../utils/onboardingGuards';
 
 const SITUACAO_LABEL: Record<SituacaoMoto, string> = {
   quitada: 'Quitada',
@@ -16,8 +18,14 @@ export function PassoConfirmacao() {
   const { perfil, dispatch } = usePerfil();
   const navigate = useNavigate();
   const { moto, trabalho, financeiro } = perfil;
+  const podeConcluir = perfilProntoParaCommit(perfil);
 
   function concluir() {
+    if (!podeConcluir) {
+      navigate('/onboarding/1', { replace: true });
+      return;
+    }
+
     dispatch({ type: 'COMMIT_ONBOARDING' });
     navigate('/estimativa', { replace: true });
   }
@@ -31,6 +39,7 @@ export function PassoConfirmacao() {
       titulo="Tudo certo!"
       subtitulo="Revise seus dados antes de concluir"
       aoProximo={concluir}
+      podeContinuar={podeConcluir}
       textoBotao="Concluir configuração"
     >
       <div className="flex flex-col gap-2">
@@ -83,7 +92,10 @@ export function PassoConfirmacao() {
           {financeiro.seguro.valorAnual > 0 && (
             <LinhaResumo
               label="Valor"
-              valor={`R$ ${financeiro.seguro.valorAnual.toFixed(2)}/${financeiro.seguro.periodicidade === 'mensal' ? 'mês' : 'ano'}`}
+              valor={`R$ ${valorSeguroNoPeriodo(
+                financeiro.seguro.valorAnual,
+                financeiro.seguro.periodicidade,
+              ).toFixed(2)}/${sufixoValorSeguro(financeiro.seguro.periodicidade)}`}
             />
           )}
         </SessaoResumo>

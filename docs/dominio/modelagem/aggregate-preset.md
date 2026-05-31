@@ -100,6 +100,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 **Onde é protegida:**
 
 - Reducer trata operações de remoção e mantém a consistência
+- `criarEstadoInicial` recupera armazenamento parcial escolhendo `presets[0]` quando a chave ativa está ausente ou aponta para id inexistente
 - `PerfilContext` tem guard `if (!estado.presetAtivoId) return` antes de persistir
 - `useEffect` de persistência em `PerfilContext.tsx`
 

@@ -9,54 +9,176 @@ Obedeça essa ordem:
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 — se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" — vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas — absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 
----
 
-~~**TASK-RNF-10**~~ — **CONCLUÍDA** em 30/05/26 (validação zod na persistência + fallback recuperável; Strict, ADR-010; 186→198 verdes). Ver `concluidas/2026-05-30--17h13--TASK-RNF-10.md`.
+#### Geradas pela Revisão Geral — 31/05/26
 
----
+> Lote de 9 tarefas geradas por revisão geral do projeto (humano + IA). Cada item foi
+> verificado contra o código antes de registrar. Severidades reclassificadas após
+> verificação. Ordem abaixo é por prioridade combinada (Valor + risco).
 
-~~**TASK-RNF-11**~~ — **CONCLUÍDA** em 30/05/26 (ErrorBoundary na raiz + escape hatch "Recarregar/Resetar"; Standard; 198→200 verdes). Ver `concluidas/2026-05-30--18h31--TASK-RNF-11.md`.
+## TASK-RNF-012 — Validação de domínio em inputs e schema (não-negativos, denominadores > 0)
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** ADR-010, INV-MANUT-1
+- **Observações:**
+  **Sintoma:** vários campos aceitam valores fora do domínio (negativos, zero em denominador),
+  podendo gerar custo negativo ou `Infinity`. O `src/schemas/perfilSchema.ts` valida só FORMATO
+  (`z.number()` em todos os campos numéricos, ex.: linhas 26-29, 126-135) — não regra de domínio.
+  **Inconsistência atual:** alguns inputs JÁ protegem (`CardServico.tsx:50` e
+  `CardCombustivel.tsx:43,52` rejeitam `<= 0`), outros NÃO:
+  `src/components/ajustes/campos/CampoAlimentacao.tsx:36-38` e
+  `src/components/ajustes/campos/CampoSeguro.tsx:41-44` só checam `isNaN` (aceitam negativo);
+  `src/components/ajustes/SecaoUltimasManutencoes.tsx:97-105` aceita km negativo. Defesa em
+  profundidade ausente no cálculo: `calcularCpkCombustivel` (`src/utils/calculos.ts:49`) divide
+  `precoGasolina / consumoKmL` sem guarda (→ `Infinity` se autonomia 0; hoje só o input barra).
+  **Correção sugerida:** (1) padronizar guarda `>= 0` (ou `> 0` p/ denominadores) em todos os
+  `Campo*`/inputs de Ajustes, com feedback ao usuário; (2) endurecer o schema com
+  `.min(0)`/`.positive()` onde o domínio exige (mantendo `.nullable()` onde aplica); (3) guardas
+  defensivas em `calculos.ts` para denominadores (combustível, intervalos). **Aceite:** impossível
+  persistir negativo/zero proibido pela UI; schema rejeita valores fora do domínio; nenhum caminho
+  de cálculo produz `Infinity`/negativo; testes cobrindo entradas inválidas.
 
----
+## TASK-REF-29 — Resolver DT-15: sincronizar IDs peça↔serviço para resolverIntervaloPeca casar
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** DT-15, INV-VIDA-UTIL-1, ADR-004
+- **Observações:**
+  **Sintoma:** editar o intervalo (km) de um serviço na aba Mão de Obra NÃO altera o intervalo
+  usado no CPK da peça correspondente; a aba Insumos exibe esse intervalo como somente-leitura,
+  sugerindo uma sincronização que não acontece. **Status:** dívida técnica JÁ DOCUMENTADA como
+  **DT-15** em `docs/dominio/invariantes.md:184` (INV-VIDA-UTIL-1) — esta tarefa promove a DT a fix.
+  **Causa-raiz:** `resolverIntervaloPeca` em `src/utils/calculos.ts:67-71` procura serviço por
+  `servicosIndependentes.find(s => s.id === pecaId && s.ativo)`, mas os IDs de peça do preset
+  (`oleo_motor`, `pneu_dianteiro`, …) divergem dos IDs de serviço (`troca-oleo`,
+  `troca-pneu-dianteiro`, …). Existe o mapa explícito `MAPA_PECA_PARA_SERVICO`
+  (`src/utils/calculos.ts:140-152`) que liga os dois, mas `resolverIntervaloPeca` não o usa — então
+  o lookup nunca casa e a Vida Útil sempre cai no fallback do preset. **Correção sugerida:** usar
+  `MAPA_PECA_PARA_SERVICO[pecaId]` para encontrar o serviço canônico (respeitando INV-VIDA-UTIL-1 e
+  ADR-004) OU normalizar os IDs. Atenção a não quebrar o anti-dupla-contagem do modo autorizado
+  (ADR-006/007) que já usa esse mapa. Atualizar `docs/dominio/invariantes.md` removendo a ressalva
+  DT-15 ao concluir. **Aceite:** editar intervalo de um serviço reflete no CPK da peça e na Vida Útil
+  exibida em Insumos; testes em `calculos.test.ts` cobrindo um id mapeado (ex.: óleo).
 
-~~**TASK-CHORE-012**~~ — **CONCLUÍDA** em 30/05/26 (CI mínima: GitHub Action `npm ci`→tsc→lint→test→build em Node 22; Standard). Ver `concluidas/2026-05-30--18h42--TASK-CHORE-012.md`.
+## TASK-DOC-013 — Corrigir README (notas coladas, contagem de testes, claim "funciona offline")
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** RNF-8.2 (PWA completo — já no backlog)
+- **Observações:**
+  **Sintoma:** o `README.md` contém informação errada e rascunho pessoal vazado.
+  **Detalhes:** (1) das linhas ~50 em diante há notas coladas por acidente (snippets de
+  `localStorage.removeItem`, "Ou num liner só", tabela de "amortizado" com markdown quebrado) que
+  não deveriam estar no README público (mover para `docs/` se útil, senão remover); (2)
+  `README.md:22` diz "Vitest (92 testes)" — hoje são 202; (3) `README.md:11` afirma "Funciona
+  offline após o primeiro acesso (PWA)" mas NÃO há PWA implementado: não existe `vite-plugin-pwa`
+  em `package.json`, não há service worker/manifest, e `index.html:8-10` carrega a fonte Inter do
+  CDN do Google (peso contra offline). A implementação real do PWA já está rastreada em
+  **TASK-RNF-8.2** — esta tarefa é só alinhar o README à realidade. **Correção sugerida:** remover
+  as notas vazadas, corrigir contagem de testes (ou remover número fixo), e ou remover a afirmação
+  de offline ou marcá-la como "planejado (TASK-RNF-8.2)". **Aceite:** README sem rascunhos, sem
+  afirmações falsas; números coerentes com o estado atual.
 
----
+## TASK-TEST-001 — Testes da cadeia de migração (migrarPerfil v5→v23) e do parsing do fipeService
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** ADR-010
+- **Observações:**
+  **Motivação (proteção, não é bug vivo):** os caminhos que podem corromper dados do usuário
+  silenciosamente não têm teste direto. `src/services/migracoes.ts` (395 linhas, 18 passos v5→v23)
+  só é exercitado de raspão via `criarEstadoInicial.test.ts`; uma regressão num passo antigo
+  estraga perfis reais sem ninguém perceber. `src/services/fipeService.ts` (parsing de
+  `"R$ 9.999,00"` → número e fallback de rota) também não tem teste. **Escopo sugerido:** (1)
+  `migracoes.test.ts` table-driven — para cada versão N, um blob de entrada mínimo no shape vN e a
+  asserção do shape esperado vN+1 (campos adicionados/removidos/renomeados conforme cada `if`),
+  além de um teste end-to-end v5→v23 e idempotência (rodar 2× = mesmo resultado); validar o
+  resultado final contra `perfilSchema`. (2) `fipeService.test.ts` — mockar `fetch` e cobrir:
+  parsing de valor BRL, rota rápida por código, fallback de 4 chamadas, timeout/erro → retorna null.
+  **Aceite:** cobertura dos 18 passos de migração e dos ramos do fipeService; `npm run test` verde.
+  **Nota:** itens de qualidade adicionais da revisão (code-splitting do bundle de 650 KB, fontes
+  text-[9px], tema claro inacabado) já são cobertos por TASK-RNF-9.1; `resolverKmDia` identidade e
+  memoização são triviais e ficam fora de tarefa formal.
 
-~~**TASK-REF-28**~~ — **CONCLUÍDA** em 30/05/26 (split de PerfilContext em 3 módulos: defaults + migração extraídos, sem ciclo; 1318→688 linhas; refatoração pura, 200 verdes). Ver `concluidas/2026-05-30--19h42--TASK-REF-28.md`.
+## TASK-CHORE-014 — Guarda catálogo↔preset: todo id do CATALOGO precisa ter preset JSON
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** —
+- **Observações:**
+  **Risco (latente hoje):** `src/hooks/useCustos.ts:22` resolve o preset por
+  `PRESETS[perfil.moto.modelo]`; se `PRESETS[modelo]` for undefined, `useCustos` retorna null e a
+  Estimativa inteira cai em "Modelo não encontrado" (`PaginaEstimativa.tsx:39`,
+  `PaginaDetalhamento.tsx:164`). Hoje só existe `pop110i`, então não dispara — mas no dia que um
+  modelo for adicionado ao `CATALOGO` (`src/data/catalogoModelos.ts:15`) SEM criar o
+  `src/presets/<id>.json` correspondente, o app quebra para quem escolher esse modelo.
+  **Causa-raiz:** acoplamento por convenção de string — o `id` do catálogo precisa bater com o
+  nome do arquivo em `src/presets/*.json`, montado via `import.meta.glob`
+  (`src/hooks/useCustos.ts:7-14`), sem garantia em compile-time nem runtime.
+  **Correção sugerida:** teste automatizado (ex.: `src/data/catalogoPresets.test.ts`) que importa
+  `CATALOGO` + o glob de presets e assere que **todo** id do catálogo tem preset; opcionalmente um
+  fallback amigável na UI (mensagem orientando refazer onboarding) em vez de tela morta.
+  **Aceite:** o teste passa hoje (pop110i) e falha se um modelo do catálogo ficar sem preset.
 
----
+## TASK-TEST-002 — Smoke tests de UI (onboarding→estimativa, Detalhamento) e perfilStorage
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 31/05/26 12:20
+- **Dependências:** —
+- **REQ/ADR/DT:** ADR-010, RNF-10
+- **Observações:**
+  **Motivação (proteção):** a camada visual está 100% sem teste automatizado — os 202 testes
+  cobrem lógica/contexto/schema/ErrorBoundary, nenhum componente/página. O cluster recente de bugs
+  era justamente de UI (TASK-BG-017 seguro, BG-019 onboarding, BG-020 bateria), exatamente o que
+  testes de componente/integração pegariam. A `TASK-RNF-9.2` é QA **manual**, não cobre isto.
+  Complementa a `TASK-TEST-001` (que cobre lógica de migração/FIPE).
+  **Escopo sugerido:** (1) integração com `@testing-library/react` (já é devDep): fluxo de
+  onboarding feliz (preencher passos → `COMMIT_ONBOARDING` → `/estimativa` renderiza SEM "Modelo
+  não encontrado"); render de `PaginaEstimativa` e `PaginaDetalhamento` com preset de fixture
+  (toggle de categoria reflete no total); regressões de `TASK-BG-018` (alimentação off não some o
+  CPK da moto) e `TASK-BG-017` (re-editar seguro não dobra). (2) `src/services/perfilStorage.test.ts`:
+  salvar/carregar presets, `setPresetAtivo(null)` remove a chave, `preservarCorrompido` grava
+  `.corrupted` e NUNCA lança.
+  **Nota de ambiente:** `vite.config.ts` usa `test.environment: 'node'`; testes de componente
+  precisam de `jsdom` (já é devDep) — declarar `// @vitest-environment jsdom` nesses arquivos.
+  Atenção à guarda `VITEST`/`NODE_ENV` (TASK-CHORE-013) que faz `React.act` funcionar nos render
+  tests — seguir o padrão do `ErrorBoundary.render.test.tsx` já existente.
+  **Aceite:** fluxo onboarding→estimativa coberto, `perfilStorage` coberto, `npm run test` verde.
 
-~~**TASK-REF-27**~~ — **CONCLUÍDA** em 30/05/26 (assinatura posicional → objeto de opções em `calcularCustoFinanciamentoAnual`; refatoração pura). Ver `concluidas/2026-05-30--16h19--TASK-REF-27.md`.
-
----
-
-~~**TASK-RF-6.18**~~ — **CONCLUÍDA** em 30/05/26 (decrementar parcelas restantes de financiamento; modelagem Snapshot, cálculo Afunilar, Strict + ADR-009). Ver `concluidas/2026-05-30--10h19--TASK-RF-6.18.md`.
-
----
-
-### Tarefas Normais
-
-~~**TASK-CHORE-013**~~ — **CONCLUÍDA** em 30/05/26 (infra de teste de render: jsdom + testing-library, ambiente por-arquivo; fix `React.act`/NODE_ENV via guarda VITEST; piloto no ErrorBoundary; 200→202 verdes). Ver `concluidas/2026-05-30--21h27--TASK-CHORE-013.md`.
-
----
 
 ## Decisões de UI/UX Pendentes
 
-| ID          | Título                                           | Valor      | Urgência   | Esforço | Dependências | Status |
-| ----------- | ------------------------------------------------ | ---------- | ---------- | ------- | ------------ | ------ |
-| ~~TASK-RF-6.4~~ | ~~Conteúdo dos pop-ups de ajuda (ícone "?")~~ **ABSORVIDA pela TASK-RF-6.16** (conteúdo escrito e aprovado em 29/05/26) | Desejável  | Quando Der | P       | -            | [x]    |
-| TASK-RF-6.5 | Seletor rápido de presets (ícone moto no header) | Desejável  | Quando Der | M       | -            | [ ]    |
-| TASK-RF-6.6 | Decisão: hamburguer vs nav sempre visível        | Importante | Normal     | P       | -            | [ ]    |
-
----
 
 ## Export/Import e Alertas (Fase 11)
 
 | ID          | Título                                            | Valor      | Urgência | Esforço | Dependências | Status |
 | ----------- | ------------------------------------------------- | ---------- | -------- | ------- | ------------ | ------ |
 | TASK-RF-7.1 | Export/Import de presets (.json)                  | Importante | Normal   | G       | TASK-RF-6.3  | [ ]    |
-| ~~TASK-RF-7.2~~ | ~~Histórico e alertas de manutenção (próxima troca)~~ **ADIADO** com RF-5.x (ADR-003) | Importante | Normal   | G       | RF-5.x       | [ ]    |
+
 
 ---
 

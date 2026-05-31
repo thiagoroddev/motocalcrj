@@ -72,7 +72,7 @@ Item de manutenção periódica com preço de mão de obra e intervalo de km pr�
 interface ServicoIndependente {
   id: string;           // ex: 'troca-oleo', 'revisao-geral'
   nome: string;
-  intervalKm: number;   // sempre > 0 (INV-MANUT-1)
+  intervalKm: number;   // > 0 para km-driven; 0 só para temporal conhecido (INV-MANUT-1)
   precoMaoDeObra: number; // em excepcionais, representa o preço total do serviço (peças + MO)
   ativo: boolean;       // false = excluído do cálculo periódico
   ehExcepcional: boolean; // true = configurado em Excepcional e sugerido em Imprevistos

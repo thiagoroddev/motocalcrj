@@ -988,7 +988,9 @@ export function calcularResultado(
   );
 
   const total = calcularTotalFiltrado(custos, filtrosAtivos);
-  const totalMoto = calcularCustoMotoAnual(total, custos.alimentacao.total);
+  // Só desconta alimentação se ela entrou no total (filtro ativo) — senão subtrairia 2x (BG-018).
+  const alimentacaoNoTotal = filtrosAtivos.alimentacao ? custos.alimentacao.total : 0;
+  const totalMoto = calcularCustoMotoAnual(total, alimentacaoNoTotal);
 
   return {
     custos,

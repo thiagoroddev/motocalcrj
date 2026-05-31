@@ -73,11 +73,11 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 
 **Onde e protegida:** `useEffect` do `PerfilProvider` retorna se `presetAtivoId` for nulo.
 
-### INV-AGG-3: Estado pre-onboarding
+### INV-AGG-3: Estado pre-onboarding e recuperação parcial
 
-**Regra:** se nao ha presets ou nao ha ativo, o app deve iniciar com `perfilPadrao` e exigir onboarding.
+**Regra:** se nao ha presets, o app inicia com `perfilPadrao` e exige onboarding. Se ha presets validos mas a chave de ativo esta ausente, o app recupera selecionando `presets[0]`.
 
-**Onde e protegida:** `criarEstadoInicial()` retorna `estadoPadrao` quando `presets.length === 0` ou `ativoId` ausente.
+**Onde e protegida:** `criarEstadoInicial()` retorna `estadoPadrao` quando `presets.length === 0`; quando ha presets validos, migra/valida e usa `presets.find(presetAtivoId) ?? presets[0]`.
 
 ---
 

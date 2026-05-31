@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
-import type { PerfilUsuario, PresetEntry, PerfilAction, PecaOverride } from '../types/perfil';
+import type {
+  PerfilUsuario,
+  PresetEntry,
+  PerfilAction,
+  PecaOverride,
+  ServicoIndependente,
+} from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { presetEntrySchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
 import { migrarPerfil } from '../services/migracoes';
+import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
   perfilPadrao,
   SERVICOS_INDEPENDENTES_PADRAO,
@@ -46,6 +53,20 @@ const campoOverrideMap = {
   intervaloKm: 'intervaloKmEditado',
 } as const;
 
+function servicoIndependenteComIntervaloValido(servico: ServicoIndependente): boolean {
+  if (servico.intervalKm > 0) {
+    return true;
+  }
+
+  if (servico.intervalKm !== 0) {
+    return false;
+  }
+
+  return SERVICOS_INDEPENDENTES_PADRAO.some(
+    (padrao) => padrao.id === servico.id && padrao.intervalKm === 0,
+  );
+}
+
 type CampoOverrideChave = keyof typeof campoOverrideMap;
 
 function alternarFiltroDefaultAtivo(
@@ -85,6 +106,10 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       };
 
     case 'COMMIT_ONBOARDING': {
+      if (!perfilProntoParaCommit(state.perfil)) {
+        return state;
+      }
+
       const modeloDados = CATALOGO[state.perfil.moto.modelo];
       const usaComBau = state.perfil.moto.perfilUso === 'entrega';
       const autonomiaGas = modeloDados
@@ -297,7 +322,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
     // ── Mão de obra ─────────────────────────────
     case 'SET_SERVICO_INDEPENDENTE': {
-      if (action.payload.intervalKm <= 0) return state; // INV-MANUT-1
+      if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV-MANUT-1
       const novos = state.perfil.servicosIndependentes.some((s) => s.id === action.payload.id)
         ? state.perfil.servicosIndependentes.map((s) =>
             s.id === action.payload.id ? action.payload : s,
@@ -643,7 +668,7 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
     const presetsRaw = storage.carregarPresets();
     const ativoId = storage.getPresetAtivo();
 
-    if (presetsRaw.length === 0 || !ativoId) {
+    if (presetsRaw.length === 0) {
       return estadoPadrao;
     }
 
