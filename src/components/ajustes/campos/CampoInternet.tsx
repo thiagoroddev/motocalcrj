@@ -35,7 +35,7 @@ export function CampoInternet({ financeiro, dispatch }: Props) {
           min={0}
           onChange={(e) => {
             const v = parseFloat(e.target.value);
-            if (!isNaN(v)) dispatch({ type: 'SET_INTERNET', valor: v });
+            if (!isNaN(v) && v >= 0) dispatch({ type: 'SET_INTERNET', valor: v });
           }}
         />
       </div>

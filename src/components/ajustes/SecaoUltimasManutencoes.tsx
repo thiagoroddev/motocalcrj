@@ -97,11 +97,13 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
                   onChange={(e) => {
                     const raw = e.target.value;
                     const v = parseInt(raw, 10);
-                    dispatch({
-                      type: 'SET_KM_ULTIMA_TROCA',
-                      componente: key,
-                      km: raw === '' || isNaN(v) ? 0 : v,
-                    });
+                    if (raw === '') {
+                      dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: 0 });
+                      return;
+                    }
+                    if (!isNaN(v) && v >= 0) {
+                      dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: v });
+                    }
                   }}
                 />
                 <button
@@ -138,10 +140,13 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
               onChange={(e) => {
                 const raw = e.target.value;
                 const v = parseInt(raw, 10);
-                dispatch({
-                  type: 'SET_MOTOR_REFEITO',
-                  km: raw === '' ? null : isNaN(v) ? null : v,
-                });
+                if (raw === '') {
+                  dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
+                  return;
+                }
+                if (!isNaN(v) && v >= 0) {
+                  dispatch({ type: 'SET_MOTOR_REFEITO', km: v });
+                }
               }}
             />
           </div>

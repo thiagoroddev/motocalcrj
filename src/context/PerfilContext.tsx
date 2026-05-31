@@ -8,7 +8,7 @@ import type {
 } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
-import { presetEntrySchema } from '../schemas/perfilSchema';
+import { perfilSchema, presetEntrySchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
 import { migrarPerfil } from '../services/migracoes';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
@@ -85,25 +85,29 @@ function alternarFiltroDefaultAtivo(
 
 export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp {
   // Atualiza perfil e sincroniza com o preset ativo
-  const comPerfil = (novoPerfil: PerfilUsuario): EstadoApp => ({
-    ...state,
-    perfil: novoPerfil,
-    presets: state.presetAtivoId
-      ? state.presets.map((p) =>
-          p.presetId === state.presetAtivoId
-            ? { ...p, perfil: novoPerfil, atualizadoEm: new Date().toISOString() }
-            : p,
-        )
-      : state.presets,
-  });
+  const comPerfil = (novoPerfil: PerfilUsuario): EstadoApp => {
+    const validacao = perfilSchema.safeParse(novoPerfil);
+    if (!validacao.success) {
+      return state;
+    }
+
+    return {
+      ...state,
+      perfil: novoPerfil,
+      presets: state.presetAtivoId
+        ? state.presets.map((p) =>
+            p.presetId === state.presetAtivoId
+              ? { ...p, perfil: novoPerfil, atualizadoEm: new Date().toISOString() }
+              : p,
+          )
+        : state.presets,
+    };
+  };
 
   switch (action.type) {
     // ── Onboarding ─────────────────────────────
     case 'SET_ONBOARDING_CAMPO':
-      return {
-        ...state,
-        perfil: { ...state.perfil, [action.campo]: action.valor } as PerfilUsuario,
-      };
+      return comPerfil({ ...state.perfil, [action.campo]: action.valor } as PerfilUsuario);
 
     case 'COMMIT_ONBOARDING': {
       if (!perfilProntoParaCommit(state.perfil)) {
@@ -601,27 +605,34 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       });
 
     // ── Presets ──────────────────────────────────
-    case 'CARREGAR_PERFIL':
+    case 'CARREGAR_PERFIL': {
+      const validacao = perfilSchema.safeParse(action.perfil);
+      if (!validacao.success) return state;
       return { ...state, perfil: action.perfil, presetAtivoId: action.presetId };
+    }
 
     case 'RESETAR_PERFIL':
       return { perfil: perfilPadrao, presets: [], presetAtivoId: null };
 
     case 'IMPORTAR_PERFIL': {
+      const validacao = perfilSchema.safeParse(action.perfil);
+      if (!validacao.success) return state;
+
       const agora = new Date().toISOString();
       const id = crypto.randomUUID();
+      const perfilImportado = action.perfil;
       const nome =
-        action.perfil.apelido ??
-        `${action.perfil.moto.marca} ${action.perfil.moto.modelo} importado`;
+        perfilImportado.apelido ??
+        `${perfilImportado.moto.marca} ${perfilImportado.moto.modelo} importado`;
       const importado: PresetEntry = {
         presetId: id,
         nome,
         criadoEm: agora,
         atualizadoEm: agora,
-        perfil: action.perfil,
+        perfil: perfilImportado,
       };
       return {
-        perfil: action.perfil,
+        perfil: perfilImportado,
         presets: [...state.presets, importado],
         presetAtivoId: id,
       };

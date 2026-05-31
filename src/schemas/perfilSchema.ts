@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
 
 // ──────────────────────────────────────────────
 // Schema de validação de runtime do PerfilUsuario (ADR-010).
@@ -22,14 +23,25 @@ const periodicidadeSeguro = z.enum(['anual', 'mensal']);
 const periodicidadeAluguel = z.enum(['mensal', 'semanal']);
 const responsabilidadeCusto = z.enum(['eu', 'locador', 'dividido']);
 
+const numeroFinito = z.number().finite();
+const dinheiroNaoNegativo = numeroFinito.min(0);
+const numeroPositivo = numeroFinito.positive();
+const inteiroNaoNegativo = numeroFinito.int().min(0);
+const inteiroPositivo = numeroFinito.int().positive();
+const idsServicosTemporais = new Set(
+  SERVICOS_INDEPENDENTES_PADRAO.filter((servico) => servico.intervalKm === 0).map(
+    (servico) => servico.id,
+  ),
+);
+
 // Interfaces auxiliares
 const configuracaoCombustivel = z.object({
-  preco: z.number(),
-  autonomia: z.number(),
+  preco: numeroPositivo,
+  autonomia: numeroPositivo,
 });
 
 const seguroConfig = z.object({
-  valorAnual: z.number(),
+  valorAnual: dinheiroNaoNegativo,
   empresa: z.string().nullable(),
   periodicidade: periodicidadeSeguro,
 });
@@ -37,7 +49,7 @@ const seguroConfig = z.object({
 const gastoCustom = z.object({
   id: z.string(),
   nome: z.string(),
-  valorAnual: z.number(),
+  valorAnual: dinheiroNaoNegativo,
   ativo: z.boolean(),
   ehPreset: z.boolean(),
 });
@@ -67,57 +79,69 @@ const filtrosManutencaoDisplay = z.object({
 
 const pecaOverride = z.object({
   id: z.string(),
-  precoEditadoOriginal: z.number().nullable(),
-  precoEditadaParalela: z.number().nullable(),
-  intervaloKmEditado: z.number().nullable(),
+  precoEditadoOriginal: dinheiroNaoNegativo.nullable(),
+  precoEditadaParalela: dinheiroNaoNegativo.nullable(),
+  intervaloKmEditado: inteiroPositivo.nullable(),
 });
 
-const servicoIndependente = z.object({
-  id: z.string(),
-  nome: z.string(),
-  intervalKm: z.number(),
-  precoIndependente: z.number(),
-  precoTotalAutorizada: z.number(),
-  incluidoNaRevisaoAutorizada: z.boolean(),
-  ativo: z.boolean(),
-  ehExcepcional: z.boolean(),
-});
+const servicoIndependente = z
+  .object({
+    id: z.string(),
+    nome: z.string(),
+    intervalKm: inteiroNaoNegativo,
+    precoIndependente: dinheiroNaoNegativo,
+    precoTotalAutorizada: dinheiroNaoNegativo,
+    incluidoNaRevisaoAutorizada: z.boolean(),
+    ativo: z.boolean(),
+    ehExcepcional: z.boolean(),
+  })
+  .superRefine((servico, ctx) => {
+    if (servico.intervalKm > 0 || idsServicosTemporais.has(servico.id)) {
+      return;
+    }
+
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['intervalKm'],
+      message: 'Serviço km-driven precisa ter intervalKm > 0',
+    });
+  });
 
 const revisaoAutorizadaOverride = z.object({
-  index: z.number(),
-  precoPecas: z.number(),
-  precoMaoDeObra: z.number(),
-  precoTotal: z.number(),
+  index: inteiroNaoNegativo,
+  precoPecas: dinheiroNaoNegativo,
+  precoMaoDeObra: dinheiroNaoNegativo,
+  precoTotal: dinheiroNaoNegativo,
 });
 
 const fipeCache = z.object({
-  valor: z.number(),
+  valor: dinheiroNaoNegativo,
   dataConsulta: z.string(),
   codigoFipe: z.string(),
-  anoModelo: z.number(),
+  anoModelo: inteiroPositivo,
   marca: z.string(),
   modelo: z.string(),
 });
 
 const kmUltimaTrocas = z.object({
-  oleo: z.number(),
-  pneuDianteiro: z.number(),
-  pneuTraseiro: z.number(),
-  kitRelacao: z.number(),
-  velaIgnicao: z.number(),
-  filtroAr: z.number(),
-  sapataFreioDianteiro: z.number(),
-  sapataFreioTraseiro: z.number(),
-  bateria: z.number(),
-  kitEmbreagem: z.number(),
-  kitCilindro: z.number(),
-  retificaCabecote: z.number(),
-  retificaCompleta: z.number(),
+  oleo: inteiroNaoNegativo,
+  pneuDianteiro: inteiroNaoNegativo,
+  pneuTraseiro: inteiroNaoNegativo,
+  kitRelacao: inteiroNaoNegativo,
+  velaIgnicao: inteiroNaoNegativo,
+  filtroAr: inteiroNaoNegativo,
+  sapataFreioDianteiro: inteiroNaoNegativo,
+  sapataFreioTraseiro: inteiroNaoNegativo,
+  bateria: inteiroNaoNegativo,
+  kitEmbreagem: inteiroNaoNegativo,
+  kitCilindro: inteiroNaoNegativo,
+  retificaCabecote: inteiroNaoNegativo,
+  retificaCompleta: inteiroNaoNegativo,
 });
 
 // Perfil principal
 export const perfilSchema = z.object({
-  schemaVersion: z.number(),
+  schemaVersion: inteiroPositivo,
   userId: z.string().nullable(),
   onboardingConcluido: z.boolean(),
   apelido: z.string().nullable(),
@@ -126,12 +150,12 @@ export const perfilSchema = z.object({
   moto: z.object({
     marca: z.string(),
     modelo: z.string(),
-    ano: z.number(),
+    ano: inteiroPositivo,
     perfilUso,
-    kmAtual: z.number(),
-    kmUltimaRevisao: z.number().nullable(),
+    kmAtual: inteiroNaoNegativo,
+    kmUltimaRevisao: inteiroNaoNegativo.nullable(),
     kmUltimaTrocas,
-    kmMotorRefeito: z.number().nullable(),
+    kmMotorRefeito: inteiroNaoNegativo.nullable(),
   }),
 
   perfilManutencao: z.object({
@@ -140,9 +164,9 @@ export const perfilSchema = z.object({
   }),
 
   trabalho: z.object({
-    kmPorDia: z.number(),
-    diasPorSemana: z.number(),
-    horasPorDia: z.number(),
+    kmPorDia: inteiroPositivo,
+    diasPorSemana: inteiroPositivo.min(1).max(7),
+    horasPorDia: numeroPositivo.max(24),
   }),
 
   financeiro: z.object({
@@ -152,15 +176,15 @@ export const perfilSchema = z.object({
       aditivada: configuracaoCombustivel,
       etanol: configuracaoCombustivel,
     }),
-    internet: z.number(),
+    internet: dinheiroNaoNegativo,
     seguro: seguroConfig,
     situacaoMoto,
-    parcelaMensal: z.number().nullable(),
-    parcelasRestantes: z.number().nullable(),
+    parcelaMensal: dinheiroNaoNegativo.nullable(),
+    parcelasRestantes: inteiroNaoNegativo.nullable(),
     dataReferenciaParcelas: z.string().nullable(),
-    aluguelMensal: z.number().nullable(),
+    aluguelMensal: dinheiroNaoNegativo.nullable(),
     aluguelPeriodicidade: periodicidadeAluguel.nullable(),
-    alimentacaoDia: z.number(),
+    alimentacaoDia: dinheiroNaoNegativo,
     gastosCustom: z.array(gastoCustom),
     responsabilidadeAluguel,
   }),

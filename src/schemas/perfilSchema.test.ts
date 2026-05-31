@@ -45,4 +45,53 @@ describe('perfilSchema — validação de runtime', () => {
     expect(perfilPadrao.financeiro.parcelaMensal).toBeNull();
     expect(perfilPadrao.fipeCache).toBeNull();
   });
+
+  it('rejeita valores financeiros negativos', () => {
+    const invalido = {
+      ...perfilPadrao,
+      financeiro: { ...perfilPadrao.financeiro, internet: -1 },
+    };
+
+    expect(() => perfilSchema.parse(invalido)).toThrow();
+  });
+
+  it('rejeita autonomia zero em combustível (denominador)', () => {
+    const invalido = {
+      ...perfilPadrao,
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        combustiveis: {
+          ...perfilPadrao.financeiro.combustiveis,
+          comum: { ...perfilPadrao.financeiro.combustiveis.comum, autonomia: 0 },
+        },
+      },
+    };
+
+    expect(() => perfilSchema.parse(invalido)).toThrow();
+  });
+
+  it('aceita serviço temporal conhecido com intervalKm 0 e rejeita serviço km-driven com 0', () => {
+    expect(() => perfilSchema.parse(perfilPadrao)).not.toThrow();
+
+    const invalido = {
+      ...perfilPadrao,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+        servico.id === 'troca-oleo' ? { ...servico, intervalKm: 0 } : servico,
+      ),
+    };
+
+    expect(() => perfilSchema.parse(invalido)).toThrow();
+  });
+
+  it('rejeita km negativo em histórico de manutenção', () => {
+    const invalido = {
+      ...perfilPadrao,
+      moto: {
+        ...perfilPadrao.moto,
+        kmUltimaTrocas: { ...perfilPadrao.moto.kmUltimaTrocas, oleo: -100 },
+      },
+    };
+
+    expect(() => perfilSchema.parse(invalido)).toThrow();
+  });
 });

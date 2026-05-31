@@ -45,11 +45,21 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             onChange={(e) => {
               const raw = e.target.value;
               const v = parseFloat(raw);
-              dispatch({
-                type: 'SET_PARCELA',
-                parcelaMensal: raw === '' ? null : isNaN(v) ? null : v,
-                parcelasRestantes: financeiro.parcelasRestantes,
-              });
+              if (raw === '') {
+                dispatch({
+                  type: 'SET_PARCELA',
+                  parcelaMensal: null,
+                  parcelasRestantes: financeiro.parcelasRestantes,
+                });
+                return;
+              }
+              if (!isNaN(v) && v >= 0) {
+                dispatch({
+                  type: 'SET_PARCELA',
+                  parcelaMensal: v,
+                  parcelasRestantes: financeiro.parcelasRestantes,
+                });
+              }
             }}
           />
         </div>
@@ -67,11 +77,21 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             onChange={(e) => {
               const raw = e.target.value;
               const v = parseInt(raw, 10);
-              dispatch({
-                type: 'SET_PARCELA',
-                parcelaMensal: financeiro.parcelaMensal,
-                parcelasRestantes: raw === '' ? null : isNaN(v) ? null : v,
-              });
+              if (raw === '') {
+                dispatch({
+                  type: 'SET_PARCELA',
+                  parcelaMensal: financeiro.parcelaMensal,
+                  parcelasRestantes: null,
+                });
+                return;
+              }
+              if (!isNaN(v) && v >= 0) {
+                dispatch({
+                  type: 'SET_PARCELA',
+                  parcelaMensal: financeiro.parcelaMensal,
+                  parcelasRestantes: v,
+                });
+              }
             }}
           />
         </div>
@@ -96,11 +116,21 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             onChange={(e) => {
               const raw = e.target.value;
               const v = parseFloat(raw);
-              dispatch({
-                type: 'SET_ALUGUEL',
-                aluguelMensal: raw === '' ? null : isNaN(v) ? null : v,
-                aluguelPeriodicidade: financeiro.aluguelPeriodicidade,
-              });
+              if (raw === '') {
+                dispatch({
+                  type: 'SET_ALUGUEL',
+                  aluguelMensal: null,
+                  aluguelPeriodicidade: financeiro.aluguelPeriodicidade,
+                });
+                return;
+              }
+              if (!isNaN(v) && v >= 0) {
+                dispatch({
+                  type: 'SET_ALUGUEL',
+                  aluguelMensal: v,
+                  aluguelPeriodicidade: financeiro.aluguelPeriodicidade,
+                });
+              }
             }}
           />
         </div>

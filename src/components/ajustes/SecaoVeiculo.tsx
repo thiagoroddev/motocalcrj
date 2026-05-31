@@ -73,10 +73,13 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
             onChange={(e) => {
               const raw = e.target.value;
               const v = parseInt(raw, 10);
-              dispatch({
-                type: 'SET_KM_ULTIMA_REVISAO',
-                km: raw === '' ? null : isNaN(v) ? null : v,
-              });
+              if (raw === '') {
+                dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km: null });
+                return;
+              }
+              if (!isNaN(v) && v >= 0) {
+                dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km: v });
+              }
             }}
           />
         </div>

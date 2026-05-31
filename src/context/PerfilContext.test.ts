@@ -65,6 +65,25 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.moto.kmAtual).toBe(20000);
   });
 
+  it('rejeita actions de rodagem fora do domínio', () => {
+    expect(perfilReducer(estadoVazio, { type: 'SET_KM_POR_DIA', valor: 0 })).toBe(estadoVazio);
+    expect(perfilReducer(estadoVazio, { type: 'SET_DIAS_POR_SEMANA', valor: 8 })).toBe(estadoVazio);
+    expect(perfilReducer(estadoVazio, { type: 'SET_KM_ATUAL', valor: -1 })).toBe(estadoVazio);
+  });
+
+  it('rejeita actions financeiras negativas ou denominador zero', () => {
+    expect(perfilReducer(estadoVazio, { type: 'SET_INTERNET', valor: -1 })).toBe(estadoVazio);
+    expect(perfilReducer(estadoVazio, { type: 'SET_ALIMENTACAO', valorDia: -1 })).toBe(estadoVazio);
+    expect(
+      perfilReducer(estadoVazio, {
+        type: 'SET_COMBUSTIVEL',
+        tipo: 'comum',
+        campo: 'autonomia',
+        valor: 0,
+      }),
+    ).toBe(estadoVazio);
+  });
+
   // ── COMMIT_ONBOARDING ─────────────────────────
 
   it('COMMIT_ONBOARDING cria um preset e marca onboardingConcluido', () => {
@@ -251,6 +270,26 @@ describe('perfilReducer', () => {
 
     expect(oleo?.intervalKm).toBe(oleoPadrao.intervalKm);
     expect(oleo?.precoIndependente).toBe(oleoPadrao.precoIndependente);
+  });
+
+  it('SET_SERVICO_INDEPENDENTE rejeita preço negativo', () => {
+    const oleoPadrao = servicoPadrao('troca-oleo');
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: { ...oleoPadrao, precoIndependente: -1 },
+    });
+
+    expect(resultado).toBe(estadoVazio);
+  });
+
+  it('SET_ONBOARDING_CAMPO rejeita bloco que violaria o schema', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_ONBOARDING_CAMPO',
+      campo: 'financeiro',
+      valor: { ...perfilPadrao.financeiro, alimentacaoDia: -20 },
+    });
+
+    expect(resultado).toBe(estadoVazio);
   });
 
   // ── Preset management ─────────────────────────

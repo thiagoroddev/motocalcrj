@@ -5,6 +5,7 @@ import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
 import { TituloSecao } from '@/components/TituloSecao';
+import { resolverServicoComIntervaloEditado } from '../utils/calculos';
 import type { PresetMoto } from '../types/calculos';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
 
@@ -53,7 +54,9 @@ export function PaginaInsumos() {
   };
 
   function resolverIntervalo(id: string, fallback: number): number {
-    return perfil.servicosIndependentes.find((s) => s.id === id)?.intervalKm ?? fallback;
+    return (
+      resolverServicoComIntervaloEditado(id, perfil.servicosIndependentes)?.intervalKm ?? fallback
+    );
   }
 
   const itensPecas = preset

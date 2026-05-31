@@ -15,12 +15,13 @@ export function Passo9() {
   );
 
   function salvarEAvancar() {
+    const gastoDiaNum = parseFloat(gastoDia);
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'financeiro',
       valor: {
         ...perfil.financeiro,
-        alimentacaoDia: comeNaRua ? parseFloat(gastoDia) || 0 : 0,
+        alimentacaoDia: comeNaRua && !isNaN(gastoDiaNum) && gastoDiaNum > 0 ? gastoDiaNum : 0,
       },
     });
     irParaProximo();

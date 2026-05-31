@@ -179,7 +179,7 @@ Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas 
 | `retifica-cabecote`     | Retífica de cabeçote           | 80000        | 800              | false   | true            |
 | `retifica-completa`     | Retífica completa              | 120000       | 1500             | false   | true            |
 
-> No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) — `resolverIntervaloPeca` casa serviço por `id` quando o `id` coincide com o da peça (`troca-oleo` ↔ `oleo_motor` via `MAPA_PECA_PARA_SERVICO` em `calculos.ts`).
+> No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) — `resolverIntervaloPeca` vincula peça e serviço pelo `MAPA_PECA_PARA_SERVICO` em `calculos.ts` (`oleo_motor` ↔ `troca-oleo`).
 
 ---
 

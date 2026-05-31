@@ -265,30 +265,33 @@ Considerar DT-14 **endereçada na prática**. Manter apenas o uso intra-onboardi
 
 ---
 
-## DT-15: Vínculo Implícito entre ServicoIndependente e Peça (NOVA)
+## DT-15: Vínculo Implícito entre ServicoIndependente e Peça — ENDEREÇADA
 
 ### Situação atual
 
-`ServicoIndependente` possui `intervalKm` que define a frequência de um serviço de mão de obra. A aba **Preço Peças** (TASK-RF-6.2) exibirá `intervalKm` de peça somente leitura espelhado de `ServicoIndependente`. O vínculo entre um serviço e suas peças é **implícito por convenção de IDs** (ex: `id: 'troca-oleo'` em `ServicoIndependente` e `id: 'oleo_motor'` em `PresetMoto.pecas[]`). Não há campo `pecaIds[]` ou tipagem de relacionamento.
+`ServicoIndependente.intervalKm` define a frequência canônica de um serviço de mão de obra. A tela **Insumos** exibe a vida útil da peça como somente leitura, espelhada do serviço vinculado quando ele está ativo.
 
-### Por que é dívida técnica
+Desde a TASK-REF-29, o vínculo peça↔serviço deixou de depender de igualdade de string e passou a usar `MAPA_PECA_PARA_SERVICO` em `src/utils/calculos.ts` (`oleo_motor` → `troca-oleo`, `pneu_traseiro` → `troca-pneu-traseiro`, etc.). `resolverIntervaloPeca`, `PaginaInsumos` e `DialogEdicaoCusto` usam a mesma resolução.
 
-- Vínculo implícito: se IDs divergirem (por rename ou novo preset), Preço Peças não encontra a peça correspondente sem erro de tipo
-- Dificulta suporte a múltiplos modelos futuros com IDs de peça distintos
+### Por que deixou de ser dívida técnica
 
-### Por que NÃO endereçar agora
+- O vínculo agora é explícito e testado.
+- Editar intervalo na aba Mão de Obra reflete no CPK da peça e na vida útil exibida.
+- Serviço inativo continua caindo no fallback do preset.
+- Override individual de peça continua tendo prioridade sobre o serviço.
 
-- Há apenas 1 modelo (pop110i) com IDs estáveis
-- Adicionar `pecaIds[]` a `ServicoIndependente` aumentaria complexidade antes de validação em produção
+### Risco residual
 
-### Gatilho que justificaria endereçar
+O mapa ainda precisa ser mantido quando novas peças/serviços forem adicionados. Há testes cobrindo que todo serviço apontado existe e que toda peça apontada existe no preset Pop 110i.
 
-- Adição de segundo modelo de moto com IDs de peça distintos
-- Bug de inconsistência ID detectado em produção
+### Gatilho futuro
+
+- Adição de segundo modelo de moto com IDs de peça distintos.
+- Necessidade de um serviço cobrir múltiplas peças fora do mapeamento atual.
 
 ### Recomendação
 
-Documentar a convenção de mapeamento ID em comentário na tela Preço Peças (TASK-RF-6.2). Adicionar campo `pecaIds[]` opcional quando segundo modelo entrar.
+Manter `MAPA_PECA_PARA_SERVICO` como fonte única do vínculo enquanto houver um catálogo pequeno. Considerar `pecaIds[]` explícito no tipo se múltiplos modelos tornarem o mapa insuficiente.
 
 ---
 

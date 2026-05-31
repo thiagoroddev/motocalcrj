@@ -12,7 +12,7 @@ import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
 import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
-import { MAPA_PECA_PARA_SERVICO } from '../../utils/calculos';
+import { MAPA_PECA_PARA_SERVICO, resolverServicoComIntervaloEditado } from '../../utils/calculos';
 import type { PresetMoto } from '../../types/calculos';
 import type {
   PerfilUsuario,
@@ -257,7 +257,9 @@ function ConteudoPecaComMO({
   }
   const usaComBau = perfil.moto.perfilUso === 'entrega';
   function resolverIntervalo(id: string, fallback: number): number {
-    return perfil.servicosIndependentes.find((s) => s.id === id)?.intervalKm ?? fallback;
+    return (
+      resolverServicoComIntervaloEditado(id, perfil.servicosIndependentes)?.intervalKm ?? fallback
+    );
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);

@@ -60,6 +60,23 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 
 ---
 
+#### INV-PERFIL-4: Domínio Numérico do Perfil
+**Regra:** valores persistidos de dinheiro, KM, histórico e contadores não podem ser negativos. Campos usados como denominador de cálculo devem ser positivos (`> 0`), como autonomia de combustível, `kmPorDia`, `diasPorSemana` e intervalos km-driven.
+
+**Exceção:** `ServicoIndependente.intervalKm === 0` é permitido apenas para serviços temporais conhecidos cujo driver não é quilometragem (ex.: bateria). Para serviços km-driven, `intervalKm` precisa ser `> 0` (ver INV-MANUT-1).
+
+**Por quê:** custo negativo, `Infinity` ou `NaN` corrompem o resultado da estimativa e podem se propagar para breakdown, CPK e granularidades.
+
+**Onde é protegida:**
+- Inputs numéricos rejeitam negativos/zero proibido antes de despachar actions
+- `perfilSchema` valida domínio numérico na fronteira de persistência (ADR-010)
+- `perfilReducer` valida o perfil resultante com `perfilSchema.safeParse` antes de aceitar actions
+- `utils/calculos.ts` aplica guardas defensivas para denominadores e custos
+
+**Como validar:** testes de schema, reducer, UI e cálculos devem cobrir negativos, denominadores zero e exceção temporal da bateria.
+
+---
+
 ### Invariantes do Aggregate Preset
 
 #### INV-PRESET-1: kmAnual é Derivada
@@ -67,7 +84,7 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 
 **Por quê:** Decisão de domínio explícita do `contexto-base`. Calcular via mês perde fidelidade (52 semanas vs 12 meses não são equivalentes). Motoboy trabalha por dias da semana, não por mês.
 
-**Onde é protegida:** `utils/calculos.ts` (com 92 testes).
+**Onde é protegida:** `utils/calculos.ts`.
 
 ---
 
@@ -174,16 +191,16 @@ if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV
 
 ---
 
-#### INV-VIDA-UTIL-1: ServicoIndependente é fonte canônica de intervalKm para peças vinculadas
-**Regra:** Para peças cujo `id` existe em `servicosIndependentes` com `ativo: true`, a fonte canônica de `intervalKm` é `ServicoIndependente.intervalKm`, não o Preset JSON. A tela Insumos exibe esse valor como somente leitura — apenas a aba Mão de Obra permite editá-lo.
+#### INV-VIDA-UTIL-1: ServicoIndependente EDITADO é fonte canônica de intervalKm para peças vinculadas
+**Regra:** Para peças vinculadas a um `ServicoIndependente` ativo via `MAPA_PECA_PARA_SERVICO`, o serviço só é a fonte canônica de `intervalKm` **quando o usuário editou o intervalo** (valor difere do default em `SERVICOS_INDEPENDENTES_PADRAO`). Enquanto o serviço estiver no valor default, a fonte canônica é o Preset JSON — que conhece a distinção entrega/passageiro. A tela Insumos exibe o valor **efetivo** como somente leitura; só a aba Mão de Obra permite editá-lo. Prioridade completa: override de peça → serviço editado → preset.
 
-**Por quê:** Evitar conflito de fonte de verdade. Se a peça e o serviço puderem ter intervalos independentes, o calculador ficará inconsistente: `calcularCpkPorPeca` usaria um valor e `calcularCustoRevisaoAnual` usaria outro.
+**Por quê:** Evitar conflito de fonte de verdade (cálculo e display precisam do mesmo valor) **sem descartar** os intervalos de entrega pesquisados do preset nem mudar a estimativa default. Ligar o serviço incondicionalmente sobreporia o `intervaloKmEntrega` (telemetria real) por um default genérico — ver Decisão C da revisão da REF-29.
 
 **Onde é protegida:**
-- `src/utils/calculos.ts` — `resolverIntervaloPeca`: verifica `servicosIndependentes.find(s => s.id === pecaId && s.ativo)` antes do fallback do preset.
-- `src/pages/PaginaInsumos.tsx` — `resolverIntervalo`: mesmo lookup; campo exibido como `<div>` read-only, sem `<Input>`.
+- `src/utils/calculos.ts` — `resolverServicoComIntervaloEditado`: resolve `pecaId → servicoId` via `MAPA_PECA_PARA_SERVICO` e só retorna o serviço se `intervalKm` ≠ default; `resolverIntervaloPeca` o consome.
+- `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` — `resolverIntervalo`: usam o mesmo helper, mantendo display e cálculo consistentes.
 
-⚠️ **Limitação atual (DT-15):** Os IDs dos serviços (`troca-oleo`, `troca-pneu-dianteiro`) divergem dos IDs das peças no Preset JSON (`oleo_motor`, `pneu_dianteiro`). Portanto, o lookup nunca casa na versão atual e a Vida Útil exibida sempre cai no fallback do preset. A invariante descreve o comportamento *quando* os IDs casarem — seja via mapeamento explícito futuro ou normalização dos IDs.
+**Histórico:** DT-15 endereçada pela TASK-REF-29 com mapeamento explícito peça↔serviço; a revisão da REF-29 (31/05/26) aplicou a **Decisão C** (serviço sobrepõe só quando editado) para preservar os intervalos de entrega e a estimativa default.
 
 ---
 

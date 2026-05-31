@@ -13,12 +13,13 @@ export function Passo8() {
   );
 
   function salvarEAvancar() {
+    const internetNum = parseFloat(internet);
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'financeiro',
       valor: {
         ...perfil.financeiro,
-        internet: parseFloat(internet) || 0,
+        internet: !isNaN(internetNum) && internetNum > 0 ? internetNum : 0,
       },
     });
     irParaProximo();

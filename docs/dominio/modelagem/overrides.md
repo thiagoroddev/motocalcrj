@@ -79,7 +79,7 @@ interface ServicoIndependente {
 - 7 serviços normais ativos (`troca-oleo`, `troca-kit-transmissao`, `troca-pneu-dianteiro`, `troca-pneu-traseiro`, `revisao-geral`, `troca-vela`, `troca-filtro-ar`)
 - 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`) — `ativo: false`, `ehExcepcional: true`
 
-🔍 **Fonte canônica do intervalo da peça (ADR-004):** `resolverIntervaloPeca` casa serviço com peça por `id` quando o `id` do serviço coincide com o id da peça (`troca-oleo` ↔ `oleo_motor` via `MAPA_PECA_PARA_SERVICO`). Isso permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura.
+🔍 **Fonte canônica do intervalo da peça (ADR-004):** `resolverIntervaloPeca` casa serviço com peça por `MAPA_PECA_PARA_SERVICO` (`oleo_motor` ↔ `troca-oleo`). Isso permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura.
 
 ### 3. `revisaoAutorizadaOverrides[]` — Overrides de Revisão Honda
 
@@ -155,8 +155,8 @@ return 0;  // fallback (não deveria acontecer)
 const override = pecasOverrides.find((o) => o.id === pecaId);
 if (override?.intervaloKmEditado != null) return override.intervaloKmEditado;
 
-// 2. ServicoIndependente ativo com mesmo id é a fonte canônica (ADR-004)
-const servico = servicosIndependentes.find((s) => s.id === pecaId && s.ativo);
+// 2. ServicoIndependente ativo vinculado via MAPA_PECA_PARA_SERVICO é a fonte canônica (ADR-004)
+const servico = resolverServicoIndependentePorPeca(pecaId, servicosIndependentes);
 if (servico) return servico.intervalKm;
 
 // 3. Cai no Preset JSON (intervaloKmEntrega para 'entrega', intervaloKm caso contrário)
@@ -171,7 +171,7 @@ return 1;  // evita divisão por zero
 
 🔍 **Três fontes em ordem de prioridade:**
 1. **Override individual** (`pecasOverrides[].intervaloKmEditado`)
-2. **`ServicoIndependente.intervalKm`** ativo (ADR-004 — edição em um lugar só)
+2. **`ServicoIndependente.intervalKm`** ativo via `MAPA_PECA_PARA_SERVICO` (ADR-004 — edição em um lugar só)
 3. **Preset JSON**
 
 ---

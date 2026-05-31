@@ -23,21 +23,26 @@ import type {
   ResultadoCalculo,
   Periodo,
 } from '../types/calculos';
+import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
+
+function valorNaoNegativo(valor: number): number {
+  return Number.isFinite(valor) && valor > 0 ? valor : 0;
+}
 
 // ─── I. Rodagem ──────────────────────────────────────────────────
 
 export function resolverKmDia(kmPorDia: number): number {
-  return kmPorDia;
+  return valorNaoNegativo(kmPorDia);
 }
 
 // Canônico: nunca derivar de kmMensal × 12
 export function calcularKmAnual(kmDia: number, diasSemana: number): number {
-  return kmDia * diasSemana * 52;
+  return valorNaoNegativo(kmDia) * valorNaoNegativo(diasSemana) * 52;
 }
 
 // Dias trabalhados no ano — não usar 365
 export function calcularDiasAno(diasSemana: number): number {
-  return diasSemana * 52;
+  return valorNaoNegativo(diasSemana) * 52;
 }
 
 // ─── II. Consumo de Combustível ──────────────────────────────────
@@ -47,7 +52,9 @@ export function resolverConsumoEfetivo(preset: PresetMoto, usaBau: boolean): num
 }
 
 export function calcularCpkCombustivel(precoGasolina: number, consumoKmL: number): number {
-  return precoGasolina / consumoKmL;
+  const preco = valorNaoNegativo(precoGasolina);
+  const consumo = valorNaoNegativo(consumoKmL);
+  return consumo > 0 ? preco / consumo : 0;
 }
 
 // ─── III. CPK por Peça ────────────────────────────────────────────
@@ -61,13 +68,15 @@ export function resolverIntervaloPeca(
 ): number {
   const override = pecasOverrides.find((o) => o.id === pecaId);
   if (override?.intervaloKmEditado != null) {
-    return override.intervaloKmEditado;
+    return valorNaoNegativo(override.intervaloKmEditado);
   }
 
-  // ServicoIndependente ativo com mesmo id é a fonte canônica do intervalo (ADR-004)
-  const servico = servicosIndependentes.find((s) => s.id === pecaId && s.ativo);
+  // ServicoIndependente ativo vinculado à peça sobrepõe o intervalo do preset APENAS
+  // quando o usuário editou (intervalo ≠ default). Sem edição, o preset — que conhece
+  // entrega/passageiro — segue canônico (Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1).
+  const servico = resolverServicoComIntervaloEditado(pecaId, servicosIndependentes);
   if (servico) {
-    return servico.intervalKm;
+    return valorNaoNegativo(servico.intervalKm);
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -96,17 +105,17 @@ export function resolverPrecoPeca(
   const precoEditadoEfetivo =
     perfilPecas === 'original' ? override?.precoEditadoOriginal : override?.precoEditadaParalela;
   if (precoEditadoEfetivo != null) {
-    return precoEditadoEfetivo;
+    return valorNaoNegativo(precoEditadoEfetivo);
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
   if (peca) {
-    return perfilPecas === 'original' ? peca.precoOriginal : peca.precoParalela;
+    return valorNaoNegativo(perfilPecas === 'original' ? peca.precoOriginal : peca.precoParalela);
   }
 
   const pneu = preset.pneus.find((p) => p.id === pecaId);
   if (pneu) {
-    return perfilPecas === 'original' ? pneu.precoOriginal : pneu.precoParalela;
+    return valorNaoNegativo(perfilPecas === 'original' ? pneu.precoOriginal : pneu.precoParalela);
   }
 
   return 0;
@@ -151,6 +160,34 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   kit_cilindro: 'troca-kit-cilindro',
 };
 
+export function resolverServicoIndependentePorPeca(
+  pecaId: string,
+  servicosIndependentes: ServicoIndependente[] = [],
+): ServicoIndependente | undefined {
+  const servicoId = MAPA_PECA_PARA_SERVICO[pecaId] ?? pecaId;
+  return servicosIndependentes.find((servico) => servico.id === servicoId && servico.ativo);
+}
+
+// Intervalos default por serviço — base para detectar edição do usuário (Decisão C).
+const INTERVALOS_PADRAO_SERVICO = new Map<string, number>(
+  SERVICOS_INDEPENDENTES_PADRAO.map((servico) => [servico.id, servico.intervalKm]),
+);
+
+// Retorna o serviço vinculado à peça SOMENTE quando o usuário editou o intervalo
+// (difere do default). Sem edição, o intervalo canônico segue o do preset (que conhece
+// entrega/passageiro) — Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1.
+export function resolverServicoComIntervaloEditado(
+  pecaId: string,
+  servicosIndependentes: ServicoIndependente[] = [],
+): ServicoIndependente | undefined {
+  const servico = resolverServicoIndependentePorPeca(pecaId, servicosIndependentes);
+  if (!servico) return undefined;
+  const intervaloPadrao = INTERVALOS_PADRAO_SERVICO.get(servico.id);
+  return intervaloPadrao === undefined || servico.intervalKm !== intervaloPadrao
+    ? servico
+    : undefined;
+}
+
 function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTrocas | undefined {
   const chaveServico = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servicoId];
   if (chaveServico) return chaveServico;
@@ -190,23 +227,36 @@ export function calcularCicloPeca(
   kmAtual: number,
   kmAnual: number,
 ): { proximaTrocaKm: number; trocasNoAno: number } {
-  if (intervalo <= 0) {
+  const intervaloSeguro = valorNaoNegativo(intervalo);
+  const kmAtualSeguro = valorNaoNegativo(kmAtual);
+  const kmAnualSeguro = valorNaoNegativo(kmAnual);
+  const kmUltimaTrocaSeguro = valorNaoNegativo(kmUltimaTroca);
+
+  if (intervaloSeguro <= 0 || kmAnualSeguro <= 0) {
     return { proximaTrocaKm: 0, trocasNoAno: 0 };
   }
 
-  if (kmUltimaTroca <= 0) {
+  if (kmUltimaTrocaSeguro <= 0) {
     // Sem dado de última troca: ciclo amortizado, próxima troca ancorada no km atual.
-    const proximaTrocaKm = kmAtual > 0 ? Math.ceil(kmAtual / intervalo) * intervalo : intervalo;
-    return { proximaTrocaKm, trocasNoAno: kmAnual / intervalo };
+    const proximaTrocaKm =
+      kmAtualSeguro > 0
+        ? Math.ceil(kmAtualSeguro / intervaloSeguro) * intervaloSeguro
+        : intervaloSeguro;
+    return { proximaTrocaKm, trocasNoAno: kmAnualSeguro / intervaloSeguro };
   }
 
   // Eventos de troca ocorrem em kmUltimaTroca + n × intervalo (n = 1, 2, ...).
-  const eventosPassados = Math.max(0, Math.floor((kmAtual - kmUltimaTroca) / intervalo));
-  const proximaTrocaKm = kmUltimaTroca + (eventosPassados + 1) * intervalo;
+  const eventosPassados = Math.max(
+    0,
+    Math.floor((kmAtualSeguro - kmUltimaTrocaSeguro) / intervaloSeguro),
+  );
+  const proximaTrocaKm = kmUltimaTrocaSeguro + (eventosPassados + 1) * intervaloSeguro;
 
-  const fimDaJanela = kmAtual + kmAnual;
+  const fimDaJanela = kmAtualSeguro + kmAnualSeguro;
   const trocasNoAno =
-    proximaTrocaKm > fimDaJanela ? 0 : Math.floor((fimDaJanela - proximaTrocaKm) / intervalo) + 1;
+    proximaTrocaKm > fimDaJanela
+      ? 0
+      : Math.floor((fimDaJanela - proximaTrocaKm) / intervaloSeguro) + 1;
 
   return { proximaTrocaKm, trocasNoAno };
 }
@@ -217,7 +267,7 @@ export function calcularKmDasProximasTrocas(
   kmAtual: number,
   kmAnual: number,
 ): number[] {
-  if (kmUltimaTroca <= 0 || intervalo <= 0) {
+  if (kmUltimaTroca <= 0 || intervalo <= 0 || kmAnual <= 0) {
     return [];
   }
 
@@ -258,6 +308,8 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
   } = opcoes;
 
   const resultado = new Map<string, CustoPeca>();
+  const kmAtualSeguro = valorNaoNegativo(kmAtual);
+  const kmAnualSeguro = valorNaoNegativo(kmAnual);
 
   // No modo autorizado, pula peças por dois critérios (ADR-006 + ADR-007):
   //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote Honda;
@@ -301,7 +353,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     const preco = resolverPrecoPeca(id, preset, perfilPecas, pecasOverrides);
 
     const pecaPreset = preset.pecas.find((p) => p.id === id);
-    const intervaloMeses = pecaPreset?.intervaloMeses ?? 0;
+    const intervaloMeses = valorNaoNegativo(pecaPreset?.intervaloMeses ?? 0);
 
     let proximaTrocaKm: number;
     let trocasNoAno: number;
@@ -318,20 +370,20 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     } else {
       // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
       const chaveKmUltimaTroca = MAPA_PECA_PARA_KM_ULTIMA_TROCA[id];
-      kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
+      kmUltimaTroca = chaveKmUltimaTroca ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca]) : 0;
 
-      const ciclo = calcularCicloPeca(kmUltimaTroca, intervalo, kmAtual, kmAnual);
+      const ciclo = calcularCicloPeca(kmUltimaTroca, intervalo, kmAtualSeguro, kmAnualSeguro);
       proximaTrocaKm = ciclo.proximaTrocaKm;
       trocasNoAno = ciclo.trocasNoAno;
       modo = kmUltimaTroca > 0 && !!chaveKmUltimaTroca ? 'ancorado' : 'amortizado';
       kmDasProximasTrocas =
         modo === 'ancorado'
-          ? calcularKmDasProximasTrocas(kmUltimaTroca, intervalo, kmAtual, kmAnual)
+          ? calcularKmDasProximasTrocas(kmUltimaTroca, intervalo, kmAtualSeguro, kmAnualSeguro)
           : [];
     }
 
     const custoAnual = trocasNoAno * preco;
-    const cpk = kmAnual > 0 ? custoAnual / kmAnual : 0;
+    const cpk = kmAnualSeguro > 0 ? custoAnual / kmAnualSeguro : 0;
 
     const override = pecasOverrides.find((o) => o.id === id);
     const usouOverride =
@@ -362,7 +414,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
 
 export function calcularCpkPecasTotal(cpkPorPeca: Map<string, CustoPeca>): number {
   let total = 0;
-  cpkPorPeca.forEach((p) => (total += p.cpk));
+  cpkPorPeca.forEach((p) => (total += valorNaoNegativo(p.cpk)));
   return total;
 }
 
@@ -377,15 +429,15 @@ export function calcularIPVA(
   if (anoAtual - anoMoto >= 15) {
     return 0;
   }
-  return valorFipe * aliquota;
+  return valorNaoNegativo(valorFipe) * valorNaoNegativo(aliquota);
 }
 
 export function calcularLicenciamento(anoAtual: number, tabela: Record<string, number>): number {
-  return tabela[String(anoAtual)] ?? 0;
+  return valorNaoNegativo(tabela[String(anoAtual)] ?? 0);
 }
 
 export function calcularCustoDocumentosAnual(ipva: number, licenciamento: number): number {
-  return ipva + licenciamento;
+  return valorNaoNegativo(ipva) + valorNaoNegativo(licenciamento);
 }
 
 // ─── V. Revisão Periódica ─────────────────────────────────────────
@@ -398,11 +450,12 @@ function calcularEventosRevisaoNoAno(
   kmAnual: number,
   quantidadeRevisoesCicloHonda: number,
 ): number {
-  if (kmAnual <= 0) return 0;
+  const kmAnualSeguro = valorNaoNegativo(kmAnual);
+  if (kmAnualSeguro <= 0) return 0;
   const eventos =
     modoRevisao === 'autorizadas'
-      ? (quantidadeRevisoesCicloHonda / KM_CICLO_REVISAO_HONDA) * kmAnual
-      : kmAnual / INTERVALO_REVISAO_INDEPENDENTE_KM;
+      ? (valorNaoNegativo(quantidadeRevisoesCicloHonda) / KM_CICLO_REVISAO_HONDA) * kmAnualSeguro
+      : kmAnualSeguro / INTERVALO_REVISAO_INDEPENDENTE_KM;
   return eventos;
 }
 
@@ -419,13 +472,14 @@ export function calcularDetalhesRevisaoAnual(
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
   const servicosNormaisAtivos = servicos.filter((s) => s.ativo && !s.ehExcepcional);
-  const kmAtual = opcoes.kmAtual ?? 0;
+  const kmAtual = valorNaoNegativo(opcoes.kmAtual ?? 0);
+  const kmAnualSeguro = valorNaoNegativo(kmAnual);
   const kmUltimaTrocas = opcoes.kmUltimaTrocas ?? KM_ULTIMA_TROCAS_VAZIO;
 
   if (modoRevisao === 'autorizadas') {
-    const ciclo = opcoes.custoCicloCompleto ?? 3334.62;
+    const ciclo = valorNaoNegativo(opcoes.custoCicloCompleto ?? 3334.62);
     const quantidadeRevisoesCicloHonda = opcoes.quantidadeRevisoesCicloHonda ?? 7;
-    const basePacoteHonda = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnual;
+    const basePacoteHonda = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnualSeguro;
     // ADR-007: soma serviços fora do pacote Honda (kit transmissão, pneus, etc.)
     // usando precoTotalAutorizada (peça + M.O. cobradas em conjunto pela Honda).
     // Excepcionais (retíficas) ficam fora aqui — saem por imprevistos sugeridos.
@@ -435,15 +489,18 @@ export function calcularDetalhesRevisaoAnual(
     const detalhesServicos = new Map<string, CustoServicoRevisao>(
       servicosForaDoPacote.map((s): [string, CustoServicoRevisao] => {
         const chaveKmUltimaTroca = resolverChaveKmUltimaTrocaServico(s.id);
-        const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
-        const ciclo = calcularCicloPeca(kmUltimaTroca, s.intervalKm, kmAtual, kmAnual);
+        const kmUltimaTroca = chaveKmUltimaTroca
+          ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca])
+          : 0;
+        const ciclo = calcularCicloPeca(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro);
         const modo =
           kmUltimaTroca > 0 && chaveKmUltimaTroca !== undefined ? 'ancorado' : 'amortizado';
         const kmDasProximasTrocas =
           modo === 'ancorado'
-            ? calcularKmDasProximasTrocas(kmUltimaTroca, s.intervalKm, kmAtual, kmAnual)
+            ? calcularKmDasProximasTrocas(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro)
             : [];
-        const custoAnual = s.precoTotalAutorizada * ciclo.trocasNoAno;
+        const precoServico = valorNaoNegativo(s.precoTotalAutorizada);
+        const custoAnual = precoServico * ciclo.trocasNoAno;
         return [
           s.id,
           {
@@ -451,8 +508,8 @@ export function calcularDetalhesRevisaoAnual(
             label: s.nome,
             custoAnual,
             intervalKm: s.intervalKm,
-            precoMaoDeObra: s.precoTotalAutorizada,
-            precoServico: s.precoTotalAutorizada,
+            precoMaoDeObra: precoServico,
+            precoServico,
             eventosNoAno: ciclo.trocasNoAno,
             ehExcepcional: s.ehExcepcional,
             modo,
@@ -474,7 +531,7 @@ export function calcularDetalhesRevisaoAnual(
         base,
         eventosNoAno: calcularEventosRevisaoNoAno(
           modoRevisao,
-          kmAnual,
+          kmAnualSeguro,
           quantidadeRevisoesCicloHonda,
         ),
         servicos: detalhesServicos,
@@ -488,13 +545,16 @@ export function calcularDetalhesRevisaoAnual(
   // (~R$ 25/ano para bateria) é débito técnico assumido pela TASK-RF-6.14.
   const base = servicosNormaisAtivos
     .filter((s) => s.intervalKm > 0)
-    .reduce((sum, s) => sum + (s.precoIndependente / s.intervalKm) * kmAnual, 0);
+    .reduce(
+      (sum, s) => sum + (valorNaoNegativo(s.precoIndependente) / s.intervalKm) * kmAnualSeguro,
+      0,
+    );
   return {
     total: base,
     detalhes: {
       modo: modoRevisao,
       base,
-      eventosNoAno: calcularEventosRevisaoNoAno(modoRevisao, kmAnual, 0),
+      eventosNoAno: calcularEventosRevisaoNoAno(modoRevisao, kmAnualSeguro, 0),
       servicos: new Map(),
     },
   };
@@ -514,15 +574,15 @@ export function calcularCustoRevisaoAnual(
 // ─── VI. Custos Operacionais ──────────────────────────────────────
 
 export function calcularCustoCombustivelAnual(cpkCombustivel: number, kmAnual: number): number {
-  return cpkCombustivel * kmAnual;
+  return valorNaoNegativo(cpkCombustivel) * valorNaoNegativo(kmAnual);
 }
 
 export function calcularCustoManutencaoAnual(cpkPecasTotal: number, kmAnual: number): number {
-  return cpkPecasTotal * kmAnual;
+  return valorNaoNegativo(cpkPecasTotal) * valorNaoNegativo(kmAnual);
 }
 
 export function calcularCustoInternetAnual(temInternet: boolean, precoInternet: number): number {
-  return temInternet ? precoInternet * 12 : 0;
+  return temInternet ? valorNaoNegativo(precoInternet) * 12 : 0;
 }
 
 export function calcularCustoSeguroAnual(valorAnual: number): number {
@@ -530,7 +590,7 @@ export function calcularCustoSeguroAnual(valorAnual: number): number {
 }
 
 export function calcularCustoAlimentacaoAnual(precoAlimentacao: number, diasAno: number): number {
-  return precoAlimentacao * diasAno;
+  return valorNaoNegativo(precoAlimentacao) * valorNaoNegativo(diasAno);
 }
 
 export function fatorResponsabilidade(resp: ResponsabilidadeCusto): number {
@@ -553,7 +613,7 @@ export function calcularParcelasRestantesAtuais(
   dataReferenciaParcelas: string | null,
   agora: Date = new Date(),
 ): number {
-  if (parcelasRestantes == null || parcelasRestantes <= 0) {
+  if (parcelasRestantes == null || !Number.isFinite(parcelasRestantes) || parcelasRestantes <= 0) {
     return 0;
   }
   if (!dataReferenciaParcelas) {
@@ -586,16 +646,21 @@ export function calcularCustoFinanciamentoAnual({
   if (situacaoMoto === 'financiada' && parcelaMensal != null) {
     // Afunila no último ano: projeta só as parcelas que ainda faltam (máx. 12);
     // quando zera, o financiamento sai do total automaticamente (RF-6.18).
-    return parcelaMensal * Math.min(12, Math.max(0, parcelasRestantesAtuais));
+    return (
+      valorNaoNegativo(parcelaMensal) * Math.min(12, valorNaoNegativo(parcelasRestantesAtuais))
+    );
   }
   if (situacaoMoto === 'alugada' && aluguelMensal != null) {
-    return aluguelPeriodicidade === 'semanal' ? aluguelMensal * 52 : aluguelMensal * 12;
+    const aluguel = valorNaoNegativo(aluguelMensal);
+    return aluguelPeriodicidade === 'semanal' ? aluguel * 52 : aluguel * 12;
   }
   return 0;
 }
 
 export function calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): number {
-  return gastosCustom.filter((g) => g.ativo).reduce((soma, g) => soma + g.valorAnual, 0);
+  return gastosCustom
+    .filter((g) => g.ativo)
+    .reduce((soma, g) => soma + valorNaoNegativo(g.valorAnual), 0);
 }
 
 function calcularImprevistosSugeridosAnual(
@@ -615,20 +680,28 @@ function calcularImprevistosSugeridosAnual(
       .map((servico): [string, CustoImprevistoSugerido] | null => {
         const preco =
           modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;
-        if (modoRevisao === 'autorizadas' && preco <= 0) return null;
+        const precoSeguro = valorNaoNegativo(preco);
+        if (precoSeguro <= 0) return null;
 
         const chaveKmUltimaTroca = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
-        const kmUltimaTroca = chaveKmUltimaTroca ? kmUltimaTrocas[chaveKmUltimaTroca] : 0;
-        const ciclo = calcularCicloPeca(kmUltimaTroca, servico.intervalKm, kmAtual, kmAnual);
+        const kmUltimaTroca = chaveKmUltimaTroca
+          ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca])
+          : 0;
+        const ciclo = calcularCicloPeca(
+          kmUltimaTroca,
+          servico.intervalKm,
+          valorNaoNegativo(kmAtual),
+          valorNaoNegativo(kmAnual),
+        );
 
         return [
           servico.id,
           {
             id: servico.id,
             label: servico.nome,
-            custoAnual: preco * ciclo.trocasNoAno,
+            custoAnual: precoSeguro * ciclo.trocasNoAno,
             intervalKm: servico.intervalKm,
-            precoServico: preco,
+            precoServico: precoSeguro,
             eventosNoAno: ciclo.trocasNoAno,
           },
         ];
@@ -646,10 +719,12 @@ function calcularTotalImprevistosFiltrado(
   if (!filtros.gastosCustom) return 0;
   const totalSugeridos = [...custos.gastosCustom.detalhes.sugeridos.entries()].reduce(
     (soma, [id, imprevisto]) =>
-      filtros.imprevistosSugeridos[id] === true ? soma + imprevisto.custoAnual : soma,
+      filtros.imprevistosSugeridos[id] === true
+        ? soma + valorNaoNegativo(imprevisto.custoAnual)
+        : soma,
     0,
   );
-  return custos.gastosCustom.total + totalSugeridos;
+  return valorNaoNegativo(custos.gastosCustom.total) + totalSugeridos;
 }
 
 // ─── VII. Agregação e Granularidades ─────────────────────────────
@@ -674,7 +749,7 @@ export function calcularCustosPorCategoria(
   // Revisão — aplica overrides individuais ao ciclo Honda antes de calcular
   const custoCicloCompleto = preset.revisaoAutorizada.reduce((s, r, idx) => {
     const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
-    return s + (override?.precoTotal ?? r.precoTotal);
+    return s + valorNaoNegativo(override?.precoTotal ?? r.precoTotal);
   }, 0);
   const revisao = calcularDetalhesRevisaoAnual(perfil.perfilManutencao.modoRevisao, kmAnual, {
     custoCicloCompleto,
@@ -740,24 +815,27 @@ export function calcularCustosPorCategoria(
       ).entries(),
     ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [
       id,
-      { ...imprevisto, custoAnual: imprevisto.custoAnual * fatorMan },
+      { ...imprevisto, custoAnual: valorNaoNegativo(imprevisto.custoAnual) * fatorMan },
     ]),
   );
 
   return {
     documentos: {
       total: calcularCustoDocumentosAnual(ipva, licenciamento) * fatorDoc,
-      detalhes: { ipva: ipva * fatorDoc, licenciamento: licenciamento * fatorDoc },
+      detalhes: {
+        ipva: valorNaoNegativo(ipva) * fatorDoc,
+        licenciamento: valorNaoNegativo(licenciamento) * fatorDoc,
+      },
     },
     revisao: {
-      total: revisao.total * fatorMan,
+      total: valorNaoNegativo(revisao.total) * fatorMan,
       detalhes: {
         ...revisao.detalhes,
-        base: revisao.detalhes.base * fatorMan,
+        base: valorNaoNegativo(revisao.detalhes.base) * fatorMan,
         servicos: new Map(
           [...revisao.detalhes.servicos.entries()].map(([id, servico]) => [
             id,
-            { ...servico, custoAnual: servico.custoAnual * fatorMan },
+            { ...servico, custoAnual: valorNaoNegativo(servico.custoAnual) * fatorMan },
           ]),
         ),
       },
@@ -801,38 +879,38 @@ export function calcularTotalFiltrado(
   let total = 0;
 
   if (filtros.documentos) {
-    total += custos.documentos.total;
+    total += valorNaoNegativo(custos.documentos.total);
   }
   if (filtros.combustivel) {
-    total += custos.combustivel.total;
+    total += valorNaoNegativo(custos.combustivel.total);
   }
   if (filtros.internet) {
-    total += custos.internet.total;
+    total += valorNaoNegativo(custos.internet.total);
   }
   if (filtros.seguro) {
-    total += custos.seguro.total;
+    total += valorNaoNegativo(custos.seguro.total);
   }
   if (filtros.alimentacao) {
-    total += custos.alimentacao.total;
+    total += valorNaoNegativo(custos.alimentacao.total);
   }
   if (filtros.financiamento) {
-    total += custos.financiamento.total;
+    total += valorNaoNegativo(custos.financiamento.total);
   }
   total += calcularTotalImprevistosFiltrado(custos, filtros);
 
   if (filtros.manutencao) {
     if (filtros.revisao) {
-      total += custos.revisao.detalhes.base;
+      total += valorNaoNegativo(custos.revisao.detalhes.base);
     }
     custos.revisao.detalhes.servicos.forEach((detalhe, servicoId) => {
       if (filtros.revisaoPorServico[servicoId] !== false) {
-        total += detalhe.custoAnual;
+        total += valorNaoNegativo(detalhe.custoAnual);
       }
     });
     // undefined em manutencaoPorPeca = peça ativa (só false explícito desativa)
     custos.manutencao.detalhes.forEach((detalhe, pecaId) => {
       if (filtros.manutencaoPorPeca[pecaId] !== false) {
-        total += detalhe.custoAnual;
+        total += valorNaoNegativo(detalhe.custoAnual);
       }
     });
   }
@@ -845,12 +923,15 @@ export function calcularGranularidades(
   diasAno: number,
   kmAnual: number,
 ): GranularidadesCusto {
+  const custo = valorNaoNegativo(custoTotalAnual);
+  const dias = valorNaoNegativo(diasAno);
+  const km = valorNaoNegativo(kmAnual);
   return {
-    anual: custoTotalAnual,
-    mensal: custoTotalAnual / 12,
-    semanal: custoTotalAnual / 52, // nunca mensal/4
-    diario: diasAno > 0 ? custoTotalAnual / diasAno : 0, // dias trabalhados, não 365
-    porKm: kmAnual > 0 ? custoTotalAnual / kmAnual : 0,
+    anual: custo,
+    mensal: custo / 12,
+    semanal: custo / 52, // nunca mensal/4
+    diario: dias > 0 ? custo / dias : 0, // dias trabalhados, não 365
+    porKm: km > 0 ? custo / km : 0,
   };
 }
 
@@ -864,26 +945,28 @@ export function calcularBreakdownValores(
     ? (filtros.revisao ? custos.revisao.detalhes.base : 0) +
       [...custos.revisao.detalhes.servicos.entries()].reduce(
         (soma, [id, servico]) =>
-          filtros.revisaoPorServico[id] !== false ? soma + servico.custoAnual : soma,
+          filtros.revisaoPorServico[id] !== false
+            ? soma + valorNaoNegativo(servico.custoAnual)
+            : soma,
         0,
       )
     : 0;
   const totalManutencaoFiltrado = filtros.manutencao
     ? [...custos.manutencao.detalhes.entries()].reduce(
         (soma, [id, peca]) =>
-          filtros.manutencaoPorPeca[id] !== false ? soma + peca.custoAnual : soma,
+          filtros.manutencaoPorPeca[id] !== false ? soma + valorNaoNegativo(peca.custoAnual) : soma,
         0,
       )
     : 0;
   return {
-    documentos: filtros.documentos ? custos.documentos.total : 0,
+    documentos: filtros.documentos ? valorNaoNegativo(custos.documentos.total) : 0,
     revisao: totalRevisaoFiltrado,
     manutencao: totalManutencaoFiltrado,
-    combustivel: filtros.combustivel ? custos.combustivel.total : 0,
-    internet: filtros.internet ? custos.internet.total : 0,
-    seguro: filtros.seguro ? custos.seguro.total : 0,
-    alimentacao: filtros.alimentacao ? custos.alimentacao.total : 0,
-    financiamento: filtros.financiamento ? custos.financiamento.total : 0,
+    combustivel: filtros.combustivel ? valorNaoNegativo(custos.combustivel.total) : 0,
+    internet: filtros.internet ? valorNaoNegativo(custos.internet.total) : 0,
+    seguro: filtros.seguro ? valorNaoNegativo(custos.seguro.total) : 0,
+    alimentacao: filtros.alimentacao ? valorNaoNegativo(custos.alimentacao.total) : 0,
+    financiamento: filtros.financiamento ? valorNaoNegativo(custos.financiamento.total) : 0,
     gastosCustom: calcularTotalImprevistosFiltrado(custos, filtros),
   };
 }
@@ -894,7 +977,7 @@ export function calcularBreakdownPercentual(
 ): Record<string, number> {
   const valores = calcularBreakdownValores(custos, filtros);
   const total = calcularTotalFiltrado(custos, filtros);
-  if (total === 0) {
+  if (total <= 0) {
     return {
       documentos: 0,
       revisao: 0,
@@ -926,15 +1009,15 @@ export function converterAnualParaPeriodo(
     dia: diasAno,
     hora: diasAno * horasDia,
   };
-  const d = divisor[periodo];
-  return d > 0 ? anual / d : 0;
+  const d = valorNaoNegativo(divisor[periodo]);
+  return d > 0 ? valorNaoNegativo(anual) / d : 0;
 }
 
 export function calcularCustoMotoAnual(
   custoTotalAnual: number,
   custoAlimentacaoAnual: number,
 ): number {
-  return custoTotalAnual - custoAlimentacaoAnual;
+  return Math.max(0, valorNaoNegativo(custoTotalAnual) - valorNaoNegativo(custoAlimentacaoAnual));
 }
 
 // ─── Mapeamento categoriasAtivas → FiltrosCategorias ────────────

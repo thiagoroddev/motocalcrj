@@ -89,7 +89,7 @@ calcularCustoManutencaoAnual(cpkPecasTotal: number, kmAnual: number): number
 
 **Ordem de resolução em `resolverIntervaloPeca`:**
 1. Override individual (`pecasOverrides[].intervaloKmEditado`)
-2. `ServicoIndependente.intervalKm` ativo com `id` igual ao da peça (ADR-004)
+2. `ServicoIndependente.intervalKm` ativo vinculado via `MAPA_PECA_PARA_SERVICO` (ADR-004)
 3. Preset JSON (`intervaloKmEntrega` se `'entrega'`, senão `intervaloKm`)
 4. Fallback `1` se peça não existe
 

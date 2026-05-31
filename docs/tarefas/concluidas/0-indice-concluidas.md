@@ -106,3 +106,5 @@
 | TASK-BG-019 | Onboarding: commit inválido bloqueado no reducer e confirmação redireciona | [2026-05-31--13h56--TASK-BG-019.md](./2026-05-31--13h56--TASK-BG-019.md) |
 | TASK-BG-020 | Mão de Obra: reset e edição de preço da bateria temporal com intervalKm 0 | [2026-05-31--14h31--TASK-BG-020.md](./2026-05-31--14h31--TASK-BG-020.md) |
 | TASK-BG-021 | criarEstadoInicial recupera presets válidos quando presetAtivo está ausente | [2026-05-31--14h53--TASK-BG-021.md](./2026-05-31--14h53--TASK-BG-021.md) |
+| TASK-RNF-012 | Validação de domínio numérico em inputs, schema, reducer e cálculos | [2026-05-31--15h25--TASK-RNF-012.md](./2026-05-31--15h25--TASK-RNF-012.md) |
+| TASK-REF-29 | Resolver DT-15: intervalos de peça usam serviço vinculado via MAPA_PECA_PARA_SERVICO | [2026-05-31--18h01--TASK-REF-29.md](./2026-05-31--18h01--TASK-REF-29.md) |

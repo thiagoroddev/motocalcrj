@@ -183,11 +183,21 @@ describe('resolverKmDia', () => {
   it('retorna sempre o kmPorDia do perfil (modo único após ADR-003)', () => {
     expect(resolverKmDia(80)).toBe(80);
   });
+
+  it('retorna 0 defensivamente para kmPorDia negativo ou não finito', () => {
+    expect(resolverKmDia(-80)).toBe(0);
+    expect(resolverKmDia(Number.POSITIVE_INFINITY)).toBe(0);
+  });
 });
 
 describe('calcularKmAnual', () => {
   it('usa multiplicação direta por 52 (canônico)', () => {
     expect(calcularKmAnual(80, 6)).toBe(80 * 6 * 52); // 24960
+  });
+
+  it('não produz km anual negativo', () => {
+    expect(calcularKmAnual(-80, 6)).toBe(0);
+    expect(calcularKmAnual(80, -6)).toBe(0);
   });
 });
 
@@ -213,6 +223,13 @@ describe('resolverConsumoEfetivo', () => {
 describe('calcularCpkCombustivel', () => {
   it('divide preço pelo consumo (R$/km)', () => {
     expect(calcularCpkCombustivel(6.61, 33)).toBeCloseTo(0.2003, 3);
+  });
+
+  it('retorna 0 defensivamente com preço inválido ou consumo <= 0', () => {
+    expect(calcularCpkCombustivel(6.61, 0)).toBe(0);
+    expect(calcularCpkCombustivel(6.61, -1)).toBe(0);
+    expect(calcularCpkCombustivel(-6.61, 33)).toBe(0);
+    expect(calcularCpkCombustivel(Number.POSITIVE_INFINITY, 33)).toBe(0);
   });
 });
 
@@ -244,11 +261,71 @@ describe('resolverIntervaloPeca', () => {
     expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', overrides)).toBe(2500);
   });
 
-  it('usa ServicoIndependente.intervalKm quando serviço ativo coincide com pecaId (ADR-004)', () => {
+  it('override.intervaloKmEditado tem prioridade sobre serviço vinculado', () => {
+    const overrides: PecaOverride[] = [
+      {
+        id: 'oleo_motor',
+        precoEditadoOriginal: null,
+        precoEditadaParalela: null,
+        intervaloKmEditado: 2500,
+      },
+    ];
     const servicos: ServicoIndependente[] = [
       {
-        id: 'pneu_traseiro',
-        nome: 'Pneu traseiro',
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 3000,
+        precoIndependente: 25,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: true,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', overrides, servicos)).toBe(
+      2500,
+    );
+  });
+
+  it('serviço mapeado EDITADO (≠ default) sobrepõe o intervalo do preset (DT-15 / Decisão C)', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 2000, // editado: o default de troca-oleo é 3000
+        precoIndependente: 25,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: true,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], servicos)).toBe(2000);
+  });
+
+  it('serviço mapeado no valor DEFAULT não sobrepõe — usa o preset entrega (Decisão C)', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-oleo',
+        nome: 'Troca de óleo',
+        intervalKm: 3000, // = default de troca-oleo → considerado não editado
+        precoIndependente: 25,
+        precoTotalAutorizada: 0,
+        incluidoNaRevisaoAutorizada: true,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    // entrega: cai no preset (intervaloKmEntrega 1250), não nos 3000 do serviço default
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], servicos)).toBe(1250);
+  });
+
+  it('usa ServicoIndependente.intervalKm mapeado para pneus', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-pneu-traseiro',
+        nome: 'Troca pneu traseiro',
         intervalKm: 9000,
         precoIndependente: 125,
         precoTotalAutorizada: 0,
@@ -260,11 +337,11 @@ describe('resolverIntervaloPeca', () => {
     expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], servicos)).toBe(9000);
   });
 
-  it('ignora ServicoIndependente inativo e cai no preset', () => {
+  it('ignora ServicoIndependente mapeado inativo e cai no preset', () => {
     const servicos: ServicoIndependente[] = [
       {
-        id: 'pneu_traseiro',
-        nome: 'Pneu traseiro',
+        id: 'troca-pneu-traseiro',
+        nome: 'Troca pneu traseiro',
         intervalKm: 9000,
         precoIndependente: 125,
         precoTotalAutorizada: 0,
@@ -377,6 +454,34 @@ describe('calcularCpkPorPeca', () => {
     });
     expect(resultado.get('oleo_motor')!.fonte).toBe('registro');
     expect(resultado.get('vela_ignicao')!.fonte).toBe('preset');
+  });
+
+  it('usa intervalo editado no serviço mapeado para calcular CPK da peça', () => {
+    const kmAnual = 10_000;
+    const resultado = calcularCpkPorPeca({
+      preset: presetMock,
+      tipoUso: 'entrega',
+      perfilPecas: 'original',
+      modoRevisao: 'independentes',
+      kmAtual: 0,
+      kmAnual,
+      servicosIndependentes: [
+        {
+          id: 'troca-oleo',
+          nome: 'Troca de óleo',
+          intervalKm: 2500,
+          precoIndependente: 25,
+          precoTotalAutorizada: 0,
+          incluidoNaRevisaoAutorizada: true,
+          ativo: true,
+          ehExcepcional: false,
+        },
+      ],
+    });
+    const oleo = resultado.get('oleo_motor')!;
+
+    expect(oleo.intervaloKm).toBe(2500);
+    expect(oleo.custoAnual).toBeCloseTo((kmAnual / 2500) * 40, 2);
   });
 });
 
@@ -720,6 +825,10 @@ describe('calcularCustoInternetAnual', () => {
   it('retorna 0 quando inativo', () => {
     expect(calcularCustoInternetAnual(false, 50)).toBe(0);
   });
+
+  it('retorna 0 defensivamente quando ativo com valor negativo', () => {
+    expect(calcularCustoInternetAnual(true, -50)).toBe(0);
+  });
 });
 
 describe('calcularCustoSeguroAnual', () => {
@@ -739,6 +848,11 @@ describe('calcularCustoSeguroAnual', () => {
 describe('calcularCustoAlimentacaoAnual', () => {
   it('precoAlimentacao × diasAno (dias trabalhados)', () => {
     expect(calcularCustoAlimentacaoAnual(30, 312)).toBe(9360);
+  });
+
+  it('não produz custo negativo', () => {
+    expect(calcularCustoAlimentacaoAnual(-30, 312)).toBe(0);
+    expect(calcularCustoAlimentacaoAnual(30, -312)).toBe(0);
   });
 });
 
@@ -961,6 +1075,14 @@ describe('calcularCustoGastosCustomAnual', () => {
       { id: 'preset-sinistro', nome: 'Sinistros', valorAnual: 500, ativo: false, ehPreset: true },
     ]);
     expect(resultado).toBe(900);
+  });
+
+  it('não soma gasto ativo com valor negativo', () => {
+    const resultado = calcularCustoGastosCustomAnual([
+      { id: 'preset-multa', nome: 'Multa', valorAnual: -900, ativo: true, ehPreset: true },
+    ]);
+
+    expect(resultado).toBe(0);
   });
 
   it('retorna 0 para lista vazia', () => {
@@ -1611,7 +1733,9 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
         kmUltimaTrocas: { ...kmUltimaTrocasVazio, pneuTraseiro: 10000 },
       },
     };
-    // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano
+    // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano.
+    // troca-pneu-traseiro está no valor default (não editado) → o intervalo vem do preset
+    // (vidaUtilKm 16.000), não do serviço (Decisão C da revisão da REF-29).
     const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ);
     expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(26000);
   });
@@ -2006,6 +2130,28 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 — afunila no último ano)',
         aluguelPeriodicidade: null,
       }),
     ).toBe(6000);
+  });
+
+  it('não produz custo negativo com financiamento ou aluguel inválido', () => {
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'financiada',
+        parcelaMensal: -500,
+        parcelasRestantesAtuais: 12,
+        aluguelMensal: null,
+        aluguelPeriodicidade: null,
+      }),
+    ).toBe(0);
+
+    expect(
+      calcularCustoFinanciamentoAnual({
+        situacaoMoto: 'alugada',
+        parcelaMensal: null,
+        parcelasRestantesAtuais: 0,
+        aluguelMensal: -400,
+        aluguelPeriodicidade: 'mensal',
+      }),
+    ).toBe(0);
   });
 
   it('retorna aluguel * 12 quando alugada mensal', () => {
