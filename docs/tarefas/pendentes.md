@@ -37,23 +37,7 @@ Obedeça essa ordem:
 
 ### Tarefas Normais
 
-## TASK-CHORE-013 — Infra de teste de render (jsdom + @testing-library/react)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** Normal
-- **Esforço-H/IA:** P/M
-- **Data origem:** 30/05/26 (gerada pela revisão da TASK-RNF-11)
-- **Dependências:** —
-- **REQ/ADR/DT:** —
-- **Observações:**
-  - **Problema:** o projeto **não tem nenhum teste de render** — o vitest roda em `environment: 'node'` (ver [`vite.config.ts:15`](../../vite.config.ts#L15)), sem DOM, e não há `@testing-library/react`/`jsdom`. Por isso componentes como [`ErrorBoundary.tsx`](../../src/components/ErrorBoundary.tsx) só puderam ser testados na lógica pura (método estático + helper), sem assertar o fallback renderizado. Conforme a UI cresce, faltará rede para regressões visuais/de comportamento de componente.
-  - **Local no código:**
-    - Config de teste: [`vite.config.ts`](../../vite.config.ts) (bloco `test`, hoje `environment: 'node'`).
-    - Primeiro candidato a ganhar render-test: [`src/components/ErrorBoundary.tsx`](../../src/components/ErrorBoundary.tsx) (assertar que o fallback aparece ao lançar erro num filho; que "Resetar" dispara o reset).
-  - **Fix proposto:** adicionar devDeps `jsdom` (ou `happy-dom`) + `@testing-library/react` + `@testing-library/jest-dom`; configurar `environment: 'jsdom'` (por arquivo via comentário `// @vitest-environment jsdom` para não forçar DOM nos testes puros existentes, OU global com setup). Escrever um render-test piloto do `ErrorBoundary`. Confirmar que os 200 testes atuais (node) seguem verdes.
-  - **Cuidados:** Standard (infra de teste + devDeps, sem tocar produção). Preferir `environment` por-arquivo para não tornar os testes de cálculo/contexto dependentes de DOM à toa (mais lentos). Lembrar da poda de devDeps do ambiente (`--include=dev`). Sem mudança de regra de negócio.
+~~**TASK-CHORE-013**~~ — **CONCLUÍDA** em 30/05/26 (infra de teste de render: jsdom + testing-library, ambiente por-arquivo; fix `React.act`/NODE_ENV via guarda VITEST; piloto no ErrorBoundary; 200→202 verdes). Ver `concluidas/2026-05-30--21h27--TASK-CHORE-013.md`.
 
 ---
 
