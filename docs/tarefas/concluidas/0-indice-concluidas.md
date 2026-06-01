@@ -110,3 +110,6 @@
 | TASK-REF-29 | Resolver DT-15: intervalos de peça usam serviço vinculado via MAPA_PECA_PARA_SERVICO | [2026-05-31--18h01--TASK-REF-29.md](./2026-05-31--18h01--TASK-REF-29.md) |
 | TASK-DOC-013 | Corrigir README: remover rascunhos, contagem fixa de testes e claim PWA/offline | [2026-05-31--19h14--TASK-DOC-013.md](./2026-05-31--19h14--TASK-DOC-013.md) |
 | TASK-REF-30 | Resetar schema pré-lançamento: storage `estimamoto:v1:*`, `schemaVersion` 1 e sem migrations históricas | [2026-05-31--20h00--TASK-REF-30.md](./2026-05-31--20h00--TASK-REF-30.md) |
+| TASK-CHORE-014 | Guarda catálogo↔preset: todo id do CATALOGO precisa ter preset JSON | [2026-06-01--13h52--TASK-CHORE-014.md](./2026-06-01--13h52--TASK-CHORE-014.md) |
+| TASK-TEST-001 | Testes do fipeService: parsing, rota rápida, fallback e erro | [2026-06-01--14h05--TASK-TEST-001.md](./2026-06-01--14h05--TASK-TEST-001.md) |
+| TASK-TEST-002 | Smoke tests de UI: onboarding→estimativa, Detalhamento e perfilStorage | [2026-06-01--17h20--TASK-TEST-002.md](./2026-06-01--17h20--TASK-TEST-002.md) |

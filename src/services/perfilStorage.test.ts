@@ -66,4 +66,30 @@ describe('LocalStoragePerfilStorage — namespace pré-lançamento', () => {
     expect(preservado.raw).toBe('{quebrado');
     expect(typeof preservado.carimbo).toBe('string');
   });
+
+  it('remove preset ativo quando recebe null', () => {
+    const storage = new LocalStoragePerfilStorage();
+    storage.setPresetAtivo('p1');
+
+    storage.setPresetAtivo(null);
+
+    expect(localStorage.getItem('estimamoto:v1:presetAtivo')).toBeNull();
+    expect(storage.getPresetAtivo()).toBeNull();
+  });
+
+  it('retorna lista vazia quando presets salvos têm JSON inválido', () => {
+    const storage = new LocalStoragePerfilStorage();
+    localStorage.setItem('estimamoto:v1:presets', '{quebrado');
+
+    expect(storage.carregarPresets()).toEqual([]);
+  });
+
+  it('preservarCorrompido nunca lança quando localStorage falha', () => {
+    const storage = new LocalStoragePerfilStorage();
+    vi.mocked(localStorage.getItem).mockImplementation(() => {
+      throw new Error('storage indisponivel');
+    });
+
+    expect(() => storage.preservarCorrompido()).not.toThrow();
+  });
 });
