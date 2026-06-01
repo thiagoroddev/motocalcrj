@@ -255,7 +255,7 @@ export function SecaoImprevistos({
                     entenda
                   </button>
                   ). Para Multa, Sinistros e Outros, toque no lápis para informar o total acumulado
-                  no ano — esta é a única categoria editável direto aqui.
+                  no ano - esta é a única categoria editável direto aqui.
                 </p>
               </div>
             </div>
@@ -273,7 +273,7 @@ export function SecaoImprevistos({
           </DialogHeader>
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>
-              Itens como retíficas custam caro, mas acontecem raramente — a cada dezenas de milhares
+              Itens como retíficas custam caro, mas acontecem raramente - a cada dezenas de milhares
               de quilômetros. Se a estimativa anual somasse o preço cheio só no ano em que o serviço
               acontece, sua média ficaria distorcida.
             </p>

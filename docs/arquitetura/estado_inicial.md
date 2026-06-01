@@ -1,4 +1,4 @@
-# MotoCalc RJ — Estado Inicial e Arquitetura de Persistência
+# MotoCalc RJ - Estado Inicial e Arquitetura de Persistência
 
 > **Status:** Engenharia reversa validada contra código real.
 > **Última atualização:** 2026-05-31 (TASK-REF-30).
@@ -7,13 +7,13 @@
 
 ---
 
-## I — Modelo de Persistência: Um Perfil Local com Múltiplas Predefinições
+## I - Modelo de Persistência: Um Perfil Local com Múltiplas Predefinições
 
 O app não tem login em V1. Existe **um perfil local** e **vários presets** (configurações nomeadas) salvos no `localStorage`. Um motoboy pode ter "Honda Pop Trabalho" e "Biz Reserva" como presets distintos, com o app trabalhando sempre **com um deles ativo por vez**.
 
-### I.1 — Chaves do localStorage
+### I.1 - Chaves do localStorage
 
-Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-3).
+Centralizadas em `src/services/perfilStorage.ts` (acesso isolado - INV-PRESET-3).
 
 | Chave                     | Tipo                   | Conteúdo                                        |
 | ------------------------- | ---------------------- | ----------------------------------------------- |
@@ -22,9 +22,9 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado — INV-PRESET-
 
 > **Nota pré-lançamento:** a TASK-REF-30 zerou o contrato de storage. Chaves antigas `motocalc:v5:*` são ignoradas; dados inválidos ou de schema diferente caem no fallback recuperável.
 
-### I.2 — Envelope: `PresetEntry`
+### I.2 - Envelope: `PresetEntry`
 
-Não pertence ao `PerfilUsuario` — é o **wrapper** com metadados de identidade do preset:
+Não pertence ao `PerfilUsuario` - é o **wrapper** com metadados de identidade do preset:
 
 ```typescript
 // src/types/perfil.ts
@@ -39,7 +39,7 @@ export interface PresetEntry {
 
 `presetId` ≠ `perfil.userId`. O primeiro é local; o segundo é reservado para auth V2 e sempre `null` em V1.
 
-### I.3 — Fluxo de Abertura do App
+### I.3 - Fluxo de Abertura do App
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
@@ -49,7 +49,7 @@ export interface PresetEntry {
 
 ---
 
-## II — `perfilPadrao` (estado pré-onboarding)
+## II - `perfilPadrao` (estado pré-onboarding)
 
 O objeto inicial criado quando o usuário começa um onboarding novo. Valores reais em `src/context/PerfilContext.tsx`:
 
@@ -151,7 +151,7 @@ export const perfilPadrao: PerfilUsuario = {
 };
 ```
 
-### II.1 — `PRESETS_GASTOS_PADRAO` (lista fechada de imprevistos)
+### II.1 - `PRESETS_GASTOS_PADRAO` (lista fechada de imprevistos)
 
 Definida em `PerfilContext.tsx`. Lista fechada pela TASK-RF-6.9 (ADR-003/ADR-006): usuário **edita** valor e toggle, **não adiciona/remove** itens.
 
@@ -163,7 +163,7 @@ export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
 ];
 ```
 
-### II.2 — `SERVICOS_INDEPENDENTES_PADRAO` (9 serviços, defaults RJ)
+### II.2 - `SERVICOS_INDEPENDENTES_PADRAO` (9 serviços, defaults RJ)
 
 Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas excepcionais (`ehExcepcional: true, ativo: false`). Os excepcionais só aparecem na seção Imprevistos do Detalhamento, desligados por padrão.
 
@@ -179,11 +179,11 @@ Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas 
 | `retifica-cabecote`     | Retífica de cabeçote           | 80000        | 800              | false   | true            |
 | `retifica-completa`     | Retífica completa              | 120000       | 1500             | false   | true            |
 
-> No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) — `resolverIntervaloPeca` vincula peça e serviço pelo `MAPA_PECA_PARA_SERVICO` em `calculos.ts` (`oleo_motor` ↔ `troca-oleo`).
+> No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) - `resolverIntervaloPeca` vincula peça e serviço pelo `MAPA_PECA_PARA_SERVICO` em `calculos.ts` (`oleo_motor` ↔ `troca-oleo`).
 
 ---
 
-## III — `EstadoApp` (estado de runtime)
+## III - `EstadoApp` (estado de runtime)
 
 `PerfilContext` mantém este shape no `useReducer`:
 
@@ -199,29 +199,29 @@ O helper interno `comPerfil(novoPerfil)` do reducer mantém `perfil` e `presets[
 
 ---
 
-## IV — Catálogo de Actions (`PerfilAction`)
+## IV - Catálogo de Actions (`PerfilAction`)
 
-Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`. Todas as mutações de estado passam por aqui — componentes nunca tocam `localStorage` diretamente (INV-PRESET-3).
+Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`. Todas as mutações de estado passam por aqui - componentes nunca tocam `localStorage` diretamente (INV-PRESET-3).
 
-### IV.1 — Onboarding
+### IV.1 - Onboarding
 
 | Action                | Efeito                                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
-| `SET_ONBOARDING_CAMPO`| Set genérico de campo durante o onboarding (DT-14 — type-safety fraca) |
+| `SET_ONBOARDING_CAMPO`| Set genérico de campo durante o onboarding (DT-14 - type-safety fraca) |
 | `COMMIT_ONBOARDING`   | Único momento de primeira persistência. Cria `PresetEntry`, deriva `categoriasAtivas` a partir das respostas, ajusta autonomias por modelo do `CATALOGO` |
 
-### IV.2 — Rodagem inline (Estimativa)
+### IV.2 - Rodagem inline (Estimativa)
 
 `SET_KM_POR_DIA`, `SET_DIAS_POR_SEMANA`, `SET_KM_ATUAL`.
 
-### IV.3 — Display
+### IV.3 - Display
 
 | Action                       | Efeito                                                            |
 | ---------------------------- | ----------------------------------------------------------------- |
 | `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                  |
 | `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`     |
 
-### IV.4 — Overrides de peças
+### IV.4 - Overrides de peças
 
 | Action                      | Efeito                                                                                            |
 | --------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -230,7 +230,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 `campoOverrideMap` em `PerfilContext.tsx` faz a tradução do nome amigável (`precoOriginal`) para o nome real do tipo (`precoEditadoOriginal`).
 
-### IV.5 — Mão de obra e revisão
+### IV.5 - Mão de obra e revisão
 
 | Action                                | Efeito                                                                       |
 | ------------------------------------- | ---------------------------------------------------------------------------- |
@@ -239,17 +239,17 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 | `SET_REVISAO_AUTORIZADA_OVERRIDE`     | Upsert por `index` em `revisaoAutorizadaOverrides[]`. Calcula `precoTotal = pecas + maoDeObra` |
 | `RESET_REVISAO_AUTORIZADA_OVERRIDE`   | Remove override por `index`                                                  |
 
-### IV.6 — Financeiro
+### IV.6 - Financeiro
 
 `SET_INTERNET`, `SET_SEGURO` (Partial), `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR`.
 
-> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` — lista de imprevistos é fechada (RF-6.9). `SET_GASTO_CUSTOM_VALOR` ativa o toggle automaticamente ao passar de 0 → >0.
+> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` - lista de imprevistos é fechada (RF-6.9). `SET_GASTO_CUSTOM_VALOR` ativa o toggle automaticamente ao passar de 0 → >0.
 
-### IV.7 — FIPE
+### IV.7 - FIPE
 
 `SET_FIPE_CACHE` (preenche o cache no Passo 3 do Onboarding).
 
-### IV.8 — Manutenção (km como âncora — RF-6.7)
+### IV.8 - Manutenção (km como âncora - RF-6.7)
 
 | Action                  | Efeito                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------- |
@@ -257,19 +257,19 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 | `SET_MOTOR_REFEITO`     | Define ou limpa `moto.kmMotorRefeito` (`number \| null`)                        |
 | `MARCAR_TROCAS_REVISAO` | Aplica `kmRevisao` em vários componentes de uma vez (checkpoint do Onboarding) |
 
-### IV.9 — Ajustes de predefinição
+### IV.9 - Ajustes de predefinição
 
 `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_PERFIL_USO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO`.
 
 > `RESETAR_AJUSTES_PADRAO` (BG-004): zera custos (alimentação, seguro, gastosCustom) e volta uso/modo de revisão ao padrão. **Não** mexe em moto nem em mão de obra.
 
-### IV.10 — Presets (envelope)
+### IV.10 - Presets (envelope)
 
 `CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
 
 ---
 
-## V — Persistência
+## V - Persistência
 
 `PerfilContext` declara um `useEffect` que sincroniza com `LocalStoragePerfilStorage` a cada mudança em `state.presets` ou `state.presetAtivoId`. O `useRef` inicial evita escrita na primeira montagem (que apenas reidrata do storage).
 
@@ -277,7 +277,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ---
 
-## VI — Schema Pré-Lançamento
+## VI - Schema Pré-Lançamento
 
 A TASK-REF-30 descartou a cadeia histórica de migração porque o app ainda não tinha usuários públicos. O contrato atual é simples:
 
@@ -289,18 +289,18 @@ A TASK-REF-30 descartou a cadeia histórica de migração porque o app ainda nã
 
 ---
 
-## VII — Fixture de dev (`src/fixtures/usuario_teste.json`)
+## VII - Fixture de dev (`src/fixtures/usuario_teste.json`)
 
 Fixture em `schemaVersion: 1`, acompanhando o baseline público inicial.
 
 ---
 
-## VIII — Histórico deste documento
+## VIII - Histórico deste documento
 
 | Data       | Mudança |
 | ---------- | ------- |
 | 2026-05-05 | Especificação pré-implementação original (v5) |
-| 2026-05-24 | Reescrita completa (TASK-DOC-009) — sincronizado com schema 14, perfilPadrao real, actions reais, migrações documentadas |
-| 2026-05-27 | TASK-RF-6.13 — sincronizado com schema 19 e `kmUltimaTrocas` ampliado para peças rastreáveis e retíficas |
-| 2026-05-31 | TASK-REF-30 — reset pré-lançamento: schema v1, namespace `estimamoto:v1:*`, sem migrações históricas |
-| 2026-05-27 | TASK-RF-6.24 — sincronizado com schema 20; `kitRevisao` removido de `kmUltimaTrocas` |
+| 2026-05-24 | Reescrita completa (TASK-DOC-009) - sincronizado com schema 14, perfilPadrao real, actions reais, migrações documentadas |
+| 2026-05-27 | TASK-RF-6.13 - sincronizado com schema 19 e `kmUltimaTrocas` ampliado para peças rastreáveis e retíficas |
+| 2026-05-31 | TASK-REF-30 - reset pré-lançamento: schema v1, namespace `estimamoto:v1:*`, sem migrações históricas |
+| 2026-05-27 | TASK-RF-6.24 - sincronizado com schema 20; `kitRevisao` removido de `kmUltimaTrocas` |

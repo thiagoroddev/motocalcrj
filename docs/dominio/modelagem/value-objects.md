@@ -45,7 +45,7 @@ interface SeguroConfig {
 
 **Invariantes:**
 
-- Presença de seguro derivada de `valorAnual > 0` (após REF-21 / ADR-005 — sem mais campo `tem`).
+- Presença de seguro derivada de `valorAnual > 0` (após REF-21 / ADR-005 - sem mais campo `tem`).
 - `valorAnual` e sempre anualizado (mesmo que `periodicidade` seja `mensal`).
 
 ---
@@ -182,7 +182,7 @@ interface CustoPeca {
 }
 ```
 
-⚠️ Campo `fonte: 'preset' | 'registro'` permanece com naming herdado — sua semantica hoje é "tem override?" (REF-18). Nao renomear sem ADR.
+⚠️ Campo `fonte: 'preset' | 'registro'` permanece com naming herdado - sua semantica hoje é "tem override?" (REF-18). Nao renomear sem ADR.
 
 ### CustoServicoRevisao
 
@@ -215,7 +215,7 @@ Usado para retíficas (`retifica-cabecote`, `retifica-completa`) em `CustosPorCa
 
 ### CustosPorCategoria
 
-Estrutura agregada com totais e detalhes por categoria — `documentos`, `revisao`, `manutencao`, `combustivel`, `internet`, `seguro`, `alimentacao`, `financiamento`, `gastosCustom`. Ver `src/types/calculos.ts` para shape completo.
+Estrutura agregada com totais e detalhes por categoria - `documentos`, `revisao`, `manutencao`, `combustivel`, `internet`, `seguro`, `alimentacao`, `financiamento`, `gastosCustom`. Ver `src/types/calculos.ts` para shape completo.
 
 ### ResultadoCalculo
 
@@ -235,12 +235,12 @@ Após REF-18 (modo único), nao tem mais `modoAtivo`.
 
 ## Value Objects que NAO existem no codigo atual
 
-Conceitos antigos removidos ou que nunca foram materializados — nao usar como verdade:
+Conceitos antigos removidos ou que nunca foram materializados - nao usar como verdade:
 
 - `HabitosUso` (nunca existiu)
 - `CustosFixos` (nunca existiu como tipo)
-- `RegistroManutencao` (eliminado por REF-19 — Registros mortos)
-- `ModoExibicao` (eliminado por REF-18 — modo unico)
+- `RegistroManutencao` (eliminado por REF-19 - Registros mortos)
+- `ModoExibicao` (eliminado por REF-18 - modo unico)
 
 Se esses conceitos voltarem a ser necessarios, devem ser modelados novamente com base no codigo real.
 

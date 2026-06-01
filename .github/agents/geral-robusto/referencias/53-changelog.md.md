@@ -31,16 +31,16 @@ Como pacote de instruções (não código executável), SemVer aplica adaptado:
 
 Cada versão organiza mudanças em até 6 categorias (omitir as não usadas):
 
-- **Adicionado** — funcionalidade nova
-- **Mudado** — mudança em funcionalidade existente
-- **Depreciado** — funcionalidade que será removida em versão futura
-- **Removido** — funcionalidade removida
-- **Corrigido** — correção de erro
-- **Segurança** — mudança específica de segurança
+- **Adicionado** - funcionalidade nova
+- **Mudado** - mudança em funcionalidade existente
+- **Depreciado** - funcionalidade que será removida em versão futura
+- **Removido** - funcionalidade removida
+- **Corrigido** - correção de erro
+- **Segurança** - mudança específica de segurança
 
 ---
 
-## [1.0.0](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b# "Primeira liberação completa do pacote") — 2026-05-13
+## [1.0.0](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b# "Primeira liberação completa do pacote") - 2026-05-13
 
 Primeira liberação do pacote.
 
@@ -48,62 +48,62 @@ Primeira liberação do pacote.
 
 #### Fundação
 
-- `00-INDICE.md` — índice navegável de todos os módulos
-- `01-nucleo.md` — núcleo sempre carregado, com hierarquia de regras e 3 inegociáveis
+- `00-INDICE.md` - índice navegável de todos os módulos
+- `01-nucleo.md` - núcleo sempre carregado, com hierarquia de regras e 3 inegociáveis
 
 #### Padrões (`padroes/`)
 
-- `10-codigo-e-convencoes.md` — idioma, nomenclatura, magic numbers, Regra de Três
-- `11-arquitetura-e-pastas.md` — estrutura de pastas e responsabilidades de cada camada
-- `12-react-e-estado.md` — padrões de hooks, derivação direta, anti-`useEffect`
-- `13-ui-e-design-system.md` — componentes UI, variantes, tokens, opção shadcn/ui
-- `14-formularios-e-validacao.md` — Zod + react-hook-form, schema como fonte de verdade
-- `15-testes.md` — Vitest + Testing Library, AAA, comportamento sobre implementação
-- `16-performance-acessibilidade.md` — Core Web Vitals, WCAG AA, padrões para os dois
-- `17-backend-node.md` — stub mínimo (Express, validação, isolamento de camadas)
-- `18-seguranca-privacidade.md` — PII, storage, XSS, validação dupla, LGPD
+- `10-codigo-e-convencoes.md` - idioma, nomenclatura, magic numbers, Regra de Três
+- `11-arquitetura-e-pastas.md` - estrutura de pastas e responsabilidades de cada camada
+- `12-react-e-estado.md` - padrões de hooks, derivação direta, anti-`useEffect`
+- `13-ui-e-design-system.md` - componentes UI, variantes, tokens, opção shadcn/ui
+- `14-formularios-e-validacao.md` - Zod + react-hook-form, schema como fonte de verdade
+- `15-testes.md` - Vitest + Testing Library, AAA, comportamento sobre implementação
+- `16-performance-acessibilidade.md` - Core Web Vitals, WCAG AA, padrões para os dois
+- `17-backend-node.md` - stub mínimo (Express, validação, isolamento de camadas)
+- `18-seguranca-privacidade.md` - PII, storage, XSS, validação dupla, LGPD
 
 #### Processos (`processos/`)
 
-- `20-ciclo-tarefa.md` — ciclo pendentes → em-andamento → concluidas, modos Light/Standard/Strict, Esforço-H/IA
-- `21-revisao-codigo.md` — auto-revisão IA, 3 níveis de achados, geração de tarefas
-- `22-refatoracao.md` — definição estrita, code smells, SOLID em React, Regra de Três
-- `23-modelagem-dominio.md` — DDD tático com estilos funcional e classe, linguagem ubíqua
-- `24-figma-para-codigo.md` — análise visual, spec técnica, ordem de implementação, intent perfect
-- `25-analise-impacto.md` — blast radius, decisões em aberto, dívida documentada
-- `26-inicializacao-projeto.md` — 5 fases de engenharia reversa, arquivamento, ADRs retrospectivas
+- `20-ciclo-tarefa.md` - ciclo pendentes → em-andamento → concluidas, modos Light/Standard/Strict, Esforço-H/IA
+- `21-revisao-codigo.md` - auto-revisão IA, 3 níveis de achados, geração de tarefas
+- `22-refatoracao.md` - definição estrita, code smells, SOLID em React, Regra de Três
+- `23-modelagem-dominio.md` - DDD tático com estilos funcional e classe, linguagem ubíqua
+- `24-figma-para-codigo.md` - análise visual, spec técnica, ordem de implementação, intent perfect
+- `25-analise-impacto.md` - blast radius, decisões em aberto, dívida documentada
+- `26-inicializacao-projeto.md` - 5 fases de engenharia reversa, arquivamento, ADRs retrospectivas
 
 #### Templates (`templates/`)
 
-- `30-task-em-andamento.md` — formato com cabeçalho em lista, variantes bloqueada/retomada/Strict
-- `31-task-concluida.md` — imutável, ✅/❌ nos critérios, variantes cancelada/Light/Hotfix/Strict[[]]
-- `32-adr.md` — anatomia, variantes retrospectiva/rejeitada/substituída, ciclo de vida
-- `33-contexto-projeto-ai.md` — cartão de visitas para IAs, 3 variantes, hierarquia de regras
-- `34-readme-projeto.md` — cartão para humanos, 3 variantes solo/OS/corporativo
-- `35-componente-ui.md` — scaffold com clsx/cva, 3 variantes (sem variantes, composto, input)
-- `36-hook-feature.md` — scaffold com interface mínima, 3 variantes (local, com service, composto)
+- `30-task-em-andamento.md` - formato com cabeçalho em lista, variantes bloqueada/retomada/Strict
+- `31-task-concluida.md` - imutável, ✅/❌ nos critérios, variantes cancelada/Light/Hotfix/Strict[[]]
+- `32-adr.md` - anatomia, variantes retrospectiva/rejeitada/substituída, ciclo de vida
+- `33-contexto-projeto-ai.md` - cartão de visitas para IAs, 3 variantes, hierarquia de regras
+- `34-readme-projeto.md` - cartão para humanos, 3 variantes solo/OS/corporativo
+- `35-componente-ui.md` - scaffold com clsx/cva, 3 variantes (sem variantes, composto, input)
+- `36-hook-feature.md` - scaffold com interface mínima, 3 variantes (local, com service, composto)
 
 #### Checklists (`checklists/`)
 
-- `40-revisao-rapida.md` — master com versão essencial + 10 dimensões da versão completa
-- `41-seguranca.md` — versão essencial inegociável + 10 categorias detalhadas
-- `42-acessibilidade.md` — POUR + WCAG AA + 10 áreas + ferramentas (auto + manual)
-- `43-performance.md` — Core Web Vitals + 10 áreas + como medir + trade-offs
+- `40-revisao-rapida.md` - master com versão essencial + 10 dimensões da versão completa
+- `41-seguranca.md` - versão essencial inegociável + 10 categorias detalhadas
+- `42-acessibilidade.md` - POUR + WCAG AA + 10 áreas + ferramentas (auto + manual)
+- `43-performance.md` - Core Web Vitals + 10 áreas + como medir + trade-offs
 
 #### Referências (`referencias/`)
 
-- `50-anti-padroes.md` — catálogo procurável com 12 categorias e níveis 🔴🟡🟢
-- `51-comandos.md` — quick reference de npm, Vite, Vitest, TypeScript, ESLint, Prettier, Git + combos
-- `52-glossario-termos-tecnicos.md` — formato híbrido (índice alfabético + 11 categorias temáticas)
-- `53-changelog.md` — este arquivo
+- `50-anti-padroes.md` - catálogo procurável com 12 categorias e níveis 🔴🟡🟢
+- `51-comandos.md` - quick reference de npm, Vite, Vitest, TypeScript, ESLint, Prettier, Git + combos
+- `52-glossario-termos-tecnicos.md` - formato híbrido (índice alfabético + 11 categorias temáticas)
+- `53-changelog.md` - este arquivo
 
 ### Decisões Arquiteturais Inegociáveis (Núcleo)
 
 Estabelecidas em `01-nucleo.md` seção 1.3. Não podem ser sobrescritas por `contexto-projeto-ai.md`:
 
-1. **Confirmação antes de ações destrutivas** — IA pergunta antes de deletar, sobrescrever sem backup, modificar arquivo crítico
-2. **Proibição de `any` sem justificativa** — TypeScript strict, `any` exige comentário documentando o motivo
-3. **Código é a verdade primária** — divergência entre doc e código vence o código
+1. **Confirmação antes de ações destrutivas** - IA pergunta antes de deletar, sobrescrever sem backup, modificar arquivo crítico
+2. **Proibição de `any` sem justificativa** - TypeScript strict, `any` exige comentário documentando o motivo
+3. **Código é a verdade primária** - divergência entre doc e código vence o código
 
 ### Convenções Estabelecidas
 
@@ -183,7 +183,7 @@ Pacote velho continua válido. Pin de versão é estratégia válida.
 Quando houver versões novas, adicionar acima desta seção, no formato:
 
 ```markdown
-## [X.Y.Z] — AAAA-MM-DD
+## [X.Y.Z] - AAAA-MM-DD
 
 ### Adicionado
 - [item]
@@ -203,7 +203,7 @@ Quando houver versões novas, adicionar acima desta seção, no formato:
 
 **1. Por que ter changelog se o pacote ainda está na versão 1.0?** Para já estabelecer o **formato** desde o início. Quando mudanças vierem, é só seguir o padrão. Sem changelog estabelecido, primeira atualização vira improviso.
 
-**2. Quando bumpa MAJOR?** Quando alguma das 3 inegociáveis do núcleo muda, ou quando reestruturação invalida `contexto-projeto-ai.md` ou tarefas escritas no formato antigo. Conservador — MAJOR é raro.
+**2. Quando bumpa MAJOR?** Quando alguma das 3 inegociáveis do núcleo muda, ou quando reestruturação invalida `contexto-projeto-ai.md` ou tarefas escritas no formato antigo. Conservador - MAJOR é raro.
 
 **3. Pacote `.agent/` precisa de tag Git?** Útil mas não obrigatório. Se você versiona o pacote como Git separado, sim. Se é parte de um projeto, basta esta data no changelog.
 
@@ -211,7 +211,7 @@ Quando houver versões novas, adicionar acima desta seção, no formato:
 
 **5. Posso usar versão velha do pacote em projeto novo?** Pode. Versões antigas continuam válidas. Mas você perde benefícios das versões mais recentes (módulos novos, correções, refinamentos).
 
-**6. Quem mantém este arquivo atualizado?** Quem propõe mudança no pacote atualiza este arquivo no mesmo commit. Se a IA propõe mudança, ela deve atualizar — mas humano valida antes de mergear.
+**6. Quem mantém este arquivo atualizado?** Quem propõe mudança no pacote atualiza este arquivo no mesmo commit. Se a IA propõe mudança, ela deve atualizar - mas humano valida antes de mergear.
 
 **7. E se eu quiser personalizar o pacote?** Você pode (e deve, conforme a necessidade do projeto). Fork mental: marcar no `contexto-projeto-ai.md` que você customizou e descrever divergências. Para mudanças grandes, registrar como ADR retrospectiva.
 
@@ -228,8 +228,8 @@ Quando houver versões novas, adicionar acima desta seção, no formato:
 
 ## 🔗 Outros Arquivos do Pacote
 
-- [`00-INDICE.md`](https://claude.ai/00-INDICE.md) — Mapa geral
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) — Regras inegociáveis
-- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) — Catálogo de anti-padrões
-- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) — Quick reference de comandos
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) — Definições
+- [`00-INDICE.md`](https://claude.ai/00-INDICE.md) - Mapa geral
+- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Regras inegociáveis
+- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) - Catálogo de anti-padrões
+- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) - Quick reference de comandos
+- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições

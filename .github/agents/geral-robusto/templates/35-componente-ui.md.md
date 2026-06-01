@@ -66,7 +66,7 @@ Use quando:
 Não use quando:
 
 - Componente é puramente visual sem interação (Skeleton, Spinner)
-- Componente é composto (Card com múltiplos filhos — ref de qual?)
+- Componente é composto (Card com múltiplos filhos - ref de qual?)
 
 ### 4. Variantes declaradas
 
@@ -86,7 +86,7 @@ Funciona sem props extras. Usuário sobrescreve quando precisa.
 
 ```tsx
 // ✅
-<Botao>Clique</Botao>  // funciona — usa defaults
+<Botao>Clique</Botao>  // funciona - usa defaults
 
 // ❌
 <Botao variante="primario" tamanho="medio" ...>Clique</Botao>  // tudo obrigatório
@@ -110,7 +110,7 @@ Aceita `onClick`, `disabled`, `type="submit"`, `aria-label`, etc., sem você pre
 
 ### 8. Sem lógica de negócio
 
-UI não consulta API, não acessa storage, não conhece tipos do domínio. Estado interno aceitável (controlado/não-controlado, hover, foco) — lógica de negócio, não.
+UI não consulta API, não acessa storage, não conhece tipos do domínio. Estado interno aceitável (controlado/não-controlado, hover, foco) - lógica de negócio, não.
 
 ---
 
@@ -587,19 +587,19 @@ CampoTexto.displayName = 'CampoTexto'
 
 **Detalhes importantes:**
 
-- `ref` chega no `<input>`, não num wrapper — react-hook-form precisa disso
+- `ref` chega no `<input>`, não num wrapper - react-hook-form precisa disso
 - `aria-invalid` + `aria-describedby` ligam o input à mensagem de erro
 - `role="alert"` no parágrafo de erro faz screen reader anunciar a mudança
 - Label fica **fora** do componente (responsabilidade do form, não do campo)
 
 ---
 
-## Acessibilidade — Checklist Específico para UI
+## Acessibilidade - Checklist Específico para UI
 
 Ao criar componente UI, verifique:
 
 - [ ] **Foco visível.** `focus-visible:ring-*` em qualquer elemento interativo
-- [ ] **Alvo de toque mínimo.** 48×48px (com exceções documentadas — ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
+- [ ] **Alvo de toque mínimo.** 48×48px (com exceções documentadas - ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
 - [ ] **Contraste mínimo.** 4.5:1 para texto normal, 3:1 para texto grande
 - [ ] **Estados anunciados.** `aria-pressed`, `aria-expanded`, `aria-selected` quando aplicável
 - [ ] **Estados de erro.** `aria-invalid` + `aria-describedby` em inputs
@@ -676,15 +676,15 @@ Mais detalhes em [módulo 15](https://claude.ai/padroes/15-testes.md).
 
 **3. `forwardRef` em todo componente?** Não. Só onde faz sentido (ver seção "Princípios" item 3). Em componente sem interação, `forwardRef` é ruído.
 
-**4. Onde defino as cores/tokens?** Em `tailwind.config.ts`. Componentes referenciam tokens (`bg-primary`, `text-foreground`) — nunca cores hex direto. Detalhes em [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
+**4. Onde defino as cores/tokens?** Em `tailwind.config.ts`. Componentes referenciam tokens (`bg-primary`, `text-foreground`) - nunca cores hex direto. Detalhes em [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
 
-**5. Componente pode ter `useState` interno?** Sim, para estado **puramente visual** (hover, foco, expand/collapse). Não para estado de negócio. Componente controlado vs não-controlado é decisão de design — geralmente ambos via prop opcional (`value` controlado; sem `value` = não-controlado interno).
+**5. Componente pode ter `useState` interno?** Sim, para estado **puramente visual** (hover, foco, expand/collapse). Não para estado de negócio. Componente controlado vs não-controlado é decisão de design - geralmente ambos via prop opcional (`value` controlado; sem `value` = não-controlado interno).
 
 **6. Como nomeio o arquivo: PascalCase ou kebab-case?** PascalCase, igual ao componente: `Botao.tsx`. Convenção quase universal no ecossistema React.
 
 **7. Devo usar shadcn/ui ou criar do zero?** shadcn/ui é uma **opção** entre outras (não recomendação forte do pacote). Se usar, mantenha consistência: ou tudo shadcn ou nada. Mistura cria inconsistência visual. Detalhes em [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
 
-**8. E se preciso de animação?** Tailwind tem `animate-*` (spin, pulse, ping, bounce). Para animações complexas, considere Framer Motion. Mas em UI base, anime poucos elementos — sobrecarga visual e performance.
+**8. E se preciso de animação?** Tailwind tem `animate-*` (spin, pulse, ping, bounce). Para animações complexas, considere Framer Motion. Mas em UI base, anime poucos elementos - sobrecarga visual e performance.
 
 **9. Posso usar React.FC?** Pode, mas a comunidade tem se afastado (problemas com `children` implícito, generics, etc.). Prefira função normal + interface de props explícita.
 
@@ -704,9 +704,9 @@ Mais que isso, mover para Storybook ou documentação dedicada.
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) — Princípios de UI no projeto
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) — Acessibilidade detalhada
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Onde mora UI vs domínio
-- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) — Testes detalhados
-- [`36-hook-feature.md`](https://claude.ai/chat/36-hook-feature.md) — Template do hook que consome estes componentes
-- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) — Checklist detalhado
+- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Princípios de UI no projeto
+- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Acessibilidade detalhada
+- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde mora UI vs domínio
+- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) - Testes detalhados
+- [`36-hook-feature.md`](https://claude.ai/chat/36-hook-feature.md) - Template do hook que consome estes componentes
+- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) - Checklist detalhado

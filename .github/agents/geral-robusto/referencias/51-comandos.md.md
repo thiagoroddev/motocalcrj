@@ -366,7 +366,7 @@ git push -u origin nome-da-branch   # primeira vez
 
 # Forçar (cuidado!)
 git push --force-with-lease   # safer
-git push --force              # PERIGO — só você
+git push --force              # PERIGO - só você
 ```
 
 ### Desfazer
@@ -383,10 +383,10 @@ git reset HEAD arquivo.ts     # clássico
 # Reverter commit (cria commit novo invertendo)
 git revert <hash>
 
-# Reset (PERIGOSO — pode perder commits)
+# Reset (PERIGOSO - pode perder commits)
 git reset --soft HEAD~1   # desfaz commit, mantém mudanças staged
 git reset --mixed HEAD~1  # desfaz commit, mantém mudanças (default)
-git reset --hard HEAD~1   # desfaz commit E mudanças — PERDE
+git reset --hard HEAD~1   # desfaz commit E mudanças - PERDE
 ```
 
 ### Stash (guardar mudanças temporariamente)
@@ -610,7 +610,7 @@ npm run build   # se quer garantir 100%
 
 ## 🔗 Referências e Módulos Relacionados
 
-- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) — Catálogo de anti-padrões
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) — Definições
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) — Quando rodar testes/lint no ciclo
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) — Setup inicial usa estes comandos
+- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) - Catálogo de anti-padrões
+- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições
+- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Quando rodar testes/lint no ciclo
+- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Setup inicial usa estes comandos

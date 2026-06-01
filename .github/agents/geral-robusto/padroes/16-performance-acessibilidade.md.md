@@ -19,7 +19,7 @@ description: "Performance e acessibilidade: Core Web Vitals, code splitting, ima
 Os dois temas dividem mais do que parece:
 
 - **Ambos são prejudicados por mudanças tardias.** Adicionar acessibilidade depois exige refatoração; adicionar performance depois exige código mais complexo.
-- **Ambos têm métricas objetivas.** Não são "achismo" — você mede.
+- **Ambos têm métricas objetivas.** Não são "achismo" - você mede.
 - **Ambos têm o mesmo conserto frequente.** Reduzir JavaScript ajuda performance E ajuda quem usa leitor de tela em hardware modesto.
 - **Ambos são afetados por decisões de UI.** O mesmo componente bem feito atende os dois.
 
@@ -29,7 +29,7 @@ Os dois temas dividem mais do que parece:
 
 O Google avalia sites por três métricas principais. Elas também medem o que o usuário percebe.
 
-### 2.1 LCP — Largest Contentful Paint
+### 2.1 LCP - Largest Contentful Paint
 
 **O que mede:** tempo até o maior elemento visível aparecer (geralmente uma imagem hero ou bloco de texto).
 
@@ -52,7 +52,7 @@ O Google avalia sites por três métricas principais. Elas também medem o que o
 <link rel="preload" as="image" href="hero.jpg" />
 ```
 
-### 2.2 INP — Interaction to Next Paint
+### 2.2 INP - Interaction to Next Paint
 
 **O que mede:** latência da pior interação do usuário (clique, tecla, toque) durante a sessão.
 
@@ -70,7 +70,7 @@ O Google avalia sites por três métricas principais. Elas também medem o que o
 - `useDeferredValue` para inputs reativos
 - Debounce em inputs caros
 
-### 2.3 CLS — Cumulative Layout Shift
+### 2.3 CLS - Cumulative Layout Shift
 
 **O que mede:** o quanto o conteúdo "pula" durante o carregamento.
 
@@ -99,7 +99,7 @@ O Google avalia sites por três métricas principais. Elas também medem o que o
 
 |Ferramenta|Quando usar|
 |---|---|
-|**Chrome DevTools — Lighthouse**|Auditoria local antes de subir|
+|**Chrome DevTools - Lighthouse**|Auditoria local antes de subir|
 |**PageSpeed Insights**|Validação em URL pública|
 |**web-vitals** (lib)|Monitorar em produção|
 
@@ -169,9 +169,9 @@ function Dashboard() {
 
 ### 3.3 Quando NÃO Fazer Code Splitting
 
-- **Componentes pequenos** — o overhead de uma chunk extra é maior que o benefício
-- **Componentes acima da fold inicial** — vão ser pedidos imediatamente mesmo
-- **Bibliotecas inline simples** — `lodash-es` faz tree-shaking automaticamente
+- **Componentes pequenos** - o overhead de uma chunk extra é maior que o benefício
+- **Componentes acima da fold inicial** - vão ser pedidos imediatamente mesmo
+- **Bibliotecas inline simples** - `lodash-es` faz tree-shaking automaticamente
 
 Code splitting **adiciona complexidade**. Use quando o ganho de performance compensar.
 
@@ -236,7 +236,7 @@ Para imagens que aparecem em tamanhos diferentes por dispositivo:
 
 O browser baixa apenas a versão necessária.
 
-### 4.4 Alt Text — Acessibilidade
+### 4.4 Alt Text - Acessibilidade
 
 |Cenário|`alt`|
 |---|---|
@@ -266,12 +266,12 @@ Sem profiler, você está adivinhando.
 ### 5.2 `React.memo` para Listas
 
 ```tsx
-// Sem memo — todo CardPerfil re-renderiza quando lista atualiza
+// Sem memo - todo CardPerfil re-renderiza quando lista atualiza
 function CardPerfil({ perfil, onEditar }: Props) {
   return <div>{perfil.nome}</div>
 }
 
-// Com memo — só re-renderiza se props mudarem
+// Com memo - só re-renderiza se props mudarem
 const CardPerfil = memo(function CardPerfil({ perfil, onEditar }: Props) {
   return <div>{perfil.nome}</div>
 })
@@ -325,17 +325,17 @@ Para listas com 100+ itens visíveis simultaneamente, use **virtualização** (r
 
 Bibliotecas populares:
 
-- `@tanstack/react-virtual` — leve, headless
-- `react-window` — clássica
-- `react-virtuoso` — mais features (sticky headers, etc.)
+- `@tanstack/react-virtual` - leve, headless
+- `react-window` - clássica
+- `react-virtuoso` - mais features (sticky headers, etc.)
 
-Não implemente virtualização manualmente — é complexo e fácil de errar.
+Não implemente virtualização manualmente - é complexo e fácil de errar.
 
 ### 5.5 Quando NÃO Otimizar
 
 Iniciantes tendem a `memo` tudo. Custos:
 
-- `memo` faz comparação a cada render — para componentes triviais, custa mais que o ganho
+- `memo` faz comparação a cada render - para componentes triviais, custa mais que o ganho
 - `useMemo`/`useCallback` adicionam dependências, criam bugs sutis
 - Código fica menos legível
 
@@ -364,7 +364,7 @@ const dobro = _.map([1, 2], x => x * 2)
 import map from 'lodash/map'
 const dobro = map([1, 2], x => x * 2)
 
-// ✅✅ Melhor — use lodash-es
+// ✅✅ Melhor - use lodash-es
 import { map } from 'lodash-es'
 ```
 
@@ -432,10 +432,10 @@ WCAG (Web Content Accessibility Guidelines) tem 3 níveis: A, AA, AAA. **Mire AA
 
 ```css
 /* ❌ Cinza claro em fundo branco */
-.texto { color: #aaa; background: white; } /* 2.32:1 — falha */
+.texto { color: #aaa; background: white; } /* 2.32:1 - falha */
 
 /* ✅ Cinza médio */
-.texto { color: #595959; background: white; } /* 7.05:1 — passa AA e AAA */
+.texto { color: #595959; background: white; } /* 7.05:1 - passa AA e AAA */
 ```
 
 ### 7.2 Estrutura Semântica
@@ -626,7 +626,7 @@ Quando algo aparece na tela após ação do usuário (mensagem de sucesso, erro,
 |---|---|
 |`role="alert"`|Interrompe e anuncia imediatamente|
 |`aria-live="polite"`|Anuncia quando o leitor estiver livre|
-|`aria-live="assertive"`|Igual a `alert` — use com moderação|
+|`aria-live="assertive"`|Igual a `alert` - use com moderação|
 |`aria-atomic="true"`|Re-anuncia tudo (não só a parte que mudou)|
 
 ### 9.3 Texto Para Leitor (Visualmente Oculto)
@@ -765,8 +765,8 @@ Usuários com baixa visão pedem alto contraste:
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) — `useMemo`, `useCallback`, `useDeferredValue`
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) — Acessibilidade nos componentes base
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Forms acessíveis em detalhe
-- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) — Checklist completo separado
-- [`../checklists/43-performance.md`](https://claude.ai/checklists/43-performance.md) — Checklist completo separado
+- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - `useMemo`, `useCallback`, `useDeferredValue`
+- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Acessibilidade nos componentes base
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Forms acessíveis em detalhe
+- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) - Checklist completo separado
+- [`../checklists/43-performance.md`](https://claude.ai/checklists/43-performance.md) - Checklist completo separado

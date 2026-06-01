@@ -29,7 +29,7 @@ description: "Refatoração: definição estrita, code smells, técnicas comuns,
 |Sem novo comportamento|Novo comportamento intencional|Comportamento corrigido|
 |Exemplo: extrair função|Exemplo: adicionar paginação|Exemplo: corrigir cálculo|
 
-**Por que importa:** misturar refatoração com mudança de comportamento é a fonte #1 de bugs sutis. Você refatora, testes quebram, você "corrige" — sem saber se quebraram por bug do refactor ou pela mudança de comportamento que você fez junto.
+**Por que importa:** misturar refatoração com mudança de comportamento é a fonte #1 de bugs sutis. Você refatora, testes quebram, você "corrige" - sem saber se quebraram por bug do refactor ou pela mudança de comportamento que você fez junto.
 
 ### 1.2 Regra Inegociável
 
@@ -81,7 +81,7 @@ Tão importante quanto saber quando refatorar é saber quando **não tocar**.
 |Sem testes e sem tempo de escrever|Sem rede de segurança|
 |Pressão de prazo crítico|Refatoração mal-feita pior que código velho|
 |Você acabou de chegar no projeto|Não conhece contexto suficiente|
-|Refatoração mudaria comportamento (na real)|Não é refatoração — é redesign|
+|Refatoração mudaria comportamento (na real)|Não é refatoração - é redesign|
 |Vai ser deletado em breve|Trabalho jogado fora|
 
 ### 3.2 A Síndrome do "Vou Refatorar Tudo"
@@ -107,18 +107,18 @@ npm run test
 # ✅ Tests passed: 82 | Failed: 0
 ```
 
-Se não há testes para a parte que você vai refatorar, **escreva testes primeiro**. Não testes profundos — apenas suficientes para detectar se você quebrar comportamento durante a refatoração.
+Se não há testes para a parte que você vai refatorar, **escreva testes primeiro**. Não testes profundos - apenas suficientes para detectar se você quebrar comportamento durante a refatoração.
 
 ```typescript
 // Testes mínimos antes de refatorar PaginaDetalhamento
-describe('PaginaDetalhamento — antes da refatoração', () => {
+describe('PaginaDetalhamento - antes da refatoração', () => {
   it('renderiza dados quando dados existem', () => { /* ... */ })
   it('renderiza estado vazio quando dados é null', () => { /* ... */ })
   it('chama onFiltrar quando filtro clica', () => { /* ... */ })
 })
 ```
 
-Esses testes vão sobreviver à refatoração. Se quebrarem, você quebrou comportamento — sinal vermelho.
+Esses testes vão sobreviver à refatoração. Se quebrarem, você quebrou comportamento - sinal vermelho.
 
 ### 4.2 Escopo Definido
 
@@ -144,7 +144,7 @@ Refatoração não é "vou fazer entre duas features". Aloque tempo dedicado. Ti
 
 ## 5. Code Smells que Justificam Refatoração
 
-"Code smell" é sinal de que algo está errado — não é prova, mas merece olhar.
+"Code smell" é sinal de que algo está errado - não é prova, mas merece olhar.
 
 ### 5.1 Tabela de Smells
 
@@ -383,7 +383,7 @@ Mas **não inline** se a variável tem nome semântico que ajuda entender (`tota
 
 Os princípios SOLID nasceram em OOP, mas têm tradução útil para React.
 
-### 7.1 S — Single Responsibility
+### 7.1 S - Single Responsibility
 
 > Cada componente/hook/função tem **uma única razão para mudar**.
 
@@ -409,21 +409,21 @@ function usePagina() {
 }
 ```
 
-### 7.2 O — Open/Closed
+### 7.2 O - Open/Closed
 
 > Componentes abertos para extensão (children, slots, props), fechados para modificação.
 
 ```tsx
-// ✅ Aceita children — extensível sem mudar o Card
+// ✅ Aceita children - extensível sem mudar o Card
 <Card>
   <ConteudoCustomizado />
 </Card>
 
-// ✅ Aceita render prop — extensível
+// ✅ Aceita render prop - extensível
 <Lista renderItem={item => <ItemCustomizado dados={item} />} />
 ```
 
-### 7.3 L — Liskov Substitution
+### 7.3 L - Liskov Substitution
 
 > Componentes wrapper não devem quebrar o contrato do componente base.
 
@@ -439,7 +439,7 @@ function MeuBotao({ onClick, ...rest }: Props) {
 }
 ```
 
-### 7.4 I — Interface Segregation
+### 7.4 I - Interface Segregation
 
 > Props mínimas, não monolíticas. Componente não pede o que não usa.
 
@@ -453,7 +453,7 @@ function MeuBotao({ onClick, ...rest }: Props) {
 
 Exceção: quando o "objeto inteiro" é convenção do projeto (ex: forms passam o objeto completo para clareza).
 
-### 7.5 D — Dependency Inversion
+### 7.5 D - Dependency Inversion
 
 > Componentes/hooks dependem de **abstrações** (interfaces, contratos), não de implementações concretas.
 
@@ -548,7 +548,7 @@ Caso real e doloroso: código antigo, sem testes, e você precisa refatorar. Com
 
 ### 10.1 A Estratégia "Testes de Caracterização"
 
-Antes de refatorar, escreva testes que **capturem o comportamento atual** — mesmo o errado. Esses são "testes de caracterização":
+Antes de refatorar, escreva testes que **capturem o comportamento atual** - mesmo o errado. Esses são "testes de caracterização":
 
 ```typescript
 // Não importa se o cálculo está "certo"
@@ -587,7 +587,7 @@ Para código onde teste não é viável ou suficiente (ex: lógica que envolve b
 
 ## 11. Quando Parar a Refatoração
 
-Refatorar é como organizar gaveta — sempre tem algo a mais para arrumar. Como saber parar?
+Refatorar é como organizar gaveta - sempre tem algo a mais para arrumar. Como saber parar?
 
 ### 11.1 Sinais de Que É Hora de Parar
 
@@ -634,8 +634,8 @@ Critério prático: você deveria sentir que o código está **claramente melhor
 |---|---|
 |Refatorar e adicionar feature ao mesmo tempo?|Nunca. Separe|
 |Sem testes para a parte que vai mudar?|Escreva testes primeiro|
-|Comportamento muda após refatoração?|Não é refatoração — é redesign|
-|Quando abstrair?|Regra de Três — 3 ocorrências|
+|Comportamento muda após refatoração?|Não é refatoração - é redesign|
+|Quando abstrair?|Regra de Três - 3 ocorrências|
 |Aplicar pattern sem motivo concreto?|Não|
 |Refatorar tudo que parece feio?|Não. Refatore o que vai mudar em breve|
 |Refatoração precisa ser perfeita?|Não. "Claramente melhor" basta|
@@ -645,8 +645,8 @@ Critério prático: você deveria sentir que o código está **claramente melhor
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/padroes/10-codigo-e-convencoes.md) — Regra de Três e convenções
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Para onde mover código durante refatoração
-- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) — Padrão de extract hook
-- [`15-testes.md`](https://claude.ai/padroes/15-testes.md) — Rede de segurança para refatorar
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) — Revisão gera tarefas REF que vêm aqui
+- [`10-codigo-e-convencoes.md`](https://claude.ai/padroes/10-codigo-e-convencoes.md) - Regra de Três e convenções
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Para onde mover código durante refatoração
+- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrão de extract hook
+- [`15-testes.md`](https://claude.ai/padroes/15-testes.md) - Rede de segurança para refatorar
+- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão gera tarefas REF que vêm aqui

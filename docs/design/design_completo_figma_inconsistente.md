@@ -1,4 +1,4 @@
-# MotoCalc RJ — Documentação de Design (Figma)
+# MotoCalc RJ - Documentação de Design (Figma)
 
 > **Fonte:** Análise visual do arquivo Figma `MotoCalc` (node-id: 1-2095)
 > **Gerado em:** 05/05/2026
@@ -40,7 +40,7 @@
 | `text-primary`      | `#FFFFFF`  | Títulos e texto principal                         |
 | `text-secondary`    | `#C1C6D7`  | Subtítulos, labels, helpers                       |
 
-> ⚠️ **Atenção:** As cores exatas de `warning` e `danger` foram inferidas visualmente — confirmar no Figma ao implementar.
+> ⚠️ **Atenção:** As cores exatas de `warning` e `danger` foram inferidas visualmente - confirmar no Figma ao implementar.
 
 ---
 
@@ -91,7 +91,7 @@ Sistema: **8pt Grid**
 **Padrão CTA duplo (Onboarding):**
 
 ```
-[Voltar — Secondary]   [Próximo → — Primary]
+[Voltar - Secondary]   [Próximo → - Primary]
 ```
 
 Botão primário ocupa ~65% da largura; secundário ~30%; gap 8px.
@@ -99,7 +99,7 @@ Botão primário ocupa ~65% da largura; secundário ~30%; gap 8px.
 **CTA único (Registro):**
 
 ```
-[💾 SALVAR REGISTRO — Primary, full-width]
+[💾 SALVAR REGISTRO - Primary, full-width]
 ```
 
 **CTA com ícone `+` à direita:**
@@ -136,7 +136,7 @@ Usado em botões de ação contextual (Adicionar Novo Gasto, Adicionar peça).
 
 **Stepper (incremento/decremento):**
 
-- Formato: `[—]  6  [+]`
+- Formato: `[-]  6  [+]`
 - Botões circulares com borda, sinal dentro
 - Usado para: Dias na semana, quantidade
 
@@ -151,7 +151,7 @@ Usado em botões de ação contextual (Adicionar Novo Gasto, Adicionar peça).
 | Tipo              | Aparência                                     | Uso                                                  |
 | ----------------- | --------------------------------------------- | ---------------------------------------------------- |
 | Toggle Switch     | Oval, azul = on / cinza = off                 | Ativar/desativar categorias de custo, eventos do dia |
-| Segmented Control | 2–3 botões em linha, selecionado = fundo azul | Tipo de gasolina, posição do pneu, periodicidade     |
+| Segmented Control | 2-3 botões em linha, selecionado = fundo azul | Tipo de gasolina, posição do pneu, periodicidade     |
 | Radio Button      | Círculo, preenchido azul quando selecionado   | Responsabilidade de custos (3 opções por categoria)  |
 | Chip/Tag          | Pill arredondado, `primary` fill = ativo      | Tipo de peça (Original/Paralela), combustível        |
 
@@ -240,19 +240,19 @@ Sub-item de Documentação tem chevron adicional para expandir detalhes.
 ```
 MotoCalc RJ
 ├── Onboarding (9 passos lineares, com branch no P6)
-│   ├── P1 — Marca da moto
-│   ├── P2 — Modelo
-│   ├── P3 — Ano de fabricação
-│   ├── P4 — Perfil de uso
-│   ├── P5 — Quilometragem
-│   ├── P6 — Situação da moto (branch)
+│   ├── P1 - Marca da moto
+│   ├── P2 - Modelo
+│   ├── P3 - Ano de fabricação
+│   ├── P4 - Perfil de uso
+│   ├── P5 - Quilometragem
+│   ├── P6 - Situação da moto (branch)
 │   │   ├── Quitada → vai para P7
 │   │   ├── Financiada → sub-tela Financiamento → P7
 │   │   └── Alugada → sub-tela Aluguel → P8-extra → P7
-│   │       └── P8-extra — Responsabilidade de Custos
-│   ├── P7 — Seguro
-│   ├── P8 — Plano de Internet
-│   └── P9/Final — Alimentação no Trabalho → Concluir
+│   │       └── P8-extra - Responsabilidade de Custos
+│   ├── P7 - Seguro
+│   ├── P8 - Plano de Internet
+│   └── P9/Final - Alimentação no Trabalho → Concluir
 │
 └── App Principal
     ├── [Tab] Estimativa (Painel)
@@ -288,23 +288,23 @@ MotoCalc RJ
 [Header: logo "MotoCalc RJ" + ícone de ajuda]
 ─────────────────────────────────────────────
 PASSO X DE 9          XX% concluído
-[Barra de progresso — blue fill]
+[Barra de progresso - blue fill]
 
-[Chip de contexto — opcional, ex: "Honda Pop 110i"]
+[Chip de contexto - opcional, ex: "Honda Pop 110i"]
 
 Título da Pergunta
 Subtítulo explicativo
 
-[Área de resposta — varia por tipo]
+[Área de resposta - varia por tipo]
 
-[Imagem atmosférica — opcional, ocupa parte inferior]
+[Imagem atmosférica - opcional, ocupa parte inferior]
 
 [Voltar]  [Próximo →]
 ```
 
 ---
 
-### IV.2- P1 — Identificação da Marca (11%)
+### IV.2- P1 - Identificação da Marca (11%)
 
 **Tipo de resposta:** Cards de seleção 2 colunas + 1 full-width
 
@@ -319,7 +319,7 @@ Subtítulo explicativo
 
 ---
 
-### IV.3- P2 — Seleção do Modelo (22%)
+### IV.3- P2 - Seleção do Modelo (22%)
 
 **Tipo de resposta:** Lista de itens (ícone + label + chevron), hero image no topo
 
@@ -338,18 +338,18 @@ Selecionado: borda azul + checkmark (sem chevron).
 
 ---
 
-### IV.4- P3 — Ano de Fabricação (33%)
+### IV.4- P3 - Ano de Fabricação (33%)
 
 **Tipo de resposta:** Dropdown + info card contextual
 
 **Chip de contexto:** "Honda Pop 110i"
 
 - Campo: "SELECIONE O ANO" → dropdown com anos disponíveis
-- Info card laranja: **REGRA DO RJ** — motos com mais de 15 anos têm 100% de isenção de IPVA no RJ
+- Info card laranja: **REGRA DO RJ** - motos com mais de 15 anos têm 100% de isenção de IPVA no RJ
 
 ---
 
-### IV.5- P4 — Perfil de Uso (44%)
+### IV.5- P4 - Perfil de Uso (44%)
 
 **Tipo de resposta:** Cards full-width verticais
 
@@ -362,7 +362,7 @@ Info card laranja contextual (aparece quando "Passageiro" selecionado): impacto 
 
 ---
 
-### IV.6- P5 — Quilometragem (55%)
+### IV.6- P5 - Quilometragem (55%)
 
 **Tipo de resposta:** Dois campos de texto + hero image (painel/hodômetro)
 
@@ -373,7 +373,7 @@ Info card laranja contextual (aparece quando "Passageiro" selecionado): impacto 
 
 ---
 
-### IV.7- P6 — Situação da Moto (66%) — Branch Condicional
+### IV.7- P6 - Situação da Moto (66%) - Branch Condicional
 
 **Tipo de resposta:** Cards full-width com radio button à direita
 
@@ -385,7 +385,7 @@ Info card laranja contextual (aparece quando "Passageiro" selecionado): impacto 
 
 ---
 
-#### IV.7.1- P6b — Sub-tela: Financiamento (condicional)
+#### IV.7.1- P6b - Sub-tela: Financiamento (condicional)
 
 Aparece quando "Financiada" selecionada. Mesmo passo 6/9 (66%).
 
@@ -399,21 +399,21 @@ Hero image: guidão com label "GESTÃO DE DÍVIDA".
 
 ---
 
-#### IV.7.2- P6c — Sub-tela: Aluguel (condicional)
+#### IV.7.2- P6c - Sub-tela: Aluguel (condicional)
 
 Aparece quando "Alugada" selecionada. Mesmo passo 6/9 (66%).
 
 | Campo         | Label                          | Opções                      |
 | ------------- | ------------------------------ | --------------------------- |
 | Valor         | "Qual o valor do seu aluguel?" | Input "R$ 0,00"             |
-| Periodicidade | —                              | Toggle "MENSAL" / "SEMANAL" |
+| Periodicidade | -                              | Toggle "MENSAL" / "SEMANAL" |
 
 Info card laranja: "O aluguel é um custo fixo que impacta diretamente sua meta diária."
 Hero image: motor de moto.
 
 ---
 
-#### IV.7.3- P8-extra — Responsabilidade de Custos (90%) — Só para fluxo "Alugada"
+#### IV.7.3- P8-extra - Responsabilidade de Custos (90%) - Só para fluxo "Alugada"
 
 Aparece como passo adicional no fluxo de moto alugada (entre P7 e o final).
 
@@ -426,11 +426,11 @@ Três seções, cada uma com 3 opções de radio:
 | Seguro                              | 🛡️    | Eu pago tudo / Locador paga tudo / Dividimos (50/50) |
 
 Info card no topo: explica que essas escolhas ajustam o cálculo operacional automaticamente.
-CTA: "Continuar >" (não "Próximo →" — inconsistência de label a padronizar).
+CTA: "Continuar >" (não "Próximo →" - inconsistência de label a padronizar).
 
 ---
 
-### IV.8- P7 — Seguro da Moto (77%)
+### IV.8- P7 - Seguro da Moto (77%)
 
 **Tipo de resposta:** Cards full-width + formulário condicional
 
@@ -448,7 +448,7 @@ Quando "Sim" selecionado, formulário aparece:
 
 ---
 
-### IV.9- P8 — Plano de Internet (88%)
+### IV.9- P8 - Plano de Internet (88%)
 
 **Tipo de resposta:** Campo único + hero image com badge
 
@@ -456,13 +456,13 @@ Hero: imagem de rede/conectividade com badge "Conectividade Ativa".
 
 | Campo        | Label                       |
 | ------------ | --------------------------- |
-| Valor mensal | "VALOR MENSAL (R$)" — input |
+| Valor mensal | "VALOR MENSAL (R$)" - input |
 
 Info card azul: "Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro."
 
 ---
 
-### IV.10- P9 / Passo Final — Alimentação no Trabalho (100%)
+### IV.10- P9 / Passo Final - Alimentação no Trabalho (100%)
 
 **Tipo de resposta:** Cards 2 colunas + campo condicional
 
@@ -480,7 +480,7 @@ Quando "Sim" selecionado:
 Info card no topo do formulário: separado dos gastos da moto, essencial para calcular lucro real.
 Info card no rodapé: "Fique tranquilo! Estes valores podem ser atualizados a qualquer momento na aba de Configurações do seu perfil."
 
-CTA final: `Concluir Configuração ✓` (botão com ícone de check — diferente dos demais passos).
+CTA final: `Concluir Configuração ✓` (botão com ícone de check - diferente dos demais passos).
 
 ---
 
@@ -501,25 +501,25 @@ Exemplo: "Honda: Pop 110i | 2024 - 55KM/L"
 
 **Rota:** Tab ESTIMATIVA
 
-#### V.2.1- Seção 1 — Configuração de Rodagem
+#### V.2.1- Seção 1 - Configuração de Rodagem
 
 Editável diretamente no painel (campo e stepper interativos):
 
 | Componente  | Label                         | Tipo                         |
 | ----------- | ----------------------------- | ---------------------------- |
 | KM diários  | "MÉDIA DE KM RODADOS POR DIA" | Input numérico + sufixo "KM" |
-| Dias/semana | "DIAS TRABALHADOS / SEMANA"   | Stepper [— N +]              |
+| Dias/semana | "DIAS TRABALHADOS / SEMANA"   | Stepper [- N +]              |
 
-#### V.2.2- Seção 2 — Custo de Operação por KM
+#### V.2.2- Seção 2 - Custo de Operação por KM
 
 Card de destaque:
 
 ```
 CUSTO DE OPERAÇÃO POR KM
-R$ 1,42/km                [ícone velocímetro — background watermark]
+R$ 1,42/km                [ícone velocímetro - background watermark]
 ```
 
-#### V.2.3- Seção 3 — Cards de Estimativa por Hora e Dia
+#### V.2.3- Seção 3 - Cards de Estimativa por Hora e Dia
 
 Grade 2 colunas:
 
@@ -529,7 +529,7 @@ Por Hora           Por Dia
 R$ 1,43            R$ 34,35
 ```
 
-#### V.2.4- Seção 4 — Cards de Estimativa por Período
+#### V.2.4- Seção 4 - Cards de Estimativa por Período
 
 Cards empilhados, cada um com:
 
@@ -544,7 +544,7 @@ Exemplo de dados reais do mockup:
 | Mês | 1.080 | R$ 962,04 |
 | Ano | 14.040 | R$ 12.506,52 |
 
-#### V.2.5- Seção 5 — Distribuição Percentual
+#### V.2.5- Seção 5 - Distribuição Percentual
 
 - Donut chart com label central (ex: "27% MANUTENÇÃO")
 - Legenda com chips coloridos e percentuais:
@@ -678,7 +678,7 @@ Tabela completa das revisões Honda programadas:
 
 Cada revisão exibe:
 
-- Label (ex: "1ª REVISÃO — 1000km em 6 meses")
+- Label (ex: "1ª REVISÃO - 1000km em 6 meses")
 - KM de uso (campo)
 - R$ mão de obra (campo)
 - Peças (campo)
@@ -711,9 +711,9 @@ Cada combustível tem dois chips alternáveis: "Valor por litro" / "Autonomia (K
 
 | Combustível        | Valor litro padrão | Autonomia padrão |
 | ------------------ | ------------------ | ---------------- |
-| Gasolina comum     | R$ 5,89            | —                |
-| Gasolina aditivada | R$ 6,15            | —                |
-| Etanol             | —                  | ⌀ 55 km/L        |
+| Gasolina comum     | R$ 5,89            | -                |
+| Gasolina aditivada | R$ 6,15            | -                |
+| Etanol             | -                  | ⌀ 55 km/L        |
 
 #### V.6.2- Seção: Peças e Elementos
 
@@ -726,10 +726,10 @@ Cada peça tem:
 
 | Peça            | Original padrão | Paralela | Vida Útil |
 | --------------- | --------------- | -------- | --------- |
-| Óleo do motor   | R$ 45,00        | —        | 1.000 km  |
-| Vela de ignição | R$ 30,00        | —        | 10.000 km |
-| Filtro de ar    | —               | R$ 20,00 | 10.000 km |
-| Kit transmissão | R$ 50,00        | —        | 22.000 km |
+| Óleo do motor   | R$ 45,00        | -        | 1.000 km  |
+| Vela de ignição | R$ 30,00        | -        | 10.000 km |
+| Filtro de ar    | -               | R$ 20,00 | 10.000 km |
+| Kit transmissão | R$ 50,00        | -        | 22.000 km |
 
 #### V.6.3- Seção: Pneus
 
@@ -750,13 +750,13 @@ Todas as telas de registro seguem este padrão estrutural:
 [Header: NOME DO REGISTRO + hamburger + help]
 [Hero Image com badge "NOVO REGISTRO" + Título]
 [Info card opcional (Dica Pro, laranja, com × dismiss)]
-[Card de contexto: "Novo Registro — TIPO DE MANUTENÇÃO"]
+[Card de contexto: "Novo Registro - TIPO DE MANUTENÇÃO"]
 
 [Seções numeradas ou com labels em caps]
 [Campos do formulário]
 [Área de evidência fotográfica (upload dashed)]
 
-[💾 SALVAR REGISTRO — full-width, blue]
+[💾 SALVAR REGISTRO - full-width, blue]
 [Bottom Nav]
 ```
 
@@ -775,7 +775,7 @@ Todas as telas de registro seguem este padrão estrutural:
 
 **Seção "EVENTOS DO DIA":**
 
-- Alimentação — toggle (on/off)
+- Alimentação - toggle (on/off)
 
 **Card de resultado em tempo real:**
 
@@ -784,7 +784,7 @@ TOTAL RODADO          MÉDIA ESTIMADA
 124.8 KM              38 km/L (laranja)
 ```
 
-**CTA:** `💾 Registrar Dia` (estilo ghost/light-blue — diferente dos outros registros)
+**CTA:** `💾 Registrar Dia` (estilo ghost/light-blue - diferente dos outros registros)
 
 ---
 
@@ -820,7 +820,7 @@ TOTAL RODADO          MÉDIA ESTIMADA
 | Marca                 | Dropdown (ex: Mobil)                          |
 | Kilometragem (KM)     | Input KM com ícone odômetro                   |
 | Valor do Serviço (R$) | Input monetário com ícone                     |
-| Evidência Visual      | Área upload dashed — "TIRAR FOTO DO ODÔMETRO" |
+| Evidência Visual      | Área upload dashed - "TIRAR FOTO DO ODÔMETRO" |
 
 ---
 
@@ -836,7 +836,7 @@ TOTAL RODADO          MÉDIA ESTIMADA
 | Marca do Pneu           | Input texto (ex: Pirelli, Michelin…)          |
 | Valor do Pneu - R$      | Input monetário                               |
 | Mão de Obra - R$        | Input monetário                               |
-| Evidência               | Área upload dashed — "TIRAR FOTO DO ODÔMETRO" |
+| Evidência               | Área upload dashed - "TIRAR FOTO DO ODÔMETRO" |
 
 ---
 
@@ -889,7 +889,7 @@ Mão de Obra: R$ 150,00    Peças: R$ 300,00
 
 **③ EVIDÊNCIA**
 
-- "Take Photo of Odometer — Obrigatório para validação" (com chevron → câmera)
+- "Take Photo of Odometer - Obrigatório para validação" (com chevron → câmera)
 
 ---
 
@@ -934,7 +934,7 @@ Cada seção tem reset individual (ícone 🔄):
 
 - Perfil de Trabalho: "Entrega" / "Passageiro" (segmented)
 - Dias na Semana (stepper ⊖ N ⊕)
-- KM por Dia — Média (input)
+- KM por Dia - Média (input)
 
 **Financeiro**
 
@@ -946,7 +946,7 @@ Cada seção tem reset individual (ícone 🔄):
 
 - Tipo: "QUITADA" / "FINANCIADA" / "ALUGADA" (segmented)
 - Valor Parcela (condicional)
-- Restantes — nº meses (condicional)
+- Restantes - nº meses (condicional)
 
 **Rodapé:** `Resetar para valores padrões` (button ghost, texto centralizado)
 
@@ -1052,14 +1052,14 @@ CUSTO TOTAL PERÍODO                  R$ X.XXX,XX
 
 > Estas inconsistências foram observadas no Figma e devem ser normalizadas na implementação:
 
-1. **Labels de CTA:** "Próximo →" vs "Continuar >" vs "Concluir Configuração ✓" — padronizar para "Próximo →" em todos os passos e "Concluir →" apenas no último.
-2. **Tamanho de fonte dos títulos:** variação visual entre telas de onboarding — implementar H1/H2 consistentes da tipografia do design system.
-3. **Espaçamento interno dos cards:** padding varia entre 12px e 20px — padronizar em 16px.
-4. **Chips "Original/Paralela":** aparecem como "Original | Paralela" em Autonomia (Vida Útil) e como "ORG | PAR" em Pneus — padronizar um dos formatos.
-5. **Evidência fotográfica:** "Take Photo of Odometer" (em inglês) no Kit Relação vs "TIRAR FOTO DO ODÔMETRO" nos outros — traduzir para PT.
-6. **Botão "Registrar Dia"** na tela de rodagem usa estilo light-blue/ghost vs o padrão azul forte — avaliar se intencional (menor urgência) ou inconsistência.
-7. **Subtítulo do P4:** "Uso padrão para cálculo de consumo e desgaste" apresenta caracteres corrompidos (UTF-8) — corrigir na implementação.
-8. **Passo 8 do fluxo Aluguel** (Responsabilidade de Custos): aparece como "8/9 — 90% Completo" mas a barra visual sugere ~88% — alinhar % com contagem de passos.
+1. **Labels de CTA:** "Próximo →" vs "Continuar >" vs "Concluir Configuração ✓" - padronizar para "Próximo →" em todos os passos e "Concluir →" apenas no último.
+2. **Tamanho de fonte dos títulos:** variação visual entre telas de onboarding - implementar H1/H2 consistentes da tipografia do design system.
+3. **Espaçamento interno dos cards:** padding varia entre 12px e 20px - padronizar em 16px.
+4. **Chips "Original/Paralela":** aparecem como "Original | Paralela" em Autonomia (Vida Útil) e como "ORG | PAR" em Pneus - padronizar um dos formatos.
+5. **Evidência fotográfica:** "Take Photo of Odometer" (em inglês) no Kit Relação vs "TIRAR FOTO DO ODÔMETRO" nos outros - traduzir para PT.
+6. **Botão "Registrar Dia"** na tela de rodagem usa estilo light-blue/ghost vs o padrão azul forte - avaliar se intencional (menor urgência) ou inconsistência.
+7. **Subtítulo do P4:** "Uso padrão para cálculo de consumo e desgaste" apresenta caracteres corrompidos (UTF-8) - corrigir na implementação.
+8. **Passo 8 do fluxo Aluguel** (Responsabilidade de Custos): aparece como "8/9 - 90% Completo" mas a barra visual sugere ~88% - alinhar % com contagem de passos.
 9. **Hamburguer vs nav sempre visivel:** decidir se o menu inferior fica sempre visivel; se sim, o hamburguer pode ser removido.
 
 ### VIII.6- Telas Pendentes
@@ -1069,5 +1069,5 @@ CUSTO TOTAL PERÍODO                  R$ X.XXX,XX
 
 ---
 
-_Documento gerado por análise do protótipo Figma MotoCalc — maio/2026._
+_Documento gerado por análise do protótipo Figma MotoCalc - maio/2026._
 _Para atualizar: reabrir o Figma e revisar frames marcados com `→` no painel de layers._

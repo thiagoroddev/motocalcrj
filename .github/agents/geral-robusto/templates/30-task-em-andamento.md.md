@@ -8,7 +8,7 @@ description: "Template para tarefa em andamento. Copie a estrutura, preencha con
 
 # 📝 Template: Tarefa em Andamento
 
-> **Arquivo destino:** `docs/tarefas/em-andamento.md` **Quando usar:** ao mover uma tarefa de `pendentes.md` para iniciar execução (modo Standard ou Strict). Para modo Light, pular este template — registro vai direto no chat/commit.
+> **Arquivo destino:** `docs/tarefas/em-andamento.md` **Quando usar:** ao mover uma tarefa de `pendentes.md` para iniciar execução (modo Standard ou Strict). Para modo Light, pular este template - registro vai direto no chat/commit.
 
 ---
 
@@ -28,7 +28,7 @@ description: "Template para tarefa em andamento. Copie a estrutura, preencha con
 Use este exemplo como referência. Os valores são fictícios mas realistas.
 
 ```markdown
-# TASK-RF-005.1 — Registros: lista e sub-abas
+# TASK-RF-005.1 - Registros: lista e sub-abas
 
 - **Status:** EM DESENVOLVIMENTO
 - **Modo:** Standard
@@ -92,18 +92,18 @@ Use este exemplo como referência. Os valores são fictícios mas realistas.
 ## Template Vazio (Para Copiar)
 
 ```markdown
-# TASK-[PREFIXO]-[NUMERO] — [Título]
+# TASK-[PREFIXO]-[NUMERO] - [Título]
 
 - **Status:** EM DESENVOLVIMENTO
 - **Modo:** [Standard / Strict]
 - **Valor:** [Crítico / Importante / Desejável]
 - **Urgência:** [Imediata / Normal]
-- **Esforço-H/IA:** [P/M/G/XG]/[P-IA/M-IA/G-IA/XG-IA] — formato: `H/IA` (ex: `G/M`)
+- **Esforço-H/IA:** [P/M/G/XG]/[P-IA/M-IA/G-IA/XG-IA] - formato: `H/IA` (ex: `G/M`)
 - **Data origem:** DD/MM/AA HH:MM
 - **Data início:** DD/MM/AA HH:MM
-- **Dependências:** [TASK-IDs separados por vírgula, ou `—`]
-- **REQ/ADR/DT:** [referências relacionadas, ou `—`]
-- **Observações:** [contexto adicional, ou `—`]
+- **Dependências:** [TASK-IDs separados por vírgula, ou `-`]
+- **REQ/ADR/DT:** [referências relacionadas, ou `-`]
+- **Observações:** [contexto adicional, ou `-`]
 
 ## Planejamento Aprovado
 
@@ -193,7 +193,7 @@ Para tarefas em modo Strict, adicione referência à ADR antes do Planejamento:
 ```markdown
 ## ADR Vinculada
 
-- **ADR-008:** [Título da ADR] — `docs/arquitetura/ADR/ADR-008.md`
+- **ADR-008:** [Título da ADR] - `docs/arquitetura/ADR/ADR-008.md`
 - **Status da ADR:** [Proposta / Aprovada]
 
 ⚠️ Implementação aguarda aprovação da ADR. Se ADR ainda em status "Proposta", **não codar**.
@@ -208,17 +208,17 @@ Para tarefas em modo Strict, adicione referência à ADR antes do Planejamento:
 Separe blocos com `---` e empilhe na ordem em que iniciaram:
 
 ```markdown
-# TASK-RF-5.1 — [Título]
+# TASK-RF-5.1 - [Título]
 [cabeçalho + execução]
 
 ---
 
-# TASK-BG-12 — [Título]
+# TASK-BG-12 - [Título]
 [cabeçalho + execução]
 
 ---
 
-# TASK-RF-5.2 — [Título]
+# TASK-RF-5.2 - [Título]
 [cabeçalho + execução]
 ```
 
@@ -228,11 +228,11 @@ Para terminar uma, **remova o bloco inteiro** (com o `---` anterior se for o cas
 
 ## Mini-FAQ
 
-**1. Posso editar o Planejamento depois de aprovado?** Mudanças pequenas (ajustes táticos) registre na seção `## Execução` com explicação. Mudanças grandes (redesign do que vai fazer) exigem nova aprovação do humano — volte ao passo PLANEJAR.
+**1. Posso editar o Planejamento depois de aprovado?** Mudanças pequenas (ajustes táticos) registre na seção `## Execução` com explicação. Mudanças grandes (redesign do que vai fazer) exigem nova aprovação do humano - volte ao passo PLANEJAR.
 
 **2. Preciso registrar todo commit?** Não. Registre eventos significativos: aprovação, conclusão de etapa, bloqueio, decisão, retomada. Commit triviais (formatação, ajuste de nome) não precisam.
 
-**3. E se a tarefa não tem dependências, REQ/ADR ou observações?** Use `—` (travessão) na linha do cabeçalho. **Não remova** a linha — manter a estrutura consistente facilita leitura entre tarefas.
+**3. E se a tarefa não tem dependências, REQ/ADR ou observações?** Use `-` (travessão) na linha do cabeçalho. **Não remova** a linha - manter a estrutura consistente facilita leitura entre tarefas.
 
 **4. Como sei qual `Esforço-IA` colocar?** Veja [módulo 20, seção 3.4](https://claude.ai/processos/20-ciclo-tarefa.md#34-esfor%C3%A7o-para-ia). Critério rápido: P-IA = 1-2 arquivos; M-IA = 2-5; G-IA = 5-12; XG-IA = 12+ (quebrar).
 
@@ -244,7 +244,7 @@ Para terminar uma, **remova o bloco inteiro** (com o `---` anterior se for o cas
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) — Processo completo do ciclo
-- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) — Template do próximo estágio
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) — Para tarefas Strict que geram ADR
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) — Revisão antes de concluir
+- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Processo completo do ciclo
+- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) - Template do próximo estágio
+- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - Para tarefas Strict que geram ADR
+- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Revisão antes de concluir

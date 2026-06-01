@@ -14,7 +14,7 @@
 
   "_fonte": {
     "manual": "MP Pop110i (2022~2024) D2203-MAN-1290",
-    "precos": "Mercado Livre RJ + Shopee — média de 2 a 3 vendedores com frete para RJ",
+    "precos": "Mercado Livre RJ + Shopee - média de 2 a 3 vendedores com frete para RJ",
     "dataColeta": "2026-04",
     "anoModelo": { "inicio": 2022, "fim": 2024 },
     "codigoFipeNota": "A ser descoberto via BrasilAPI após implementação. GET /api/fipe/motos/v1/{codigoFipe}",
@@ -33,7 +33,7 @@
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
         "intervaloKmNota": "Manual: trocar a cada 6.000 km ou 1× por ano (o que ocorrer primeiro).",
-        "intervaloKmEntregaNota": "Telemetria real: motoboy urbano troca entre 1.000–1.500 km. Média adotada: 1.250 km.",
+        "intervaloKmEntregaNota": "Telemetria real: motoboy urbano troca entre 1.000-1.500 km. Média adotada: 1.250 km.",
         "precoOriginalNota": "Pro Honda SAE 10W-30 SL JASO MA (1L). Inclui troca (0,8L + serviço mão de obra básica).",
         "precoParalelaNota": "Mobil Super Moto 10W-30 ou equivalente nacional."
       }
@@ -65,8 +65,8 @@
       "_fonte": {
         "intervaloKmNota": "Manual: trocar a cada 18.000 km. Em uso com poluição urbana: antecipar para 12.000 km.",
         "intervaloKmEntregaNota": "Dado real: trocado na revisão de 12.000 km pelo usuário.",
-        "precoOriginalNota": "Filtro compatível de marca (ML/Shopee R$45–50, média R$47). Genuíno Honda OEM ≈ R$50–52.",
-        "precoParalelaNota": "Filtro genérico compatível — diversas marcas (ML/Shopee)."
+        "precoOriginalNota": "Filtro compatível de marca (ML/Shopee R$45-50, média R$47). Genuíno Honda OEM ≈ R$50-52.",
+        "precoParalelaNota": "Filtro genérico compatível - diversas marcas (ML/Shopee)."
       }
     },
     {
@@ -80,9 +80,9 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Manual: verificar, ajustar e lubrificar a cada 1.000 km. Troca estimada por pesquisa de campo RJ.",
-        "intervaloKmEntregaNota": "Com lubrificação regular a cada 1.000 km o kit dura 15.000–20.000 km. Mock: 18.000 km.",
+        "intervaloKmEntregaNota": "Com lubrificação regular a cada 1.000 km o kit dura 15.000-20.000 km. Mock: 18.000 km.",
         "precoOriginalNota": "Kit HAMP (Honda Authentic Motorcycle Parts).",
-        "precoParalelaNota": "Kit Riffel ou similar — corrente + coroa + pinhão com retentor O-ring."
+        "precoParalelaNota": "Kit Riffel ou similar - corrente + coroa + pinhão com retentor O-ring."
       }
     },
     {
@@ -112,7 +112,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i usa freio a tambor traseiro.",
-        "intervaloKmEntregaNota": "No anda-e-para urbano RJ o desgaste é acelerado. Estimativa conservadora: 10.000–15.000 km. Mock: 12.000 km.",
+        "intervaloKmEntregaNota": "No anda-e-para urbano RJ o desgaste é acelerado. Estimativa conservadora: 10.000-15.000 km. Mock: 12.000 km.",
         "precoOriginalNota": "Patim/lona HAMP Nissin (par, dianteiro + traseiro).",
         "precoParalelaNota": "Lona compatível Cobreq ou similar (par)."
       }
@@ -125,7 +125,7 @@
       "precoParalela": 163.20,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloMesesNota": "Driver temporal: bateria envelhece por tempo, não por km. Vida útil típica 18–30 meses em uso urbano RJ. Adotado: 24 meses.",
+        "intervaloMesesNota": "Driver temporal: bateria envelhece por tempo, não por km. Vida útil típica 18-30 meses em uso urbano RJ. Adotado: 24 meses.",
         "precoOriginalNota": "Original Honda (Luz Motos, informado pelo usuário 25/05/26).",
         "precoParalelaNota": "Heliar HTZ5L (Mercado Livre, informado pelo usuário 25/05/26)."
       }
@@ -170,7 +170,7 @@
       "precoParalela": 163.31,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Caminho alternativo à Retífica completa. Vida útil ≈ 100.000 km. Concessionária Honda raramente executa em Pop 110i — serviço típico de oficina independente.",
+        "intervaloKmNota": "Caminho alternativo à Retífica completa. Vida útil ≈ 100.000 km. Concessionária Honda raramente executa em Pop 110i - serviço típico de oficina independente.",
         "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
         "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
       }
@@ -507,13 +507,13 @@
       "id": "ajuste_valvulas",
       "nome": "Ajuste de válvulas",
       "intervaloKm": 6000,
-      "nota": "Apenas serviço — sem custo de peça. Incluído na mão de obra da revisão."
+      "nota": "Apenas serviço - sem custo de peça. Incluído na mão de obra da revisão."
     },
     {
       "id": "limpeza_filtro_oleo",
       "nome": "Limpeza da tela e filtro centrífugo de óleo",
       "intervaloKm": 12000,
-      "nota": "Apenas limpeza — sem troca de peça. Incluído na revisão."
+      "nota": "Apenas limpeza - sem troca de peça. Incluído na revisão."
     },
     {
       "id": "ajuste_corrente",

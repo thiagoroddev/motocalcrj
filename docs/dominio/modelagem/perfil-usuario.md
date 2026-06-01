@@ -85,12 +85,12 @@ export interface PerfilUsuario {
 ### 🎨 `configuracaoDisplay`
 
 **Arquivo:** `bloco-configuracao-display.md`
-**O quê:** controle do que é exibido — quais categorias estão ativas no donut e total, e quais imprevistos sugeridos (retíficas) estão ligados.
+**O quê:** controle do que é exibido - quais categorias estão ativas no donut e total, e quais imprevistos sugeridos (retíficas) estão ligados.
 
 ### ✏️ Overrides
 
 **Arquivo:** `overrides.md`
-**O quê:** três estruturas que materializam o sistema de overrides — `pecasOverrides[]` (preço original/paralela e intervalo customizados por peça), `servicosIndependentes[]` (intervalo + preço de mão de obra dos serviços de manutenção; substituiu `servicosMaoDeObra` pela TASK-REF-11), `revisaoAutorizadaOverrides[]` (preço por linha da tabela de revisões Honda).
+**O quê:** três estruturas que materializam o sistema de overrides - `pecasOverrides[]` (preço original/paralela e intervalo customizados por peça), `servicosIndependentes[]` (intervalo + preço de mão de obra dos serviços de manutenção; substituiu `servicosMaoDeObra` pela TASK-REF-11), `revisaoAutorizadaOverrides[]` (preço por linha da tabela de revisões Honda).
 
 ### 🌐 `fipeCache`
 
@@ -172,7 +172,7 @@ Ver INV-FIPE-1 acima.
 
 ### INV-PERFIL-5: Categorias de Display espelham realidade do perfil
 
-**Regra:** Categoria `true` com valor de origem `<= 0` (ex.: `categoriasAtivas.seguro: true` mas `financeiro.seguro.valorAnual === 0`) é estado tolerado. O cálculo retorna 0 sem erro — presença derivada de `valor > 0` (REF-21 / ADR-005).
+**Regra:** Categoria `true` com valor de origem `<= 0` (ex.: `categoriasAtivas.seguro: true` mas `financeiro.seguro.valorAnual === 0`) é estado tolerado. O cálculo retorna 0 sem erro - presença derivada de `valor > 0` (REF-21 / ADR-005).
 
 ⚠️ Não é invariante forte; é observação de comportamento de `categoriasParaFiltros()` e das funções de cálculo defensivas.
 
@@ -181,7 +181,7 @@ Ver INV-FIPE-1 acima.
 ## Snippet TypeScript (Real, simplificado)
 
 ```typescript
-// Estrutura geral — ver bloco-*.md para detalhes de cada parte
+// Estrutura geral - ver bloco-*.md para detalhes de cada parte
 
 export interface PerfilUsuario {
   schemaVersion: number;
@@ -210,9 +210,9 @@ export interface PerfilUsuario {
 
 Esta documentação foi validada contra:
 
-- `src/types/perfil.ts` — estrutura completa de `PerfilUsuario` (schema 14) e `FipeCache`
-- `src/types/perfil.ts` — type `PerfilAction` (Actions disponíveis)
-- `src/context/PerfilContext.tsx` — `perfilPadrao` e reducer
-- `docs/arquitetura/estado_inicial.md` — visão completa do estado e migrações
+- `src/types/perfil.ts` - estrutura completa de `PerfilUsuario` (schema 14) e `FipeCache`
+- `src/types/perfil.ts` - type `PerfilAction` (Actions disponíveis)
+- `src/context/PerfilContext.tsx` - `perfilPadrao` e reducer
+- `docs/arquitetura/estado_inicial.md` - visão completa do estado e migrações
 
 **Divergências encontradas:** nenhuma. Documentação fiel ao código pós-TASK-DOC-009 (24/05/26).

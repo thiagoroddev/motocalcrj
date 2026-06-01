@@ -75,7 +75,7 @@ PII inclui: nome completo, CPF, RG, passaporte, email, telefone, endereço, data
 #### Quando aparecer (necessariamente)
 
 - [ ] Enviado em body de requisição POST/PUT/PATCH (não em querystring)
-- [ ] HTTPS sempre — nunca HTTP plano
+- [ ] HTTPS sempre - nunca HTTP plano
 - [ ] Header `Authorization` carrega token, não credenciais (não basic auth com senha)
 
 ### 2. Storage e Tokens
@@ -83,7 +83,7 @@ PII inclui: nome completo, CPF, RG, passaporte, email, telefone, endereço, data
 #### Tokens de autenticação
 
 - [ ] Refresh tokens em **cookies httpOnly + Secure + SameSite=strict**
-- [ ] Access tokens podem estar em memória (state da aplicação) — não persistir
+- [ ] Access tokens podem estar em memória (state da aplicação) - não persistir
 - [ ] Se persistência for necessária, considerar **sessionStorage** (limpa ao fechar tab) em vez de **localStorage**
 - [ ] Tokens expirados são limpos no logout/inatividade
 
@@ -147,7 +147,7 @@ PII inclui: nome completo, CPF, RG, passaporte, email, telefone, endereço, data
 
 #### Autorização (no front)
 
-- [ ] **Decisões de autorização nunca são apenas no frontend** — backend valida cada requisição
+- [ ] **Decisões de autorização nunca são apenas no frontend** - backend valida cada requisição
 - [ ] Frontend esconde elementos de UI sem permissão, mas backend bloqueia mesmo se chamado
 - [ ] Rotas protegidas validam permissão a cada navegação (não só no login)
 - [ ] Tokens carregam o **mínimo** de informação para autorização (não dados pessoais inteiros)
@@ -156,8 +156,8 @@ PII inclui: nome completo, CPF, RG, passaporte, email, telefone, endereço, data
 
 #### Princípio
 
-- [ ] Validação client-side existe (UX) — Zod ou similar
-- [ ] Validação server-side existe (segurança) — backend revalida
+- [ ] Validação client-side existe (UX) - Zod ou similar
+- [ ] Validação server-side existe (segurança) - backend revalida
 - [ ] Sanitização ocorre nas **bordas** (entrada e saída), não no meio
 - [ ] Tipos do TypeScript não são considerados validação (são dica de desenvolvedor)
 
@@ -195,7 +195,7 @@ PII inclui: nome completo, CPF, RG, passaporte, email, telefone, endereço, data
 
 #### Para o usuário
 
-- [ ] Mensagens de erro são genéricas para usuários ("Erro ao processar pagamento" — não "ECONNREFUSED na linha 47")
+- [ ] Mensagens de erro são genéricas para usuários ("Erro ao processar pagamento" - não "ECONNREFUSED na linha 47")
 - [ ] Erros nunca expõem stack trace
 - [ ] Erros nunca expõem queries SQL ou estrutura interna
 - [ ] Páginas 404/500 customizadas não vazam informação técnica
@@ -289,26 +289,26 @@ Em casos assim, **abrir tarefa Strict** e marcar como dependente de validação 
 
 **3. Como sei se uma dependência é confiável?** Verifique: histórico do mantenedor, número de downloads, última atualização, issues abertas, código no GitHub (não só publicado no npm). Para libs críticas, leia o código-fonte.
 
-**4. Validação client-side é desnecessária se o backend valida?** Não é desnecessária — é importante para **UX** (feedback rápido). Mas não substitui validação backend. As duas convivem.
+**4. Validação client-side é desnecessária se o backend valida?** Não é desnecessária - é importante para **UX** (feedback rápido). Mas não substitui validação backend. As duas convivem.
 
-**5. CSP é obrigatório?** Em projeto sério, sim. Em projeto solo de estudo, ainda recomendado mas não bloqueante. Configurar CSP bem demora — vale registrar como dívida técnica se ainda não fez.
+**5. CSP é obrigatório?** Em projeto sério, sim. Em projeto solo de estudo, ainda recomendado mas não bloqueante. Configurar CSP bem demora - vale registrar como dívida técnica se ainda não fez.
 
-**6. Como sei se um dado é PII?** Regra prática: se alguém pode usar para identificar você (ou impactar você se vazar), é PII. Email, telefone, endereço, dados de saúde são óbvios. Mas combinações de dados aparentemente não-pessoais (CEP + data de nascimento + gênero) também podem identificar — cuidado.
+**6. Como sei se um dado é PII?** Regra prática: se alguém pode usar para identificar você (ou impactar você se vazar), é PII. Email, telefone, endereço, dados de saúde são óbvios. Mas combinações de dados aparentemente não-pessoais (CEP + data de nascimento + gênero) também podem identificar - cuidado.
 
-**7. Posso fazer "Login com Google" sem expertise?** OAuth com provider conhecido (Google, GitHub, Auth0) é mais seguro que reinventar. Use bibliotecas oficiais. Mas mesmo assim, entender o fluxo é importante — não copie sem entender.
+**7. Posso fazer "Login com Google" sem expertise?** OAuth com provider conhecido (Google, GitHub, Auth0) é mais seguro que reinventar. Use bibliotecas oficiais. Mas mesmo assim, entender o fluxo é importante - não copie sem entender.
 
 **8. Quanto tempo gasto em segurança em cada PR?** Para versão essencial: 2-5 minutos. Para versão completa em mudança sensível: 15-30 minutos. Para feature de auth ou pagamento: horas. Tempo proporcional ao risco.
 
 **9. Auditoria de dependências em todo PR?** Não. `npm audit` semanal/mensal é razoável. Em PR específico, só se a mudança **adiciona** ou **atualiza** dependência.
 
-**10. E se o backend for stub e não validar?** Você tem dois problemas: o stub e o frontend. Documente como **dívida técnica crítica** (`docs/dominios/divida-tecnica.md`). Não trate frontend como compensação — backend precisa ser feito.
+**10. E se o backend for stub e não validar?** Você tem dois problemas: o stub e o frontend. Documente como **dívida técnica crítica** (`docs/dominios/divida-tecnica.md`). Não trate frontend como compensação - backend precisa ser feito.
 
 ---
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) — Checklist master que aponta para este
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) — Checklist de acessibilidade
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) — Checklist de performance
-- [`../padroes/18-seguranca-privacidade.md`](https://claude.ai/padroes/18-seguranca-privacidade.md) — Conceitos e justificativas detalhadas
-- [`../padroes/14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) — Validação com Zod
+- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master que aponta para este
+- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist de acessibilidade
+- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist de performance
+- [`../padroes/18-seguranca-privacidade.md`](https://claude.ai/padroes/18-seguranca-privacidade.md) - Conceitos e justificativas detalhadas
+- [`../padroes/14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) - Validação com Zod

@@ -224,7 +224,7 @@ Proprietário. Uso interno apenas. Ver `LICENSE`.
 > [1 frase: o que é + para quem]
 
 **Status:** [Alpha / Beta / Produção / Manutenção]
-**Stack:** [libs principais separadas por · — ex: React 18 · TypeScript 5 · Vite]
+**Stack:** [libs principais separadas por · - ex: React 18 · TypeScript 5 · Vite]
 
 ---
 
@@ -327,9 +327,9 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev` — dev server
-- `npm run build` — build
-- `npm run test` — testes
+- `npm run dev` - dev server
+- `npm run build` - build
+- `npm run test` - testes
 
 ## Estrutura
 
@@ -393,7 +393,7 @@ Issues: [link] Discord/Slack: [link]
 
 ## 📜 Licença
 
-MIT — ver [`LICENSE`](https://claude.ai/chat/LICENSE).
+MIT - ver [`LICENSE`](https://claude.ai/chat/LICENSE).
 
 ## 🙏 Agradecimentos
 
@@ -528,9 +528,9 @@ Só inclua perguntas que de fato aparecem. FAQ inventado é ruído.
 
 **5. Como sei se README está bom?** Teste: peça para alguém que nunca viu o projeto clonar e rodar **só lendo o README**. Se conseguir em 5-10 minutos, está bom. Se travar, melhore.
 
-**6. Devo incluir comandos de Docker, Kubernetes, etc.?** Se o setup padrão depende deles, sim — mas no nível "como rodar". Detalhes de configuração avançada vão em `docs/`.
+**6. Devo incluir comandos de Docker, Kubernetes, etc.?** Se o setup padrão depende deles, sim - mas no nível "como rodar". Detalhes de configuração avançada vão em `docs/`.
 
-**7. Posso colocar emojis nos títulos?** Pode. Ajuda na varredura visual. Mas modere — 1 emoji por seção é suficiente.
+**7. Posso colocar emojis nos títulos?** Pode. Ajuda na varredura visual. Mas modere - 1 emoji por seção é suficiente.
 
 **8. README e contexto-projeto-ai podem ter informação repetida?** Mínimo de sobreposição. **Stack** pode aparecer nos dois (resumida no README, detalhada no contexto-projeto-ai). **Decisões inegociáveis** ficam só no contexto-projeto-ai. Setup detalhado fica só no README ou em `docs/arquitetura/setup-inicial.md`.
 
@@ -538,6 +538,6 @@ Só inclua perguntas que de fato aparecem. FAQ inventado é ruído.
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) — Cartão de visitas para IAs (complementa este)
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) — Quando criar este arquivo
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Estrutura de pastas referenciada
+- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) - Cartão de visitas para IAs (complementa este)
+- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Quando criar este arquivo
+- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura de pastas referenciada

@@ -157,7 +157,7 @@ function obterCpkDetalhamento(): string | null {
   return within(obterCardTotalDetalhamento()).getByText(/\/km$/).textContent;
 }
 
-describe('App — smoke UI', () => {
+describe('App - smoke UI', () => {
   beforeEach(() => {
     vi.stubGlobal('localStorage', criarLocalStorageFalso());
     window.history.pushState({}, '', '/');

@@ -3,7 +3,7 @@ import { criarEstadoInicial, perfilPadrao } from './PerfilContext';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import type { PresetEntry, PerfilUsuario } from '../types/perfil';
 
-// Storage falso configurável — o ciclo de tarefa pede injeção de storage para
+// Storage falso configurável - o ciclo de tarefa pede injeção de storage para
 // testar a montagem sem tocar no localStorage real.
 function criarStorageFalso(presets: unknown[], ativoId: string | null): IPerfilStorage {
   return {
@@ -26,7 +26,7 @@ function presetValido(presetId: string, nome = 'Teste'): PresetEntry {
   };
 }
 
-describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)', () => {
+describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', () => {
   it('sem presets → estado padrão (sem marcar corrompido)', () => {
     const storage = criarStorageFalso([], null);
     const estado = criarEstadoInicial(storage);

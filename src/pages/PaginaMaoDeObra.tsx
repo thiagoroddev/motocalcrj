@@ -108,7 +108,7 @@ export function PaginaMaoDeObra() {
 
   const servicosNormais = perfil.servicosIndependentes.filter((s) => !s.ehExcepcional);
   const servicosExcepcionais = perfil.servicosIndependentes.filter((s) => s.ehExcepcional);
-  // Aba Honda: serviços avulsos fora das revisões (ADR-007) — só os que a
+  // Aba Honda: serviços avulsos fora das revisões (ADR-007) - só os que a
   // concessionária cobra à parte, com precoTotalAutorizada > 0 no preset.
   const servicosAvulsosAutorizada = servicosNormais.filter(
     (s) => !s.incluidoNaRevisaoAutorizada && (s.precoTotalAutorizada > 0 || ehAvulsoEditado(s)),

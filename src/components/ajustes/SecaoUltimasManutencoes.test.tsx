@@ -10,7 +10,7 @@ afterEach(() => {
   cleanup();
 });
 
-describe('SecaoUltimasManutencoes — validação de domínio', () => {
+describe('SecaoUltimasManutencoes - validação de domínio', () => {
   it('não despacha km negativo para última troca', () => {
     const dispatch = vi.fn<(action: PerfilAction) => void>();
     render(<SecaoUltimasManutencoes moto={perfilPadrao.moto} dispatch={dispatch} />);

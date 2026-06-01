@@ -168,7 +168,7 @@ if (filtros.imprevistosSugeridos[imprevistoId] !== false) {
 **Por quê:** O orçamento oficial Honda já inclui óleo, vela e filtro de ar nas revisões periódicas (ver `valores-mao-de-obra-honda-pop110i-2024-RJ.md`). Como o custo dessas peças já está no pacote `revisaoAutorizada`, contá-las também pelo CPK por peça inflaria o total. No modo `independentes` não há sobreposição: a revisão conta apenas mão de obra.
 
 **Onde é protegida:**
-- `src/utils/calculos.ts` — `calcularCpkPorPeca` recebe `modoRevisao` e filtra `preset.pecas` por `incluidoNaRevisaoAutorizada` quando `modoRevisao === 'autorizadas'`. Pneus nunca são filtrados (não fazem parte das revisões periódicas).
+- `src/utils/calculos.ts` - `calcularCpkPorPeca` recebe `modoRevisao` e filtra `preset.pecas` por `incluidoNaRevisaoAutorizada` quando `modoRevisao === 'autorizadas'`. Pneus nunca são filtrados (não fazem parte das revisões periódicas).
 
 **Origem:** ADR-006 / TASK-BG-003.
 
@@ -187,18 +187,18 @@ Serviços temporais conhecidos, como `troca-bateria`, podem usar `intervalKm ===
 if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV-MANUT-1
 ```
 
-⚠️ **Cuidado:** a action não lança erro — ela silenciosamente ignora a atualização. Componentes de UI devem validar o campo antes de despachar para dar feedback ao usuário.
+⚠️ **Cuidado:** a action não lança erro - ela silenciosamente ignora a atualização. Componentes de UI devem validar o campo antes de despachar para dar feedback ao usuário.
 
 ---
 
 #### INV-VIDA-UTIL-1: ServicoIndependente EDITADO é fonte canônica de intervalKm para peças vinculadas
-**Regra:** Para peças vinculadas a um `ServicoIndependente` ativo via `MAPA_PECA_PARA_SERVICO`, o serviço só é a fonte canônica de `intervalKm` **quando o usuário editou o intervalo** (valor difere do default em `SERVICOS_INDEPENDENTES_PADRAO`). Enquanto o serviço estiver no valor default, a fonte canônica é o Preset JSON — que conhece a distinção entrega/passageiro. A tela Insumos exibe o valor **efetivo** como somente leitura; só a aba Mão de Obra permite editá-lo. Prioridade completa: override de peça → serviço editado → preset.
+**Regra:** Para peças vinculadas a um `ServicoIndependente` ativo via `MAPA_PECA_PARA_SERVICO`, o serviço só é a fonte canônica de `intervalKm` **quando o usuário editou o intervalo** (valor difere do default em `SERVICOS_INDEPENDENTES_PADRAO`). Enquanto o serviço estiver no valor default, a fonte canônica é o Preset JSON - que conhece a distinção entrega/passageiro. A tela Insumos exibe o valor **efetivo** como somente leitura; só a aba Mão de Obra permite editá-lo. Prioridade completa: override de peça → serviço editado → preset.
 
-**Por quê:** Evitar conflito de fonte de verdade (cálculo e display precisam do mesmo valor) **sem descartar** os intervalos de entrega pesquisados do preset nem mudar a estimativa default. Ligar o serviço incondicionalmente sobreporia o `intervaloKmEntrega` (telemetria real) por um default genérico — ver Decisão C da revisão da REF-29.
+**Por quê:** Evitar conflito de fonte de verdade (cálculo e display precisam do mesmo valor) **sem descartar** os intervalos de entrega pesquisados do preset nem mudar a estimativa default. Ligar o serviço incondicionalmente sobreporia o `intervaloKmEntrega` (telemetria real) por um default genérico - ver Decisão C da revisão da REF-29.
 
 **Onde é protegida:**
-- `src/utils/calculos.ts` — `resolverServicoComIntervaloEditado`: resolve `pecaId → servicoId` via `MAPA_PECA_PARA_SERVICO` e só retorna o serviço se `intervalKm` ≠ default; `resolverIntervaloPeca` o consome.
-- `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` — `resolverIntervalo`: usam o mesmo helper, mantendo display e cálculo consistentes.
+- `src/utils/calculos.ts` - `resolverServicoComIntervaloEditado`: resolve `pecaId → servicoId` via `MAPA_PECA_PARA_SERVICO` e só retorna o serviço se `intervalKm` ≠ default; `resolverIntervaloPeca` o consome.
+- `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` - `resolverIntervalo`: usam o mesmo helper, mantendo display e cálculo consistentes.
 
 **Histórico:** DT-15 endereçada pela TASK-REF-29 com mapeamento explícito peça↔serviço; a revisão da REF-29 (31/05/26) aplicou a **Decisão C** (serviço sobrepõe só quando editado) para preservar os intervalos de entrega e a estimativa default.
 
@@ -265,8 +265,8 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 
 - Invariantes de Registros de Gasto (TASK-5.x)
 - Invariantes de Registros de Rodagem (TASK-5.x)
-- ~~Invariantes de Vida Útil de Peças~~ — ver INV-VIDA-UTIL-1 (adicionada em 20/05/26 por TASK-DOC-005)
-- ~~Invariantes de Mão de Obra~~ — adicionado INV-MANUT-1 por TASK-REF-11
+- ~~Invariantes de Vida Útil de Peças~~ - ver INV-VIDA-UTIL-1 (adicionada em 20/05/26 por TASK-DOC-005)
+- ~~Invariantes de Mão de Obra~~ - adicionado INV-MANUT-1 por TASK-REF-11
 - Invariantes específicas das funções de cálculo (granularidade, totalização)
 
 ---
@@ -277,7 +277,7 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 |---|---|---|---|
 | 2026-05-09 | (todas as iniciais) | Criação | Engenharia reversa |
 | 2026-05-19 | INV-CALC-2 | Nota de autorização ADR-004 para TASK-REF-12 | Conflito com proibição absoluta resolvido por decisão explícita |
-| 2026-05-19 | INV-MANUT-1 | Nova — `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |
-| 2026-05-20 | INV-CALC-2 | ADR-004 concluído — 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |
-| 2026-05-20 | INV-VIDA-UTIL-1 | Nova — fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |
-| 2026-05-22 | INV-CALC-3 | Nova — sem dupla contagem de peças no modo autorizado | TASK-BG-003 (ADR-006) |
+| 2026-05-19 | INV-MANUT-1 | Nova - `ServicoIndependente.intervalKm > 0` | TASK-REF-11: novo tipo substitui ServicosMaoDeObra |
+| 2026-05-20 | INV-CALC-2 | ADR-004 concluído - 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |
+| 2026-05-20 | INV-VIDA-UTIL-1 | Nova - fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |
+| 2026-05-22 | INV-CALC-3 | Nova - sem dupla contagem de peças no modo autorizado | TASK-BG-003 (ADR-006) |

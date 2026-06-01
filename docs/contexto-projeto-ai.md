@@ -6,7 +6,7 @@
 ## Regra 0 Antes de Qualquer Coisa
 
 1. Ler este documento por completo
-2. Ler '/docs/tarefas/em-andamento.md', depois pergunte se pode iniciar o planejamento da tarefa. Se sim, leia o arquivo `.github/agents/geral-robusto/01-nucleo.md.md` — esse é o núcleo do pacote de agente que define os princípios e processo de trabalho. Nunca agir sem seguir esses padrões e sem contexto específico do projeto atual. 
+2. Ler '/docs/tarefas/em-andamento.md', depois pergunte se pode iniciar o planejamento da tarefa. Se sim, leia o arquivo `.github/agents/geral-robusto/01-nucleo.md.md` - esse é o núcleo do pacote de agente que define os princípios e processo de trabalho. Nunca agir sem seguir esses padrões e sem contexto específico do projeto atual. 
 3. Obtenha contexto específico desse projeto necessário antes de agir, leia o que for preciso em docs/ ou arquivos do projeto, você já sabe onde fica cada coisa pois aqui está tudo documentado onde encotrar cada coisa. 
 4. Leia os documentos principais da raiz do projeto.
 5. Só então agir
@@ -105,7 +105,7 @@ src/
 ├── fixtures/
 │   └── usuario_teste.json   # Carregado só em DEV
 ├── assets/
-│   └── icons/               # 22 SVGs Material Symbols (referência raw — não importados diretamente)
+│   └── icons/               # 22 SVGs Material Symbols (referência raw - não importados diretamente)
 ├── components/
 │   ├── ui/                  # Wrappers shadcn/ui (accordion, badge, button, card, input, label, etc.)
 │   ├── icons/
@@ -118,7 +118,7 @@ src/
 │   │   ├── DistribuicaoCustos.tsx # Donut + legenda. Props: segmentos[]
 │   │   └── CardCpk.tsx      # Card custo/km. Props: porKm, porKmSemAlimentacao?
 │   ├── detalhamento/
-│   │   ├── Toggle.tsx       # Toggle checkbox-styled (custom — não shadcn Switch; thumb diferente)
+│   │   ├── Toggle.tsx       # Toggle checkbox-styled (custom - não shadcn Switch; thumb diferente)
 │   │   ├── LinhaDetalhe.tsx # Linha label + valor formatado
 │   │   ├── CategoriaAccordion.tsx # Linha de categoria com toggle + chevron expand
 │   │   ├── CardTotalAnual.tsx     # Resumo no topo: total anual, mensal, cpk/km
@@ -157,7 +157,7 @@ src/
 - **Persistência:** `localStorage` acessado exclusivamente via `services/perfilStorage.ts`.
 - **Presets JSON:** Imutáveis em runtime. Toda personalização vai para overrides no perfil.
 - **Cálculos:** `utils/calculos.ts` é imutável (ver `npm run test` para contagem atual). Novas funções de cálculo seguem o mesmo estilo, mas não alteram as existentes sem aprovação.
-- **Roteamento:** React Router v7 (modo biblioteca — API v6 preservada).
+- **Roteamento:** React Router v7 (modo biblioteca - API v6 preservada).
 - **UI base:** shadcn/ui instalado. Wrappers em `components/ui/`. Componentes em uso: Card, Button, Input, Label, Badge, Accordion, Dialog, Switch, Tabs, Sheet, Separator, Toggle.
 - **Testes:** Vitest com `describe`/`it`, padrão AAA, nomes em português.
 - **Build:** Vite + `vite-plugin-pwa` (Service Worker).
@@ -166,7 +166,7 @@ src/
 
 ## Modelo de Custo Anual (Manutenção): Amortizado × Ancorado
 
-> **Por que esta seção existe:** o app combina dois modelos de projeção de custo por peça no mesmo total anual. Entender a diferença é pré-requisito para qualquer task que toque `calcularCpkPorPeca`, `calcularCicloPeca` ou a Seção Manutenção do Detalhamento. Modelo conceitualizado aqui após uso real do app em **27/05/26** — referência canônica para futuras decisões.
+> **Por que esta seção existe:** o app combina dois modelos de projeção de custo por peça no mesmo total anual. Entender a diferença é pré-requisito para qualquer task que toque `calcularCpkPorPeca`, `calcularCicloPeca` ou a Seção Manutenção do Detalhamento. Modelo conceitualizado aqui após uso real do app em **27/05/26** - referência canônica para futuras decisões.
 
 ### Conceito de "ano" no MotoCalc RJ
 
@@ -186,7 +186,7 @@ Manter essa distinção ao explicar valores ao usuário ou modificar cálculos: 
 | **Amortizado** | `kmUltimaTroca = 0` (usuário não informou) **ou** peça ausente de `MAPA_PECA_PARA_KM_ULTIMA_TROCA` | `trocasNoAno = kmAnual / intervalo` | Fracionário (0,18; 1,52; 3,03…) | `trocasNoAno × preço` (fração do preço cheio) |
 | **Ancorado** | `kmUltimaTroca > 0` (preenchido no card "Últimas manutenções") **e** peça mapeada | Projeta eventos reais em `(kmAtual, kmAtual + kmAnual]` | Inteiro (0, 1, 2, 14…) | `n × preçoCheio` |
 
-**custoAnual** = `trocasNoAno × preço` em ambos os modos — a diferença é o que `trocasNoAno` representa.
+**custoAnual** = `trocasNoAno × preço` em ambos os modos - a diferença é o que `trocasNoAno` representa.
 
 ### Exemplo prático (Pop 110i, `kmAnual ≈ 18.200`, `kmAtual = 90.000`)
 
@@ -196,20 +196,20 @@ Manter essa distinção ao explicar valores ao usuário ou modificar cálculos: 
 | Pneu traseiro | Ancorado | 16.000 km | 60.000 | 2 | R$ 490,00 |
 | Pneu dianteiro | Ancorado | 25.000 km | 78.000 | 1 | R$ 209,00 |
 | Kit relação | Ancorado | 18.000 km | 78.000 | 1 | R$ 230,00 |
-| Vela ignição | Amortizado | 12.000 km | — | 1,52 | R$ 124,37 |
-| Bateria | Amortizado (temporal) | 24 meses | — | 0,50 | R$ 164,90 |
-| Kit cilindro | Amortizado | 100.000 km | — | **0,18** | **R$ 65,67** |
+| Vela ignição | Amortizado | 12.000 km | - | 1,52 | R$ 124,37 |
+| Bateria | Amortizado (temporal) | 24 meses | - | 0,50 | R$ 164,90 |
+| Kit cilindro | Amortizado | 100.000 km | - | **0,18** | **R$ 65,67** |
 
-### Por que isto importa — pontos sensíveis
+### Por que isto importa - pontos sensíveis
 
 - **Convergem no longo prazo, divergem ano a ano.** Em horizonte de 10 anos os dois modelos somam o mesmo total. Em um ano específico podem divergir em ordem de grandeza.
-- **Amortizado subestima/superestima conforme posição no ciclo.** Kit cilindro a 5.000 km do gatilho (100k km) provisiona R$ 65 (`0,18 × R$ 360`) quando deveria provisionar **R$ 360 cheio** — uma troca real está prevista. Moto recém-trocada provisiona o mesmo valor mesmo sem nenhuma troca prevista nos próximos 5 anos.
+- **Amortizado subestima/superestima conforme posição no ciclo.** Kit cilindro a 5.000 km do gatilho (100k km) provisiona R$ 65 (`0,18 × R$ 360`) quando deveria provisionar **R$ 360 cheio** - uma troca real está prevista. Moto recém-trocada provisiona o mesmo valor mesmo sem nenhuma troca prevista nos próximos 5 anos.
 - **TASK-RF-6.13 estende a ancoragem:** `MAPA_PECA_PARA_KM_ULTIMA_TROCA` em `calculos.ts` cobre as peças rastreáveis do card de últimas trocas; retíficas usam mapa paralelo por serviço. Itens com km informado entram no modo ancorado, e itens sem km informado continuam no fallback amortizado.
 - **TASK-RF-6.24 remove `kit_revisao` da ancoragem:** o kit revisão representa juntas/anéis/vedações recorrentes das revisões regulares. No modo independente entra automaticamente no fallback amortizado de 6.000 km; no modo autorizado fica absorvido pelo pacote Honda. Não aparece em Ajustes como última troca editável.
 
-### Display atual — débito de UX conhecido
+### Display atual - débito de UX conhecido
 
-Em [`src/components/detalhamento/SecaoManutencao.tsx`](../src/components/detalhamento/SecaoManutencao.tsx) (linha 117) o número exibido na coluna esquerda é `Math.ceil(peca.trocasNoAno)`. Isso converte `0,18` em **`1×`** e mistura visualmente "fração amortizada" com "1 troca real prevista". A **TASK-BG-005** resolveu o problema irmão para Imprevistos exibindo `preço cheio + ≈ valor amortizado`. Seção Manutenção ainda não recebeu tratamento equivalente — abrir BG dedicada quando priorizado.
+Em [`src/components/detalhamento/SecaoManutencao.tsx`](../src/components/detalhamento/SecaoManutencao.tsx) (linha 117) o número exibido na coluna esquerda é `Math.ceil(peca.trocasNoAno)`. Isso converte `0,18` em **`1×`** e mistura visualmente "fração amortizada" com "1 troca real prevista". A **TASK-BG-005** resolveu o problema irmão para Imprevistos exibindo `preço cheio + ≈ valor amortizado`. Seção Manutenção ainda não recebeu tratamento equivalente - abrir BG dedicada quando priorizado.
 
 ### Regras práticas para o agente
 
@@ -217,7 +217,7 @@ Em [`src/components/detalhamento/SecaoManutencao.tsx`](../src/components/detalha
 - **Ao adicionar peça nova ao preset:** decidir explicitamente se ela entra em `MAPA_PECA_PARA_KM_ULTIMA_TROCA` e se precisa aparecer no card de últimas trocas. Se o usuário pode informar uma troca real, prefira rastrear; se não houver evento editável claro, mantenha amortizado. Consumíveis recorrentes de revisão, como `kit_revisao`, ficam fora do card.
 - **Ao exibir `trocasNoAno` na UI:** prefira mostrar o valor real (com vírgula decimal) ou diferenciar visualmente amortizado de ancorado. `Math.ceil` esconde informação relevante e induz interpretação errada.
 - **Ao escrever/reescrever testes que envolvem custos anuais:** o teste precisa explicitar se assume modo amortizado (sem `kmUltimaTrocas`) ou ancorado (`kmUltimaTrocas` definido). Os dois caminhos produzem `custoAnual` diferentes para a mesma peça.
-- **Ao explicar números ao usuário:** "este custo anual é uma projeção amortizada/cíclica" — nunca "este é o custo do ano de 2026" (não é calendário) nem "é o que você vai gastar no próximo ano exato" (é estimativa com fronteira de modelo conhecida).
+- **Ao explicar números ao usuário:** "este custo anual é uma projeção amortizada/cíclica" - nunca "este é o custo do ano de 2026" (não é calendário) nem "é o que você vai gastar no próximo ano exato" (é estimativa com fronteira de modelo conhecida).
 
 ---
 

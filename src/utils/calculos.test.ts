@@ -304,7 +304,7 @@ describe('resolverIntervaloPeca', () => {
     expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], servicos)).toBe(2000);
   });
 
-  it('serviço mapeado no valor DEFAULT não sobrepõe — usa o preset entrega (Decisão C)', () => {
+  it('serviço mapeado no valor DEFAULT não sobrepõe - usa o preset entrega (Decisão C)', () => {
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-oleo',
@@ -583,7 +583,7 @@ describe('calcularCustoRevisaoAnual', () => {
     },
   ];
 
-  it('modo autorizadas: km-based — (ciclo / 36000) × kmAnual', () => {
+  it('modo autorizadas: km-based - (ciclo / 36000) × kmAnual', () => {
     const ciclo = 3334.62;
     expect(
       calcularCustoRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo }),
@@ -1294,7 +1294,7 @@ describe('calcularCustoMotoAnual', () => {
   });
 });
 
-describe('calcularResultado — CPK sem alimentação', () => {
+describe('calcularResultado - CPK sem alimentação', () => {
   const dadosRJMock: DadosRJ = {
     ipva: { aliquotaMotos: 0, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
@@ -1345,7 +1345,7 @@ describe('calcularResultado — CPK sem alimentação', () => {
   });
 });
 
-describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
+describe('calcularCustosPorCategoria - revisaoAutorizadaOverrides', () => {
   const dadosRJMock: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
@@ -1411,7 +1411,7 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
   it('retíficas no modo independente: ficam em imprevistos sugeridos e sincronizam com Mão de Obra', () => {
     // Cenário convertido para modo independente (ADR-007): no autorizado,
     // retífica tem precoTotalAutorizada=0 e some do mapa de imprevistos
-    // (Honda não executa retífica — substitui por kit cilindro). Coberto por
+    // (Honda não executa retífica - substitui por kit cilindro). Coberto por
     // teste dedicado abaixo.
     const perfilIndependente = {
       ...perfilAutorizadas,
@@ -1435,7 +1435,7 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
     expect(retifica?.custoAnual).toBeCloseTo((900 / 80000) * kmAnual, 2);
   });
 
-  it('retífica no modo autorizado some dos imprevistos (precoTotalAutorizada=0 — Honda não executa)', () => {
+  it('retífica no modo autorizado some dos imprevistos (precoTotalAutorizada=0 - Honda não executa)', () => {
     const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
     expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-cabecote')).toBe(false);
     expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-completa')).toBe(false);
@@ -1444,7 +1444,7 @@ describe('calcularCustosPorCategoria — revisaoAutorizadaOverrides', () => {
 
 // ─── BG-003: modo autorizado não duplica peças da revisão ────────
 
-describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => {
+describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
   it('modo autorizado: exclui peças cobertas pela revisão Honda (óleo, vela)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
@@ -1544,7 +1544,7 @@ describe('calcularCpkPorPeca — exclusão de peças no modo autorizado', () => 
   });
 });
 
-describe('calcularCustosPorCategoria — modo autorizado não duplica peças da revisão', () => {
+describe('calcularCustosPorCategoria - modo autorizado não duplica peças da revisão', () => {
   const dadosRJBG003: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
@@ -1593,7 +1593,7 @@ describe('calcularCustosPorCategoria — modo autorizado não duplica peças da 
   });
 });
 
-describe('preset pop110i — campo incluidoNaRevisaoAutorizada', () => {
+describe('preset pop110i - campo incluidoNaRevisaoAutorizada', () => {
   it('toda peça do preset declara incluidoNaRevisaoAutorizada', () => {
     for (const peca of pop110i.pecas) {
       expect(typeof peca.incluidoNaRevisaoAutorizada).toBe('boolean');
@@ -1601,7 +1601,7 @@ describe('preset pop110i — campo incluidoNaRevisaoAutorizada', () => {
   });
 });
 
-describe('preset pop110i — detalhamento das revisões Honda', () => {
+describe('preset pop110i - detalhamento das revisões Honda', () => {
   it('toda revisão declara itens substituídos e serviços executados', () => {
     for (const revisao of pop110i.revisaoAutorizada) {
       expect(revisao.itensSubstituidos.length).toBeGreaterThan(0);
@@ -1670,7 +1670,7 @@ describe('calcularCicloPeca', () => {
   });
 });
 
-describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => {
+describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => {
   it('peça com km de última troca informado usa custo cíclico', () => {
     // pneu_traseiro: intervalo 16.000, preço paralela 137; última troca 10.000 → 1 troca no ano
     const resultado = calcularCpkPorPeca({
@@ -1743,7 +1743,7 @@ describe('calcularCpkPorPeca — kmUltimaTrocas alimenta o ciclo (RF-6.7)', () =
 
 // ─── TASK-RF-6.14: peças temporais + kit embreagem/revisão/cilindro ──
 
-describe('TASK-RF-6.14 — bateria com driver temporal', () => {
+describe('TASK-RF-6.14 - bateria com driver temporal', () => {
   const presetComBateria: PresetMoto = {
     ...presetMock,
     pecas: [
@@ -1791,7 +1791,7 @@ describe('TASK-RF-6.14 — bateria com driver temporal', () => {
   });
 });
 
-describe('TASK-RF-6.14 — kit revisão (incluido na revisão autorizada)', () => {
+describe('TASK-RF-6.14 - kit revisão (incluido na revisão autorizada)', () => {
   const presetComKitRevisao: PresetMoto = {
     ...presetMock,
     pecas: [
@@ -1836,7 +1836,7 @@ describe('TASK-RF-6.14 — kit revisão (incluido na revisão autorizada)', () =
   });
 });
 
-describe('TASK-RF-6.14 — kit cilindro como peça cíclica regular', () => {
+describe('TASK-RF-6.14 - kit cilindro como peça cíclica regular', () => {
   const presetComKitCilindro: PresetMoto = {
     ...presetMock,
     pecas: [
@@ -1868,7 +1868,7 @@ describe('TASK-RF-6.14 — kit cilindro como peça cíclica regular', () => {
   });
 });
 
-describe('TASK-RF-6.14 — modo autorizado soma precoTotalAutorizada de troca-kit-embreagem', () => {
+describe('TASK-RF-6.14 - modo autorizado soma precoTotalAutorizada de troca-kit-embreagem', () => {
   it('modo autorizado: serviço troca-kit-embreagem com precoTotalAutorizada exclui peça kit_embreagem', () => {
     const presetComKitEmbreagem: PresetMoto = {
       ...presetMock,
@@ -1911,7 +1911,7 @@ describe('TASK-RF-6.14 — modo autorizado soma precoTotalAutorizada de troca-ki
   });
 });
 
-describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () => {
+describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   const kmAtual = 90000;
   const kmAnual = 18200;
 
@@ -2013,7 +2013,7 @@ describe('TASK-RF-6.13 — peças novas usam kmUltimaTrocas como âncora', () =>
   });
 });
 
-describe('TASK-RF-6.13 — retíficas usam kmUltimaTrocas em Imprevistos', () => {
+describe('TASK-RF-6.13 - retíficas usam kmUltimaTrocas em Imprevistos', () => {
   const dadosRJ: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
@@ -2082,7 +2082,7 @@ describe('MAPA_PECA_PARA_SERVICO', () => {
   });
 });
 
-describe('calcularCustoFinanciamentoAnual (RF-6.18 — afunila no último ano)', () => {
+describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', () => {
   it('retorna parcela * 12 quando restam >= 12 parcelas', () => {
     expect(
       calcularCustoFinanciamentoAnual({
@@ -2191,7 +2191,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 — afunila no último ano)',
   });
 });
 
-describe('calcularParcelasRestantesAtuais (RF-6.18 — derivação por snapshot)', () => {
+describe('calcularParcelasRestantesAtuais (RF-6.18 - derivação por snapshot)', () => {
   it('retorna 0 quando parcelasRestantes é null', () => {
     expect(calcularParcelasRestantesAtuais(null, '2026-01-01', new Date('2026-05-01'))).toBe(0);
   });

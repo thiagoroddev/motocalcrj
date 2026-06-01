@@ -32,7 +32,7 @@ export interface GastoCustom {
   id: string;
   nome: string;
   // Valor único acumulado no ano (não recorrência mensal). Padrão do app
-  // para valores personalizados após ADR-003 — ver ADR-006.
+  // para valores personalizados após ADR-003 - ver ADR-006.
   valorAnual: number;
   ativo: boolean;
   // Presets fixos (Multa, Sinistros, Outros) não podem ser deletados.
@@ -95,7 +95,7 @@ export interface RevisaoAutorizadaOverride {
   index: number;
   precoPecas: number;
   precoMaoDeObra: number;
-  precoTotal: number; // precoPecas + precoMaoDeObra — usado pelo calculador
+  precoTotal: number; // precoPecas + precoMaoDeObra - usado pelo calculador
 }
 
 export interface FipeCache {
@@ -168,7 +168,7 @@ export interface PerfilUsuario {
     parcelasRestantes: number | null;
     // Mês de referência (ISO) em que parcelasRestantes foi informado. Permite
     // decrementar as parcelas pelo tempo sem escrever no perfil periodicamente
-    // (modelagem Snapshot — TASK-RF-6.18 / ADR-009).
+    // (modelagem Snapshot - TASK-RF-6.18 / ADR-009).
     dataReferenciaParcelas: string | null;
     aluguelMensal: number | null;
     aluguelPeriodicidade: PeriodicidadeAluguel | null;

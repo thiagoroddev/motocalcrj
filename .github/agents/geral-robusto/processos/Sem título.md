@@ -9,8 +9,8 @@ Campos
 | **Valor**        | Crítico / Importante / Desejável                                                                                                                                             |
 | **Urgência**     | Imediata / Normal                                                                                                                                                            |
 | **Esforço-H**    | P (≤ 2h) / M (2-8h) / G (1-3d) / XG (> 3d)                                                                                                                                   |
-| **Dependências** | IDs de outras tarefas que precisam ser concluídas antes. `—` se nenhuma                                                                                                      |
-| **Status**       | `[ ]` pendente / `[x]` concluída (raramente aparece aqui — tarefa concluída sai do arquivo)                                                                                  |
+| **Dependências** | IDs de outras tarefas que precisam ser concluídas antes. `-` se nenhuma                                                                                                      |
+| **Status**       | `[ ]` pendente / `[x]` concluída (raramente aparece aqui - tarefa concluída sai do arquivo)                                                                                  |
 | **Data origem**  | DD/MM/AA quando a tarefa foi criada                                                                                                                                          |
 |                  |                                                                                                                                                                              |
 
@@ -102,7 +102,7 @@ Template em-andamento:
 - 14:15: Plano aprovado
 - 14:30: Iniciada implementação do componente CardRegistro
 - 15:45: CardRegistro pronto. Iniciando lista paginada
-- 16:00: Bloqueio — paginação API retorna formato inesperado
+- 16:00: Bloqueio - paginação API retorna formato inesperado
 ## Bloqueio em YYYY-MM-DD HH:MM
 
   **O que tentei:** [descrição]
@@ -117,7 +117,7 @@ Template em-andamento:
 
 -----------------------------
 Template Concluidas
-# TASK-RF-5.1 — Registros: lista e sub-abas
+# TASK-RF-5.1 - Registros: lista e sub-abas
 
 - **Status:** Concluído
 - **Modo:** Standard
@@ -153,7 +153,7 @@ Template Concluidas
 - RNF-13: [descrição] (adicionado em docs/requisitos/nao-funcionais.md)
 
 ## ADRs Geradas
-- —
+- -
 
 ## Testes
 - `npm run test`: 82 verdes

@@ -7,7 +7,7 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 //
 // Espelha fielmente `src/types/perfil.ts`. A fidelidade é amarrada por um
 // teste de compatibilidade `z.infer<typeof perfilSchema>` ↔ `PerfilUsuario`
-// (ver perfilSchema.test.ts) — se o tipo e o schema divergirem, o tsc quebra.
+// (ver perfilSchema.test.ts) - se o tipo e o schema divergirem, o tsc quebra.
 //
 // É deliberadamente tolerante onde o tipo permite (`.nullable()`), para não
 // gerar falso-positivo que rejeite dado bom. Validar é a fronteira de carga:

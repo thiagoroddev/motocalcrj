@@ -28,7 +28,8 @@ agente/
 │   ├── 23-modelagem-dominio.md
 │   ├── 24-figma-para-codigo.md
 │   ├── 25-analise-impacto.md
-│   └── 26-inicializacao-projeto.md
+│   ├── 26-inicializacao-projeto.md
+│   └── 27-revisao-geral.md
 │
 ├── templates/                      ← Consulta quando vai gerar artefato
 │   ├── 30-task-em-andamento.md
@@ -37,7 +38,8 @@ agente/
 │   ├── 33-contexto-projeto-ai.md   ← NOVO (lacuna identificada)
 │   ├── 34-readme-projeto.md
 │   ├── 35-componente-ui.md
-│   └── 36-hook-feature.md
+│   ├── 36-hook-feature.md
+│   └── 37-revisao-geral.md
 │
 ├── checklists/                     ← Verificações rápidas
 │   ├── 40-revisao-rapida.md
@@ -77,7 +79,7 @@ agente/
 
 ---
 
-### 📁 `padroes/` — Como escrever código
+### 📁 `padroes/` - Como escrever código
 
 Carregar quando a tarefa envolver escrever ou revisar código.
 
@@ -90,12 +92,12 @@ Carregar quando a tarefa envolver escrever ou revisar código.
 |[`14-formularios-e-validacao.md`](https://claude.ai/chat/padroes/14-formularios-e-validacao.md)|react-hook-form, Zod, padrão de validação, mensagens de erro|
 |[`15-testes.md`](https://claude.ai/chat/padroes/15-testes.md)|Vitest, AAA, cobertura mínima, user-event, atualização de testes|
 |[`16-performance-acessibilidade.md`](https://claude.ai/chat/padroes/16-performance-acessibilidade.md)|Lighthouse, code splitting, React.memo, ARIA, contraste, toque mínimo|
-|[`17-backend-node.md`](https://claude.ai/chat/padroes/17-backend-node.md)|**Stub mínimo** — Node/Express/Prisma. A expandir quando entrar projeto backend.|
+|[`17-backend-node.md`](https://claude.ai/chat/padroes/17-backend-node.md)|**Stub mínimo** - Node/Express/Prisma. A expandir quando entrar projeto backend.|
 |[`18-seguranca-privacidade.md`](https://claude.ai/chat/padroes/18-seguranca-privacidade.md)|XSS, CSP, dados pessoais, .env, sanitização, princípio "emprestar dispositivo"|
 
 ---
 
-### 📁 `processos/` — Como conduzir o trabalho
+### 📁 `processos/` - Como conduzir o trabalho
 
 Carregar quando a tarefa envolver tomar decisão sobre processo, não código.
 
@@ -108,10 +110,11 @@ Carregar quando a tarefa envolver tomar decisão sobre processo, não código.
 |[`24-figma-para-codigo.md`](https://claude.ai/chat/processos/24-figma-para-codigo.md)|Análise visual, spec técnica, planejamento de componentes|
 |[`25-analise-impacto.md`](https://claude.ai/chat/processos/25-analise-impacto.md)|Análise antes de feature em sistema existente|
 |[`26-inicializacao-projeto.md`](https://claude.ai/chat/processos/26-inicializacao-projeto.md)|Engenharia reversa, criação da estrutura, arquivamento de docs antigas|
+|[`27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md)|Revisão completa do projeto, somente quando o humano pedir, registrada em `REV-NNN.md`|
 
 ---
 
-### 📁 `templates/` — Formatos prontos para preencher
+### 📁 `templates/` - Formatos prontos para preencher
 
 Consultar quando precisar gerar um artefato com formato padrão.
 
@@ -124,10 +127,11 @@ Consultar quando precisar gerar um artefato com formato padrão.
 |[`34-readme-projeto.md`](https://claude.ai/chat/templates/34-readme-projeto.md)|Template de README.md para a raiz do projeto|
 |[`35-componente-ui.md`](https://claude.ai/chat/templates/35-componente-ui.md)|Esqueleto de componente UI com forwardRef + variantes|
 |[`36-hook-feature.md`](https://claude.ai/chat/templates/36-hook-feature.md)|Esqueleto de hook de feature (estado + memo + callbacks)|
+|[`37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md)|Template para `docs/arquitetura/revisoes-gerais/REV-NNN.md`|
 
 ---
 
-### 📁 `checklists/` — Verificações antes de entregar
+### 📁 `checklists/` - Verificações antes de entregar
 
 Carregar antes de finalizar tarefa ou abrir revisão.
 
@@ -140,7 +144,7 @@ Carregar antes de finalizar tarefa ou abrir revisão.
 
 ---
 
-### 📁 `referencias/` — Consulta densa
+### 📁 `referencias/` - Consulta densa
 
 Carregar quando precisar de detalhes específicos. Não são leitura corrida.
 

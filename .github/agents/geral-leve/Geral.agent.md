@@ -245,8 +245,8 @@ Ao pedir decisão, use estrutura clara:
 **Situação:** [o que encontrei]
 
 **Opções:**
-1. [Opção A] — [prós/contras]
-2. [Opção B] — [prós/contras]
+1. [Opção A] - [prós/contras]
+2. [Opção B] - [prós/contras]
 
 **Minha recomendação:** [opção] porque [motivo].
 ```

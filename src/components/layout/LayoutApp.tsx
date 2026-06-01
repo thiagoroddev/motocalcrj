@@ -21,7 +21,7 @@ export function LayoutApp() {
   const tipoComb = perfil.financeiro.tipoGasolinaPreferida;
   const consumo = perfil.financeiro.combustiveis[tipoComb].autonomia;
   const kmUltimaRevisaoTexto =
-    perfil.moto.kmUltimaRevisao !== null ? kmFormatado(perfil.moto.kmUltimaRevisao) : '—';
+    perfil.moto.kmUltimaRevisao !== null ? kmFormatado(perfil.moto.kmUltimaRevisao) : '-';
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -44,7 +44,7 @@ export function LayoutApp() {
             </p>
           </Link>
           <p className="text-muted-foreground/50 text-xs">
-            {perfil.moto.ano} —{' '}
+            {perfil.moto.ano} -{' '}
             <Link
               to="/insumos"
               aria-label="Editar consumo em Insumos"

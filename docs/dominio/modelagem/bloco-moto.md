@@ -60,7 +60,7 @@ O `Math.max` garante que `kmAtual` **nunca regrida** mesmo se o Motoboy registra
 
 | Action                 | Comportamento                                | Quando dispara                                            |
 | ---------------------- | -------------------------------------------- | --------------------------------------------------------- |
-| `SET_ONBOARDING_CAMPO` | Define qualquer campo durante o Onboarding   | Passos P1–P5                                              |
+| `SET_ONBOARDING_CAMPO` | Define qualquer campo durante o Onboarding   | Passos P1-P5                                              |
 | `SET_KM_ATUAL`         | Atualiza km atual diretamente                | Tela Ajustes (manual) ou Registro de Rodagem (automático) |
 | `COMMIT_ONBOARDING`    | Persiste pela primeira vez com tudo do bloco | Final do Onboarding                                       |
 

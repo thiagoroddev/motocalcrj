@@ -53,16 +53,16 @@ Arquivo `.json` em `src/presets/` com dados técnico-financeiros pré-cadastrado
 
 ### Override
 
-Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosIndependentes[]`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** — o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02). Após ADR-003 (modo único), Override sempre se aplica quando presente — não há mais modo "ignorar customizações para comparar".
+Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em runtime. Armazenado dentro do `PerfilUsuario` (em `pecasOverrides[]`, `servicosIndependentes[]`, `revisaoAutorizadaOverrides[]`). **O Preset JSON nunca é modificado** - o sistema lê o Override quando disponível e cai no Preset JSON quando não há (RN-02). Após ADR-003 (modo único), Override sempre se aplica quando presente - não há mais modo "ignorar customizações para comparar".
 
 ### Modo de Revisão (`ModoRevisao`)
 
 Tipo: `'autorizadas' | 'independentes'`. Controla qual cálculo de revisão periódica é usado:
 
 - **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por km anual.
-- **`independentes`:** usa `servicosIndependentes[]` — array de `ServicoIndependente`, onde cada serviço tem `intervalKm` e `precoMaoDeObra` próprios. CPK = `∑ (precoMaoDeObra / intervalKm) × kmAnual` (apenas serviços com `ativo: true`).
+- **`independentes`:** usa `servicosIndependentes[]` - array de `ServicoIndependente`, onde cada serviço tem `intervalKm` e `precoMaoDeObra` próprios. CPK = `∑ (precoMaoDeObra / intervalKm) × kmAnual` (apenas serviços com `ativo: true`).
 
-⚠️ **Sem dupla contagem (ADR-006 / INV-CALC-3):** no modo `autorizadas`, o cálculo por peça (`calcularCpkPorPeca`) **exclui** as peças com `incluidoNaRevisaoAutorizada: true` — óleo, vela e filtro de ar já estão no pacote de revisão Honda. No modo `independentes`, todas as peças entram pelo cálculo por peça (a revisão conta apenas mão de obra).
+⚠️ **Sem dupla contagem (ADR-006 / INV-CALC-3):** no modo `autorizadas`, o cálculo por peça (`calcularCpkPorPeca`) **exclui** as peças com `incluidoNaRevisaoAutorizada: true` - óleo, vela e filtro de ar já estão no pacote de revisão Honda. No modo `independentes`, todas as peças entram pelo cálculo por peça (a revisão conta apenas mão de obra).
 
 ### Serviço Independente (`ServicoIndependente`)
 
@@ -83,7 +83,7 @@ Defaults de 9 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (val
 
 ### Perfil de Peças (`PerfilPecas`)
 
-Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (mais caras, vida útil maior) ou paralelas. É **global** via `perfil.perfilManutencao.perfilPecasGlobal`. Override por peça existe em `pecasOverrides[]` apenas para **preço** (campos `precoEditadoOriginal` e `precoEditadaParalela`) — o perfil ativo (original ou paralela) é único para todas as peças.
+Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (mais caras, vida útil maior) ou paralelas. É **global** via `perfil.perfilManutencao.perfilPecasGlobal`. Override por peça existe em `pecasOverrides[]` apenas para **preço** (campos `precoEditadoOriginal` e `precoEditadaParalela`) - o perfil ativo (original ou paralela) é único para todas as peças.
 
 ### Perfil de Uso (`PerfilUso`)
 
@@ -124,9 +124,9 @@ Classificação de despesas para o cálculo. As categorias **reais do projeto** 
 
 ⚠️ **Regra crítica (RN-27):** `revisao` **não é fatia separada no donut** da Estimativa; seu custo é incorporado à fatia de `manutencao`. No Detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria.
 
-### Gasto Personalizado (`GastoCustom`) — valor único acumulado
+### Gasto Personalizado (`GastoCustom`) - valor único acumulado
 
-Lista fechada de 3 presets em `financeiro.gastosCustom` que o usuário edita direto na seção Imprevistos do Detalhamento: **Multa**, **Sinistros** e **Outros**. Cada item tem `valorAnual` (total acumulado no ano corrente — não recorrência mensal), `ativo` (toggle) e `ehPreset: true` (não deletável). Quando vier custo novo do mesmo tipo, o usuário **edita somando** ao valor anterior. Padrão estabelecido pela TASK-RF-6.9 (consequência da ADR-003 e ADR-006).
+Lista fechada de 3 presets em `financeiro.gastosCustom` que o usuário edita direto na seção Imprevistos do Detalhamento: **Multa**, **Sinistros** e **Outros**. Cada item tem `valorAnual` (total acumulado no ano corrente - não recorrência mensal), `ativo` (toggle) e `ehPreset: true` (não deletável). Quando vier custo novo do mesmo tipo, o usuário **edita somando** ao valor anterior. Padrão estabelecido pela TASK-RF-6.9 (consequência da ADR-003 e ADR-006).
 
 ⚠️ Imprevistos é a **única categoria editável direto na tela de Detalhamento**. As demais (combustível, internet, seguro, alimentação, financiamento, mão de obra, custos & peças) só são editáveis nas suas telas dedicadas.
 
@@ -171,7 +171,7 @@ Estrutura usada **internamente nos cálculos** para decidir quais categorias ent
 
 ### Peça
 
-Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`, `intervaloKm` (manual da Honda), `intervaloKmEntrega` (real para motoboy, geralmente menor), `precoOriginal`, `precoParalela`, `incluidoNaRevisaoAutorizada` (se a peça é trocada nas revisões periódicas Honda — ver Modo de Revisão e INV-CALC-3). Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
+Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`, `intervaloKm` (manual da Honda), `intervaloKmEntrega` (real para motoboy, geralmente menor), `precoOriginal`, `precoParalela`, `incluidoNaRevisaoAutorizada` (se a peça é trocada nas revisões periódicas Honda - ver Modo de Revisão e INV-CALC-3). Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
 
 ### Pneu
 
@@ -293,7 +293,7 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-09 (v2) | (todos)                                           | **Reescrita completa baseada em código real** | Validação contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts` e Requisitos v6 |
 | 2026-05-11 (v3) | Diário de Trabalho, Dados RJ, Catálogo de Modelos | Alinhamento com código real                   | Ajustes e referências v6                                                                                 |
 | 2026-05-19 (v4) | Override, Modo de Revisão, CPK, Vida Útil, Serviço Independente | Adição e atualização por ADR-004 | TASK-REF-11: substituição ServicosMaoDeObra → ServicoIndependente[], fórmula CPK por evento |
-| 2026-05-20 (v5) | Modo de Revisão | Confirmação de implementação — fórmula km-based e CPK por serviço agora no calculador | TASK-REF-12 concluída |
+| 2026-05-20 (v5) | Modo de Revisão | Confirmação de implementação - fórmula km-based e CPK por serviço agora no calculador | TASK-REF-12 concluída |
 | 2026-05-22 (v6) | Modo de Revisão, Peça | Nota de não-duplicação no modo autorizado; campo `incluidoNaRevisaoAutorizada` na Peça | TASK-BG-003 (ADR-006) |
 | 2026-05-22 (v7) | Vida Útil | Ciclo de troca ancorado no km da última troca; `CustoPeca.trocasNoAno` | TASK-RF-6.7 (ADR-006) |
-| 2026-05-24 (v8) | Modo de Exibição, Diário de Trabalho, Histórico de Manutenção | **Termos eliminados** — conceitos removidos pelas TASK-REF-18/REF-19 (ADR-003, modo único, sem Registros). `Perfil de Peças` atualizado (`perfilPecasOverride` por peça não existe mais). `Categoria Display` ganhou `imprevistos`. Override ganhou nota sobre modo único. | TASK-DOC-009 |
+| 2026-05-24 (v8) | Modo de Exibição, Diário de Trabalho, Histórico de Manutenção | **Termos eliminados** - conceitos removidos pelas TASK-REF-18/REF-19 (ADR-003, modo único, sem Registros). `Perfil de Peças` atualizado (`perfilPecasOverride` por peça não existe mais). `Categoria Display` ganhou `imprevistos`. Override ganhou nota sobre modo único. | TASK-DOC-009 |

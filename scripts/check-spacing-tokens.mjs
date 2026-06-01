@@ -10,7 +10,7 @@
 //   1. utilities de spacing com sufixo nomeado: (p|m|gap|space...)-(xs|sm|md|lg|xl)
 //   2. redefinição de --spacing-(xs|sm|md|lg|xl) em CSS
 //
-// Sem dependências externas — roda no `npm run lint` e no CI.
+// Sem dependências externas - roda no `npm run lint` e no CI.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
@@ -19,11 +19,11 @@ import { fileURLToPath } from 'node:url';
 const RAIZ = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const DIR_SRC = join(RAIZ, 'src');
 
-// Prefixos das utilities que resolvem pela escala de SPACING do Tailwind — as
+// Prefixos das utilities que resolvem pela escala de SPACING do Tailwind - as
 // únicas onde uma chave nomeada (xs/sm/md/lg/xl) é não-canônica e indica o token
 // customizado que causou a TASK-BG-009. Sizing/position (max-w, min-h, w, h,
 // inset, top...) usam a escala de container e aceitam chaves nomeadas
-// legitimamente (ex.: `max-w-lg` = 32rem) — por isso NÃO entram aqui.
+// legitimamente (ex.: `max-w-lg` = 32rem) - por isso NÃO entram aqui.
 const PREFIXOS_SPACING = [
   'p',
   'px',
@@ -53,7 +53,7 @@ const PREFIXOS_SPACING = [
 ];
 const CHAVES_NOMEADAS = ['xs', 'sm', 'md', 'lg', 'xl'];
 
-// (^|separador) (prefixo)-(chave) (fim|separador) — separadores: aspas, espaço, crase, backtick.
+// (^|separador) (prefixo)-(chave) (fim|separador) - separadores: aspas, espaço, crase, backtick.
 const REGEX_UTILITY = new RegExp(
   `(?<![\\w-])(?:${PREFIXOS_SPACING.join('|')})-(?:${CHAVES_NOMEADAS.join('|')})(?![\\w-])`,
   'g',

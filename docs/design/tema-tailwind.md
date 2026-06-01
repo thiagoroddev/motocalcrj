@@ -4,7 +4,7 @@ Este documento define a configuracao global de CSS para o tema do MotoCalc RJ e 
 
 ## Arquivo global (src/index.css)
 
-Tailwind v4 — a configuração de tema vai no próprio CSS, não em `tailwind.config.cjs` (removido):
+Tailwind v4 - a configuração de tema vai no próprio CSS, não em `tailwind.config.cjs` (removido):
 
 ```css
 @import "tailwindcss";
@@ -22,12 +22,12 @@ Tailwind v4 — a configuração de tema vai no próprio CSS, não em `tailwind.
   /* Tipografia */
   --font-sans: Inter, system-ui, sans-serif;
 
-  /* Espaçamento: escala numérica padrão do Tailwind (NÃO redefinir --spacing-*) — ver ADR-008 */
+  /* Espaçamento: escala numérica padrão do Tailwind (NÃO redefinir --spacing-*) - ver ADR-008 */
 
   /* Border radius */
   --radius-btn: 4px;
   --radius-input: 4px;
-  --radius-lg: var(--radius);   /* card radius — depende de --radius em :root */
+  --radius-lg: var(--radius);   /* card radius - depende de --radius em :root */
 
   /* Touch target */
   --size-touch: 48px;
@@ -40,7 +40,7 @@ Tailwind v4 — a configuração de tema vai no próprio CSS, não em `tailwind.
 ```
 
 - `@import "tailwindcss"` substitui `@tailwind base/components/utilities` (sintaxe v3).
-- Não há `tailwind.config.cjs` — tudo em CSS.
+- Não há `tailwind.config.cjs` - tudo em CSS.
 - `color-scheme: dark` definido no `:root` via `color-scheme: dark`.
 - Body: `@apply bg-background text-foreground font-sans` (tokens shadcn, não `bg-surface`).
 
@@ -51,7 +51,7 @@ Inter via `--font-sans` no `@theme inline`. Carregamento no `index.html` via Goo
 ## Tokens de espaçamento e tamanho
 
 **Spacing/sizing seguem a escala numérica padrão do Tailwind/shadcn** (`p-4`, `gap-2`, `space-y-4`…).
-**Proibido redefinir `--spacing-*` no `@theme`** — as chaves nomeadas `sm/md/lg/xl` colidem com a
+**Proibido redefinir `--spacing-*` no `@theme`** - as chaves nomeadas `sm/md/lg/xl` colidem com a
 escala de container que `max-w-*` consome no Tailwind v4 (causou a TASK-BG-009). Ver **ADR-008**.
 Guard-rail: `scripts/check-spacing-tokens.mjs` (roda no `npm run lint`).
 
@@ -72,13 +72,13 @@ Equivalência usada na conversão (TASK-REF-26): `xs→1` (4px), `sm→2` (8px),
 - Evite cores hardcoded fora de componentes isolados; prefira os tokens do tema.
 
 
-## Tokens de Cor (Shadcn/ui — CSS vars)
+## Tokens de Cor (Shadcn/ui - CSS vars)
 
-O projeto usa a **convenção CSS vars do Shadcn** — não `--color-*` customizado.
+O projeto usa a **convenção CSS vars do Shadcn** - não `--color-*` customizado.
 Valores em formato `rgb()` (padrão pós-TASK-RNF-006 / Tailwind v4):
 
 ```css
-/* index.css — :root (tema escuro padrão) */
+/* index.css - :root (tema escuro padrão) */
 :root {
   --radius: 0.5rem;                  /* ADR-002: alinhado ao shadcn */
   --background: rgb(13 19 33);       /* #0D1321 */
@@ -99,7 +99,7 @@ Valores em formato `rgb()` (padrão pós-TASK-RNF-006 / Tailwind v4):
   --accent: rgb(51 57 72);
   --accent-foreground: rgb(255 255 255);
   /* tokens customizados */
-  --label: rgb(139 144 160);         /* #8B90A0 — label-neutro */
+  --label: rgb(139 144 160);         /* #8B90A0 - label-neutro */
   --warning: rgb(255 182 149);
   --success: rgb(34 197 94);
   --cyan: rgb(0 192 232);

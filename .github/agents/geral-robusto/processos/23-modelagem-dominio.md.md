@@ -10,7 +10,7 @@ description: "Modelagem de domínio com DDD tático: entidade, value object, agg
 
 # 🧬 Modelagem de Domínio
 
-> Modelagem é onde a maioria dos desenvolvedores junior patina e os sênior se diferenciam. A diferença não está em sintaxe — está em **como você representa o problema do mundo real** no código.
+> Modelagem é onde a maioria dos desenvolvedores junior patina e os sênior se diferenciam. A diferença não está em sintaxe - está em **como você representa o problema do mundo real** no código.
 
 ---
 
@@ -74,7 +74,7 @@ Pergunta-teste: _"se eu trocar PostgreSQL por MongoDB amanhã, quanto do meu có
 
 ---
 
-## 3. Linguagem Ubíqua — O Conceito Mais Importante
+## 3. Linguagem Ubíqua - O Conceito Mais Importante
 
 > **Cada termo do negócio tem UM significado único em código, conversa, documentação e UI.**
 
@@ -112,10 +112,10 @@ Agora "Pedido em estado rascunho" é "Pedido"; "Pedido confirmado" é "Pedido". 
 
 ### 3.3 Como Construir e Manter
 
-1. **Glossário em `docs/dominios/glossario.md`** — definição única por termo
-2. **Termos proibidos listados** — `order`, `compra`, `cart` viram sinônimos a evitar
-3. **Code review verifica** — se aparece "order" em revisão, é flag
-4. **Documentação usa os mesmos termos** — sem traduções
+1. **Glossário em `docs/dominios/glossario.md`** - definição única por termo
+2. **Termos proibidos listados** - `order`, `compra`, `cart` viram sinônimos a evitar
+3. **Code review verifica** - se aparece "order" em revisão, é flag
+4. **Documentação usa os mesmos termos** - sem traduções
 
 ### 3.4 Quando Linguagem Muda
 
@@ -125,7 +125,7 @@ Negócios evoluem. Termos mudam. Quando isso acontece:
 2. **Refatore o código** para usar o novo termo (Standard ou Strict, dependendo do impacto)
 3. **Comunique** stakeholders sobre a mudança
 
-Mudança parcial gera **dois vocabulários no mesmo projeto** — o que é exatamente o problema que linguagem ubíqua resolve.
+Mudança parcial gera **dois vocabulários no mesmo projeto** - o que é exatamente o problema que linguagem ubíqua resolve.
 
 ---
 
@@ -149,7 +149,7 @@ Vou detalhar cada um.
 
 ```typescript
 type Pedido = {
-  id: string                    // identidade — única para sempre
+  id: string                    // identidade - única para sempre
   cliente: string
   itens: ItemPedido[]
   total: number
@@ -194,7 +194,7 @@ type Endereco = {
 **Sinais de que algo é VO:**
 
 - Você compara por valor (`enderecoA === enderecoB` se atributos iguais)
-- Não faz sentido ter "histórico de mudanças" — você substitui por outro
+- Não faz sentido ter "histórico de mudanças" - você substitui por outro
 - Não persiste com chave primária própria (vive embutido)
 
 ### 4.3 Distinção Crítica: Entidade vs Value Object
@@ -231,7 +231,7 @@ type ItemPedido = {        // VO dentro do aggregate Pedido
 
 **Regras do aggregate:**
 
-1. **Acesso externo só pela raiz.** Você nunca pega `ItemPedido` diretamente — sempre via `Pedido`
+1. **Acesso externo só pela raiz.** Você nunca pega `ItemPedido` diretamente - sempre via `Pedido`
 2. **Invariantes garantidas dentro do aggregate.** A raiz garante consistência
 3. **Referências entre aggregates por ID, não por objeto.** `Pedido` referencia `cliente` por ID, não embute o objeto Cliente
 4. **Transação opera em um aggregate por vez.** Salvar `Pedido` não atualiza `Cliente` simultaneamente
@@ -331,10 +331,10 @@ Para cada conceito, decida: **Entidade, Value Object, ou parte de Aggregate**.
 |Cliente|Entidade|Tem ID, persiste, evolui (mudou endereço, mudou CNH)|
 |CNH|Value Object|Atributo do Cliente. Se mudar, é outro CNH|
 |Carro|Entidade|Tem placa única, persiste, tem histórico|
-|Modelo|Value Object|"Civic 2024" — não tem identidade própria|
+|Modelo|Value Object|"Civic 2024" - não tem identidade própria|
 |Aluguel|Entidade (raiz de aggregate)|Tem ID, contém Carro, Cliente, Período|
 |Pagamento|Entidade dentro do aggregate Aluguel|Tem ID, mas só faz sentido dentro de um Aluguel|
-|Período|Value Object|`{ inicio, fim }` — sem identidade|
+|Período|Value Object|`{ inicio, fim }` - sem identidade|
 |Endereço|Value Object|Atributo do Cliente|
 |Valor|Value Object|`{ montante, moeda }`|
 
@@ -371,7 +371,7 @@ Cliente ────┐
 
 - O que é raiz de aggregate? (Aluguel)
 - O que vive dentro? (Período, Pagamento)
-- O que é referência externa? (Cliente, Carro — referência por ID)
+- O que é referência externa? (Cliente, Carro - referência por ID)
 
 ### 5.5 Validar Contra Cenários
 
@@ -427,7 +427,7 @@ Cada invariante de formato/valor entra como `.refine()` no Zod.
 
 ### 6.2 Funções de Comportamento
 
-Comportamento mora junto com os dados. Mas em TypeScript funcional, não precisam ser métodos de classe — podem ser funções que operam sobre o tipo.
+Comportamento mora junto com os dados. Mas em TypeScript funcional, não precisam ser métodos de classe - podem ser funções que operam sobre o tipo.
 
 ```typescript
 // src/dominios/aluguel/aluguelService.ts ou aluguelDominio.ts
@@ -454,7 +454,7 @@ export function confirmar(aluguel: Aluguel): Aluguel {
 - Funções **puras**, sem `this`
 - Recebem entidade, devolvem nova entidade (imutabilidade)
 - Invariantes verificadas antes de qualquer mutação
-- Sem dependência de infra (DB, HTTP) — domínio puro
+- Sem dependência de infra (DB, HTTP) - domínio puro
 
 ### 6.3 Smart Constructors
 
@@ -482,11 +482,11 @@ export function criarAluguel(dados: DadosCriarAluguel): Aluguel {
 }
 ```
 
-Quem cria Aluguel chama `criarAluguel()` — não constrói o objeto manualmente. Garante que toda Aluguel passa pelas validações.
+Quem cria Aluguel chama `criarAluguel()` - não constrói o objeto manualmente. Garante que toda Aluguel passa pelas validações.
 
 ### 6.4 Alternativa: Mesma Modelagem em Classe
 
-O mesmo Aluguel pode ser modelado em estilo OOP tradicional. Os conceitos de DDD são idênticos — muda apenas a sintaxe.
+O mesmo Aluguel pode ser modelado em estilo OOP tradicional. Os conceitos de DDD são idênticos - muda apenas a sintaxe.
 
 ```typescript
 // src/dominio/aluguel/Aluguel.ts
@@ -584,13 +584,13 @@ Os dois estilos atendem o mesmo objetivo de DDD (modelo rico, invariantes garant
 
 |Situação|Sugestão|
 |---|---|
-|Projeto React/Next + Zod|**Funcional** — casa com o resto do código|
-|Backend Node puro|**Qualquer um** — preferência do time|
-|Domínio muito complexo com muitos invariantes|**Classe** — encapsulamento ajuda|
-|Time vem de Java/C#|**Classe** — menor atrito de aprendizado|
-|Time vem de JS moderno|**Funcional** — idiomático|
+|Projeto React/Next + Zod|**Funcional** - casa com o resto do código|
+|Backend Node puro|**Qualquer um** - preferência do time|
+|Domínio muito complexo com muitos invariantes|**Classe** - encapsulamento ajuda|
+|Time vem de Java/C#|**Classe** - menor atrito de aprendizado|
+|Time vem de JS moderno|**Funcional** - idiomático|
 
-**Você não precisa escolher para sempre.** Pode usar funcional em entidades simples e classe em entidades complexas, no mesmo projeto. **Só não misture os dois estilos na mesma entidade** — escolha uma representação por entidade.
+**Você não precisa escolher para sempre.** Pode usar funcional em entidades simples e classe em entidades complexas, no mesmo projeto. **Só não misture os dois estilos na mesma entidade** - escolha uma representação por entidade.
 
 ---
 
@@ -619,7 +619,7 @@ const aluguelService = {
 
 **Por que é ruim:**
 
-- Estado e validação ficam separados — invariante pode ser violada manualmente
+- Estado e validação ficam separados - invariante pode ser violada manualmente
 - Outras partes do código podem mudar `aluguel.estado` direto, ignorando regras
 - Difícil rastrear quem pode fazer o quê
 
@@ -657,7 +657,7 @@ class Aluguel {
 function confirmar(aluguel: Aluguel): Aluguel { /* ... */ }
 ```
 
-Os dois são "ricos" — o comportamento vive próximo dos dados. A diferença é estilo, não conceito. Veja a comparação detalhada em [6.5](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#65-compara%C3%A7%C3%A3o-quando-usar-cada-estilo).
+Os dois são "ricos" - o comportamento vive próximo dos dados. A diferença é estilo, não conceito. Veja a comparação detalhada em [6.5](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#65-compara%C3%A7%C3%A3o-quando-usar-cada-estilo).
 
 ---
 
@@ -866,7 +866,7 @@ export async function criarAvaliacaoComValidacoes(dados) {
 |---|---|---|
 |**Modelo anêmico**|Tipos só com dados, lógica espalhada|Comportamento junto com dados (funções puras)|
 |**Categorização forçada**|Tudo vira "Entity" mesmo coisas simples|Use VO ou só `type` quando bastar|
-|**Domínio inflado**|Campo `observacao: string` virou entidade `Observacao`|Mantenha simples — entidade só quando tem identidade|
+|**Domínio inflado**|Campo `observacao: string` virou entidade `Observacao`|Mantenha simples - entidade só quando tem identidade|
 |**Aggregate gigante**|Pedido contém Cliente embutido, com endereços, com histórico...|Aggregates pequenos, referenciar outros por ID|
 |**Vazamento de infra no domínio**|Função de domínio chama `prisma.X` direto|Domínio puro, infra em service/repository|
 |**Sem invariantes documentadas**|Regras existem só na cabeça do dev|`docs/dominios/invariantes.md`|
@@ -910,7 +910,7 @@ Em todos os casos, **converse com o humano antes de "consertar"**. Modelagem afe
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Onde a modelagem vive no projeto
-- [`14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) — Zod usado para validar invariantes
-- [`17-backend-node.md`](https://claude.ai/padroes/17-backend-node.md) — Domínio + repository + service no backend
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) — Mudanças no modelo afetam muitos arquivos
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde a modelagem vive no projeto
+- [`14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) - Zod usado para validar invariantes
+- [`17-backend-node.md`](https://claude.ai/padroes/17-backend-node.md) - Domínio + repository + service no backend
+- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Mudanças no modelo afetam muitos arquivos

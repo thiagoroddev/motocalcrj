@@ -1,8 +1,8 @@
-# MotoCalc RJ — Documento de Requisitos v6.0
+# MotoCalc RJ - Documento de Requisitos v6.0
 
 > **Versão:** 6.0
 > **Data:** 09/05/2026
-> **Baseado em:** v5.0 (05/05/2026) + correções da Avaliação 1 (07–09/05/2026)
+> **Baseado em:** v5.0 (05/05/2026) + correções da Avaliação 1 (07-09/05/2026)
 > **Supersede:** todas as versões anteriores
 > **Stack:** TypeScript · React 18 · Vite · Tailwind CSS · PWA (offline-first) · sem backend
 > **Distribuição:** Web (link/QR) + Google Play Store via TWA · sem login em V1 · login-ready
@@ -33,7 +33,7 @@
 
 ### II.1- Descrição
 
-O **MotoCalc RJ** é um Progressive Web App mobile-first para entregadores de moto do Município do Rio de Janeiro. Transforma custos invisíveis — depreciação de peças, manutenções, financiamento, seguro — em valores concretos por hora, dia, semana, mês e ano, dando ao entregador clareza real sobre sua despesa na área.
+O **MotoCalc RJ** é um Progressive Web App mobile-first para entregadores de moto do Município do Rio de Janeiro. Transforma custos invisíveis - depreciação de peças, manutenções, financiamento, seguro - em valores concretos por hora, dia, semana, mês e ano, dando ao entregador clareza real sobre sua despesa na área.
 
 ### II.2- Problema
 
@@ -78,13 +78,13 @@ SPA mobile-first que:
 
 ### III.1- Bottom Navigation Bar (5 abas fixas)
 
-> **Fonte de verdade:** protótipo Figma — nomes e ícones exatos abaixo.
+> **Fonte de verdade:** protótipo Figma - nomes e ícones exatos abaixo.
 
 | Aba | Label          | Ícone                | Rota           | Conteúdo                                                                                                 |
 | --- | -------------- | -------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
 | 1   | **ESTIMATIVA** | Gráfico/painel       | `/estimativa`  | Painel de custos com rodagem editável, cards por período, custo/km e acesso ao detalhamento              |
 | 2   | **M. DE OBRA** | Chave + martelo      | `/mao-de-obra` | Ajustes avançados de serviços + revisões autorizadas Honda                                               |
-| 3   | **INSUMOS**    | Velocímetro circular | `/insumos`     | Ajustes avançados de combustíveis, peças e pneus (renomeada pela TASK-DOC-008 em 24/05/26 — era "AUTONOMIA" / `/vida-util`)         |
+| 3   | **INSUMOS**    | Velocímetro circular | `/insumos`     | Ajustes avançados de combustíveis, peças e pneus (renomeada pela TASK-DOC-008 em 24/05/26 - era "AUTONOMIA" / `/vida-util`)         |
 | 4   | **AJUSTES**    | Perfil/usuário       | `/ajustes`     | Ajustes de predefinição (dados do onboarding)                                                            |
 
 > ⚠️ **ADIADO via ADR-003 (18/05/26):** a aba **REGISTROS** (`/registros`, ícone tabela com lápis, sub-abas Geral · Rodagem · Combustível · Manutenção) foi removida da bottom nav para a entrega de maio/2026. Bottom nav passou de 5 para 4 abas. Conteúdo preservado em V.4 / V.5 / VIII.2.3 / XI / XII com o mesmo banner para fidelidade histórica desta spec v6.0.
@@ -121,19 +121,19 @@ Hamburguer → abre o menu inferior quando ele não estiver visível.
 
 ```
 / (root)
-├── /onboarding              → OnboardingFlow (P1–P9 + branches)
-│   ├── /onboarding/1        P1 — Marca
-│   ├── /onboarding/2        P2 — Modelo
-│   ├── /onboarding/3        P3 — Ano de fabricação
-│   ├── /onboarding/4        P4 — Perfil de uso
-│   ├── /onboarding/5        P5 — Quilometragem
-│   ├── /onboarding/6        P6 — Situação da moto (branch)
+├── /onboarding              → OnboardingFlow (P1-P9 + branches)
+│   ├── /onboarding/1        P1 - Marca
+│   ├── /onboarding/2        P2 - Modelo
+│   ├── /onboarding/3        P3 - Ano de fabricação
+│   ├── /onboarding/4        P4 - Perfil de uso
+│   ├── /onboarding/5        P5 - Quilometragem
+│   ├── /onboarding/6        P6 - Situação da moto (branch)
 │   │   ├── /onboarding/6/financiamento   (condicional)
 │   │   ├── /onboarding/6/aluguel         (condicional)
-│   │   └── /onboarding/6/responsabilidade (condicional — só "alugada")
-│   ├── /onboarding/7        P7 — Seguro
-│   ├── /onboarding/8        P8 — Plano de Internet
-│   └── /onboarding/9        P9 — Alimentação (passo final)
+│   │   └── /onboarding/6/responsabilidade (condicional - só "alugada")
+│   ├── /onboarding/7        P7 - Seguro
+│   ├── /onboarding/8        P8 - Plano de Internet
+│   └── /onboarding/9        P9 - Alimentação (passo final)
 │
 ├── /estimativa              → PainelEstimativa
 │   └── /estimativa/detalhamento → DetalhamentoCustos
@@ -161,18 +161,18 @@ Todo passo do onboarding exibe:
 [Header: 🚲 MotoCalc RJ            [?]]
 ──────────────────────────────────────
 PASSO X DE 9              XX% concluído
-[Barra de progresso — preenchimento azul proporcional]
+[Barra de progresso - preenchimento azul proporcional]
 
-[Chip de contexto opcional — ex: "Honda Pop 110i"]
+[Chip de contexto opcional - ex: "Honda Pop 110i"]
 
 Título da Pergunta          ← H1, bold, branco
 Subtítulo explicativo       ← body, cinza
 
-[Área de resposta — varia por passo]
+[Área de resposta - varia por passo]
 
 [Imagem atmosférica opcional]
 
-[Voltar — Secondary]   [Próximo → — Primary]
+[Voltar - Secondary]   [Próximo → - Primary]
 ```
 
 - Barra de progresso: thin (4px), `primary` fill, background `surface-bright`
@@ -181,7 +181,7 @@ Subtítulo explicativo       ← body, cinza
 
 ### IV.2- Descrição detalhada de cada passo
 
-#### IV.2.1- P1 — Identificação da Marca (11%)
+#### IV.2.1- P1 - Identificação da Marca (11%)
 
 **Tipo de input:** Cards de seleção 2 colunas + 1 full-width
 
@@ -189,11 +189,11 @@ Subtítulo explicativo       ← body, cinza
 | ------------- | ------------- | ------------------------------------------------------------------------------- |
 | Honda         | Honda         | Filtra modelos disponíveis em P2                                                |
 | Yamaha        | Yamaha        | Filtra modelos disponíveis em P2                                                |
-| Outras Marcas | Outras Marcas | Bloqueia avanço com mensagem "Modelo sem preset disponível — cálculo impreciso" |
+| Outras Marcas | Outras Marcas | Bloqueia avanço com mensagem "Modelo sem preset disponível - cálculo impreciso" |
 
 Selecionado: borda `primary` + badge `✓` no canto superior direito.
 
-#### IV.2.2- P2 — Seleção do Modelo (22%)
+#### IV.2.2- P2 - Seleção do Modelo (22%)
 
 **Tipo de input:** Hero image (moto da marca) + lista de itens com chevron
 
@@ -205,7 +205,7 @@ Modelos Honda disponíveis em V1:
 
 Selecionado: borda `primary` + `✓`, sem chevron.
 
-#### IV.2.3- P3 — Ano de Fabricação (33%)
+#### IV.2.3- P3 - Ano de Fabricação (33%)
 
 **Tipo de input:** Dropdown de anos + info card contextual
 
@@ -214,7 +214,7 @@ Chip de contexto: `{Marca} {Modelo}`
 - Dropdown: "SELECIONE O ANO" → lista de anos do modelo selecionado
 - Info card laranja (⚠️ REGRA DO RJ): "Motos com mais de 15 anos de fabricação possuem 100% de isenção de IPVA no Estado do Rio de Janeiro."
 
-#### IV.2.4- P4 — Perfil de Uso (44%)
+#### IV.2.4- P4 - Perfil de Uso (44%)
 
 **Tipo de input:** Cards full-width verticais (ícone + título + subtítulo descritivo)
 
@@ -225,7 +225,7 @@ Chip de contexto: `{Marca} {Modelo}`
 
 Info card laranja contextual quando "Passageiro" selecionado.
 
-#### IV.2.5- P5 — Quilometragem (55%)
+#### IV.2.5- P5 - Quilometragem (55%)
 
 **Tipo de input:** 2 campos de texto + hero image (painel/hodômetro)
 
@@ -234,17 +234,17 @@ Info card laranja contextual quando "Passageiro" selecionado.
 | `kmAtual`         | KM ATUAL DO HODÔMETRO \* | Sim         | "Essencial para prever as próximas manutenções" |
 | `kmUltimaRevisao` | KM NA ÚLTIMA REVISÃO     | Não         | "Ajuda a calcular o desgaste acumulado"         |
 
-#### IV.2.6- P6 — Situação da Moto (66%) — Branch Condicional
+#### IV.2.6- P6 - Situação da Moto (66%) - Branch Condicional
 
 **Tipo de input:** Cards full-width com radio button à direita
 
 | Opção          | Ícone | Descrição                                                                                   | Subtela exibida                              |
 | -------------- | ----- | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| **Quitada**    | ⚙️    | "A moto é totalmente sua. Focaremos apenas em manutenção, combustível e taxas fixas."       | Nenhuma — avança para P7                     |
+| **Quitada**    | ⚙️    | "A moto é totalmente sua. Focaremos apenas em manutenção, combustível e taxas fixas."       | Nenhuma - avança para P7                     |
 | **Financiada** | 💰    | "Você paga parcelas mensais. Incluiremos o valor do financiamento no seu cálculo de lucro." | Sub-tela Financiamento                       |
 | **Alugada**    | 🔑    | "Pagamento semanal ou diário. Ideal para quem usa frotas como Mottu ou similares."          | Sub-tela Aluguel → Sub-tela Responsabilidade |
 
-**P6b — Sub-tela Financiamento** (condicional):
+**P6b - Sub-tela Financiamento** (condicional):
 
 | Campo               | Label                        | Placeholder  |
 | ------------------- | ---------------------------- | ------------ |
@@ -253,18 +253,18 @@ Info card laranja contextual quando "Passageiro" selecionado.
 
 Info azul: "Saber as parcelas ajuda a calcular seu lucro real até a quitação."
 
-**P6c — Sub-tela Aluguel** (condicional):
+**P6c - Sub-tela Aluguel** (condicional):
 
 | Campo                  | Label                        | Opções                  |
 | ---------------------- | ---------------------------- | ----------------------- |
 | `aluguelValor`         | Qual o valor do seu aluguel? | Input R$                |
-| `aluguelPeriodicidade` | —                            | Toggle MENSAL / SEMANAL |
+| `aluguelPeriodicidade` | -                            | Toggle MENSAL / SEMANAL |
 
 Info laranja: "O aluguel é um custo fixo que impacta diretamente sua meta diária."
 
-**P6d — Sub-tela Responsabilidade de Custos** (condicional — só quando "Alugada"):
+**P6d - Sub-tela Responsabilidade de Custos** (condicional - só quando "Alugada"):
 
-> Aparece como passo 8/9 — 90% (extra step no fluxo aluguel)
+> Aparece como passo 8/9 - 90% (extra step no fluxo aluguel)
 
 Três seções com radio tri-estado (Eu pago tudo / Locador paga tudo / Dividimos 50/50):
 
@@ -272,7 +272,7 @@ Três seções com radio tri-estado (Eu pago tudo / Locador paga tudo / Dividimo
 - Manutenção (Peças + Revisões)
 - Seguro
 
-#### IV.2.7- P7 — Seguro da Moto (77%)
+#### IV.2.7- P7 - Seguro da Moto (77%)
 
 **Tipo de input:** Cards full-width + formulário condicional
 
@@ -283,10 +283,10 @@ Três seções com radio tri-estado (Eu pago tudo / Locador paga tudo / Dividimo
 
 Quando "Sim" selecionado:
 
-- VALOR DO SEGURO (R$) — input numérico
-- PERIODICIDADE — toggle ANUAL / MENSAL
+- VALOR DO SEGURO (R$) - input numérico
+- PERIODICIDADE - toggle ANUAL / MENSAL
 
-#### IV.2.8- P8 — Plano de Internet (88%)
+#### IV.2.8- P8 - Plano de Internet (88%)
 
 Hero image: conectividade com badge "Conectividade Ativa"
 
@@ -296,7 +296,7 @@ Hero image: conectividade com badge "Conectividade Ativa"
 
 Info azul: "Este custo será diluído para calcular seu lucro líquido real por hora e quilômetro."
 
-#### IV.2.9- P9 — Alimentação no Trabalho (100% — Passo Final)
+#### IV.2.9- P9 - Alimentação no Trabalho (100% - Passo Final)
 
 **Tipo de input:** Cards 2 colunas + campo condicional
 
@@ -307,7 +307,7 @@ Info azul: "Este custo será diluído para calcular seu lucro líquido real por 
 
 Quando "Sim":
 
-- GASTO MÉDIO POR DIA (R$) — input numérico (padrão: R$ 20,00)
+- GASTO MÉDIO POR DIA (R$) - input numérico (padrão: R$ 20,00)
 
 Info footer: "Fique tranquilo! Estes valores podem ser atualizados a qualquer momento na aba de Configurações do seu perfil."
 
@@ -331,24 +331,24 @@ CTA: `Concluir Configuração ✓`
 
 ---
 
-### V.2- Aba ESTIMATIVA — Painel
+### V.2- Aba ESTIMATIVA - Painel
 
 | ID        | Descrição                                                                                                 | Critério de Aceite                                                                                                            |
 | --------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| RF-EST-01 | Exibir alerta de manutenção (card vermelho) no topo quando houver manutenção em menos de 500 km.          | "Alerta — [Peça] em [X] km (estimativa: [N] dias)". Calculado com `kmAtual` e `kmDia`. Exibe apenas a mais urgente.           |
+| RF-EST-01 | Exibir alerta de manutenção (card vermelho) no topo quando houver manutenção em menos de 500 km.          | "Alerta - [Peça] em [X] km (estimativa: [N] dias)". Calculado com `kmAtual` e `kmDia`. Exibe apenas a mais urgente.           |
 | RF-EST-02 | Exibir toggle PREDEFINIDOS / PERSONALIZADO (modo de cálculo).                                             | PREDEFINIDOS → usa preset puro. PERSONALIZADO → usa overrides. Alternar recalcula em < 200ms.                                 |
 | RF-EST-03 | Exibir toggle AUTORIZADAS / INDEPENDENTES (modo de revisão).                                              | Alternar recalcula custo de revisão em tempo real.                                                                            |
 | RF-EST-04 | Exibir seção "CONFIGURAÇÃO DE RODAGEM" com: input KM/dia + stepper dias/semana. Valores editáveis inline. | Qualquer alteração recalcula todos os cards imediatamente.                                                                    |
 | RF-EST-05 | Exibir card "CUSTO DE OPERAÇÃO POR KM" em destaque.                                                       | Atualizado em tempo real. Ícone velocímetro como watermark.                                                                   |
 | RF-EST-06 | Exibir cards estimativos Por Hora e Por Dia em grade 2 colunas.                                           | `porHora = custoDiario / horasDia`. `porDia = custoTotalAnual / diasAno`.                                                     |
 | RF-EST-07 | Exibir blocos de estimativa por período: Semana, Mês, Ano. Cada bloco: KM RODADOS + CUSTO TOTAL.          | Recalcular em < 200ms após qualquer alteração de input.                                                                       |
-| RF-EST-08 | Exibir gráfico de rosca (donut) com distribuição percentual por categoria.                                | Categorias com toggle off excluídas. Percentuais somam 100% sobre categorias ativas. Label central = categoria dominante + %. **Revisão não é fatia separada no donut — seu custo é incorporado à fatia Manutenção** (vide RN-27). |
-| RF-EST-09 | Exibir legenda abaixo do donut com chips coloridos: categoria + %.                                        | Chips clicáveis — clicar destaca a fatia correspondente no gráfico.                                                           |
+| RF-EST-08 | Exibir gráfico de rosca (donut) com distribuição percentual por categoria.                                | Categorias com toggle off excluídas. Percentuais somam 100% sobre categorias ativas. Label central = categoria dominante + %. **Revisão não é fatia separada no donut - seu custo é incorporado à fatia Manutenção** (vide RN-27). |
+| RF-EST-09 | Exibir legenda abaixo do donut com chips coloridos: categoria + %.                                        | Chips clicáveis - clicar destaca a fatia correspondente no gráfico.                                                           |
 | RF-EST-10 | Exibir botão "＋ Visualizar / Editar" que navega para `/estimativa/detalhamento`.                         | Sempre visível abaixo do donut.                                                                                               |
 
 ---
 
-### V.3- Aba ESTIMATIVA — Detalhamento de Custos
+### V.3- Aba ESTIMATIVA - Detalhamento de Custos
 
 | ID        | Descrição                                                                                                                                             | Critério de Aceite                                                                        |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -356,7 +356,7 @@ CTA: `Concluir Configuração ✓`
 | RF-DET-02 | Cada accordion exibe: toggle on/off · ícone colorido · nome · valor anual · % do custo total · chevron.                                               | Toggle off → `fatorCategoria = 0` → recalcula total imediatamente.                        |
 | RF-DET-03 | Detalhamento expandido de **Combustível**: Preço Médio/L · Custo Mensal · Consumo Médio km/L · Nº de abastecimentos/mês.                              |                                                                                           |
 | RF-DET-04 | Detalhamento expandido de **Alimentação**: Custo Mensal · Refeições anuais.                                                                           | Refeições anuais = `diasAno` (dias trabalhados).                                          |
-| RF-DET-05 | Detalhamento expandido de **Manutenção**: sub-itens com toggle individual · frequência anual (Nx) · custo anual. Ex: "12x Troca de óleo — R$ 240,43". | Sub-itens derivados do preset + overrides do usuário.                                     |
+| RF-DET-05 | Detalhamento expandido de **Manutenção**: sub-itens com toggle individual · frequência anual (Nx) · custo anual. Ex: "12x Troca de óleo - R$ 240,43". | Sub-itens derivados do preset + overrides do usuário.                                     |
 | RF-DET-06 | Detalhamento expandido de **Documentação**: sub-itens IPVA · CRLV · Emplacamento, cada um com chevron expansível mostrando origem do valor.           | IPVA exibe "Isento" se moto ≥ 15 anos.                                                    |
 | RF-DET-07 | Detalhamento expandido de **Internet**: Custo Mensal · Recargas/pagamentos anuais.                                                                    |                                                                                           |
 | RF-DET-08 | Detalhamento expandido de **Seguro**: Custo mensal equivalente · Nome da seguradora.                                                                  |                                                                                           |
@@ -398,7 +398,7 @@ Todos os formulários compartilham:
 - CTA: `💾 SALVAR REGISTRO` (full-width, azul)
 - Bottom nav visível
 
-#### V.5.1- RF-FORM-01 — Registro de Rodagem (KM do Dia)
+#### V.5.1- RF-FORM-01 - Registro de Rodagem (KM do Dia)
 
 | Campo            | Tipo              | Detalhe                                       |
 | ---------------- | ----------------- | --------------------------------------------- |
@@ -408,9 +408,9 @@ Todos os formulários compartilham:
 
 Card calculado em tempo real: TOTAL RODADO (KM) · MÉDIA ESTIMADA (km/L)
 
-CTA alternativo: `💾 Registrar Dia` (estilo ghost-light — menor urgência visual)
+CTA alternativo: `💾 Registrar Dia` (estilo ghost-light - menor urgência visual)
 
-#### V.5.2- RF-FORM-02 — Registro de Abastecimento
+#### V.5.2- RF-FORM-02 - Registro de Abastecimento
 
 | Campo                | Tipo                                                     |
 | -------------------- | -------------------------------------------------------- |
@@ -422,7 +422,7 @@ CTA alternativo: `💾 Registrar Dia` (estilo ghost-light — menor urgência vi
 | Volume estimado      | Calculado (read-only): `totalPago / precoPorLitro`       |
 | Evidências           | 2 botões upload dashed: FOTO DO ODÔMETRO · FOTO DA BOMBA |
 
-#### V.5.3- RF-FORM-03 — Registro de Troca de Óleo
+#### V.5.3- RF-FORM-03 - Registro de Troca de Óleo
 
 | Campo                 | Tipo                                        |
 | --------------------- | ------------------------------------------- |
@@ -431,9 +431,9 @@ CTA alternativo: `💾 Registrar Dia` (estilo ghost-light — menor urgência vi
 | Marca                 | Dropdown (ex: Mobil)                        |
 | Kilometragem (KM)     | Input com ícone odômetro                    |
 | Valor do Serviço (R$) | Input monetário com ícone                   |
-| Evidência Visual      | Área upload dashed — TIRAR FOTO DO ODÔMETRO |
+| Evidência Visual      | Área upload dashed - TIRAR FOTO DO ODÔMETRO |
 
-#### V.5.4- RF-FORM-04 — Registro de Troca de Pneu
+#### V.5.4- RF-FORM-04 - Registro de Troca de Pneu
 
 | Campo                   | Tipo                                        |
 | ----------------------- | ------------------------------------------- |
@@ -443,9 +443,9 @@ CTA alternativo: `💾 Registrar Dia` (estilo ghost-light — menor urgência vi
 | Marca do Pneu           | Input texto livre                           |
 | Valor do Pneu (R$)      | Input monetário                             |
 | Mão de Obra (R$)        | Input monetário                             |
-| Evidência               | Área upload dashed — TIRAR FOTO DO ODÔMETRO |
+| Evidência               | Área upload dashed - TIRAR FOTO DO ODÔMETRO |
 
-#### V.5.5- RF-FORM-05 — Registro de Revisão Geral
+#### V.5.5- RF-FORM-05 - Registro de Revisão Geral
 
 | Campo                              | Tipo                                      |
 | ---------------------------------- | ----------------------------------------- |
@@ -458,7 +458,7 @@ CTA alternativo: `💾 Registrar Dia` (estilo ghost-light — menor urgência vi
 
 Card de total em tempo real: TOTAL ESTIMADO = mão de obra + peças
 
-#### V.5.6- RF-FORM-06 — Registro de Kit Relação
+#### V.5.6- RF-FORM-06 - Registro de Kit Relação
 
 Dica Pro (info card laranja, dismissível): "Kits com retentor (O-ring) costumam durar até 50% mais se lubrificados a cada 500km."
 
@@ -481,7 +481,7 @@ Seções numeradas:
 
 **③ EVIDÊNCIA**
 
-- "Tirar Foto do Odômetro — Obrigatório para validação" (câmera + chevron)
+- "Tirar Foto do Odômetro - Obrigatório para validação" (câmera + chevron)
 
 ---
 
@@ -531,7 +531,7 @@ Peças exibidas (Pop 110i): Óleo do motor · Vela de ignição · Filtro de ar 
 | RF-PERF-01 | Exibir predefinição atual: nome do modelo · avatar · ano · autonomia.                                                                                                                                            |                             |
 | RF-PERF-02 | Botões de ação na predefinição: Editar predefinição (→ `/ajustes`) · Criar nova (→ inicia novo onboarding) · Mudar predefinição (→ modal com lista de presets salvos) · Apagar Tudo (vermelho, com confirmação). |                             |
 | RF-PERF-03 | Seção Exportar & Importar: Exportar Backup (.json) · Importar Backup (aceita .json).                                                                                                                             | RF-EXP completo nesta tela. |
-| RF-PERF-04 | Itens de configuração geral: Idioma (Português Brasil) · Aparência (Modo Escuro — padrão) · Privacidade e Termos (link externo · versão do app).                                                                 |                             |
+| RF-PERF-04 | Itens de configuração geral: Idioma (Português Brasil) · Aparência (Modo Escuro - padrão) · Privacidade e Termos (link externo · versão do app).                                                                 |                             |
 
 #### V.8.1- Ajustes de Predefinição (`/ajustes`)
 
@@ -580,7 +580,7 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | RN-01 | **Os arquivos de preset JSON são somente leitura.** Nenhuma ação do usuário os modifica. O app apenas os lê.                                                                     |
 | RN-02 | **Toda personalização é armazenada como override no perfil (localStorage)**, nunca no preset. O sistema usa o override quando disponível e cai no preset quando não há override. |
 | RN-03 | **O botão ↺ (reset) em qualquer campo apaga apenas o override daquele campo**, fazendo o sistema voltar ao preset para aquele item. Não afeta outros campos.                     |
-| RN-04 | **Modo PREDEFINIDOS:** ignora todos os overrides — calcula usando exclusivamente valores do preset.                                                                              |
+| RN-04 | **Modo PREDEFINIDOS:** ignora todos os overrides - calcula usando exclusivamente valores do preset.                                                                              |
 | RN-05 | **Modo PERSONALIZADO:** usa overrides onde existem, cai no preset onde não há. Este é o modo padrão após qualquer personalização.                                                |
 
 ### VI.2- Toggles de Categoria (Inclusão/Exclusão do Total)
@@ -588,9 +588,9 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | ID    | Regra                                                                                                                                                                      |
 | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | RN-06 | Toggle off em uma categoria → `fatorCategoria = 0` → custo daquela categoria não entra no total.                                                                           |
-| RN-07 | Toggle off não apaga dados — ao reativar, custo retorna normalmente.                                                                                                       |
+| RN-07 | Toggle off não apaga dados - ao reativar, custo retorna normalmente.                                                                                                       |
 | RN-08 | Toggle de categoria é independente do fator de responsabilidade de moto alugada. São camadas ortogonais.                                                                   |
-| RN-09 | Porcentagens calculadas apenas sobre categorias com toggle ativo, somando ~100%. `calcularBreakdownPercentual` retorna `0` para categorias desativadas — nunca uma fatia do total filtrado. |
+| RN-09 | Porcentagens calculadas apenas sobre categorias com toggle ativo, somando ~100%. `calcularBreakdownPercentual` retorna `0` para categorias desativadas - nunca uma fatia do total filtrado. |
 | RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria. |
 
 ### VI.3- Toggle ORG/PAR por Peça
@@ -606,7 +606,7 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | ID    | Regra                                                                                                                          |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------ |
 | RN-13 | Custo de combustível calculado usando `tipoGasolinaPreferida` definido no onboarding.                                          |
-| RN-14 | Configurar preço/autonomia de outros tipos na aba AUTONOMIA não muda o tipo principal — apenas atualiza os dados daquele tipo. |
+| RN-14 | Configurar preço/autonomia de outros tipos na aba AUTONOMIA não muda o tipo principal - apenas atualiza os dados daquele tipo. |
 | RN-15 | Para trocar o tipo principal, o usuário vai a Configurações e altera `tipoGasolinaPreferida`.                                  |
 
 ### VI.5- Gatilho Duplo (km ou tempo)
@@ -629,7 +629,7 @@ Rodapé: botão `Resetar para valores padrões` (reseta a predefinição inteira
 | ID    | Regra                                                                                                                             |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------- |
 | RN-21 | `fatorResponsabilidade` aceita: `"eu" → 1.0` · `"locador" → 0.0` · `"dividimos" → 0.5`.                                           |
-| RN-22 | Fator aplicado por bloco: documentação · manutenção · seguro. Financiamento/aluguel não tem fator — é sempre custo do entregador. |
+| RN-22 | Fator aplicado por bloco: documentação · manutenção · seguro. Financiamento/aluguel não tem fator - é sempre custo do entregador. |
 | RN-23 | Se `situacaoMoto !== 'alugada'`, todos os fatores são `1.0` (sem efeito).                                                         |
 
 ### VI.8- Consistências de Dados
@@ -671,13 +671,13 @@ O público usa o app em movimento, com uma mão, em plena luz solar.
 
 | ID     | Descrição                                                                   | Meta                                                                       |
 | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| RNF-10 | Dados de cada modelo em arquivo JSON separado da lógica de cálculo.         | Adicionar novo modelo = inserir novo `.json`. Zero alteração no código. `useCustos.ts` carrega todos os presets com `import.meta.glob('../presets/*.json', { eager: true })` — nenhum import manual necessário. |
+| RNF-10 | Dados de cada modelo em arquivo JSON separado da lógica de cálculo.         | Adicionar novo modelo = inserir novo `.json`. Zero alteração no código. `useCustos.ts` carrega todos os presets com `import.meta.glob('../presets/*.json', { eager: true })` - nenhum import manual necessário. |
 | RNF-11 | Lógica de cálculo isolada em funções puras e testáveis.                     | Funções em `/utils/calculos.ts`. Cobertura de testes unitários com Vitest. |
 | RNF-12 | Arquivos TypeScript com tipagem estrita. `strict: true` no `tsconfig.json`. | `any` proibido. Todas as interfaces declaradas em `/types`.                |
 
 ### VII.4- Componentização com Shadcn/ui
 
-> **Motivação:** Componentes atômicos reutilizáveis produzem código legível, manutenível e reconhecível como trabalho profissional. Todo elemento visual que aparece mais de uma vez no app deve ser um componente — não JSX duplicado. Shadcn/ui é a base: componentes copiados para `src/components/ui/`, estilo definido inteiramente por CSS vars e Tailwind, sem dependência de tema externo.
+> **Motivação:** Componentes atômicos reutilizáveis produzem código legível, manutenível e reconhecível como trabalho profissional. Todo elemento visual que aparece mais de uma vez no app deve ser um componente - não JSX duplicado. Shadcn/ui é a base: componentes copiados para `src/components/ui/`, estilo definido inteiramente por CSS vars e Tailwind, sem dependência de tema externo.
 
 #### Regras de componentização
 
@@ -686,9 +686,9 @@ O público usa o app em movimento, com uma mão, em plena luz solar.
 | RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 150 linhas.                                                                                                    |
 | RNF-COMP-02 | **Tudo que se repete vira componente.** Qualquer JSX de card, input, label, badge, toggle, stepper, accordion, botão ou separador que aparece ≥ 2 vezes no app deve estar em `src/components/ui/`. | Revisão de código: nenhuma duplicação de estrutura JSX entre arquivos.                                                                                          |
 | RNF-COMP-03 | **`src/components/ui/` é a camada Shadcn.** Os componentes gerados por `npx shadcn@latest add <nome>` ficam nesta pasta. Componentes customizados não disponíveis no Shadcn seguem o mesmo padrão de arquivo (export nomeado, props tipadas, sem lógica de negócio). | `ls src/components/ui/` lista tanto componentes Shadcn quanto os custom do projeto, todos no mesmo estilo.                                                       |
-| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/estimativa/detalhamento/`. Formulário de registro → `src/components/registros/formularios/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente.                                                   |
-| RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict — zero erros de tipo.                                                                                                                         |
-| RNF-COMP-06 | **Lógica de negócio fora do JSX.** Cálculos, formatação e filtragem ficam em hooks ou utils. O `return (...)` de todo componente contém apenas estrutura e referências — sem funções multi-linha inline. | Revisão de código: ausência de cálculos dentro de `return (...)`.                                                                                               |
+| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/estimativa/detalhamento/`. Formulário de registro → `src/components/registros/formularios/`. | Cada componente de feature recebe dados via props ou hook dedicado - nunca acessa `PerfilContext` diretamente.                                                   |
+| RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict - zero erros de tipo.                                                                                                                         |
+| RNF-COMP-06 | **Lógica de negócio fora do JSX.** Cálculos, formatação e filtragem ficam em hooks ou utils. O `return (...)` de todo componente contém apenas estrutura e referências - sem funções multi-linha inline. | Revisão de código: ausência de cálculos dentro de `return (...)`.                                                                                               |
 
 #### Componentes Shadcn obrigatórios
 
@@ -707,35 +707,35 @@ Os componentes abaixo devem ser instalados via `npx shadcn@latest add` e persona
 | `button`          | Todos os botões primários, secundários e ghost                            |
 | `separator`       | Divisores entre seções de accordion e formulários                         |
 | `toggle`          | Toggle MENSAL/ANUAL, AUTORIZADAS/INDEPENDENTES, PREDEFINIDOS/PERSONALIZADO |
-| `sheet`           | Painel lateral para menus em telas de registro (hamburguer — III.3)       |
+| `sheet`           | Painel lateral para menus em telas de registro (hamburguer - III.3)       |
 
 #### Tokens CSS (padrão Shadcn)
 
 > As variáveis CSS seguem **exatamente** a convenção do Shadcn/ui. Isso garante que componentes instalados com `npx shadcn@latest add` funcionem sem adaptação e que qualquer desenvolvedor reconheça o padrão imediatamente.
 
 ```css
-/* src/index.css — valores para o tema escuro MotoCalc RJ */
+/* src/index.css - valores para o tema escuro MotoCalc RJ */
 :root {
-  --background:         13 19 33;      /* #0D1321 — fundo base */
-  --foreground:         193 198 215;   /* #C1C6D7 — texto principal */
+  --background:         13 19 33;      /* #0D1321 - fundo base */
+  --foreground:         193 198 215;   /* #C1C6D7 - texto principal */
 
-  --card:               18 26 44;      /* #121A2C — superfície de card */
-  --card-foreground:    255 255 255;   /* #FFFFFF — texto sobre card */
+  --card:               18 26 44;      /* #121A2C - superfície de card */
+  --card-foreground:    255 255 255;   /* #FFFFFF - texto sobre card */
 
   --popover:            18 26 44;
   --popover-foreground: 255 255 255;
 
-  --primary:            0 120 255;     /* #0078FF — azul de ação */
+  --primary:            0 120 255;     /* #0078FF - azul de ação */
   --primary-foreground: 255 255 255;
 
-  --secondary:          0 192 232;     /* #00C0E8 — azul secundário / destaque */
+  --secondary:          0 192 232;     /* #00C0E8 - azul secundário / destaque */
   --secondary-foreground: 13 19 33;
 
   --muted:              30 38 58;      /* superfície elevada (surface-bright) */
-  --muted-foreground:   139 144 160;   /* #8B90A0 — label neutro (cinza) */
+  --muted-foreground:   139 144 160;   /* #8B90A0 - label neutro (cinza) */
 
-  --accent:             0 40 91;       /* #00285B — azul escuro de acento */
-  --accent-foreground:  173 199 255;   /* #ADC7FF — texto sobre acento */
+  --accent:             0 40 91;       /* #00285B - azul escuro de acento */
+  --accent-foreground:  173 199 255;   /* #ADC7FF - texto sobre acento */
 
   --destructive:        239 68 68;     /* vermelho de alerta */
   --destructive-foreground: 255 255 255;
@@ -756,21 +756,21 @@ Os componentes abaixo devem ser instalados via `npx shadcn@latest add` e persona
 
 - Não reimplementar manualmente componentes que existem no Shadcn (accordion, switch, dialog).
 - Não criar variáveis CSS com nomes fora do padrão Shadcn (ex.: `--color-primary`, `--color-surface`). Se uma cor nova for necessária, usar `--nome-sem-prefixo-color`.
-- Não usar `style={{ }}` inline para cores — sempre via classe Tailwind referenciando token CSS.
+- Não usar `style={{ }}` inline para cores - sempre via classe Tailwind referenciando token CSS.
 - Não criar componentes de mais de 150 linhas sem justificativa documentada.
 
 ---
 
 ## VIII- Coleta de Eventos (Analytics)
 
-> Ferramenta: **Umami** — sem cookies, sem dados pessoais, LGPD-compatível.
+> Ferramenta: **Umami** - sem cookies, sem dados pessoais, LGPD-compatível.
 
 ### VIII.1- Requisitos de Analytics
 
 | ID         | Descrição                                                                                                                                                              |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | RNF-ANA-01 | Integrar Umami para rastreamento anônimo. Nenhum dado pessoal enviado (sem nome, email, CPF, localização, hodômetro).                                                  |
-| RNF-ANA-02 | Implementar função `trackEvent(nome, propriedades?)` centralizada em `/utils/analytics.ts`. Todos os componentes usam essa função — nunca `umami.track()` diretamente. |
+| RNF-ANA-02 | Implementar função `trackEvent(nome, propriedades?)` centralizada em `/utils/analytics.ts`. Todos os componentes usam essa função - nunca `umami.track()` diretamente. |
 | RNF-ANA-03 | Eventos rastreados devem ser auditáveis: arquivo `/utils/analytics.ts` lista e documenta cada evento.                                                                  |
 
 ### VIII.2- Catálogo de Eventos
@@ -795,7 +795,7 @@ Os componentes abaixo devem ser instalados via `npx shadcn@latest add` e persona
 | `estimativa_dias_alterado`       | Usuário edita dias/semana                    | `{ novo_valor: number }`                      |
 | `estimativa_modo_alterado`       | Toggle PREDEFINIDOS/PERSONALIZADO clicado    | `{ modo: 'predefinidos' \| 'personalizado' }` |
 | `estimativa_oficina_alterada`    | Toggle AUTORIZADAS/INDEPENDENTES clicado     | `{ modo: 'autorizadas' \| 'independentes' }`  |
-| `estimativa_detalhamento_aberto` | Usuário clica "Visualizar / Editar"          | —                                             |
+| `estimativa_detalhamento_aberto` | Usuário clica "Visualizar / Editar"          | -                                             |
 | `estimativa_categoria_toggle`    | Toggle de categoria no detalhamento alterado | `{ categoria: string, ativo: boolean }`       |
 | `estimativa_gasto_adicionado`    | Usuário adiciona gasto personalizado         | `{ valor_mensal: number }`                    |
 
@@ -817,7 +817,7 @@ Os componentes abaixo devem ser instalados via `npx shadcn@latest add` e persona
 | `override_resetado` | Usuário clica ↺ em um campo                            | `{ campo: string }`                    |
 | `perfil_exportado`  | Usuário clica "Exportar Backup"                        | `{ schema_version: number }`           |
 | `perfil_importado`  | Usuário importa um arquivo com sucesso                 | `{ schema_version_importado: number }` |
-| `perfil_resetado`   | Usuário confirma "Apagar Tudo"                         | —                                      |
+| `perfil_resetado`   | Usuário confirma "Apagar Tudo"                         | -                                      |
 | `fipe_consultada`   | Consulta BrasilAPI com sucesso                         | `{ modelo: string, ano: number }`      |
 | `fipe_offline`      | Consulta BrasilAPI falhou (offline)                    | `{ usou_cache: boolean }`              |
 
@@ -872,11 +872,11 @@ bubblewrap build
 
 | Dado                        | Frequência de Atualização                              |
 | --------------------------- | ------------------------------------------------------ |
-| Licenciamento DETRAN-RJ     | Anual (janeiro) — atualizar `dados_rj.json`            |
-| Alíquota IPVA RJ            | Anual (janeiro) — atualizar `dados_rj.json`            |
-| Preço gasolina padrão (ANP) | Mensal — atualizar `dados_rj.json`                     |
-| Preços de peças nos presets | Semestral (abril/outubro) — atualizar `presets/*.json` |
-| Tabela revisões autorizadas | Anual — atualizar `presets/*.json`                     |
+| Licenciamento DETRAN-RJ     | Anual (janeiro) - atualizar `dados_rj.json`            |
+| Alíquota IPVA RJ            | Anual (janeiro) - atualizar `dados_rj.json`            |
+| Preço gasolina padrão (ANP) | Mensal - atualizar `dados_rj.json`                     |
+| Preços de peças nos presets | Semestral (abril/outubro) - atualizar `presets/*.json` |
+| Tabela revisões autorizadas | Anual - atualizar `presets/*.json`                     |
 | FIPE                        | Automático via BrasilAPI (runtime)                     |
 | `versionName` no app        | A cada release                                         |
 
@@ -903,19 +903,19 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 | ------------------- | ------------------------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Linguagem           | **TypeScript**                             | 5+                   | `strict: true`. Tipos explícitos eliminam bugs silenciosos em cálculos financeiros.                                                            |
 | UI                  | **React**                                  | 18+                  | Reatividade para recalcular em tempo real (RF-EST-07). Hooks para estado complexo.                                                             |
-| Estilização         | **Tailwind CSS**                           | 3+                   | Mobile-first. Integrado ao Shadcn — as classes geradas por `shadcn add` funcionam sem adaptação.                                               |
+| Estilização         | **Tailwind CSS**                           | 3+                   | Mobile-first. Integrado ao Shadcn - as classes geradas por `shadcn add` funcionam sem adaptação.                                               |
 | Componentes UI      | **Shadcn/ui**                              | latest               | Componentes copiados para `src/components/ui/`. Código próprio, estilo 100% controlado via Tailwind e CSS vars. Padrão reconhecível por qualquer desenvolvedor. Instalação: `npx shadcn@latest init`. |
-| Primitivos          | **Radix UI** (via Shadcn)                  | —                    | Acessibilidade nativa (ARIA, foco, teclado) sem esforço. Accordion, Switch, Dialog, Select, etc. Shadcn é a camada visual sobre Radix.         |
+| Primitivos          | **Radix UI** (via Shadcn)                  | -                    | Acessibilidade nativa (ARIA, foco, teclado) sem esforço. Accordion, Switch, Dialog, Select, etc. Shadcn é a camada visual sobre Radix.         |
 | Build + PWA         | **Vite** + `vite-plugin-pwa`               | latest               | Service Worker automático. Build leve (< 500 KB meta). HMR instantâneo em dev.                                                                 |
 | Roteamento          | **React Router DOM**                       | 6+                   | Navegação SPA com `<Routes>` + `<Navigate>`. Suporte a rotas `/estimativa`, `/registros`, `/mao-de-obra`, `/insumos`, `/perfil`, `/ajustes`.   |
-| Estado Global       | **`useReducer` + Context API**             | —                    | `useReducer` para o perfil complexo (evita prop drilling). Context distribui `perfil` e `dispatch`.                                            |
-| Persistência        | **localStorage via `services/perfilStorage.ts`** | —             | Sem backend em V1. Classe abstrai o storage (RNF-LR-01/03).                                                                                    |
-| Dados Estáticos     | **JSON** em `/src/presets/` e `/src/data/` | —                    | Separação total dados/lógica. Novo modelo = novo JSON (RNF-10).                                                                                |
-| Cálculos            | **Funções puras** em `/utils/calculos.ts`  | —                    | Testável independentemente da UI (RNF-11). Nenhum efeito colateral.                                                                            |
+| Estado Global       | **`useReducer` + Context API**             | -                    | `useReducer` para o perfil complexo (evita prop drilling). Context distribui `perfil` e `dispatch`.                                            |
+| Persistência        | **localStorage via `services/perfilStorage.ts`** | -             | Sem backend em V1. Classe abstrai o storage (RNF-LR-01/03).                                                                                    |
+| Dados Estáticos     | **JSON** em `/src/presets/` e `/src/data/` | -                    | Separação total dados/lógica. Novo modelo = novo JSON (RNF-10).                                                                                |
+| Cálculos            | **Funções puras** em `/utils/calculos.ts`  | -                    | Testável independentemente da UI (RNF-11). Nenhum efeito colateral.                                                                            |
 | Gráfico             | **Recharts**                               | 2+                   | Donut chart via `<PieChart>/<Pie>/<Cell>`. Componentes React declarativos. ~120 KB.                                                            |
 | IDs Únicos          | **nanoid**                                 | 3+                   | Geração de IDs para registros. Leve e criptograficamente seguro.                                                                               |
 | Datas               | **date-fns**                               | 3+                   | Formatação e cálculo de datas. Tree-shakeable (zero overhead).                                                                                 |
-| API FIPE            | **BrasilAPI**                              | —                    | `GET https://brasilapi.com.br/api/fipe/motos/v1/{codigo}`. Gratuita, sem chave. Consultada uma vez no onboarding e cacheada.                   |
+| API FIPE            | **BrasilAPI**                              | -                    | `GET https://brasilapi.com.br/api/fipe/motos/v1/{codigo}`. Gratuita, sem chave. Consultada uma vez no onboarding e cacheada.                   |
 | Analytics           | **Umami**                                  | cloud ou self-hosted | Sem cookies, sem dados pessoais, compatível LGPD (RNF-ANA-01).                                                                                 |
 | Testes              | **Vitest**                                 | latest               | Testes unitários das funções de `calculos.ts`.                                                                                                 |
 | Linting             | **ESLint** + `@typescript-eslint`          | latest               | Regras TypeScript estritas.                                                                                                                    |
@@ -945,7 +945,7 @@ O app não terá login em V1, mas deve ser preparado para adicioná-lo em V2 sem
 
 ### XII.2- Schema do Arquivo de Export
 
-> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 20 — ver `estado_inicial.md` para a tabela de migrações). Forma geral:
+> O snapshot v6.0 original fixava `schemaVersion: 5` como literal. O schema atual usa `schemaVersion: number` (em 20 - ver `estado_inicial.md` para a tabela de migrações). Forma geral:
 
 ```typescript
 export interface ExportFile {
@@ -959,7 +959,7 @@ export interface ExportFile {
 
 ### XII.3- Resolução de Override (algoritmo central)
 
-> ⚠️ **Desatualizado:** este algoritmo era parametrizado por `modoExibicao` ('predefinidos' vs 'personalizado'). Esse modo foi **removido por ADR-003** — o app passa a operar exclusivamente em modo personalizado, e o override (quando presente) é sempre o valor efetivo. A função real vive em [`src/utils/calculos.ts`](../../src/utils/calculos.ts) sob outra forma (`resolverPerfilEfetivoDaPeca`, `resolverServicosIndependentesEfetivos`, etc.). Snippet preservado para fidelidade da spec v6.0.
+> ⚠️ **Desatualizado:** este algoritmo era parametrizado por `modoExibicao` ('predefinidos' vs 'personalizado'). Esse modo foi **removido por ADR-003** - o app passa a operar exclusivamente em modo personalizado, e o override (quando presente) é sempre o valor efetivo. A função real vive em [`src/utils/calculos.ts`](../../src/utils/calculos.ts) sob outra forma (`resolverPerfilEfetivoDaPeca`, `resolverServicosIndependentesEfetivos`, etc.). Snippet preservado para fidelidade da spec v6.0.
 
 ```typescript
 // /src/utils/resolverOverride.ts
@@ -1005,7 +1005,7 @@ export function resolverPerfilPeca(
 
 ## XIII- Funções de Cálculo (`/src/utils/calculos.ts`)
 
-> **Catálogo congelado em 09/05/26.** Para o catálogo vivo (assinaturas reais + função→tela), ver [`docs/arquitetura/calculos-visao.md`](../arquitetura/calculos-visao.md) (criado pela TASK-DOC-009). Algumas assinaturas abaixo divergem do código atual — notas inline.
+> **Catálogo congelado em 09/05/26.** Para o catálogo vivo (assinaturas reais + função→tela), ver [`docs/arquitetura/calculos-visao.md`](../arquitetura/calculos-visao.md) (criado pela TASK-DOC-009). Algumas assinaturas abaixo divergem do código atual - notas inline.
 
 ```typescript
 // Rodagem
@@ -1028,7 +1028,7 @@ calcularCustoRevisaoAnualAutorizado(revisoes: RevisaoPreset[], kmAnual: number):
 calcularCustoRevisaoAnualIndependente(precoMO: number, freqKm: number, kmAnual: number): number
 calcularCustoDocumentosAnual(fipe: number, aliquota: number, idadeMoto: number, licenciamento: number, fator: number): number
 calcularCustoInternetAnual(mensal: number): number
-calcularCustoSeguroAnual(valorAnual: number, fator: number): number  // [REF-21] param `tem: boolean` removido — ausência de seguro é representada por valorAnual = 0
+calcularCustoSeguroAnual(valorAnual: number, fator: number): number  // [REF-21] param `tem: boolean` removido - ausência de seguro é representada por valorAnual = 0
 calcularCustoFinanciamentoAnual(parcela: number | null, situacao: SituacaoMoto): number
 calcularCustoAluguelAnual(aluguel: number | null, situacao: SituacaoMoto, periodicidade: 'mensal' | 'semanal' | null): number
 calcularCustoAlimentacaoAnual(alimentacaoDia: number, diasAno: number): number
@@ -1043,7 +1043,7 @@ categoriasParaFiltros(categorias: CategoriaDisplay): FiltrosCategorias
 calcularTotalFiltrado(custos: CustosPorCategoria, filtros: FiltrosCategorias): number
   // Soma apenas as categorias com filtros[X] === true
 calcularBreakdownPercentual(custos: CustosPorCategoria, filtros: FiltrosCategorias): BreakdownPercentual
-  // REGRA CRÍTICA: categorias com filtros[X] === false retornam 0% — não uma fatia do total filtrado.
+  // REGRA CRÍTICA: categorias com filtros[X] === false retornam 0% - não uma fatia do total filtrado.
   // Os percentuais das categorias ativas somam ~100% sobre o total filtrado.
 calcularGranularidades(custoAnual: number, diasAno: number, horasDia: number, kmAnual: number): Granularidades
 calcularDistribuicaoCustos(config: DistribuicaoInput): DistribuicaoCustos
@@ -1055,7 +1055,7 @@ calcularIPVA(valorFipe: number, aliquota: number, idadeMoto: number): number
 calcularProximaManutencao(kmAtual: number, kmUltimaTroca: number, intervaloKm: number, kmDia: number, diasSemana: number): AlertaManutencao
 
 // Médias reais (baseadas em histórico)
-// ⚠️ ADIADO via ADR-003 — estas três funções dependiam da tela Registros e não existem no código atual:
+// ⚠️ ADIADO via ADR-003 - estas três funções dependiam da tela Registros e não existem no código atual:
 calcularMediaKmDiaReal(registros: DiarioEntry[]): number | null      // null se < 5 registros
 calcularConsumoRealKmL(abastecimentos: Abastecimento[]): number | null // null se < 3 registros
 calcularIntervaloMedioReal(registros: Array<{ km: number }>): number | null // null se < 2 registros
@@ -1151,7 +1151,7 @@ motocalc/
 │   │   │       ├── DetalhamentoCustos.tsx
 │   │   │       └── CardCategoria.tsx
 │   │   │
-│   │   ├── registros/   ⚠️ ADIADO via ADR-003 — pasta não foi criada
+│   │   ├── registros/   ⚠️ ADIADO via ADR-003 - pasta não foi criada
 │   │   │
 │   │   ├── maoDeObra/
 │   │   │   ├── MaoDeObra.tsx            → aba MÃO DE OBRA
@@ -1184,7 +1184,7 @@ motocalc/
 
 | Prioridade                | Requisitos                                                                                                                                                                              | Justificativa                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Must Have (V1)**        | RF-ON-01 a 07, RF-EST-01 a 10, RF-DET-01 a 11, RF-MO-01 a 05, RF-VU-01 a 05, RF-DOC-01 a 03, RF-CONF-01 a 02, RF-PERF-01 a 04, RN-01 a 23 + RN-27, RNF-01 a 12, RNF-LR-01 a 06, RNF-PWA-01 a 05 | Núcleo funcional. Sistema de overrides (RN-01 a 05) é arquitetural — deve estar desde o início. |
+| **Must Have (V1)**        | RF-ON-01 a 07, RF-EST-01 a 10, RF-DET-01 a 11, RF-MO-01 a 05, RF-VU-01 a 05, RF-DOC-01 a 03, RF-CONF-01 a 02, RF-PERF-01 a 04, RN-01 a 23 + RN-27, RNF-01 a 12, RNF-LR-01 a 06, RNF-PWA-01 a 05 | Núcleo funcional. Sistema de overrides (RN-01 a 05) é arquitetural - deve estar desde o início. |
 | **Should Have (V1)**      | RF-EXP-01 a 03, RNF-ANA-01 a 03 + catálogo de eventos, RNF-TWA-01 a 06 (Play Store)                                                                                                      | Export/import e Play Store expandem alcance e segurança dos dados.                              |
 | **Could Have (V1 ou V2)** | Modo comparativo (duas motos lado a lado), Alertas push via Web Push API                                                                                                                | Adicionar sem refatoração do núcleo.                                                            |
 | **Won't Have (V1)**       | Login, sincronização entre dispositivos, backend, API de preços em tempo real, comparativo de plataformas, iOS App Store                                                                | Complexidade excessiva. `RNF-LR-01 a 06` e `RF-EXP-01 a 03` preparam V2.                        |
@@ -1196,14 +1196,14 @@ motocalc/
 
 ```
 ──────────────────────────────────────────────────────────────────
-Fase 0 — Dados ✅ CONCLUÍDA
+Fase 0 - Dados ✅ CONCLUÍDA
   ✅ pop110i.json com preços original + paralela + revisaoAutorizada
   ✅ Valores fixos RJ: licenciamento R$206, gasolina R$6,61, IPVA 2%
   ✅ Estratégia FIPE via BrasilAPI decidida
   ✅ src/data/dados_rj.json criado
 
 ──────────────────────────────────────────────────────────────────
-Fase 1 — Setup do Projeto (sequência correta para novo início)
+Fase 1 - Setup do Projeto (sequência correta para novo início)
   npm create vite@latest motocalc -- --template react-ts
   npm install tailwindcss @tailwindcss/vite react-router-dom recharts nanoid date-fns vite-plugin-pwa workbox-window
   npm install -D vitest @vitest/ui typescript @typescript-eslint/eslint-plugin
@@ -1222,9 +1222,9 @@ Fase 1 — Setup do Projeto (sequência correta para novo início)
   Criar src/types/ com todas as interfaces TypeScript
 
 ──────────────────────────────────────────────────────────────────
-Fase 2 — Lógica Pura (sem UI) ✅ CONCLUÍDA
+Fase 2 - Lógica Pura (sem UI) ✅ CONCLUÍDA
   ✅ calculos.ts com 92 testes Vitest passando
-  ✅ Funções incluem: calcularBreakdownPercentual (com guarda por filtro — RN-09),
+  ✅ Funções incluem: calcularBreakdownPercentual (com guarda por filtro - RN-09),
      categoriasParaFiltros, calcularTotalFiltrado, overrides (RN-04/05)
   ✅ Fator etanol: 0.78 (não 0.79)
   [ ] resolverOverride.ts como arquivo separado (atualmente inline em calculos.ts)
@@ -1232,9 +1232,9 @@ Fase 2 — Lógica Pura (sem UI) ✅ CONCLUÍDA
   [ ] analytics.ts com catálogo de eventos (Seção VIII)
 
 ──────────────────────────────────────────────────────────────────
-Fase 3 — Persistência e Estado ✅ CONCLUÍDA
+Fase 3 - Persistência e Estado ✅ CONCLUÍDA
   ✅ PerfilContext.tsx (Context + Provider + useReducer)
-  ✅ src/services/perfilStorage.ts (IPerfilStorage + LocalStoragePerfilStorage — RNF-LR-01/03)
+  ✅ src/services/perfilStorage.ts (IPerfilStorage + LocalStoragePerfilStorage - RNF-LR-01/03)
   ✅ usePerfil.ts re-exporta IPerfilStorage e LocalStoragePerfilStorage
   ✅ PerfilContext recebe instância de IPerfilStorage via injeção
   ✅ Persistência apenas em COMMIT_ONBOARDING (RF-ON-06)
@@ -1242,25 +1242,25 @@ Fase 3 — Persistência e Estado ✅ CONCLUÍDA
   ✅ FipeCache com marca + modelo para invalidação correta (A06)
 
 ──────────────────────────────────────────────────────────────────
-Fase 4 — Layout Base e Navegação ✅ CONCLUÍDA
+Fase 4 - Layout Base e Navegação ✅ CONCLUÍDA
   ✅ App.tsx com React Router (rotas: /estimativa, /estimativa/detalhamento, /registros, /mao-de-obra, /insumos, /ajustes)
   ✅ RotaProtegida.tsx (RNF-LR-04)
   ✅ LayoutApp.tsx + NavBar.tsx (estados ativo/inativo per Figma: bg-primary text-white / text-neutral/50)
   ✅ ThemeContext.tsx com CHAVE_TEMA const (sem localStorage direto)
 
 ──────────────────────────────────────────────────────────────────
-Fase 5 — Onboarding ✅ CONCLUÍDA
+Fase 5 - Onboarding ✅ CONCLUÍDA
   ✅ FluxoOnboarding.tsx + PassoLayout.tsx
   ✅ Passo1 (marca) → Passo2 (modelo) → Passo3 (ano + BrasilAPI FIPE)
   ✅ Passo4 (perfil uso) → Passo5 (kmAtual + kmUltimaRevisao)
   ✅ Passo6 (branch) → Passo6Financiamento / Passo6Aluguel / Passo6Responsabilidade
   ✅ Passo7 (seguro, normalizado para anual no save) → Passo8 (internet) → Passo9 (alimentação)
-  ✅ PassoConfirmacao (revisão final com botão Editar por seção — RF-ON-05)
+  ✅ PassoConfirmacao (revisão final com botão Editar por seção - RF-ON-05)
   ✅ FIPE cache inclui marca + modelo; useEffect depende de marca/modelo (A06)
   ✅ Onboarding não persiste durante o fluxo (A02)
 
 ──────────────────────────────────────────────────────────────────
-Fase 6 — Aba ESTIMATIVA ✅ CONCLUÍDA (monolito — refatorar com RNF-COMP)
+Fase 6 - Aba ESTIMATIVA ✅ CONCLUÍDA (monolito - refatorar com RNF-COMP)
   ✅ PaginaEstimativa.tsx com cards por período, custo/km, donut
   ✅ Donut sincronizado com categoriasAtivas do perfil (A09)
   ✅ Revisão incorporada à fatia Manutenção no donut (RN-27)
@@ -1277,46 +1277,46 @@ Fase 6 — Aba ESTIMATIVA ✅ CONCLUÍDA (monolito — refatorar com RNF-COMP)
     detalhamento/DetalhamentoCustos.tsx (composição)
 
 ──────────────────────────────────────────────────────────────────
-Fase 7 — Aba MÃO DE OBRA
+Fase 7 - Aba MÃO DE OBRA
   MaoDeObra.tsx com aviso informativo
   SecaoMaoDeObraParalela.tsx (5 serviços + reset)
   SecaoRevisaoAutorizada.tsx (tabela + reset por linha)
 
 ──────────────────────────────────────────────────────────────────
-Fase 8 — Aba AUTONOMIA
+Fase 8 - Aba AUTONOMIA
   VidaUtil.tsx (estrutura 3 seções)
   SecaoCombustivel.tsx (comum + aditivada + etanol)
   SecaoPecas.tsx (toggle ORG/PAR + preço + vida útil + reset)
   SecaoPneus.tsx (dianteiro + traseiro)
 
 ──────────────────────────────────────────────────────────────────
-Fase 9 — Aba REGISTROS  ⚠️ ADIADO via ADR-003 (18/05/26)
+Fase 9 - Aba REGISTROS  ⚠️ ADIADO via ADR-003 (18/05/26)
   Removida do escopo de maio/2026. Backlog futuro (reavaliar pós-produção).
   Componentes Registros.tsx, sub-abas, formulários e RF-REG-11/12 não foram implementados.
 
 ──────────────────────────────────────────────────────────────────
-Fase 10 — Perfil e Configurações
+Fase 10 - Perfil e Configurações
   Perfil.tsx (predefinição + ações + export/import + configurações)
   AjustesPredefinicao.tsx (5 seções com reset individual)
   SecaoExportImport.tsx (JSON export + import + redefinir perfil)
 
 ──────────────────────────────────────────────────────────────────
-Fase 11 — PWA
+Fase 11 - PWA
   manifest.json e ícones maskable (192px e 512px)
   Configurar vite-plugin-pwa (CacheFirst para assets, NetworkFirst para BrasilAPI)
-  Banner "Instalar MotoCalc" (beforeinstallprompt — RNF-PWA-04)
+  Banner "Instalar MotoCalc" (beforeinstallprompt - RNF-PWA-04)
   Testar instalação como PWA no Android
   Testar funcionamento offline completo
 
 ──────────────────────────────────────────────────────────────────
-Fase 12 — Outros Modelos
+Fase 12 - Outros Modelos
   Criar presets/cg_titan160.json
   Criar presets/biz125.json
   Criar presets/factor150.json
   Criar presets/nxr_bros160.json
 
 ──────────────────────────────────────────────────────────────────
-Fase 13 — Play Store (TWA)
+Fase 13 - Play Store (TWA)
   Deploy em produção (Netlify/Vercel) com HTTPS
   Publicar /.well-known/assetlinks.json
   bubblewrap init + bubblewrap build
@@ -1332,11 +1332,11 @@ VERIFICAÇÃO FINAL (antes do deploy/Play Store)
   [ ] Teste de onboarding com 3 usuários reais (meta: < 3 min)
   [ ] Teste offline: desligar rede → reabrir → verificar funcionamento completo
   [ ] grep "localStorage" src/ → zero resultados fora de src/services/perfilStorage.ts (RNF-LR-01)
-  [ ] grep "any" src/ → zero resultados (strict TypeScript — RNF-12)
+  [ ] grep "any" src/ → zero resultados (strict TypeScript - RNF-12)
   [ ] grep "\-\-color-" src/ → zero resultados (todas as vars seguem padrão Shadcn sem prefixo --color-)
   [ ] Verificar que NENHUM componente importa preset diretamente (só via useCustos)
   [ ] wc -l src/pages/*.tsx src/components/**/*.tsx → zero arquivos > 150 linhas (RNF-COMP-01)
-  [ ] Verificar que accordion, switch, dialog, card vêm de src/components/ui/ (Shadcn) — não reimplementados
+  [ ] Verificar que accordion, switch, dialog, card vêm de src/components/ui/ (Shadcn) - não reimplementados
   [ ] Donut: ao desativar categoria em detalhamento, fatia desaparece e soma volta a 100%
   [ ] Toggle categoria em detalhamento persiste após reload (via TOGGLE_CATEGORIA → localStorage)
   [ ] Verificar assetlinks.json respondendo corretamente (para TWA)
@@ -1345,6 +1345,6 @@ VERIFICAÇÃO FINAL (antes do deploy/Play Store)
 
 ---
 
-_MotoCalc RJ — Documento de Requisitos v6.0 — Atividade Extensionista — ADS_
-_Criado em: 05/05/2026 — Atualizado em: 09/05/2026 (Avaliação 1: A01–A16 + RNF-COMP)_
+_MotoCalc RJ - Documento de Requisitos v6.0 - Atividade Extensionista - ADS_
+_Criado em: 05/05/2026 - Atualizado em: 09/05/2026 (Avaliação 1: A01-A16 + RNF-COMP)_
 _Principais adições v5: TypeScript com interfaces completas · Play Store via TWA (Fase 13) · Catálogo completo de eventos Umami (Seção VII) · Arquitetura login-ready formalizada (Seção IX) · Nomes das abas reconciliados com o Figma (ESTIMATIVA · REGISTROS · M. DE OBRA · AUTONOMIA · AJUSTES) · Formulários de registro detalhados campo a campo · Mapa completo de rotas · Interfaces TypeScript de todos os tipos_

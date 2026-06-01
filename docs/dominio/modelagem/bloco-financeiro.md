@@ -34,7 +34,7 @@ financeiro: {
   situacaoMoto: SituacaoMoto;                                        // 'quitada' | 'financiada' | 'alugada'
   parcelaMensal: number | null;                                      // só financiada
   parcelasRestantes: number | null;                                  // só financiada (snapshot informado)
-  dataReferenciaParcelas: string | null;                             // só financiada (mês ISO do snapshot — ADR-009)
+  dataReferenciaParcelas: string | null;                             // só financiada (mês ISO do snapshot - ADR-009)
   aluguelMensal: number | null;                                      // só alugada
   aluguelPeriodicidade: PeriodicidadeAluguel | null;                 // só alugada
   responsabilidadeAluguel: ResponsabilidadeAluguel;                  // só alugada (mas sempre presente)
@@ -69,7 +69,7 @@ interface SeguroConfig {
 }
 ```
 
-⚠️ **Sem campo `tem` (REF-21 / ADR-005).** Presença de seguro é derivada de `valorAnual > 0`. O toggle Sim/Não no Passo 7 do Onboarding existe como UX local — quando "Não", o dispatch grava `valorAnual: 0`.
+⚠️ **Sem campo `tem` (REF-21 / ADR-005).** Presença de seguro é derivada de `valorAnual > 0`. O toggle Sim/Não no Passo 7 do Onboarding existe como UX local - quando "Não", o dispatch grava `valorAnual: 0`.
 
 ⚠️ **`periodicidade` é informação de display, não de cálculo.** O valor armazenado é sempre anual. Se o Motoboy informa mensalmente, o Onboarding multiplica por 12 antes de gravar.
 
@@ -111,12 +111,12 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 | `preset-sinistro` | Sinistros    | Prejuízos diversos por acidente, furto, queda etc.              |
 | `preset-outros`   | Outros       | Coringa para custos não previstos pelos presets acima.          |
 
-⚠️ **Regras** (definidas pela TASK-RF-6.9 — ver ADR-003 e ADR-006):
+⚠️ **Regras** (definidas pela TASK-RF-6.9 - ver ADR-003 e ADR-006):
 
-- **Sem cadastro avulso.** O usuário não adiciona nem deleta itens. A lista é fechada — quando um custo não cabe em Multa ou Sinistros, vai em "Outros".
+- **Sem cadastro avulso.** O usuário não adiciona nem deleta itens. A lista é fechada - quando um custo não cabe em Multa ou Sinistros, vai em "Outros".
 - **Valor único acumulado.** `valorAnual` é o **total que o usuário já gastou e/ou prevê gastar no ano corrente**, somado num único campo. Não há recorrência mensal nem registro item-a-item: ao tomar nova multa, edita o valor somando ao que já estava.
 - **Edição direta no Detalhamento.** Imprevistos é a **única categoria** editável direto na tela de Detalhamento, via popup acionado pelo ícone de lápis.
-- **Auto-ativação por conveniência.** Ao informar valor > 0 num item desligado, o toggle ativa automaticamente (o usuário acabou de declarar o custo). Zerar o valor **não** desativa — quem zera mantém controle explícito do toggle.
+- **Auto-ativação por conveniência.** Ao informar valor > 0 num item desligado, o toggle ativa automaticamente (o usuário acabou de declarar o custo). Zerar o valor **não** desativa - quem zera mantém controle explícito do toggle.
 
 ---
 
@@ -125,7 +125,7 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 | Action                           | Comportamento                                                                       |
 | -------------------------------- | ----------------------------------------------------------------------------------- |
 | `SET_INTERNET`                   | Atualiza valor de internet mensal                                                   |
-| `SET_SEGURO`                     | Atualiza configuração de seguro (Partial — pode atualizar só o que mudou)           |
+| `SET_SEGURO`                     | Atualiza configuração de seguro (Partial - pode atualizar só o que mudou)           |
 | `SET_ALIMENTACAO`                | Atualiza gasto diário com alimentação                                               |
 | `SET_COMBUSTIVEL`                | Atualiza preço ou autonomia de um tipo específico de combustível                    |
 | `SET_TIPO_COMBUSTIVEL_PREFERIDO` | Troca o tipo principal usado nos cálculos                                           |
@@ -134,9 +134,9 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 | `SET_SITUACAO_MOTO`              | Define `situacaoMoto` (quitada/financiada/alugada)                                  |
 | `SET_PARCELA`                    | Define `parcelaMensal` + `parcelasRestantes`; re-ancora `dataReferenciaParcelas` só quando `parcelasRestantes` muda (RF-6.18 / ADR-009) |
 | `SET_ALUGUEL`                    | Define `aluguelMensal` + `aluguelPeriodicidade`                                     |
-| `SET_RESPONSABILIDADE_ALUGUEL`   | Atualiza `responsabilidadeAluguel` (Partial — campos documentos/manutencao/seguro). Adicionado pela BG-006 |
+| `SET_RESPONSABILIDADE_ALUGUEL`   | Atualiza `responsabilidadeAluguel` (Partial - campos documentos/manutencao/seguro). Adicionado pela BG-006 |
 
-> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` — lista de imprevistos é **fechada** em 3 presets (Multa, Sinistros, Outros), TASK-RF-6.9 / ADR-006.
+> Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` - lista de imprevistos é **fechada** em 3 presets (Multa, Sinistros, Outros), TASK-RF-6.9 / ADR-006.
 
 ---
 
@@ -294,7 +294,7 @@ O Motoboy informa o **valor cheio** dos custos (IPVA total, manutenção total).
 
 ### `gastosCustom` é lista fechada
 
-Pela TASK-RF-6.9 / ADR-006, a lista é fechada em 3 presets (Multa, Sinistros, Outros). Sem mecanismo de cadastro avulso. Se uma necessidade futura justificar abrir, é decisão arquitetural — ADR nova.
+Pela TASK-RF-6.9 / ADR-006, a lista é fechada em 3 presets (Multa, Sinistros, Outros). Sem mecanismo de cadastro avulso. Se uma necessidade futura justificar abrir, é decisão arquitetural - ADR nova.
 
 ---
 
@@ -310,4 +310,4 @@ Documentação validada contra:
 **Divergências encontradas:**
 
 - Naming `aluguelMensal` ambíguo (registrado como DT-8 em `divida-tecnica.md`).
-- Documentação atualizada em 24/05/26 (TASK-DOC-009) — `SeguroConfig.tem` removido, actions BG-006 (`SET_RESPONSABILIDADE_ALUGUEL`) e ajustes adicionadas, `calcularCustoSeguroAnual` com assinatura única (REF-21).
+- Documentação atualizada em 24/05/26 (TASK-DOC-009) - `SeguroConfig.tem` removido, actions BG-006 (`SET_RESPONSABILIDADE_ALUGUEL`) e ajustes adicionadas, `calcularCustoSeguroAnual` com assinatura única (REF-21).

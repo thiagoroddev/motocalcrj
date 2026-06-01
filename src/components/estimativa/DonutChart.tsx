@@ -11,7 +11,7 @@ export interface SegmentoDonut {
 }
 
 interface Props {
-  // Já vem filtrado e ordenado pelo chamador — a ordem dos segmentos no anel
+  // Já vem filtrado e ordenado pelo chamador - a ordem dos segmentos no anel
   // espelha a ordem da legenda.
   segmentos: SegmentoDonut[];
   tamanho?: number;

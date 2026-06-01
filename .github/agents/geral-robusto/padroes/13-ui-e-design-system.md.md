@@ -37,7 +37,7 @@ Antes de entregar um componente UI, pergunte:
 
 ### 1.3 Não Reinventar a Roda
 
-Acessibilidade é **difícil** de fazer certo. Dropdowns, modais, comboboxes, date pickers — todos têm armadilhas (foco preso no modal, navegação por teclado, ARIA corretos, screen reader anunciando).
+Acessibilidade é **difícil** de fazer certo. Dropdowns, modais, comboboxes, date pickers - todos têm armadilhas (foco preso no modal, navegação por teclado, ARIA corretos, screen reader anunciando).
 
 **Use bibliotecas que já resolveram isso:**
 
@@ -55,9 +55,9 @@ A escolha entre elas depende do projeto. **shadcn/ui + Radix** é uma combinaç�
 Diferente de Material UI ou Chakra (que vêm como pacote npm), **shadcn/ui copia o código fonte para o seu projeto**. Você é dono dos componentes. Vantagens:
 
 - **Customização total** sem brigar com `!important` ou tema mágico
-- **Sem versionamento de breaking changes** — o código é seu
-- **Bundle enxuto** — só inclui o que você usa
-- **Aprendizado direto** — você lê o componente e entende como funciona
+- **Sem versionamento de breaking changes** - o código é seu
+- **Bundle enxuto** - só inclui o que você usa
+- **Aprendizado direto** - você lê o componente e entende como funciona
 
 Desvantagem: você é responsável por manter atualizações manualmente.
 
@@ -72,7 +72,7 @@ Este é o template que **todo** componente em `components/ui/` deve seguir.
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
 
-// 1. INTERFACE DE PROPS — sempre exportada
+// 1. INTERFACE DE PROPS - sempre exportada
 export interface BotaoProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variante?: 'primario' | 'secundario' | 'ghost' | 'destrutivo'
   tamanho?: 'sm' | 'md' | 'lg'
@@ -100,7 +100,7 @@ export const Botao = forwardRef<HTMLButtonElement, BotaoProps>(
         ref={ref}
         disabled={disabled || carregando}
         className={cn(
-          // Base — todos os botões
+          // Base - todos os botões
           'inline-flex items-center justify-center rounded-md font-medium transition-colors',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -111,7 +111,7 @@ export const Botao = forwardRef<HTMLButtonElement, BotaoProps>(
           variante === 'ghost' && 'hover:bg-accent hover:text-accent-foreground',
           variante === 'destrutivo' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
 
-          // Tamanhos — sempre 48px+ de altura (toque mínimo)
+          // Tamanhos - sempre 48px+ de altura (toque mínimo)
           tamanho === 'sm' && 'h-12 px-3 text-sm',
           tamanho === 'md' && 'h-12 px-4 text-base',
           tamanho === 'lg' && 'h-14 px-6 text-lg',
@@ -119,7 +119,7 @@ export const Botao = forwardRef<HTMLButtonElement, BotaoProps>(
           // Largura
           larguraTotal && 'w-full',
 
-          // Permite override contextual — SEMPRE por último
+          // Permite override contextual - SEMPRE por último
           className
         )}
         {...props}
@@ -130,7 +130,7 @@ export const Botao = forwardRef<HTMLButtonElement, BotaoProps>(
   }
 )
 
-// 3. displayName — essencial para devtools
+// 3. displayName - essencial para devtools
 Botao.displayName = 'Botao'
 ```
 
@@ -138,7 +138,7 @@ Botao.displayName = 'Botao'
 
 **Por que `forwardRef`?** Sem ref, libs como react-hook-form não conseguem focar o input quando há erro. Animações com Framer Motion precisam de ref. Plugins de scroll precisam. **`forwardRef` em todo componente UI** é regra inegociável.
 
-**Por que estender `React.ButtonHTMLAttributes`?** Para que o componente herde naturalmente `onClick`, `onFocus`, `aria-label`, `type`, `disabled`. Sem isso, você teria que listar prop por prop manualmente — e esquecer alguma.
+**Por que estender `React.ButtonHTMLAttributes`?** Para que o componente herde naturalmente `onClick`, `onFocus`, `aria-label`, `type`, `disabled`. Sem isso, você teria que listar prop por prop manualmente - e esquecer alguma.
 
 **Por que `disabled || carregando`?** Quando carregando, o botão tem que estar desabilitado funcionalmente (não clicável). A prop `disabled` original do consumidor ainda pode forçar disable independente do carregando.
 
@@ -165,7 +165,7 @@ export function cn(...inputs: ClassValue[]) {
 - `clsx` junta classes condicionais (`'a', { b: true, c: false }` → `'a b'`)
 - `twMerge` resolve conflitos do Tailwind (`'p-2 p-4'` → `'p-4'`, em vez de aplicar ambos)
 
-Sem `twMerge`, você teria `p-2 p-4` no DOM e a regra que vence depende da ordem do CSS — comportamento imprevisível.
+Sem `twMerge`, você teria `p-2 p-4` no DOM e a regra que vence depende da ordem do CSS - comportamento imprevisível.
 
 ---
 
@@ -182,7 +182,7 @@ import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
 
 const botaoVariantes = cva(
-  // Base — sempre aplicado
+  // Base - sempre aplicado
   [
     'inline-flex items-center justify-center rounded-md font-medium transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -263,7 +263,7 @@ A confusão mais comum: _"o shadcn já me dá um Botão, devo criar outro?"_
 
 Você cria wrapper para:
 
-1. **Padronizar variantes do seu projeto** (`primario`, `destrutivo` — não `default`, `secondary`)
+1. **Padronizar variantes do seu projeto** (`primario`, `destrutivo` - não `default`, `secondary`)
 2. **Garantir acessibilidade adicional** (toque mínimo 48px que shadcn não força)
 3. **Adicionar comportamento padrão** (estado de loading)
 4. **Trocar idioma** (props em português quando o projeto é PT)
@@ -416,10 +416,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 
 ### 5.3 Por Que Esse Padrão
 
-- **Composição flexível** — você pode omitir partes (`<Card>` sem `<CardHeader>`)
-- **Cada parte tem estilo próprio** — espaçamento, tipografia consistentes
-- **API descobrível** — autocomplete do editor mostra todas as partes
-- **Casa com semântica HTML** — `<h3>` para título, `<div>` para conteúdo
+- **Composição flexível** - você pode omitir partes (`<Card>` sem `<CardHeader>`)
+- **Cada parte tem estilo próprio** - espaçamento, tipografia consistentes
+- **API descobrível** - autocomplete do editor mostra todas as partes
+- **Casa com semântica HTML** - `<h3>` para título, `<div>` para conteúdo
 
 ### 5.4 Alternativa: Slots em Props
 
@@ -479,7 +479,7 @@ Em qualquer dessas exceções, registre a decisão no `contexto-projeto-ai.md` o
 className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 ```
 
-**Por que `focus-visible` e não `focus`?** `focus` aparece em clique do mouse também — confunde usuário. `focus-visible` só aparece quando o foco vem do teclado.
+**Por que `focus-visible` e não `focus`?** `focus` aparece em clique do mouse também - confunde usuário. `focus-visible` só aparece quando o foco vem do teclado.
 
 ### 6.3 Contraste Mínimo
 
@@ -534,10 +534,10 @@ Componentes UI **nunca** usam cores ou tamanhos hardcoded. Tudo passa pelos toke
 ### 7.1 Por Que Tokens
 
 ```tsx
-// ❌ Hardcoded — mudar tema vira mudança em 100 arquivos
+// ❌ Hardcoded - mudar tema vira mudança em 100 arquivos
 <div className="bg-blue-600 text-white" />
 
-// ✅ Token — mudar tema é mudar 1 arquivo
+// ✅ Token - mudar tema é mudar 1 arquivo
 <div className="bg-primary text-primary-foreground" />
 ```
 
@@ -641,10 +641,10 @@ Preciso de um componente UI. Posso usar shadcn pronto?
 ├─ Sim, mas a API não casa com meu padrão (idioma, naming)
 │   └─► Crie wrapper só para renomear
 │
-├─ Parcialmente — tem 70% do que preciso
+├─ Parcialmente - tem 70% do que preciso
 │   └─► Use o primitivo do Radix (sem shadcn) e construa
 │
-└─ Não — caso específico do meu projeto
+└─ Não - caso específico do meu projeto
     └─► Componente custom em components/ui/, mas se conhece o
         negócio é components/[dominio]/
 ```
@@ -652,11 +652,11 @@ Preciso de um componente UI. Posso usar shadcn pronto?
 ### 8.1 Anti-Padrão: Wrapper Sem Valor
 
 ```tsx
-// ❌ Wrapper que só re-exporta — inútil
+// ❌ Wrapper que só re-exporta - inútil
 import { Button } from 'shadcn/ui/button'
 export const Botao = Button
 
-// ✅ Sem wrapper — use direto
+// ✅ Sem wrapper - use direto
 import { Button } from '@/components/ui/button'
 ```
 
@@ -717,7 +717,7 @@ Verifique cada item:
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) — Onde os componentes vivem
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) — Como os componentes são consumidos
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Componentes UI específicos para forms
-- [`16-performance-acessibilidade.md`](https://claude.ai/chat/16-performance-acessibilidade.md) — Acessibilidade completa e performance
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde os componentes vivem
+- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Como os componentes são consumidos
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Componentes UI específicos para forms
+- [`16-performance-acessibilidade.md`](https://claude.ai/chat/16-performance-acessibilidade.md) - Acessibilidade completa e performance

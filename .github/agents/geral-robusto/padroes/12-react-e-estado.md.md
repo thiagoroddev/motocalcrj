@@ -110,7 +110,7 @@ const [estado, dispatch] = useReducer(reducer, estadoInicial)
 
 ### 2.3 Vantagens do Reducer
 
-- **Transições explícitas.** Cada ação tem um nome — você lê o código e entende o fluxo.
+- **Transições explícitas.** Cada ação tem um nome - você lê o código e entende o fluxo.
 - **Testável.** O reducer é função pura. Testa sem montar React.
 - **Sem inconsistência intermediária.** A atualização de várias chaves é atômica.
 
@@ -165,7 +165,7 @@ export function useDetalhamento() {
     setFiltros({})
   }, [])
 
-  // 4. INTERFACE MÍNIMA — só o que o JSX precisa
+  // 4. INTERFACE MÍNIMA - só o que o JSX precisa
   return {
     filtros,
     expandido,
@@ -269,7 +269,7 @@ export function PaginaDetalhamento() {
 
 ### 4.2 Por Que `vm`?
 
-`vm` = view model. É o nome convencional para a "instância" retornada por um hook de feature. Algumas alternativas usam o nome da feature (`const detalhamento = useDetalhamento()`) — funciona também. O importante é **ter um nome único** e usar consistentemente.
+`vm` = view model. É o nome convencional para a "instância" retornada por um hook de feature. Algumas alternativas usam o nome da feature (`const detalhamento = useDetalhamento()`) - funciona também. O importante é **ter um nome único** e usar consistentemente.
 
 ### 4.3 Sinais de Page Suja
 
@@ -291,14 +291,14 @@ A confusão mais frequente: _"devo memoizar tudo?"_. **Não.** Memoização tem 
 
 ### 5.0 Por Que o Hook de Feature Memoiza e o Componente Não Precisa
 
-Você pode ter notado: o padrão de hook (seção 3) usa `useMemo` e `useCallback` em quase tudo. Parece contradizer a regra "comece sem memoizar". Não é contradição — são contextos diferentes:
+Você pode ter notado: o padrão de hook (seção 3) usa `useMemo` e `useCallback` em quase tudo. Parece contradizer a regra "comece sem memoizar". Não é contradição - são contextos diferentes:
 
 |Contexto|Comportamento|Por quê|
 |---|---|---|
 |**Hook compartilhado** (`useDetalhamento`, `usePerfil`)|Memoiza por padrão|Você **não sabe** quem vai consumir. Filhos memoizados podem aparecer depois. Estabilidade de referência é contrato.|
 |**Componente específico** (`PaginaDetalhamento`)|Não memoiza por padrão|Você **sabe** exatamente quem usa. Adiciona `useMemo` só se o profiler indicar problema.|
 
-Em outras palavras: **memoização em hook é defensiva, memoização em componente é otimização**. As regras abaixo se aplicam a componentes — para o hook, a seção 3 já mostrou o padrão.
+Em outras palavras: **memoização em hook é defensiva, memoização em componente é otimização**. As regras abaixo se aplicam a componentes - para o hook, a seção 3 já mostrou o padrão.
 
 ### 5.1 Quando `useMemo` Vale a Pena
 
@@ -307,13 +307,13 @@ Em outras palavras: **memoização em hook é defensiva, memoização em compone
 - Cálculo derivado que você usaria em vários lugares no JSX
 
 ```typescript
-// ✅ Vale — cálculo derivado de filtros
+// ✅ Vale - cálculo derivado de filtros
 const itensFiltrados = useMemo(
   () => itens.filter(i => filtros[i.tipo]),
   [itens, filtros]
 )
 
-// ✅ Vale — referência estável de objeto passado a filho memoizado
+// ✅ Vale - referência estável de objeto passado a filho memoizado
 const configMapa = useMemo(
   () => ({ zoom: 12, centro: [lat, lng] }),
   [lat, lng]
@@ -327,7 +327,7 @@ const configMapa = useMemo(
 - Não é passado a filho memoizado
 
 ```typescript
-// ❌ Inútil — primitivo é comparado por valor naturalmente
+// ❌ Inútil - primitivo é comparado por valor naturalmente
 const total = useMemo(() => a + b, [a, b])
 
 // ✅ Direto
@@ -343,7 +343,7 @@ Só quando o handler é passado para:
 - Componente que faz comparação de identidade (raro)
 
 ```typescript
-// ✅ Vale — passado a filho memoizado
+// ✅ Vale - passado a filho memoizado
 const handleClick = useCallback(() => {
   setContador(c => c + 1)
 }, [])
@@ -358,7 +358,7 @@ return <ListaMemoizada onClick={handleClick} />
 - Handler trivial (re-criar não custa nada)
 
 ```typescript
-// ❌ Inútil — só usado aqui mesmo
+// ❌ Inútil - só usado aqui mesmo
 const handleClick = useCallback(() => {
   setAberto(true)
 }, [])
@@ -374,11 +374,11 @@ return <button onClick={() => setAberto(true)}>Abrir</button>
 > 
 > **Em hooks compartilhados:** memoize por padrão. É contrato de estabilidade para consumidores que você não controla.
 
-Memoização prematura em componentes é otimização prematura — adiciona complexidade sem benefício comprovado. Memoização em hook é proteção contra regressões silenciosas.
+Memoização prematura em componentes é otimização prematura - adiciona complexidade sem benefício comprovado. Memoização em hook é proteção contra regressões silenciosas.
 
 ---
 
-## 6. `useEffect` — Quando Usar (Pouco) e Quando NÃO Usar (Quase Sempre)
+## 6. `useEffect` - Quando Usar (Pouco) e Quando NÃO Usar (Quase Sempre)
 
 `useEffect` é o hook mais mal-usado do React. Regra: **se não é sincronização com o mundo externo, provavelmente não é `useEffect`.**
 
@@ -430,7 +430,7 @@ useEffect(() => {
   }
 }, [botaoClicado])
 
-// ✅ Certo — chame direto no handler
+// ✅ Certo - chame direto no handler
 const handleClick = () => {
   enviarFormulario()
 }
@@ -462,13 +462,13 @@ const { data: perfil, isLoading } = useQuery({
 #### Erro 4: Inicializar estado
 
 ```typescript
-// ❌ Errado — inicializa depois do primeiro render
+// ❌ Errado - inicializa depois do primeiro render
 const [valor, setValor] = useState(0)
 useEffect(() => {
   setValor(calcularInicial())
 }, [])
 
-// ✅ Certo — inicialização preguiçosa
+// ✅ Certo - inicialização preguiçosa
 const [valor, setValor] = useState(() => calcularInicial())
 ```
 
@@ -727,7 +727,7 @@ export function Campo({ nome }) {
 
 ## 9. Padrões de Composição
 
-### 9.1 Children — Padrão Mais Simples
+### 9.1 Children - Padrão Mais Simples
 
 ```tsx
 function Card({ children }: { children: ReactNode }) {
@@ -742,7 +742,7 @@ function Card({ children }: { children: ReactNode }) {
 
 Use quando o pai não precisa controlar o que o filho renderiza.
 
-### 9.2 Slots — Múltiplas Áreas Nomeadas
+### 9.2 Slots - Múltiplas Áreas Nomeadas
 
 ```tsx
 function CardComplexo({
@@ -772,7 +772,7 @@ function CardComplexo({
 
 Use quando há múltiplas áreas, cada uma com conteúdo distinto.
 
-### 9.3 Render Props — Controle Total
+### 9.3 Render Props - Controle Total
 
 ```tsx
 function ListaCarregavel<T>({
@@ -916,7 +916,7 @@ Irmãos coordenam via pai. Sem Context, sem estado global. **Faça isso até a d
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) — Onde os arquivos deste módulo vivem
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) — Como os componentes consumidos aqui são construídos
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Padrão de form com hook + Zod
-- [`15-testes.md`](https://claude.ai/chat/15-testes.md) — Como testar hooks e componentes
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde os arquivos deste módulo vivem
+- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Como os componentes consumidos aqui são construídos
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Padrão de form com hook + Zod
+- [`15-testes.md`](https://claude.ai/chat/15-testes.md) - Como testar hooks e componentes

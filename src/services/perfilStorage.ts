@@ -7,7 +7,7 @@ export interface IPerfilStorage {
   setPresetAtivo(presetId: string | null): void;
   limpar(): void;
   // Preserva o blob atual sob uma chave `.corrupted` quando ele falha na
-  // validação/migração — sem perda silenciosa, permite diagnóstico/export
+  // validação/migração - sem perda silenciosa, permite diagnóstico/export
   // futuro (ADR-010, decisão 2). É best-effort: nunca lança.
   preservarCorrompido(): void;
 }

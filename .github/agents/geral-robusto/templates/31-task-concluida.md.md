@@ -5,12 +5,13 @@ description: "Template para tarefa concluída. Arquivo imutável de registro his
 - "30-task-em-andamento.md"
 - "20-ciclo-tarefa.md"
 - "21-revisao-codigo.md"
+- "27-revisao-geral.md"
 
 ---
 
 # 📝 Template: Tarefa Concluída
 
-> **Arquivo destino:** `docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[DATA]-[HORA].md` Exemplo: `docs/tarefas/concluidas/TASK-RF-5.1-2026-05-13-17h30.md` **Quando usar:** ao terminar uma tarefa Standard ou Strict, **após** passar pelos critérios da [seção 5.2 do módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md#52-crit%C3%A9rios-para-concluir). Para modo Light, pular este template — registro vai direto no commit.
+> **Arquivo destino:** `docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[DATA]-[HORA].md` Exemplo: `docs/tarefas/concluidas/TASK-RF-5.1-2026-05-13-17h30.md` **Quando usar:** ao terminar uma tarefa Standard ou Strict, **após** passar pelos critérios da [seção 5.2 do módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md#52-crit%C3%A9rios-para-concluir). Para modo Light, pular este template - registro vai direto no commit.
 
 ---
 
@@ -19,7 +20,7 @@ description: "Template para tarefa concluída. Arquivo imutável de registro his
 Arquivos em `concluidas/` são **registros históricos**. Depois de criar:
 
 - ✅ Pode corrigir erro óbvio (typo, link quebrado)
-- ❌ Não reabrir para continuar trabalho — crie tarefa nova
+- ❌ Não reabrir para continuar trabalho - crie tarefa nova
 - ❌ Não reescrever decisões depois ("achei que fosse melhor outra")
 
 Se o trabalho continua, é **nova tarefa**. Esta arquivada documenta o que foi feito **naquele momento**.
@@ -66,7 +67,7 @@ TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [[](./2026-
 Continuação da TASK-RF-5.1 que foi mostrada no template 30. Agora concluída.
 
 ```markdown
-# TASK-RF-005.1 — Registros: lista e sub-abas
+# TASK-RF-005.1 - Registros: lista e sub-abas
 
 - **Status:** Concluído
 - **Modo:** Standard
@@ -125,7 +126,7 @@ Continuação da TASK-RF-5.1 que foi mostrada no template 30. Agora concluída.
 
 - **Animação de transição entre páginas:** fora do escopo aprovado. Anotada como TASK-REF-08 em pendentes.
 - **Exportar lista como CSV:** mencionado no Figma mas não estava nos critérios. Confirmado com humano que vira tarefa nova (TASK-RF-5.3).
-- **Refresh manual da lista:** decidido adiar — paginação cursor já busca dados novos automaticamente.
+- **Refresh manual da lista:** decidido adiar - paginação cursor já busca dados novos automaticamente.
   
 ## Testes
 
@@ -155,7 +156,7 @@ Auto-revisão IA + validação humana
 - Considerar extrair `formatadorDeDataRelativa` para `utils/formatters.ts` se aparecer em mais 1 lugar
 
 ### Veredito
-APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
+APROVADO COM RESSALVAS - TASK-REF-09 gerada como melhoria não-bloqueante.
 
 ## Tarefas Geradas pela Revisão
 
@@ -165,7 +166,7 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 
 ## Requisitos Gerados pela Revisão
 
-- — (nenhum requisito novo)
+- - (nenhum requisito novo)
 
 ## ADRs Geradas
 
@@ -185,7 +186,7 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 ## Template Vazio (Para Copiar)
 
 ```markdown
-# TASK-[PREFIXO]-[NUMERO] — [Título]
+# TASK-[PREFIXO]-[NUMERO] - [Título]
 
 - **Status:** Concluído
 - **Modo:** [Standard / Strict]
@@ -195,9 +196,9 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 - **Data origem:** DD/MM/AA HH:MM
 - **Data início:** DD/MM/AA HH:MM
 - **Data conclusão:** DD/MM/AA HH:MM
-- **Dependências:** [TASK-IDs, ou `—`]
-- **REQ/ADR/DT:** [referências, ou `—`]
-- **Observações:** [contexto adicional, ou `—`]
+- **Dependências:** [TASK-IDs, ou `-`]
+- **REQ/ADR/DT:** [referências, incluindo `REV-NNN-Axx` se veio de revisão geral, ou `-`]
+- **Observações:** [contexto adicional, ou `-`]
 
 ## Planejamento Aprovado
 
@@ -229,10 +230,10 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 [Auto-revisão IA / Auto-revisão IA + validação humana / Revisão humana completa]
 
 ### ✅ Bom
-- [algo que ficou bem feito — sempre liste algo, não deixe vazio]
+- [algo que ficou bem feito - sempre liste algo, não deixe vazio]
 
 ### 🔴 Bloqueante
-[Se houver. Senão, omita esta subseção. Bloqueante impede conclusão — se chegou aqui, foi corrigido]
+[Se houver. Senão, omita esta subseção. Bloqueante impede conclusão - se chegou aqui, foi corrigido]
 
 ### 🟡 Importante
 **[Título do problema, se houver]**
@@ -250,22 +251,22 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 ## Tarefas Geradas pela Revisão
 
 - TASK-[PREFIXO]-XXX: [descrição]
-- (ou `— (nenhuma tarefa gerada)`)
+- (ou `- (nenhuma tarefa gerada)`)
 
 ## Requisitos Gerados pela Revisão
 
 - [RF/RN/RNF]-XXX: [descrição] (adicionado em `docs/requisitos/...`)
-- (ou `— (nenhum requisito gerado)`)
+- (ou `- (nenhum requisito gerado)`)
 
 ## ADRs Geradas
 
 - ADR-XXX: [título]
-- (ou `— (nenhuma ADR gerada)`)
+- (ou `- (nenhuma ADR gerada)`)
 
 
 ## Aprendizados Para o Projeto
 
-- [lição destilada para o futuro — não copia execução; destila padrão útil]
+- [lição destilada para o futuro - não copia execução; destila padrão útil]
 ```
 
 ---
@@ -275,7 +276,7 @@ APROVADO COM RESSALVAS — TASK-REF-09 gerada como melhoria não-bloqueante.
 Tarefa começou mas decidiu-se não fazer. Ainda assim gera arquivo concluído (com status diferente):
 
 ```markdown
-# TASK-RF-XXX — [Título]
+# TASK-RF-XXX - [Título]
 
 - **Status:** CANCELADA
 - **Modo:** [original]
@@ -287,7 +288,7 @@ Tarefa começou mas decidiu-se não fazer. Ainda assim gera arquivo concluído (
 - **Data conclusão:** [data do cancelamento]
 - **Dependências:** [original]
 - **REQ/ADR/DT:** [original]
-- **Observações:** Tarefa cancelada — ver "O Que NÃO Foi Feito"
+- **Observações:** Tarefa cancelada - ver "O Que NÃO Foi Feito"
 
 ## Planejamento Aprovado
 [O que estava planejado, mesmo que não tenha sido feito]
@@ -299,13 +300,13 @@ Tarefa começou mas decidiu-se não fazer. Ainda assim gera arquivo concluído (
 - **Cancelar a tarefa:** [motivo da decisão]
 
 ## O Que NÃO Foi Feito (e Por Quê)
-- **Tudo a partir do dia X:** [motivo do cancelamento — escopo mudou? prioridade caiu? bug encontrado tornou o trabalho inútil?]
+- **Tudo a partir do dia X:** [motivo do cancelamento - escopo mudou? prioridade caiu? bug encontrado tornou o trabalho inútil?]
   
 ## Testes
 - `1º npm run test`: 84 verdes
 
 ## Revisão
-N/A — Tarefa cancelada antes da conclusão.
+N/A - Tarefa cancelada antes da conclusão.
 
 ## Tarefas Geradas pela Revisão
 - (se cancelamento gerou nova tarefa, listar aqui)
@@ -318,11 +319,11 @@ N/A — Tarefa cancelada antes da conclusão.
 
 ## Variante 2: Tarefa Light (Revisão N/A)
 
-Tarefas Light **não usam este template** — registro vai direto no commit. Mas se por algum motivo for criada (consistência de histórico), a Revisão fica:
+Tarefas Light **não usam este template** - registro vai direto no commit. Mas se por algum motivo for criada (consistência de histórico), a Revisão fica:
 
 ```markdown
 ## Revisão
-N/A — Mudança trivial: [especificar — ex: "correção de typo na linha 42 do README, sem impacto funcional"].
+N/A - Mudança trivial: [especificar - ex: "correção de typo na linha 42 do README, sem impacto funcional"].
 ```
 
 A regra: **N/A é aceitável, silêncio não**. Sempre justifique.
@@ -334,7 +335,7 @@ A regra: **N/A é aceitável, silêncio não**. Sempre justifique.
 Bug crítico em produção corrigido fora do fluxo normal:
 
 ```markdown
-# TASK-BG-XXX — [Título]
+# TASK-BG-XXX - [Título]
 
 - **Status:** Concluído
 - **Modo:** Hotfix
@@ -344,7 +345,7 @@ Bug crítico em produção corrigido fora do fluxo normal:
 - **Data origem:** [data da detecção]
 - **Data início:** [imediata]
 - **Data conclusão:** [imediata após correção]
-- **Observações:** Hotfix — bug afetando produção, contornou fluxo normal de tarefas
+- **Observações:** Hotfix - bug afetando produção, contornou fluxo normal de tarefas
 
 ## Testes
 - `1º npm run test`: 62 verdes - 22 falhando
@@ -355,7 +356,7 @@ Bug crítico em produção corrigido fora do fluxo normal:
 - **Detectado por:** [como foi descoberto]
 
 ## Execução
-- HH:MM: Diagnóstico — causa raiz identificada
+- HH:MM: Diagnóstico - causa raiz identificada
 - HH:MM: Correção aplicada
 - HH:MM: Deploy em produção
 - HH:MM: Validado em produção
@@ -383,7 +384,7 @@ Tarefa modo Strict gerou uma ADR durante o processo:
 ```markdown
 ## ADRs Geradas
 
-- **ADR-XXX:** [Título da ADR] — `docs/arquitetura/ADR/ADR-XXX.md`
+- **ADR-XXX:** [Título da ADR] - `docs/arquitetura/ADR/ADR-XXX.md`
 - **Decisão central da ADR:** [resumo de 1-2 linhas do que foi decidido]
 - **Implementada nesta tarefa:** Sim
 ```
@@ -409,19 +410,22 @@ A ideia: a ADR é a **decisão estratégica**; a tarefa é a **implementação d
 
 **3. Posso editar este arquivo depois de criado?** Apenas correções óbvias (typo, link quebrado, formatação). Mudanças de conteúdo = nova tarefa que referencia esta.
 
-**4. O que vai em "Aprendizados Para o Projeto"?** Não copia execução. Destila lições: padrões que valem reusar, armadilhas a evitar, decisões que viraram boas. Se não houve aprendizado relevante, use `— (sem aprendizado destilável desta tarefa)`. Não invente para preencher.
+**4. O que vai em "Aprendizados Para o Projeto"?** Não copia execução. Destila lições: padrões que valem reusar, armadilhas a evitar, decisões que viraram boas. Se não houve aprendizado relevante, use `- (sem aprendizado destilável desta tarefa)`. Não invente para preencher.
 
 **5. E se a revisão revelou bloqueante que voltei para corrigir?** Não chegue aqui com bloqueante aberto. Bloqueante → volta para em-andamento → corrige → volta para revisão → se aprovado, então conclui. A seção "Revisão" deste arquivo deve mostrar **a revisão final que aprovou**.
 
-**6. Como linkar de outra tarefa para esta?** Use o caminho relativo: `[ver TASK-RF-5.1](../concluidas/TASK-RF-5.1-2026-05-13-17h30.md)`. Em texto corrido, basta citar o ID — quem precisa busca pelo prefixo no diretório.
+**6. Como linkar de outra tarefa para esta?** Use o caminho relativo: `[ver TASK-RF-5.1](../concluidas/TASK-RF-5.1-2026-05-13-17h30.md)`. Em texto corrido, basta citar o ID - quem precisa busca pelo prefixo no diretório.
 
-**7. Se a tarefa não gerou nada (sem novas tarefas, sem ADRs, sem requisitos), preciso manter as seções vazias?** Sim. Mantenha a seção com `— (nenhuma tarefa gerada)` (ou equivalente). Manter estrutura facilita leitura comparativa entre tarefas.
+**7. Se a tarefa não gerou nada (sem novas tarefas, sem ADRs, sem requisitos), preciso manter as seções vazias?** Sim. Mantenha a seção com `- (nenhuma tarefa gerada)` (ou equivalente). Manter estrutura facilita leitura comparativa entre tarefas.
+
+**8. Como registrar tarefa criada por revisão geral?** Inclua `REV-NNN-Axx` em `REQ/ADR/DT` ou nas observações da tarefa. A REV correspondente também precisa listar esta tarefa no achado que a gerou. REV só existe quando o humano pediu revisão completa do projeto.
 
 ---
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`30-task-em-andamento.md`](https://claude.ai/chat/30-task-em-andamento.md) — Template do estágio anterior
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) — Para tarefas que geram ADR
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) — Processo completo
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) — Como conduzir a revisão antes de concluir
+- [`30-task-em-andamento.md`](https://claude.ai/chat/30-task-em-andamento.md) - Template do estágio anterior
+- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - Para tarefas que geram ADR
+- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Processo completo
+- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Como conduzir a revisão antes de concluir
+- [`../processos/27-revisao-geral.md`](https://claude.ai/processos/27-revisao-geral.md) - Origem `REV-NNN-Axx` para tarefas geradas por revisão geral

@@ -15,7 +15,7 @@ function financeiroCom(overrides: Partial<PerfilUsuario['financeiro']> = {}) {
   return { ...perfilPadrao.financeiro, ...overrides };
 }
 
-describe('Campos financeiros de Ajustes — validação de domínio', () => {
+describe('Campos financeiros de Ajustes - validação de domínio', () => {
   it('CampoAlimentacao não despacha valor negativo', () => {
     const dispatch = vi.fn<(action: PerfilAction) => void>();
     render(

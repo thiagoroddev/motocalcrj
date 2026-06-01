@@ -36,7 +36,7 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       },
       {
         titulo: 'Distribuição de custos',
-        texto: 'O peso de cada categoria no total — onde seu dinheiro vai.',
+        texto: 'O peso de cada categoria no total - onde seu dinheiro vai.',
       },
       {
         titulo: 'Visualizar / Editar',
@@ -61,7 +61,7 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       {
         titulo: 'Categorias',
         texto:
-          'Documentos, Manutenção, Combustível, Internet, Seguro, Alimentação, Financiamento/Aluguel e Imprevistos. Cada uma abre e mostra o cálculo detalhado. O interruptor liga/desliga a categoria — desligada, ela sai do total (ótimo para simular cenários). O lápis edita os valores.',
+          'Documentos, Manutenção, Combustível, Internet, Seguro, Alimentação, Financiamento/Aluguel e Imprevistos. Cada uma abre e mostra o cálculo detalhado. O interruptor liga/desliga a categoria - desligada, ela sai do total (ótimo para simular cenários). O lápis edita os valores.',
       },
       {
         titulo: 'Itens individuais',
@@ -103,17 +103,17 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
   insumos: {
     titulo: 'Insumos',
     intro:
-      'O cadastro de preços dos itens de consumo — combustível e peças/pneus. Junto com os intervalos de troca, viram o custo de combustível e de manutenção na estimativa.',
+      'O cadastro de preços dos itens de consumo - combustível e peças/pneus. Junto com os intervalos de troca, viram o custo de combustível e de manutenção na estimativa.',
     secoes: [
       {
         titulo: 'Combustível',
         texto:
-          'Para cada tipo (comum, aditivada, etanol) informe o preço por litro e a autonomia (km/L). O marcado como Preferido é o usado nos cálculos — toque em "Usar este" para trocar. Quanto maior a autonomia, menor o custo por km.',
+          'Para cada tipo (comum, aditivada, etanol) informe o preço por litro e a autonomia (km/L). O marcado como Preferido é o usado nos cálculos - toque em "Usar este" para trocar. Quanto maior a autonomia, menor o custo por km.',
       },
       {
         titulo: 'Peças e Pneus',
         texto:
-          'Cada item tem preço Original e Paralela — escolha qual usa. A vida útil em km define de quanto em quanto o custo se repete. O intervalo de troca é editado na aba Mão de Obra.',
+          'Cada item tem preço Original e Paralela - escolha qual usa. A vida útil em km define de quanto em quanto o custo se repete. O intervalo de troca é editado na aba Mão de Obra.',
       },
     ],
   },
@@ -135,16 +135,16 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       {
         titulo: 'Preferências',
         texto:
-          'O modo de revisão — Autorizada (Honda) ou Independente. Define qual conjunto de preços da Mão de Obra entra no cálculo.',
+          'O modo de revisão - Autorizada (Honda) ou Independente. Define qual conjunto de preços da Mão de Obra entra no cálculo.',
       },
       {
         titulo: 'Uso diário',
         texto:
-          'Km/dia, dias/semana e perfil de uso (entrega ou passageiro) — o mesmo uso da Estimativa.',
+          'Km/dia, dias/semana e perfil de uso (entrega ou passageiro) - o mesmo uso da Estimativa.',
       },
       {
         titulo: 'Financeiro',
-        texto: 'Custos fixos — internet, alimentação, seguro e parcela/aluguel da moto.',
+        texto: 'Custos fixos - internet, alimentação, seguro e parcela/aluguel da moto.',
       },
       {
         titulo: 'Situação legal e responsabilidade',

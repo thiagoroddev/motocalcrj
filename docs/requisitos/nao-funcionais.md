@@ -1,4 +1,4 @@
-# Requisitos Não Funcionais — MotoCalc RJ
+# Requisitos Não Funcionais - MotoCalc RJ
 
 > Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026). Agrupa as seções VII, VIII, IX, X e XI do documento original.
 > IDs: RNF-01 a RNF-12, RNF-COMP-01 a 06, RNF-ANA-01 a 03, RNF-PWA-01 a 05, RNF-TWA-01 a 06, RNF-LR-01 a 06, RNF-STACK-01 a 04.
@@ -32,11 +32,11 @@
 
 | ID | Descrição | Meta / Critério | Status |
 |---|---|---|---|
-| RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** (meta revisada para ≤ 200 em TASK-REF-02 — Prettier expande JSX) e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 200 linhas. | ✅ CONCLUÍDO (PaginaEstimativa: 127, PaginaDetalhamento: 199 linhas — TASK-REF-01/02) |
+| RNF-COMP-01 | **Páginas são composições, não monólitos.** Cada arquivo em `src/pages/` deve ter no máximo **150 linhas** (meta revisada para ≤ 200 em TASK-REF-02 - Prettier expande JSX) e conter apenas importações, composição e estado de rota local. | `wc -l src/pages/*.tsx` → zero arquivos acima de 200 linhas. | ✅ CONCLUÍDO (PaginaEstimativa: 127, PaginaDetalhamento: 199 linhas - TASK-REF-01/02) |
 | RNF-COMP-02 | **Tudo que se repete vira componente.** Qualquer JSX de card, input, label, badge, toggle, stepper, accordion, botão ou separador que aparece ≥ 2 vezes no app deve estar em `src/components/ui/`. | Revisão de código: nenhuma duplicação de estrutura JSX entre arquivos. | [ ] PENDENTE |
 | RNF-COMP-03 | **`src/components/ui/` é a camada Shadcn.** Componentes customizados seguem o mesmo padrão de arquivo (export nomeado, props tipadas, sem lógica de negócio). | `ls src/components/ui/` lista tanto componentes Shadcn quanto os custom do projeto, no mesmo estilo. | ✅ CONCLUÍDO (shadcn instalado em TASK-REF-03; Card, Button, Input, Badge, Label, Accordion em uso) |
-| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/detalhamento/`. | Cada componente de feature recebe dados via props ou hook dedicado — nunca acessa `PerfilContext` diretamente. | ✅ CONCLUÍDO (subpastas estimativa/ com 5 componentes e detalhamento/ com 7 componentes — TASK-REF-01/02) |
-| RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict — zero erros de tipo. | ✅ CONCLUÍDO |
+| RNF-COMP-04 | **Componentes de feature em subpasta própria.** Donut chart → `src/components/estimativa/`. Accordion de categoria → `src/components/detalhamento/`. | Cada componente de feature recebe dados via props ou hook dedicado - nunca acessa `PerfilContext` diretamente. | ✅ CONCLUÍDO (subpastas estimativa/ com 5 componentes e detalhamento/ com 7 componentes - TASK-REF-01/02) |
+| RNF-COMP-05 | **Props tipadas com `interface` explícita.** Nenhum componente usa `any`, `object` ou `React.FC` sem tipo de props. | TypeScript strict - zero erros de tipo. | ✅ CONCLUÍDO |
 | RNF-COMP-06 | **Lógica de negócio fora do JSX.** Cálculos, formatação e filtragem ficam em hooks ou utils. | Revisão de código: ausência de cálculos dentro de `return (...)`. | [ ] PENDENTE |
 
 ---

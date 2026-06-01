@@ -61,7 +61,7 @@ export function PassoConfirmacao() {
             valor={
               moto.kmUltimaRevisao != null
                 ? `${moto.kmUltimaRevisao.toLocaleString('pt-BR')} km`
-                : '—'
+                : '-'
             }
           />
         </SessaoResumo>
@@ -103,7 +103,7 @@ export function PassoConfirmacao() {
         <SessaoResumo titulo="Gastos operacionais" aoEditar={() => editarPasso('8')}>
           <LinhaResumo
             label="Internet"
-            valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '—'}
+            valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '-'}
           />
         </SessaoResumo>
 

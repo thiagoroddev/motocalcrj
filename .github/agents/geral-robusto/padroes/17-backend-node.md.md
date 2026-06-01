@@ -1,6 +1,6 @@
 ---
 
-description: "Backend Node — stub mínimo. Princípios, estrutura, validação, erros, .env. A expandir quando entrar projeto backend." modulo: "17" categoria: "padroes" versao: "1.0" status: "stub" relacionado:
+description: "Backend Node - stub mínimo. Princípios, estrutura, validação, erros, .env. A expandir quando entrar projeto backend." modulo: "17" categoria: "padroes" versao: "1.0" status: "stub" relacionado:
 
 - "10-codigo-e-convencoes.md"
 - "11-arquitetura-e-pastas.md"
@@ -9,9 +9,9 @@ description: "Backend Node — stub mínimo. Princípios, estrutura, validação
 
 ---
 
-# 🖥️ Backend Node — Stub Mínimo
+# 🖥️ Backend Node - Stub Mínimo
 
-> ⚠️ **Este módulo é um stub deliberadamente curto.** Foi escrito em **2026-05-13** quando o autor focava em frontend. A expansão acontece quando o primeiro projeto backend real entrar em desenvolvimento, com base em decisões reais — não em especulação.
+> ⚠️ **Este módulo é um stub deliberadamente curto.** Foi escrito em **2026-05-13** quando o autor focava em frontend. A expansão acontece quando o primeiro projeto backend real entrar em desenvolvimento, com base em decisões reais - não em especulação.
 
 ---
 
@@ -82,9 +82,9 @@ Database
 
 Cada camada pode ser **testada e trocada** isoladamente:
 
-- **Service** não conhece HTTP — você testa sem subir servidor
-- **Repository** não conhece negócio — você troca PostgreSQL por MongoDB sem refatorar service
-- **Controller** é fino — apenas adapta HTTP para a chamada da camada de baixo
+- **Service** não conhece HTTP - você testa sem subir servidor
+- **Repository** não conhece negócio - você troca PostgreSQL por MongoDB sem refatorar service
+- **Controller** é fino - apenas adapta HTTP para a chamada da camada de baixo
 
 ### 3.2 Anti-Padrão Comum
 
@@ -229,14 +229,14 @@ export const schemaCriarPedido = z.object({
 export type DadosCriarPedido = z.infer<typeof schemaCriarPedido>
 ```
 
-Frontend valida antes de enviar. Backend valida ao receber. **Não confie no frontend** — sempre revalide.
+Frontend valida antes de enviar. Backend valida ao receber. **Não confie no frontend** - sempre revalide.
 
 ### 5.2 Validação no Controller
 
 ```typescript
 // controllers/pedidoController.ts
 export async function criarPedidoController(req: Request, res: Response) {
-  // Lança ZodError se inválido — middleware de erro pega
+  // Lança ZodError se inválido - middleware de erro pega
   const dados = schemaCriarPedido.parse(req.body)
 
   const pedido = await pedidoService.criar(dados)
@@ -401,7 +401,7 @@ PORT=3000
 ```
 
 ```bash
-# .env.example (commitar — serve de template)
+# .env.example (commitar - serve de template)
 DATABASE_URL=
 JWT_SECRET=
 PORT=3000
@@ -440,7 +440,7 @@ if (!resultado.success) {
 export const env = resultado.data
 ```
 
-Agora `import { env } from '@/config/env'` é tipado e seguro. Se faltar variável, o servidor **falha alto** na inicialização — não silenciosamente em produção.
+Agora `import { env } from '@/config/env'` é tipado e seguro. Se faltar variável, o servidor **falha alto** na inicialização - não silenciosamente em produção.
 
 ### 7.3 O Que NÃO Fazer
 
@@ -480,25 +480,25 @@ res.status(204).send()
 ### 8.2 Erro
 
 ```typescript
-// 400 — Validação falhou
+// 400 - Validação falhou
 {
   "erro": "Validação falhou",
   "detalhes": { "email": ["Email inválido"] }
 }
 
-// 401 — Não autenticado
+// 401 - Não autenticado
 { "erro": "Token inválido ou expirado" }
 
-// 403 — Autenticado mas sem permissão
+// 403 - Autenticado mas sem permissão
 { "erro": "Sem permissão para acessar este recurso" }
 
-// 404 — Não encontrado
+// 404 - Não encontrado
 { "erro": "Pedido 123 não encontrado" }
 
-// 409 — Conflito (ex: email já cadastrado)
+// 409 - Conflito (ex: email já cadastrado)
 { "erro": "Email já está em uso" }
 
-// 500 — Erro inesperado (não exponha detalhes internos)
+// 500 - Erro inesperado (não exponha detalhes internos)
 { "erro": "Erro interno do servidor" }
 ```
 
@@ -524,10 +524,10 @@ res.status(204).send()
 
 As convenções do módulo 10 valem aqui também:
 
-- **Idioma único** — backend no mesmo idioma do frontend do projeto
-- **Sem `any`** — `unknown` + Zod
-- **Erros nunca engolidos** — sempre lance ou trate explicitamente
-- **Nomes claros** — `criarPedido` em vez de `cp`
+- **Idioma único** - backend no mesmo idioma do frontend do projeto
+- **Sem `any`** - `unknown` + Zod
+- **Erros nunca engolidos** - sempre lance ou trate explicitamente
+- **Nomes claros** - `criarPedido` em vez de `cp`
 - **Sem `console.log` em produção com dados sensíveis**
 
 ---
@@ -552,7 +552,7 @@ Quando o primeiro projeto backend entrar em desenvolvimento, este módulo será 
 |**Deploy**|Build, env, processos (PM2, Docker), CI/CD|
 |**Observabilidade**|Métricas, traces, health checks|
 
-Esses temas serão expandidos **com base em decisões reais** quando você for usar — não em especulação agora.
+Esses temas serão expandidos **com base em decisões reais** quando você for usar - não em especulação agora.
 
 ---
 
@@ -573,7 +573,7 @@ Esses temas serão expandidos **com base em decisões reais** quando você for u
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) — Convenções de código aplicáveis aqui também
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) — Estrutura em camadas (mesmo princípio do frontend)
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Zod no frontend (mesmo padrão aqui)
-- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) — Segurança no backend (próximo módulo)
+- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Convenções de código aplicáveis aqui também
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Estrutura em camadas (mesmo princípio do frontend)
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Zod no frontend (mesmo padrão aqui)
+- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) - Segurança no backend (próximo módulo)

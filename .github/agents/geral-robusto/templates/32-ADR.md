@@ -3,6 +3,7 @@
 description: "Template para Architecture Decision Record (ADR). Documenta decisões arquiteturais com contexto, alternativas e trade-offs." modulo: "32" categoria: "templates" versao: "1.0" arquivo_destino: "docs/arquitetura/ADR/ADR-[NUMERO].md" relacionado:
 
 - "25-analise-impacto.md"
+- "27-revisao-geral.md"
 - "20-ciclo-tarefa.md"
 - "31-task-concluida.md"
 
@@ -42,13 +43,14 @@ A regra: **se a decisão tem custo grande para reverter, vira ADR. Se reverter �
 |Definição de padrão arquitetural (camadas, isolamento de storage)|✅ Sim|
 |Decisão sobre imutabilidade ou criticidade de arquivos/módulos|✅ Sim|
 |Resolução de uma decisão pendente identificada em análise de impacto|✅ Sim|
+|Decisão arquitetural surgida de achado `REV-NNN-Axx` em revisão geral do projeto|✅ Sim|
 |Adoção de padrão que impacta todo o código (idioma, formato de teste)|✅ Sim|
 |Mudança de stack ou versão com impacto estrutural|✅ Sim|
 |Decisão de **não** fazer algo importante (ex: "não usaremos microservices")|✅ Sim|
-|Convenção trivial (espaçamento, nome de função)|❌ Não — vai em `convencoes.md`|
-|Refatoração local sem impacto arquitetural|❌ Não — vira tarefa REF|
-|Implementação de algo já definido em requisitos|❌ Não — já tem origem documentada|
-|Escolha de biblioteca pequena para resolver problema isolado|❌ Não — registra no PR/commit|
+|Convenção trivial (espaçamento, nome de função)|❌ Não - vai em `convencoes.md`|
+|Refatoração local sem impacto arquitetural|❌ Não - vira tarefa REF|
+|Implementação de algo já definido em requisitos|❌ Não - já tem origem documentada|
+|Escolha de biblioteca pequena para resolver problema isolado|❌ Não - registra no PR/commit|
 
 ### Teste prático
 
@@ -160,7 +162,7 @@ Componentes de lista (`ListaRegistros`, futuras `ListaPedidos`, etc.) consomem `
 
 ## Supersede
 
-- (nenhuma) — esta é uma decisão nova, não substitui ADR anterior
+- (nenhuma) - esta é uma decisão nova, não substitui ADR anterior
 
 ## Histórico
 
@@ -185,7 +187,7 @@ Componentes de lista (`ListaRegistros`, futuras `ListaPedidos`, etc.) consomem `
 
 [1-3 parágrafos. Por que esta decisão precisou ser tomada AGORA? Que problema apareceu? Que restrições existem? Que opções estavam em cima da mesa?]
 
-[Importante: contexto explica o "porque virou questão". Não é "o que é React" — é "no nosso projeto, neste momento, surgiu situação X que exige escolha"]
+[Importante: contexto explica o "porque virou questão". Não é "o que é React" - é "no nosso projeto, neste momento, surgiu situação X que exige escolha"]
 
 ## Decisão
 
@@ -222,19 +224,19 @@ Componentes de lista (`ListaRegistros`, futuras `ListaPedidos`, etc.) consomem `
 
 ## Requisitos Relacionados
 
-- **Motivada por:** [TASK-X, RF-Y, ou contexto não-tarefa]
+- **Motivada por:** [TASK-X, RF-Y, REV-NNN-Axx, ou contexto não-tarefa]
 - **Afeta:** [áreas/features/requisitos impactados]
 - **Cumpre RNF:** [RNFs relacionados, se houver]
 
 ## Tasks Geradas
 
 - [TASK-X: descrição]
-- (ou `— (nenhuma tarefa gerada por esta ADR)`)
+- (ou `- (nenhuma tarefa gerada por esta ADR)`)
 
 ## Supersede
 
-- [ADR-XX: título] — caso esta substitua decisão anterior
-- (ou `— (decisão nova, não substitui anterior)`)
+- [ADR-XX: título] - caso esta substitua decisão anterior
+- (ou `- (decisão nova, não substitui anterior)`)
 
 ## Histórico
 
@@ -269,7 +271,7 @@ Decisão **já foi tomada e implementada** no passado, mas não foi documentada.
 
 ## Consequências Observadas
 
-[O que já vimos acontecer com a decisão. Vantagens reais, problemas reais. Diferente de "consequências previstas" da ADR normal — aqui você fala do que **aconteceu de verdade**]
+[O que já vimos acontecer com a decisão. Vantagens reais, problemas reais. Diferente de "consequências previstas" da ADR normal - aqui você fala do que **aconteceu de verdade**]
 
 ## Alternativas Não Investigadas
 
@@ -360,7 +362,7 @@ A ADR-005 estabelecia [...]. Após [evento/aprendizado/mudança], notamos que a 
 
 ## Supersede
 
-- **ADR-005: [título]** — substituída por:
+- **ADR-005: [título]** - substituída por:
   - [motivo 1]
   - [motivo 2]
   - [aprendizado adquirido entre as duas decisões]
@@ -409,7 +411,7 @@ Justificativa: títulos mudam (refinamentos de redação); número não. Manter 
 
 ## Mini-FAQ
 
-**1. Quantas ADRs um projeto típico tem?** Depende muito. Projeto solo enxuto: 5-15 ADRs em 1 ano. Projeto profissional médio: 30-80. Não persiga número — persiga relevância.
+**1. Quantas ADRs um projeto típico tem?** Depende muito. Projeto solo enxuto: 5-15 ADRs em 1 ano. Projeto profissional médio: 30-80. Não persiga número - persiga relevância.
 
 **2. Quem decide se uma decisão "merece" ADR?** Use o teste prático: _"reverter é caro?"_ Se sim, vira ADR. Quando em dúvida, **pergunte ao humano** antes de criar.
 
@@ -423,7 +425,7 @@ Justificativa: títulos mudam (refinamentos de redação); número não. Manter 
 
 **7. Como mostro uma ADR no PR/commit?** Mencione no commit: `feat: implementar paginação cursor (ADR-008)`. No PR, link direto para o arquivo. Quem revisar PR vai ler a ADR para entender a decisão antes do código.
 
-**8. ADR pode conter código?** Pequenos snippets para ilustrar a decisão, sim. Mas ADR não substitui documentação de implementação. Se você está escrevendo 200 linhas de código no ADR, está fazendo errado — código vai para o projeto, ADR fica enxuta.
+**8. ADR pode conter código?** Pequenos snippets para ilustrar a decisão, sim. Mas ADR não substitui documentação de implementação. Se você está escrevendo 200 linhas de código no ADR, está fazendo errado - código vai para o projeto, ADR fica enxuta.
 
 **9. Onde fica a lista de todas as ADRs?** `docs/arquitetura/ADR/` como pasta. Opcionalmente, manter `docs/arquitetura/ADR/README.md` com índice (tabela de número, título, status, data). Útil para projetos com muitas ADRs.
 
@@ -431,7 +433,7 @@ Justificativa: títulos mudam (refinamentos de redação); número não. Manter 
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../processos/25-analise-impacto.md`](https://claude.ai/processos/25-analise-impacto.md) — Análise de impacto frequentemente gera ADR
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) — Tarefas Strict exigem ADR
-- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) — Tarefa concluída referencia ADRs geradas
-- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) — Contexto do projeto pode referenciar ADRs importantes
+- [`../processos/25-analise-impacto.md`](https://claude.ai/processos/25-analise-impacto.md) - Análise de impacto frequentemente gera ADR
+- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Tarefas Strict exigem ADR
+- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) - Tarefa concluída referencia ADRs geradas
+- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) - Contexto do projeto pode referenciar ADRs importantes

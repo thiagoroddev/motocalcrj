@@ -48,9 +48,9 @@ Em DDD clássico, comportamento de domínio pertence à entidade. Modelo anêmic
 
 ---
 
-## ~~DT-2: Divergência RevisaoGeral.status entre Código e Requisitos~~ — ENDEREÇADA (23/05/26)
+## ~~DT-2: Divergência RevisaoGeral.status entre Código e Requisitos~~ - ENDEREÇADA (23/05/26)
 
-`RevisaoGeral` foi inteiramente removido pela TASK-REF-19 — conceito morto pela ADR-003 (sem Registros). A divergência deixou de existir. Os requisitos RF-REG-* serão revistos na TASK-DOC-010.
+`RevisaoGeral` foi inteiramente removido pela TASK-REF-19 - conceito morto pela ADR-003 (sem Registros). A divergência deixou de existir. Os requisitos RF-REG-* serão revistos na TASK-DOC-010.
 
 ---
 
@@ -138,9 +138,9 @@ Motoboy com moto não-listada não consegue usar o app. Em V1 isso é aceitável
 
 ---
 
-## ~~DT-7: Substituição Automática vs Opt-in no Modo Personalizado~~ — ENDEREÇADA (23/05/26)
+## ~~DT-7: Substituição Automática vs Opt-in no Modo Personalizado~~ - ENDEREÇADA (23/05/26)
 
-ADR-003 eliminou Modo Personalizado e Registros. TASK-REF-18 removeu `modoExibicao`; TASK-REF-19 removeu `diarioTrabalho` e funções derivadas (`resolverKmDia` ficou trivial, sem `>= 1` registro). A divergência com RN-25/RN-26 deixou de existir — os requisitos serão atualizados na TASK-DOC-010.
+ADR-003 eliminou Modo Personalizado e Registros. TASK-REF-18 removeu `modoExibicao`; TASK-REF-19 removeu `diarioTrabalho` e funções derivadas (`resolverKmDia` ficou trivial, sem `>= 1` registro). A divergência com RN-25/RN-26 deixou de existir - os requisitos serão atualizados na TASK-DOC-010.
 
 ---
 
@@ -170,9 +170,9 @@ Renomear para `aluguelValor` quando schemaVersion subir. Combinar com migração
 
 ---
 
-## ~~DT-9: Sem Action de EDIT em Histórico e Diário~~ — ENDEREÇADA (23/05/26)
+## ~~DT-9: Sem Action de EDIT em Histórico e Diário~~ - ENDEREÇADA (23/05/26)
 
-Histórico de Manutenção e Diário de Trabalho foram inteiramente removidos pela TASK-REF-19 — não existe mais nem `ADD_*` nem `DELETE_*` para esses conceitos. A divergência com RF-REG-12 deixou de existir.
+Histórico de Manutenção e Diário de Trabalho foram inteiramente removidos pela TASK-REF-19 - não existe mais nem `ADD_*` nem `DELETE_*` para esses conceitos. A divergência com RF-REG-12 deixou de existir.
 
 ---
 
@@ -230,7 +230,7 @@ Quando houver usuários públicos ou dados reais a preservar, criar migração e
 
 ---
 
-## ~~DT-12: Duplicidade Abastecimento Diário × Histórico~~ — ENDEREÇADA (23/05/26)
+## ~~DT-12: Duplicidade Abastecimento Diário × Histórico~~ - ENDEREÇADA (23/05/26)
 
 Ambos os lugares (`diarioTrabalho` e `historicoManutencao.abastecimentos`) foram removidos pela TASK-REF-19. Sem dois fluxos, sem duplicidade.
 
@@ -257,7 +257,7 @@ A action `SET_ONBOARDING_CAMPO` aceita `campo: string` e `valor: unknown`. **Vá
 
 ### O que ainda usa `SET_ONBOARDING_CAMPO`
 
-Apenas o fluxo de Onboarding propriamente dito (passos 1-9) — uso legítimo. Pode permanecer como está; a action virou específica do contexto que dá nome a ela.
+Apenas o fluxo de Onboarding propriamente dito (passos 1-9) - uso legítimo. Pode permanecer como está; a action virou específica do contexto que dá nome a ela.
 
 ### Recomendação
 
@@ -265,7 +265,7 @@ Considerar DT-14 **endereçada na prática**. Manter apenas o uso intra-onboardi
 
 ---
 
-## DT-15: Vínculo Implícito entre ServicoIndependente e Peça — ENDEREÇADA
+## DT-15: Vínculo Implícito entre ServicoIndependente e Peça - ENDEREÇADA
 
 ### Situação atual
 
@@ -295,7 +295,7 @@ Manter `MAPA_PECA_PARA_SERVICO` como fonte única do vínculo enquanto houver um
 
 ---
 
-## DT-16: Excepcionais e normais somados no mesmo revisao.total — ENDEREÇADA
+## DT-16: Excepcionais e normais somados no mesmo revisao.total - ENDEREÇADA
 
 ### Situação atual
 
@@ -320,7 +320,7 @@ Manter retíficas fora de `revisao.total`. O padrão de filtro de imprevistos su
 
 ---
 
-## ~~DT-17: Componentes UI usam classes do `tailwindcss-animate` sem o plugin instalado~~ — ENDEREÇADA (23/05/26)
+## ~~DT-17: Componentes UI usam classes do `tailwindcss-animate` sem o plugin instalado~~ - ENDEREÇADA (23/05/26)
 
 ### Situação resolvida
 
@@ -361,13 +361,13 @@ Quando uma dívida for endereçada (refatorada, decidida, eliminada), **mover pa
 
 ## Histórico (Dívidas Endereçadas)
 
-### ~~DT-13: Estrutura por Índice em revisaoAutorizadaOverrides~~ — ENDEREÇADA (20/05/26)
+### ~~DT-13: Estrutura por Índice em revisaoAutorizadaOverrides~~ - ENDEREÇADA (20/05/26)
 
 Override por índice estava definido no tipo mas **nunca era lido** pelo calculador (orphan). Em TASK-REF-12, `calcularCustosPorCategoria` passou a aplicar `revisaoAutorizadaOverrides` ao `custoCicloCompleto` antes de calcular `revisaoAnual`. O override **funciona agora**.
 
 A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) permanece como risco aceito:
 - O array `preset.revisaoAutorizada` é estável (manual Honda, 7 revisões fixas)
-- Mudanças no array exigiriam migração de schema — gatilho adequado para rever
+- Mudanças no array exigiriam migração de schema - gatilho adequado para rever
 
 **Decisão:** fechar como endereçado. A fragilidade remanescente é risco conhecido e aceitável dado a estabilidade do dado.
 
@@ -381,6 +381,6 @@ A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) perm
 | 2026-05-09 (v2) | **Reescrita corrigida.** DT-2 substancialmente revisada (interpretação errada do A12 corrigida). Adicionados DT-7 a DT-13 baseados em divergências reais encontradas na engenharia reversa do código. |
 | 2026-05-11 (v3) | Referencias atualizadas para v6 e DT-12 confirmada sem sincronizacao no reducer.                                                                                                                      |
 | 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |
-| 2026-05-20 (v5) | DT-13 endereçada — override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
-| 2026-05-20 (v6) | DT-16 adicionada — excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
-| 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada — várias actions específicas já criadas, DT considerada endereçada na prática. |
+| 2026-05-20 (v5) | DT-13 endereçada - override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
+| 2026-05-20 (v6) | DT-16 adicionada - excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
+| 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada - várias actions específicas já criadas, DT considerada endereçada na prática. |

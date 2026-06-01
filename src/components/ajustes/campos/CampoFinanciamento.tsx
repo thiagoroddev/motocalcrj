@@ -24,7 +24,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
 
   if (situacaoMoto === 'financiada') {
     // Mostra as parcelas que faltam HOJE (derivado pelo tempo). Ao editar, o
-    // valor digitado vira o novo snapshot — o reducer re-ancora a referência.
+    // valor digitado vira o novo snapshot - o reducer re-ancora a referência.
     const restantesHoje = calcularParcelasRestantesAtuais(
       financeiro.parcelasRestantes,
       financeiro.dataReferenciaParcelas,

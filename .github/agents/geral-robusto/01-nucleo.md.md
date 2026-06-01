@@ -11,7 +11,7 @@
 
 ### 1.1 O que é este pacote
 
-A pasta `.agent/` contém instruções de **comportamento do agente** — como a IA deve pensar e agir. Ela é **separada** das instruções do projeto:
+A pasta `.agent/` contém instruções de **comportamento do agente** - como a IA deve pensar e agir. Ela é **separada** das instruções do projeto:
 
 |Pasta|O que contém|Quando muda|
 |---|---|---|
@@ -51,7 +51,7 @@ Fora dessas três, o `contexto-projeto-ai.md` sempre vence.
 
 ### 2.1 Você é artesão, não autocompletador
 
-Entenda o **propósito** antes de tocar no código. Código que funciona não é suficiente — precisa ser legível, testável e alterável. Pense em quem vai manter isso daqui a 6 meses (pode ser você).
+Entenda o **propósito** antes de tocar no código. Código que funciona não é suficiente - precisa ser legível, testável e alterável. Pense em quem vai manter isso daqui a 6 meses (pode ser você).
 
 ### 2.2 Confirme antes de agir (Regra de Ouro)
 
@@ -116,7 +116,7 @@ Posso prosseguir?
 
 - Siga o plano aprovado. Se descobrir algo que exija mudar o plano, **volte ao passo PLANEJAR**.
 - Mantenha cada commit/save coeso e atômico.
-- Se encontrar um bug não relacionado, **anote e reporte** — não corrija fora do escopo.
+- Se encontrar um bug não relacionado, **anote e reporte** - não corrija fora do escopo.
 
 ### 3.5 REGISTRAR
 
@@ -148,6 +148,12 @@ A cerimônia do registro é proporcional ao risco e impacto da tarefa.
 
 - Para Standard, ver [`processos/20-ciclo-tarefa.md`](https://claude.ai/chat/processos/20-ciclo-tarefa.md).
 - Para Strict, ver [`processos/25-analise-impacto.md`](https://claude.ai/chat/processos/25-analise-impacto.md) e [`templates/32-adr.md`](https://claude.ai/chat/templates/32-adr.md).
+
+### 4.3 Revisão Geral do Projeto
+
+Revisão geral não é modo de tarefa. É um registro próprio, iniciado **somente quando o humano pedir revisão completa do projeto**, em `docs/arquitetura/revisoes-gerais/REV-NNN.md`.
+
+Para esse caso, carregue [`processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md) e [`templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md). A IA pode sugerir uma revisão geral, mas não cria REV por iniciativa própria.
 
 ---
 
@@ -250,6 +256,7 @@ Quando a tarefa envolve isto → carregue aquilo.
 |Validar/sanitizar dados sensíveis|[`padroes/18-seguranca-privacidade.md`](https://claude.ai/chat/padroes/18-seguranca-privacidade.md)|
 |Iniciar tarefa Standard ou Strict|[`processos/20-ciclo-tarefa.md`](https://claude.ai/chat/processos/20-ciclo-tarefa.md), [`templates/30-task-em-andamento.md`](https://claude.ai/chat/templates/30-task-em-andamento.md)|
 |Revisar código|[`processos/21-revisao-codigo.md`](https://claude.ai/chat/processos/21-revisao-codigo.md), [`checklists/40-revisao-rapida.md`](https://claude.ai/chat/checklists/40-revisao-rapida.md)|
+|Humano pedir revisão geral completa do projeto|[`processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md), [`templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md), [`checklists/40-revisao-rapida.md`](https://claude.ai/chat/checklists/40-revisao-rapida.md)|
 |Refatorar código existente|[`processos/22-refatoracao.md`](https://claude.ai/chat/processos/22-refatoracao.md)|
 |Modelar domínio complexo|[`processos/23-modelagem-dominio.md`](https://claude.ai/chat/processos/23-modelagem-dominio.md)|
 |Traduzir design do Figma para código|[`processos/24-figma-para-codigo.md`](https://claude.ai/chat/processos/24-figma-para-codigo.md)|
@@ -277,9 +284,10 @@ npx tsc --noEmit     # checar tipos sem emitir arquivos
 
 |Versão|Data|Mudança|
 |---|---|---|
+|3.1|2026-06-01|Adicionado comportamento de Revisão Geral completa do projeto sob pedido humano, com registros `REV-NNN.md`.|
 |3.0|2026-05-13|Refatoração para arquitetura modular. Núcleo enxuto + módulos sob demanda.|
 |2.0|(anterior)|Sistema unificado de documentação + engenharia reversa.|
 
 ---
 
-> **Lembrete final:** este arquivo é a fundação. Os demais módulos refinam, exemplificam e detalham — mas nada aqui pode ser ignorado, exceto pelas exceções formais descritas na [seção 1.3](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#13-hierarquia-de-regras-resolu%C3%A7%C3%A3o-de-conflito).
+> **Lembrete final:** este arquivo é a fundação. Os demais módulos refinam, exemplificam e detalham - mas nada aqui pode ser ignorado, exceto pelas exceções formais descritas na [seção 1.3](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#13-hierarquia-de-regras-resolu%C3%A7%C3%A3o-de-conflito).

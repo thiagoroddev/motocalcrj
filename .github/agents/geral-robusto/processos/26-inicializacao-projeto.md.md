@@ -21,9 +21,9 @@ Use este módulo quando uma das três situações for verdadeira:
 
 |Cenário|Sintoma|
 |---|---|
-|**A** — Projeto novo sem documentação|Não existe `docs/contexto-projeto-ai.md` nem estrutura equivalente|
-|**B** — Projeto com docs fora do padrão|Existe documentação mas não segue a estrutura do [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md)|
-|**C** — Projeto com docs que divergem do código|Doc antiga descreve uma coisa, código faz outra|
+|**A** - Projeto novo sem documentação|Não existe `docs/contexto-projeto-ai.md` nem estrutura equivalente|
+|**B** - Projeto com docs fora do padrão|Existe documentação mas não segue a estrutura do [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md)|
+|**C** - Projeto com docs que divergem do código|Doc antiga descreve uma coisa, código faz outra|
 
 Para todos os três, o objetivo é **chegar ao mesmo estado**: projeto com `.agent/` (este pacote) + `docs/` no padrão definido aqui.
 
@@ -31,7 +31,7 @@ Para todos os três, o objetivo é **chegar ao mesmo estado**: projeto com `.age
 
 - Projeto que **já tem** `docs/contexto-projeto-ai.md` no padrão deste pacote
 - Você está apenas dando manutenção em projeto bem documentado
-- Está adicionando feature isolada — use [módulo 20](https://claude.ai/chat/20-ciclo-tarefa.md)
+- Está adicionando feature isolada - use [módulo 20](https://claude.ai/chat/20-ciclo-tarefa.md)
 
 ---
 
@@ -69,7 +69,7 @@ Em projeto pequeno (< 50 arquivos de código), você consegue ler tudo. Em proje
 |50-200 arquivos|Análise dos pontos-chave + perguntas ao humano|
 |200+ arquivos|**Peça resumo inicial ao humano**; valide pontos no código|
 
-Não é desistir — é eficiência. Humano que conhece o projeto resume em 30 minutos o que você levaria 2 dias para extrair.
+Não é desistir - é eficiência. Humano que conhece o projeto resume em 30 minutos o que você levaria 2 dias para extrair.
 
 ### 2.4 Nunca Delete Documentação Antiga
 
@@ -83,7 +83,7 @@ Mesmo que a doc velha esteja errada, ela **carrega contexto histórico**:
 
 ### 2.5 Pause em Caso de Dúvida
 
-Não tem ranking de "regras óbvias" — se algo ambíguo aparece, **pergunte ao humano**. Inicialização errada gera ruído por meses.
+Não tem ranking de "regras óbvias" - se algo ambíguo aparece, **pergunte ao humano**. Inicialização errada gera ruído por meses.
 
 ---
 
@@ -138,7 +138,7 @@ ls src/
 ls src/components/
 ```
 
-Mapeie o que existe **realmente** — não o que módulo 11 diz que **deveria** existir. Se o projeto tem `src/screens/` em vez de `src/pages/`, registre isso.
+Mapeie o que existe **realmente** - não o que módulo 11 diz que **deveria** existir. Se o projeto tem `src/screens/` em vez de `src/pages/`, registre isso.
 
 ### 4.3 Pontos-Chave a Mapear
 
@@ -159,7 +159,7 @@ Para cada item, registre o que encontrou:
 
 ### 4.4 Convenções Implícitas
 
-Algumas convenções não estão em arquivo de config — estão **no código real**. Identifique:
+Algumas convenções não estão em arquivo de config - estão **no código real**. Identifique:
 
 - **Idioma:** maioria dos nomes em PT ou EN?
 - **Nomenclatura:** boolean usa `is`/`has` ou `eh`/`tem`?
@@ -368,7 +368,7 @@ Exemplo para `requisitos/funcionais.md`:
 |---|---|---|---|---|
 | RF-01 | Usuário pode fazer login com email e senha | MUST | ✅ | Extraído de `FormularioLogin.tsx` |
 | RF-02 | Usuário pode visualizar perfil | MUST | ✅ | Extraído de rota `/perfil` |
-| RF-03 | Usuário pode editar perfil | ? | ? | **A confirmar** — vi botão "Editar" mas não tenho certeza do fluxo |
+| RF-03 | Usuário pode editar perfil | ? | ? | **A confirmar** - vi botão "Editar" mas não tenho certeza do fluxo |
 
 ## Pendente de Validação
 - RF-03: confirmar fluxo de edição
@@ -411,7 +411,7 @@ por domínio (PerfilContext, PedidoContext).
 - [ ] Esta decisão foi validada com humano em [data]
 ```
 
-Marcar "retrospectiva" deixa claro que a ADR foi escrita **depois** da decisão original — não é forjar histórico.
+Marcar "retrospectiva" deixa claro que a ADR foi escrita **depois** da decisão original - não é forjar histórico.
 
 ### 6.5 Validação com o Humano
 
@@ -451,18 +451,18 @@ Para cada arquivo/pasta de documentação antiga:
 
 Esta pasta contém documentação **anterior à inicialização do projeto no padrão `.agent/`** (data: 2026-05-13).
 
-**Status:** read-only — não atualizamos mais.
+**Status:** read-only - não atualizamos mais.
 **Motivo do arquivamento:** estrutura antiga incompatível com padrão atual.
 
 ## Conteúdo
-- `dominio/` — documentação antiga de domínio (substituída por `docs/dominios/`)
-- `ux/` — documentação antiga de UX (parcialmente migrada para `docs/design/`)
-- `historico/` — decisões antigas (algumas viraram ADRs em `docs/arquitetura/ADR/`)
+- `dominio/` - documentação antiga de domínio (substituída por `docs/dominios/`)
+- `ux/` - documentação antiga de UX (parcialmente migrada para `docs/design/`)
+- `historico/` - decisões antigas (algumas viraram ADRs em `docs/arquitetura/ADR/`)
 
 ## O Que Foi Migrado
 - Glossário (extraído de `dominio/glossario.md` → `docs/dominios/glossario.md`)
 - Lista de rotas (extraído de `historico/rotas.md` → `docs/arquitetura/rotas.md`)
-- Regras de negócio (parcialmente — algumas precisam validação)
+- Regras de negócio (parcialmente - algumas precisam validação)
 ```
 
 ### 7.3 Regras de Arquivamento
@@ -478,9 +478,9 @@ Esta pasta contém documentação **anterior à inicialização do projeto no pa
 
 Algumas coisas ficam onde estão:
 
-- **README.md da raiz do projeto** — para humanos, fica
-- **CONTRIBUTING.md, LICENSE, etc.** — convenções padrão de repo, ficam
-- **Documentação de API gerada (OpenAPI, Swagger)** — fica (é gerada automaticamente)
+- **README.md da raiz do projeto** - para humanos, fica
+- **CONTRIBUTING.md, LICENSE, etc.** - convenções padrão de repo, ficam
+- **Documentação de API gerada (OpenAPI, Swagger)** - fica (é gerada automaticamente)
 
 Arquive apenas a documentação **conceitual** que não casa com o padrão `.agent/`.
 
@@ -493,7 +493,7 @@ Quando todas as fases anteriores terminam, **gere um relatório** para o humano.
 ### 8.1 Formato
 
 ```markdown
-# Inicialização do Projeto [Nome] — Concluída
+# Inicialização do Projeto [Nome] - Concluída
 
 **Data:** 2026-05-13
 **Tempo total:** ~3 horas
@@ -524,7 +524,7 @@ Quando todas as fases anteriores terminam, **gere um relatório** para o humano.
 1. **RF-03 (editar perfil):** vi UI mas não confirmei fluxo completo
 2. **Regras de negócio sobre seguros:** encontrei lógica mas sem doc oficial
 3. **Decisão sobre ADR-001:** confirmar Context vs Zustand como escolha consciente
-4. **Tema do Tailwind:** algumas cores fora do padrão — confirmar se são oficiais
+4. **Tema do Tailwind:** algumas cores fora do padrão - confirmar se são oficiais
 
 ## Próximos Passos Sugeridos
 
@@ -541,9 +541,9 @@ Quando todas as fases anteriores terminam, **gere um relatório** para o humano.
 
 ## Arquivos para Você Revisar Primeiro
 
-1. `docs/contexto-projeto-ai.md` — ponto de entrada
-2. `docs/requisitos/funcionais.md` — pontos "a confirmar"
-3. `docs/arquivo/README.md` — entender o que foi preservado
+1. `docs/contexto-projeto-ai.md` - ponto de entrada
+2. `docs/requisitos/funcionais.md` - pontos "a confirmar"
+3. `docs/arquivo/README.md` - entender o que foi preservado
 ```
 
 ### 8.2 Por Que Relatório Importa
@@ -553,7 +553,7 @@ Quando todas as fases anteriores terminam, **gere um relatório** para o humano.
 - **Próximos passos** dão direção concreta
 - **Riscos** alertam para decisões importantes
 
-Sem relatório, humano precisa "descobrir" o que você fez — desperdício.
+Sem relatório, humano precisa "descobrir" o que você fez - desperdício.
 
 ---
 
@@ -571,16 +571,16 @@ Engenharia reversa completa é inviável. Estratégia:
 2. **Crie `contexto-projeto-ai.md`** baseado no resumo + validação pontual no código
 3. **Cubra estrutura básica de `docs/`** mas não tente preencher tudo
 4. **Marque muito como "a expandir conforme o projeto evolui"**
-5. **Iniciativa contínua** — cada nova tarefa contribui um pouco
+5. **Iniciativa contínua** - cada nova tarefa contribui um pouco
 
 ### 9.2 Projeto Sem Testes
 
 Inicialização sem rede de segurança. Cuidado especial:
 
-- Documente intensamente — você não pode validar comportamento via teste
+- Documente intensamente - você não pode validar comportamento via teste
 - Mais perguntas ao humano que normalmente
 - Tarefas pendentes geradas: criar testes para áreas críticas
-- Não force refatoração durante inicialização — só documente
+- Não force refatoração durante inicialização - só documente
 
 ### 9.3 Projeto com Documentação Que Diverge do Código
 
@@ -588,7 +588,7 @@ Quando você encontra: "doc antiga diz X, código faz Y".
 
 1. **Código vence sempre**
 2. **Documente Y no novo doc**
-3. **Anote a divergência no relatório final** — humano pode querer entender o que mudou
+3. **Anote a divergência no relatório final** - humano pode querer entender o que mudou
 4. **Não corrija silenciosamente.** Reporte: "doc antiga dizia X, código faz Y, registrei Y. Confirmar se Y está correto."
 
 ### 9.4 Projeto com Dependências Estranhas
@@ -669,7 +669,7 @@ Você (IA) chega em um projeto:
 - Existe pasta `documentacao/` com 6 arquivos antigos
 - Sem `docs/contexto-projeto-ai.md`
 
-### 11.2 Fase 1 — Análise
+### 11.2 Fase 1 - Análise
 
 Inspeciona arquivos-chave:
 
@@ -689,10 +689,10 @@ Inspeciona arquivos-chave:
 Identifica:
 
 - React 18 + Vite
-- Estado global: **Zustand** (não Context — registro)
+- Estado global: **Zustand** (não Context - registro)
 - Forms: rhf + Zod
 - Validação: Zod (importa em 12 arquivos)
-- Idioma: misto (alguns componentes em PT, outros em EN) — **flag**
+- Idioma: misto (alguns componentes em PT, outros em EN) - **flag**
 
 Inspeciona `src/`:
 
@@ -712,7 +712,7 @@ Lê 5 componentes representativos: idioma é mesclado mesmo. Marcação de pend�
 
 Lê `documentacao/` antiga: 6 arquivos sobre regras de negócio antigas, algumas válidas, algumas obsoletas.
 
-### 11.3 Fase 2 — `contexto-projeto-ai.md`
+### 11.3 Fase 2 - `contexto-projeto-ai.md`
 
 Cria arquivo:
 
@@ -728,7 +728,7 @@ Cria arquivo:
 - Zustand 4.4 (estado global)
 - react-hook-form 7.45 + Zod 3.22
 - Vite 5.1
-- Tailwind 3.3 (sem shadcn — utility puro)
+- Tailwind 3.3 (sem shadcn - utility puro)
 
 ## Estrutura Real
 `src/components/`, `src/stores/`, `src/hooks/`, `src/pages/`, `src/lib/`, `src/api/`
@@ -741,7 +741,7 @@ Cria arquivo:
 - Sem design system declarado (Tailwind puro)
 
 ## Convenções
-- **Idioma: PENDENTE — projeto tem mistura, precisa decidir**
+- **Idioma: PENDENTE - projeto tem mistura, precisa decidir**
 - Imports absolutos via `@/`
 - Stores Zustand em `stores/[dominio]Store.ts`
 
@@ -755,7 +755,7 @@ Cria arquivo:
 2. Exceções inegociáveis do `.agent/01-nucleo.md` aplicam
 ```
 
-### 11.4 Fase 3 — Estrutura `docs/`
+### 11.4 Fase 3 - Estrutura `docs/`
 
 Cria os arquivos. Destaques:
 
@@ -769,24 +769,24 @@ Cria os arquivos. Destaques:
 Marca pendências:
 
 - Idioma a decidir (PT, EN, ou padronizar)
-- Ausência total de testes — risco alto
+- Ausência total de testes - risco alto
 - `documentacao/` antiga a arquivar
 
-### 11.5 Fase 4 — Arquivamento
+### 11.5 Fase 4 - Arquivamento
 
 Move `documentacao/` para `docs/arquivo/documentacao-original/`. Cria `README.md` em arquivo explicando.
 
-### 11.6 Fase 5 — Relatório
+### 11.6 Fase 5 - Relatório
 
 Envia para humano:
 
 ```markdown
-# Inicialização do AlugaCar — Concluída
+# Inicialização do AlugaCar - Concluída
 
 ## Pontos Pendentes Críticos
-1. **Idioma do projeto** — mistura PT/EN. Padronizar?
-2. **Ausência de testes** — risco alto. Adicionar tarefa de cobertura mínima?
-3. **ADR-001 e ADR-002 são retrospectivas** — confirmar se as decisões foram conscientes ou herdadas
+1. **Idioma do projeto** - mistura PT/EN. Padronizar?
+2. **Ausência de testes** - risco alto. Adicionar tarefa de cobertura mínima?
+3. **ADR-001 e ADR-002 são retrospectivas** - confirmar se as decisões foram conscientes ou herdadas
 
 ## Riscos
 - Refatorar idioma depois é caro. Sugiro decidir agora.
@@ -831,9 +831,9 @@ Humano responde, decisões viram conteúdo definitivo. Inicialização termina.
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) — Hierarquia de regras
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Estrutura padrão de docs
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) — Manutenção contínua após inicialização
-- [`../templates/33-contexto-projeto-ai.md`](https://claude.ai/templates/33-contexto-projeto-ai.md) — Template do arquivo de contexto
-- [`../templates/34-readme-projeto.md`](https://claude.ai/templates/34-readme-projeto.md) — Template do README.md
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) — Template de ADR retrospectiva
+- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Hierarquia de regras
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura padrão de docs
+- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Manutenção contínua após inicialização
+- [`../templates/33-contexto-projeto-ai.md`](https://claude.ai/templates/33-contexto-projeto-ai.md) - Template do arquivo de contexto
+- [`../templates/34-readme-projeto.md`](https://claude.ai/templates/34-readme-projeto.md) - Template do README.md
+- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Template de ADR retrospectiva

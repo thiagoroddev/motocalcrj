@@ -23,7 +23,7 @@ export function CampoSeguro({ financeiro, dispatch }: Props) {
   const { seguro } = financeiro;
   // valorAnual é canônico; o input edita o valor exibido por periodicidade. String
   // local + commit no onBlur (padrão CardServico/CardCombustivel) evita o reformat a
-  // cada tecla que colapsava a digitação multi-dígito — ver TASK-BG-017 (revisão).
+  // cada tecla que colapsava a digitação multi-dígito - ver TASK-BG-017 (revisão).
   const valorDerivado = formatarValorSeguroParaInput(seguro.valorAnual, seguro.periodicidade);
   const [valorInput, setValorInput] = useState(valorDerivado);
   useEffect(() => {

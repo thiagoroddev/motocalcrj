@@ -77,7 +77,7 @@ export function resolverKmDia(kmPorDia: number): number {
 }
 ```
 
-`kmPorDia` declarado pelo Motoboy é a fonte única — não há mais Diário de Trabalho nem médias automáticas substituindo o valor. A função existe ainda como ponto de extensibilidade caso isso volte numa V2.
+`kmPorDia` declarado pelo Motoboy é a fonte única - não há mais Diário de Trabalho nem médias automáticas substituindo o valor. A função existe ainda como ponto de extensibilidade caso isso volte numa V2.
 
 ---
 
@@ -159,11 +159,11 @@ const diasAno = calcularDiasAno(perfil.trabalho.diasPorSemana);
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` — bloco `trabalho`
-- `src/utils/calculos.ts` — `calcularKmAnual`, `calcularDiasAno`, `resolverKmDia`
-- `Requisitos v6` — RF-EST-04 (configuração de rodagem inline)
+- `src/types/perfil.ts` - bloco `trabalho`
+- `src/utils/calculos.ts` - `calcularKmAnual`, `calcularDiasAno`, `resolverKmDia`
+- `Requisitos v6` - RF-EST-04 (configuração de rodagem inline)
 
 **Divergências encontradas:**
 
 - Bloco tem `horasPorDia` mas Onboarding não coleta. Documentado como observação.
-- Documentação atualizada em 24/05/26 (TASK-DOC-009) — seção sobre Diário de Trabalho removida (eliminado pela ADR-003 / REF-19).
+- Documentação atualizada em 24/05/26 (TASK-DOC-009) - seção sobre Diário de Trabalho removida (eliminado pela ADR-003 / REF-19).

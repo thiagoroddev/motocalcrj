@@ -62,7 +62,7 @@ export function PaginaEstimativa() {
     .map(([id, cfg]) => ({
       id,
       label: cfg.label,
-      // revisao é sub-item de manutencao — soma aqui para o visual
+      // revisao é sub-item de manutencao - soma aqui para o visual
       porcentagem:
         id === 'manutencao'
           ? (breakdown.manutencao ?? 0) + (breakdown.revisao ?? 0)

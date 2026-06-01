@@ -9,7 +9,7 @@ const OPCOES: { valor: PerfilUso; titulo: string; descricao: string }[] = [
   {
     valor: 'entrega',
     titulo: 'Entregas',
-    descricao: 'Motoboy, delivery — uso intenso e profissional',
+    descricao: 'Motoboy, delivery - uso intenso e profissional',
   },
   {
     valor: 'passageiro',

@@ -8,12 +8,12 @@
 
 ## Conceito no Mundo Real
 
-Bloco que controla **o que é exibido** na Estimativa e no Detalhamento. Não armazena valores de cálculo — armazena **preferências de visualização**:
+Bloco que controla **o que é exibido** na Estimativa e no Detalhamento. Não armazena valores de cálculo - armazena **preferências de visualização**:
 
 - Quais categorias de custo entram no donut e no total exibido
 - Quais imprevistos sugeridos (retíficas) estão ligados
 
-Após ADR-003 / TASK-REF-18 / REF-19, **não existe mais `modoExibicao` nem `modoOficinDisplay`**. O app opera em modo único — `perfilManutencao.modoRevisao` é a única fonte de "qual modo de revisão" tanto para cálculo quanto para UI.
+Após ADR-003 / TASK-REF-18 / REF-19, **não existe mais `modoExibicao` nem `modoOficinDisplay`**. O app opera em modo único - `perfilManutencao.modoRevisao` é a única fonte de "qual modo de revisão" tanto para cálculo quanto para UI.
 
 ---
 
@@ -60,7 +60,7 @@ type CategoriaDisplay = {
 imprevistosSugeridosAtivos: Record<string, boolean>;
 ```
 
-Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-completa`). Padrão é `{}` (vazio) — qualquer id sem entrada conta como **desligado**. Apenas `true` explícito ativa o cálculo da retífica no total.
+Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-completa`). Padrão é `{}` (vazio) - qualquer id sem entrada conta como **desligado**. Apenas `true` explícito ativa o cálculo da retífica no total.
 
 ### `filtrosManutencao`
 
@@ -86,7 +86,7 @@ Filtros finos persistidos da seção Manutenção no Detalhamento. `revisao` con
 | `TOGGLE_MANUTENCAO_POR_PECA` | Liga/desliga uma peça específica em `filtrosManutencao.manutencaoPorPeca` |
 | `TOGGLE_REVISAO_POR_SERVICO` | Liga/desliga um serviço em `filtrosManutencao.revisaoPorServico`         |
 
-> Actions `SET_MODO_EXIBICAO` e `SET_MODO_OFICINA` **foram removidas** pelas TASK-REF-18 e REF-19 (ADR-003 — modo único).
+> Actions `SET_MODO_EXIBICAO` e `SET_MODO_OFICINA` **foram removidas** pelas TASK-REF-18 e REF-19 (ADR-003 - modo único).
 
 ---
 
@@ -95,7 +95,7 @@ Filtros finos persistidos da seção Manutenção no Detalhamento. `revisao` con
 **Função-chave** que conecta este bloco com os cálculos (ler implementação real em `src/utils/calculos.ts`):
 
 ```typescript
-// Esboço — ver código para detalhes
+// Esboço - ver código para detalhes
 export function categoriasParaFiltros(
   cat: CategoriaDisplay,
   imprevistosSugeridosAtivos: Record<string, boolean>,
@@ -123,7 +123,7 @@ export function categoriasParaFiltros(
 1. `documentacao` → `documentos` (nomes diferentes em camadas diferentes)
 2. `manutencao` controla a categoria inteira; `filtrosManutencao.revisao` controla a linha "Revisão Geral"
 3. `imprevistos` controla `gastosCustom` (lista fechada de Multa/Sinistros/Outros)
-4. `imprevistosSugeridos` vem direto de `imprevistosSugeridosAtivos` — retíficas começam desligadas, ativam só com `true` explícito
+4. `imprevistosSugeridos` vem direto de `imprevistosSugeridosAtivos` - retíficas começam desligadas, ativam só com `true` explícito
 5. `manutencaoPorPeca`/`revisaoPorServico` vêm de `filtrosManutencao` e persistem no perfil
 
 ---
@@ -146,7 +146,7 @@ export function categoriasParaFiltros(
 
 **Regra:** Item de `imprevistosSugeridosAtivos[id]` ativa custo somente quando valor é `true` explícito. `undefined` ou `false` mantém desligado. Inverso de `manutencaoPorPeca` (que é default-on).
 
-**Por quê:** Retíficas são custos corretivos de alto km — não devem inflar o total exibido por padrão. O Motoboy liga o sugerido quando quer planejar para o evento. (BG-005)
+**Por quê:** Retíficas são custos corretivos de alto km - não devem inflar o total exibido por padrão. O Motoboy liga o sugerido quando quer planejar para o evento. (BG-005)
 
 **Onde é protegida:** lógica de `calcularTotalFiltrado` em `calculos.ts`.
 
@@ -178,9 +178,9 @@ PerfilUsuario.configuracaoDisplay
 
 ## Eventos Relacionados
 
-- `CategoriaAlternada` — `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
-- `ImprevistoSugeridoAlternado` — `TOGGLE_IMPREVISTO_SUGERIDO`. Liga/desliga uma retífica específica.
-- `FiltroManutencaoAlternado` — `TOGGLE_REVISAO_MANUTENCAO`, `TOGGLE_MANUTENCAO_POR_PECA` ou `TOGGLE_REVISAO_POR_SERVICO`.
+- `CategoriaAlternada` - `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
+- `ImprevistoSugeridoAlternado` - `TOGGLE_IMPREVISTO_SUGERIDO`. Liga/desliga uma retífica específica.
+- `FiltroManutencaoAlternado` - `TOGGLE_REVISAO_MANUTENCAO`, `TOGGLE_MANUTENCAO_POR_PECA` ou `TOGGLE_REVISAO_POR_SERVICO`.
 
 ---
 
@@ -192,7 +192,7 @@ Comportamento explícito pós TASK-BG-014. Desligar a categoria Manutenção rem
 
 ### Toggle de imprevistos controla gastosCustom
 
-Após RF-6.9, `imprevistos` é a categoria que engloba tanto os 3 presets fixos (Multa, Sinistros, Outros) quanto as retíficas sugeridas. Desligar `imprevistos` esconde os dois grupos do total. Imprevistos é a **única categoria editável direto na tela de Detalhamento** (via lápis — RF-6.11).
+Após RF-6.9, `imprevistos` é a categoria que engloba tanto os 3 presets fixos (Multa, Sinistros, Outros) quanto as retíficas sugeridas. Desligar `imprevistos` esconde os dois grupos do total. Imprevistos é a **única categoria editável direto na tela de Detalhamento** (via lápis - RF-6.11).
 
 ### Sincronização perfil → UI
 
@@ -230,9 +230,9 @@ configuracaoDisplay: {
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` — bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
-- `src/types/calculos.ts` — `FiltrosCategorias`
-- `src/utils/calculos.ts` — `categoriasParaFiltros`
-- `src/context/PerfilContext.tsx` — actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` e filtros finos de Manutenção
+- `src/types/perfil.ts` - bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
+- `src/types/calculos.ts` - `FiltrosCategorias`
+- `src/utils/calculos.ts` - `categoriasParaFiltros`
+- `src/context/PerfilContext.tsx` - actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` e filtros finos de Manutenção
 
 **Divergências encontradas:** nenhuma. Documentação atualizada em 25/05/26 (TASK-BG-014) após persistência dos filtros finos de Manutenção.

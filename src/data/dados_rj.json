@@ -13,7 +13,7 @@
     "aliquotaCarros": 0.04,
     "isencaoIdadeMinimaMeses": 180,
     "isencaoIdadeMinimaNota": "Motos com mais de 15 anos (180 meses) de fabricação são isentas de IPVA no RJ",
-    "fonte": "SEFAZ-RJ 2026 — Lei nº 2877/97 e alterações"
+    "fonte": "SEFAZ-RJ 2026 - Lei nº 2877/97 e alterações"
   },
 
   "licenciamento": {
@@ -31,9 +31,9 @@
   "combustivel": {
     "gasolinaComumPadrao": {
       "precoLitro": 6.61,
-      "semanaReferencia": "19–25 abr/2026",
+      "semanaReferencia": "19-25 abr/2026",
       "municipio": "Rio de Janeiro",
-      "fonte": "ANP — Levantamento de Preços de Combustíveis (semanal)",
+      "fonte": "ANP - Levantamento de Preços de Combustíveis (semanal)",
       "urlFonte": "https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/precos-revenda-e-de-distribuicao-combustiveis/serie-historica-do-levantamento-de-precos",
       "nota": "Atualizar mensalmente com o levantamento ANP mais recente para o município RJ."
     },
@@ -43,7 +43,7 @@
     },
     "etanolPadrao": {
       "precoLitro": 4.29,
-      "nota": "Estimativa. Pop 110i não é flex — campo apenas para usuários que informarem manualmente."
+      "nota": "Estimativa. Pop 110i não é flex - campo apenas para usuários que informarem manualmente."
     }
   },
 

@@ -87,7 +87,7 @@ Exemplo de um projeto real fictício: app de gestão de aluguel de carros (conti
 | Zustand | 4.4 | estado global |
 | react-hook-form | 7.45 | formulários |
 | Zod | 3.22 | validação + schemas |
-| Vitest | 1.4 | testes (em adoção — apenas 12 arquivos com teste) |
+| Vitest | 1.4 | testes (em adoção - apenas 12 arquivos com teste) |
 | @testing-library/react | 14.2 | testes de componentes |
 
 ## Estrutura Real de Pastas
@@ -128,8 +128,8 @@ Estes pontos foram decididos e **não devem ser revistos sem ADR explícita**:
 
 ## Convenções Específicas (diferem do default do pacote)
 
-- **Pasta `stores/` em vez de `context/`** — porque usamos Zustand.
-- **Pasta `api/` em vez de `services/`** — convenção legada, mantida por custo de migração.
+- **Pasta `stores/` em vez de `context/`** - porque usamos Zustand.
+- **Pasta `api/` em vez de `services/`** - convenção legada, mantida por custo de migração.
 - **Hooks de feature retornam objeto chamado `vm`** quando consumidos por pages.
 - **Cores de status** definidas em `tailwind.config.ts` com `success`, `warning`, `danger` (não usar cores Tailwind padrão `green-500`, `red-500` etc. diretamente para status).
 
@@ -138,7 +138,7 @@ Estes pontos foram decididos e **não devem ser revistos sem ADR explícita**:
 Lista explícita para prevenir invenção de features:
 
 - ❌ **Não tem autenticação OAuth.** Só email/senha. (Planejado para TASK-RF-9.2.)
-- ❌ **Não tem testes E2E.** Decisão consciente — ver ADR-005.
+- ❌ **Não tem testes E2E.** Decisão consciente - ver ADR-005.
 - ❌ **Não é PWA.** Sem service worker, sem instalação. Foco em web tradicional.
 - ❌ **Não tem modo escuro.** Decisão de produto.
 - ❌ **Não suporta multi-tenant nativamente.** Cada cliente é um deploy próprio.
@@ -307,7 +307,7 @@ E na seção `Estrutura Real de Pastas`:
 ```markdown
 ## Estrutura Planejada
 
-[Para projeto novo, pode descrever a estrutura **alvo** — o que será construído]
+[Para projeto novo, pode descrever a estrutura **alvo** - o que será construído]
 
 ```
 
@@ -318,7 +318,7 @@ src/ ├── ... (em criação)
 A estrutura segue o padrão do pacote `.agent/11-arquitetura-e-pastas.md` sem divergências.
 ```
 
-Para projeto novo, costuma ser mais curto (60-100 linhas) — não tem histórico nem decisões herdadas.
+Para projeto novo, costuma ser mais curto (60-100 linhas) - não tem histórico nem decisões herdadas.
 
 ---
 
@@ -347,8 +347,8 @@ E nas decisões inegociáveis:
 ```markdown
 ## Decisões Inegociáveis
 
-- **Estado global:** Zustand (retrospectivo — ADR-002)
-- **Acesso ao backend:** pasta `api/` (retrospectivo — ADR-001)
+- **Estado global:** Zustand (retrospectivo - ADR-002)
+- **Acesso ao backend:** pasta `api/` (retrospectivo - ADR-001)
 - ...
 ```
 
@@ -446,8 +446,8 @@ Padrão do pacote (núcleo nas 3 inegociáveis, este arquivo no resto).
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../01-nucleo.md`](https://claude.ai/01-nucleo.md) — Hierarquia de regras
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) — Como criar do zero em projeto existente
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Estrutura padrão linkada aqui
-- [`34-readme-projeto.md`](https://claude.ai/chat/34-readme-projeto.md) — README.md complementa (foco em humanos)
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) — ADRs linkadas a partir daqui
+- [`../01-nucleo.md`](https://claude.ai/01-nucleo.md) - Hierarquia de regras
+- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Como criar do zero em projeto existente
+- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura padrão linkada aqui
+- [`34-readme-projeto.md`](https://claude.ai/chat/34-readme-projeto.md) - README.md complementa (foco em humanos)
+- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - ADRs linkadas a partir daqui

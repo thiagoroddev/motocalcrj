@@ -63,11 +63,11 @@ export interface PresetEntry {
 
 ### Acesso isolado
 
-**Toda leitura/escrita passa por `src/services/perfilStorage.ts`** — interface `IPerfilStorage` implementada por `LocalStoragePerfilStorage`. Componentes, hooks e contexto **nunca** acessam `localStorage` diretamente. Regra de arquitetura crítica (RNF-LR-01 / INV-PRESET-3).
+**Toda leitura/escrita passa por `src/services/perfilStorage.ts`** - interface `IPerfilStorage` implementada por `LocalStoragePerfilStorage`. Componentes, hooks e contexto **nunca** acessam `localStorage` diretamente. Regra de arquitetura crítica (RNF-LR-01 / INV-PRESET-3).
 
 ### Versionamento
 
-O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atual: `1`.
+O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `1`.
 
 ---
 

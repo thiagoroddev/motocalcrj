@@ -4,7 +4,7 @@ import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 
 // Limpa os dados locais. Extraído para função pura (sem reload) para ser
-// testável em ambiente node — o reload fica no handler do botão.
+// testável em ambiente node - o reload fica no handler do botão.
 export function resetarPerfilStorage(storage: IPerfilStorage): void {
   storage.limpar();
 }

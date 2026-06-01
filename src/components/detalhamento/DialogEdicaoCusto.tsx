@@ -326,7 +326,7 @@ function ConteudoPecaComMO({
         </div>
       ) : (
         <p className="text-xs text-muted-foreground/60 leading-relaxed px-px">
-          Este item não tem serviço de troca cadastrado — apenas o preço da peça é editável aqui.
+          Este item não tem serviço de troca cadastrado - apenas o preço da peça é editável aqui.
         </p>
       )}
     </>

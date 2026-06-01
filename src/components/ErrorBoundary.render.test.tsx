@@ -4,16 +4,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { ErrorBoundary } from './ErrorBoundary';
 
-// Componente que sempre lança — dispara o getDerivedStateFromError do boundary.
+// Componente que sempre lança - dispara o getDerivedStateFromError do boundary.
 const ComponenteQueLanca = (): never => {
   throw new Error('erro de teste');
 };
 
-describe('ErrorBoundary — render (jsdom)', () => {
+describe('ErrorBoundary - render (jsdom)', () => {
   let consoleErroSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    // React e o componentDidCatch logam o erro capturado no console.error —
+    // React e o componentDidCatch logam o erro capturado no console.error -
     // silencia o ruído esperado para manter a saída de teste limpa.
     consoleErroSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });

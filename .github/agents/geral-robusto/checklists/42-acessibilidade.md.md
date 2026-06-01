@@ -57,7 +57,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 - [ ] **Todos os elementos interativos são acessíveis por teclado** (Tab navega, Enter/Espaço aciona)
 - [ ] **Foco visível** em qualquer elemento que pode receber foco (`focus-visible:ring-*` no Tailwind)
 - [ ] **Sem armadilhas de foco** (foco preso em modal sem saída, etc.)
-- [ ] **Toque mínimo 48×48px** (ou exceção documentada — ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
+- [ ] **Toque mínimo 48×48px** (ou exceção documentada - ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
 
 ### Understandable
 
@@ -119,7 +119,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 #### Ordem de tabulação
 
 - [ ] Ordem do DOM corresponde à ordem visual esperada
-- [ ] `tabindex` positivo (`tabindex="5"`) **NÃO é usado** — apenas `0` ou `-1`
+- [ ] `tabindex` positivo (`tabindex="5"`) **NÃO é usado** - apenas `0` ou `-1`
 - [ ] `tabindex="-1"` em elementos que recebem foco programático (modal ao abrir)
 - [ ] Elementos visualmente escondidos (`display:none`, `visibility:hidden`) não recebem foco
 
@@ -134,7 +134,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 
 #### Princípio: ARIA é último recurso
 
-- [ ] **HTML semântico foi usado primeiro** — ARIA só onde semântica não cobre
+- [ ] **HTML semântico foi usado primeiro** - ARIA só onde semântica não cobre
 - [ ] Nenhum `role` redundante (`<button role="button">` é erro)
 - [ ] Nenhum ARIA que contradiz HTML (`<a role="button">` é confuso)
 
@@ -143,7 +143,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 - [ ] Botões sem texto visível têm `aria-label` (ícone-botão "X" tem `aria-label="Fechar"`)
 - [ ] Ícones decorativos têm `aria-hidden="true"`
 - [ ] Ícones com significado têm `aria-label` ou texto associado
-- [ ] Inputs sem `<label>` visível têm `aria-label` (raro — prefira label visível)
+- [ ] Inputs sem `<label>` visível têm `aria-label` (raro - prefira label visível)
 - [ ] Grupos de inputs (radio, checkbox) têm `<fieldset>` + `<legend>` ou `role="group"` + `aria-labelledby`
 
 #### Estados dinâmicos
@@ -195,7 +195,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 
 #### Toque
 
-- [ ] Alvo de toque mínimo **48×48px** (WCAG AAA) — ou exceção documentada
+- [ ] Alvo de toque mínimo **48×48px** (WCAG AAA) - ou exceção documentada
 - [ ] Espaçamento entre alvos: pelo menos 8px se algum é < 48px
 - [ ] Áreas de toque podem ser maiores que o visual (padding aumenta área clicável)
 
@@ -240,7 +240,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 
 #### Erros
 
-- [ ] Mensagens de erro são específicas ("CPF deve ter 11 dígitos" — não "Inválido")
+- [ ] Mensagens de erro são específicas ("CPF deve ter 11 dígitos" - não "Inválido")
 - [ ] Erro associado ao input via `aria-describedby`
 - [ ] Input com erro tem `aria-invalid="true"`
 - [ ] Erro também é anunciado para screen reader (`role="alert"` ou similar)
@@ -257,7 +257,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 - [ ] `type` apropriado (`email`, `tel`, `number`, `date`, etc.)
 - [ ] `inputMode` apropriado (`numeric`, `decimal`, `tel`, `email`)
 - [ ] `autocomplete` apropriado (`name`, `email`, `current-password`, etc.)
-- [ ] `pattern` quando aplicável (raro — Zod valida no JS)
+- [ ] `pattern` quando aplicável (raro - Zod valida no JS)
 
 ### 8. Estados Dinâmicos
 
@@ -319,7 +319,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 |**eslint-plugin-jsx-a11y**|A11y em JSX|Roda no `npm run lint`|
 |**Pa11y CLI**|Auditoria em pipeline|`pa11y http://localhost:5173`|
 
-### Manuais (essenciais — automated não pega)
+### Manuais (essenciais - automated não pega)
 
 |Verificação|Como fazer|
 |---|---|
@@ -358,7 +358,7 @@ Design bom **prevê acessibilidade**. Se o designer reclama: tem fundamento WCAG
 
 **1. WCAG AAA é necessário?** Não para a maioria dos projetos. AAA é caro (contraste 7:1, sem timeout, sem texto em imagem, etc.) e às vezes inviável. AA é o padrão profissional. Apps específicos para a11y (governo, saúde, educação inclusiva) miram AAA.
 
-**2. Posso usar `aria-label` em vez de `<label>` visível?** Pode tecnicamente, mas **prefira label visível**. Label visível ajuda usuários cognitivos, motores, e visuais — não só screen readers. `aria-label` só quando o contexto torna desnecessário (ex: botão "X" para fechar).
+**2. Posso usar `aria-label` em vez de `<label>` visível?** Pode tecnicamente, mas **prefira label visível**. Label visível ajuda usuários cognitivos, motores, e visuais - não só screen readers. `aria-label` só quando o contexto torna desnecessário (ex: botão "X" para fechar).
 
 **3. Botão de ícone sem texto precisa de `aria-label`?** Sim sempre. Sem ele, screen reader anuncia "botão" sem dizer **qual**. Inacessível.
 
@@ -370,7 +370,7 @@ Design bom **prevê acessibilidade**. Se o designer reclama: tem fundamento WCAG
 
 **7. PWA mobile precisa de tudo isso?** Sim e mais. Touch precisa de alvos maiores, zoom de pinça precisa funcionar, orientação landscape/portrait precisa renderizar bem.
 
-**8. Como vendo a11y para stakeholder/cliente?** Argumentos: (1) **Legal** — LGPD/LBI/ADA podem obrigar; (2) **Mercado** — ~15% das pessoas têm alguma deficiência; (3) **SEO** — semântica = melhor indexação; (4) **Qualidade** — boas práticas a11y são boas práticas gerais.
+**8. Como vendo a11y para stakeholder/cliente?** Argumentos: (1) **Legal** - LGPD/LBI/ADA podem obrigar; (2) **Mercado** - ~15% das pessoas têm alguma deficiência; (3) **SEO** - semântica = melhor indexação; (4) **Qualidade** - boas práticas a11y são boas práticas gerais.
 
 **9. Erro do usuário e erro de validação são diferentes?** Sim. Validação automática (campo CPF inválido) usa `aria-invalid` + `aria-describedby`. Erro do usuário ao tentar ação não-permitida usa toast com `role="alert"`. Ambos são acessíveis, mas com semântica diferente.
 
@@ -386,9 +386,9 @@ Design bom **prevê acessibilidade**. Se o designer reclama: tem fundamento WCAG
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) — Checklist master
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) — Checklist de segurança
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) — Checklist de performance
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) — Conceitos detalhados
-- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) — Componentes UI acessíveis por design
-- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) — Como tratar a11y vinda de design
+- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master
+- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist de segurança
+- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist de performance
+- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Conceitos detalhados
+- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Componentes UI acessíveis por design
+- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) - Como tratar a11y vinda de design

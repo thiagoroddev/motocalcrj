@@ -22,9 +22,9 @@ Cada anti-padrão tem nível de gravidade:
 
 |Nível|Significado|
 |---|---|
-|🔴|**Crítico** — vira bug ou risco real|
-|🟡|**Importante** — manutenção cara, bugs prováveis|
-|🟢|**Cosmético** — feio mas funciona|
+|🔴|**Crítico** - vira bug ou risco real|
+|🟡|**Importante** - manutenção cara, bugs prováveis|
+|🟢|**Cosmético** - feio mas funciona|
 
 ---
 
@@ -109,7 +109,7 @@ const [nomeMaiusculo, setNomeMaiusculo] = useState('')
 useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 ```
 
-**Por que é ruim:** Mesmo problema do anterior, pior — 2 fontes de verdade. **Conserto:** Uma única fonte: `const nomeMaiusculo = nome.toUpperCase()`.
+**Por que é ruim:** Mesmo problema do anterior, pior - 2 fontes de verdade. **Conserto:** Uma única fonte: `const nomeMaiusculo = nome.toUpperCase()`.
 
 ### 🟡 Setter Exposto Em Vez de Handler
 
@@ -125,7 +125,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Hook Customizado Com Retorno Gigante
 
-**Sintoma:** Hook retorna 20 coisas (states, setters, handlers, derivações...). **Por que é ruim:** Interface confusa, page consome mais do que precisa, re-render excessivo. **Conserto:** Interface mínima — só o que JSX consome. Se realmente precisa de 20, divida em sub-hooks compostos.
+**Sintoma:** Hook retorna 20 coisas (states, setters, handlers, derivações...). **Por que é ruim:** Interface confusa, page consome mais do que precisa, re-render excessivo. **Conserto:** Interface mínima - só o que JSX consome. Se realmente precisa de 20, divida em sub-hooks compostos.
 
 ### 🟡 Mutação Direta de State
 
@@ -181,7 +181,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Placeholder em Vez de Label
 
-**Sintoma:** `<input placeholder="Email" />` sem `<label>` visível. **Por que é ruim:** Quando digita, placeholder some — usuário esquece o que era o campo. Inacessível. **Conserto:** `<label htmlFor="email">Email</label>` + `<input id="email" />`. Placeholder pode complementar mas não substitui.
+**Sintoma:** `<input placeholder="Email" />` sem `<label>` visível. **Por que é ruim:** Quando digita, placeholder some - usuário esquece o que era o campo. Inacessível. **Conserto:** `<label htmlFor="email">Email</label>` + `<input id="email" />`. Placeholder pode complementar mas não substitui.
 
 ### 🟡 Mensagem de Erro Vaga
 
@@ -195,7 +195,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Testes de Implementação
 
-**Sintoma:** Teste que checa estado interno (`useState` específico) ou método interno (mock de função privada). **Por que é ruim:** Refatoração quebra testes mesmo com comportamento preservado. **Conserto:** Teste **comportamento**. "Quando clica em X, mostra Y" — não "chama setState com valor Z".
+**Sintoma:** Teste que checa estado interno (`useState` específico) ou método interno (mock de função privada). **Por que é ruim:** Refatoração quebra testes mesmo com comportamento preservado. **Conserto:** Teste **comportamento**. "Quando clica em X, mostra Y" - não "chama setState com valor Z".
 
 ### 🟡 Mock Excessivo
 
@@ -277,7 +277,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🔴 `dangerouslySetInnerHTML` Sem Sanitização
 
-**Sintoma:** `<div dangerouslySetInnerHTML={{ __html: userInput }} />`. **Por que é ruim:** XSS clássico. Qualquer JS injetado executa. **Conserto:** DOMPurify com allowlist restritiva. Ou repensar — talvez markdown processado serve.
+**Sintoma:** `<div dangerouslySetInnerHTML={{ __html: userInput }} />`. **Por que é ruim:** XSS clássico. Qualquer JS injetado executa. **Conserto:** DOMPurify com allowlist restritiva. Ou repensar - talvez markdown processado serve.
 
 ### 🔴 Segredo Hardcoded
 
@@ -303,7 +303,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Concluir Sem Revisão
 
-**Sintoma:** Mover tarefa de em-andamento para concluida sem seção `## Revisão`. **Por que é ruim:** Drift entre código real e o que se esperava. Bugs passam. **Conserto:** Sempre seção `## Revisão` — mesmo `N/A com motivo` é aceitável; silêncio não.
+**Sintoma:** Mover tarefa de em-andamento para concluida sem seção `## Revisão`. **Por que é ruim:** Drift entre código real e o que se esperava. Bugs passam. **Conserto:** Sempre seção `## Revisão` - mesmo `N/A com motivo` é aceitável; silêncio não.
 
 ### 🟡 Achado Sumindo na Revisão
 
@@ -329,7 +329,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Análise de Impacto Pulada
 
-**Sintoma:** Tarefa Strict iniciada sem análise prévia das áreas afetadas. **Por que é ruim:** Descobertas no meio da implementação. Estimativa errada. **Conserto:** Análise antes do plano — mesmo "mini-análise" curta. Detalhes em [módulo 25](https://claude.ai/processos/25-analise-impacto.md).
+**Sintoma:** Tarefa Strict iniciada sem análise prévia das áreas afetadas. **Por que é ruim:** Descobertas no meio da implementação. Estimativa errada. **Conserto:** Análise antes do plano - mesmo "mini-análise" curta. Detalhes em [módulo 25](https://claude.ai/processos/25-analise-impacto.md).
 
 ---
 
@@ -359,7 +359,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Otimismo Pós-Refatoração
 
-**Sintoma:** "Refatorei mas não testei — vai funcionar." **Por que é ruim:** Refatoração sem testes é apostar. Bugs sutis aparecem em produção. **Conserto:** Rede de segurança (testes) antes de refatorar. Detalhes em [módulo 22](https://claude.ai/processos/22-refatoracao.md).
+**Sintoma:** "Refatorei mas não testei - vai funcionar." **Por que é ruim:** Refatoração sem testes é apostar. Bugs sutis aparecem em produção. **Conserto:** Rede de segurança (testes) antes de refatorar. Detalhes em [módulo 22](https://claude.ai/processos/22-refatoracao.md).
 
 ### 🟡 "Vou Atualizar a Doc Depois"
 
@@ -371,7 +371,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🔴 Não Confirmar Em Ação Destrutiva
 
-**Sintoma:** IA executa `rm`, deleta tarefa, ou modifica arquivo crítico sem confirmação. **Por que é ruim:** Reversão difícil ou impossível. **Conserto:** Confirmação **sempre** para ações destrutivas — uma das 3 regras inegociáveis do núcleo.
+**Sintoma:** IA executa `rm`, deleta tarefa, ou modifica arquivo crítico sem confirmação. **Por que é ruim:** Reversão difícil ou impossível. **Conserto:** Confirmação **sempre** para ações destrutivas - uma das 3 regras inegociáveis do núcleo.
 
 ---
 
@@ -379,13 +379,13 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 **1. Por que catálogo separado em vez de incluir tudo nos módulos?** Os módulos cobrem anti-padrões da sua área, mas devs procuram **por sintoma**. Catálogo procurável (Ctrl+F) é otimizado para essa busca.
 
-**2. Posso adicionar anti-padrões do meu projeto?** Sim. Crie `docs/anti-padroes-projeto.md` com regras específicas (ex: "Não usar tabela do legado X" — só faz sentido nesse projeto).
+**2. Posso adicionar anti-padrões do meu projeto?** Sim. Crie `docs/anti-padroes-projeto.md` com regras específicas (ex: "Não usar tabela do legado X" - só faz sentido nesse projeto).
 
 **3. Como nomeio anti-padrão novo?** Se tem nome consagrado (inglês ou português), use. Se não, nome curto e descritivo do sintoma. Ex: "Setter Exposto Em Vez de Handler".
 
 **4. Anti-padrão vira regra de lint?** Quando possível, sim. ESLint detecta muitos (`react-hooks/exhaustive-deps`, `@typescript-eslint/no-explicit-any`). Para os que lint não pega, vira item de checklist.
 
-**5. Todo anti-padrão é sempre ruim?** Quase. Alguns têm exceções raras (ex: `any` em integração com lib mal-tipada — com comentário). Marque a exceção e justifique.
+**5. Todo anti-padrão é sempre ruim?** Quase. Alguns têm exceções raras (ex: `any` em integração com lib mal-tipada - com comentário). Marque a exceção e justifique.
 
 **6. Como ensino anti-padrões para a IA?** A IA usa este pacote como contexto. Quando este arquivo está em contexto, IA reconhece os padrões pelos nomes durante revisão.
 
@@ -397,8 +397,8 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 🔗 Referências e Módulos Relacionados
 
-- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) — Quick-reference de comandos
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) — Definições
-- [`40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) — Checklist que detecta esses anti-padrões
-- Módulos `padroes/` (10-18) — Padrões corretos correspondentes
-- Módulos `processos/` (20-26) — Processos que previnem esses anti-padrões
+- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) - Quick-reference de comandos
+- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições
+- [`40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) - Checklist que detecta esses anti-padrões
+- Módulos `padroes/` (10-18) - Padrões corretos correspondentes
+- Módulos `processos/` (20-26) - Processos que previnem esses anti-padrões

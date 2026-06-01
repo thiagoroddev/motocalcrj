@@ -15,14 +15,14 @@ description: "Checklist detalhado de performance. Core Web Vitals + verificaçõ
 
 ## Princípio: Medir Antes de Otimizar
 
-> _"Premature optimization is the root of all evil."_ — Donald Knuth
+> _"Premature optimization is the root of all evil."_ - Donald Knuth
 
 Antes dos itens:
 
-1. **Sem medição, não há problema real** — apenas suspeita.
+1. **Sem medição, não há problema real** - apenas suspeita.
 2. **Otimização tem custo cognitivo.** Cada `memo` adiciona complexidade.
-3. **Concentre-se em onde escala** (imagens, bundle, listas grandes — não em ganhar 0.5ms).
-4. **Performance é proporcional** — app de 10 usuários, regra diferente de app de 1 milhão.
+3. **Concentre-se em onde escala** (imagens, bundle, listas grandes - não em ganhar 0.5ms).
+4. **Performance é proporcional** - app de 10 usuários, regra diferente de app de 1 milhão.
 
 Se você está "otimizando" sem ter medido, **pare** e meça primeiro.
 
@@ -67,7 +67,7 @@ Métricas secundárias úteis: **FCP** (First Contentful Paint, < 1.8s), **TTFB*
 
 ### Cuidados Básicos
 
-- [ ] **Sem cálculo pesado em render** (filter, sort, reduce de 1000+ itens) — usar `useMemo`
+- [ ] **Sem cálculo pesado em render** (filter, sort, reduce de 1000+ itens) - usar `useMemo`
 - [ ] **Sem `console.log` em loop** ou em re-render frequente
 
 Cumpriu essas? Para mudança Standard típica, está bom. Para feature de listagem grande, dashboard, ou tela com muitos elementos, prossiga para versão completa.
@@ -202,7 +202,7 @@ Cumpriu essas? Para mudança Standard típica, está bom. Para feature de listag
 
 #### Storage
 
-- [ ] localStorage acessado raramente (operação síncrona — bloqueia main thread)
+- [ ] localStorage acessado raramente (operação síncrona - bloqueia main thread)
 - [ ] IndexedDB para dados grandes (assíncrono, escala)
 - [ ] Sem leituras de storage em loop ou em re-render frequente
 - [ ] Dados grandes (10kb+) em localStorage são reconsiderados
@@ -211,7 +211,7 @@ Cumpriu essas? Para mudança Standard típica, está bom. Para feature de listag
 
 #### Performance
 
-- [ ] Animações usam `transform` e `opacity` (compositing) — não `width`, `height`, `top`, `left`
+- [ ] Animações usam `transform` e `opacity` (compositing) - não `width`, `height`, `top`, `left`
 - [ ] `will-change` usado pontualmente (não em todos os elementos animados)
 - [ ] Animações em 60fps (16ms por frame) confirmado em DevTools Performance
 - [ ] Sem animação rodando quando não visível
@@ -280,7 +280,7 @@ Cumpriu essas? Para mudança Standard típica, está bom. Para feature de listag
 
 ### 10. Monitoramento em Produção
 
-Para projetos sérios — opcional em projeto solo.
+Para projetos sérios - opcional em projeto solo.
 
 - [ ] Real User Monitoring (RUM) configurado (web-vitals lib, Vercel Analytics, Datadog RUM, etc.)
 - [ ] Métricas de Core Web Vitals coletadas para usuários reais
@@ -374,7 +374,7 @@ Lib que ajuda mas custa 100kb. Vale?
 - SSR (Next.js, Remix): melhor LCP, FCP, SEO
 - SPA tradicional (Vite SPA): melhor INP em interações, simplicidade
 
-Decisão arquitetural — vira ADR.
+Decisão arquitetural - vira ADR.
 
 ---
 
@@ -386,26 +386,26 @@ Decisão arquitetural — vira ADR.
 
 **3. Como sei se algo está lento?** Profiler do React DevTools mostra ms por render. Performance tab do Chrome mostra long tasks (>50ms vermelho). Lighthouse dá score geral. Comece pelo Lighthouse, aprofunde no profiler se score baixo.
 
-**4. Bundle de 500kb é ruim?** Depende. 500kb gzipped é alto — alvo é < 200kb gzipped para inicial. Para apps complexos, code split é a saída. Não otimize bundle prematuramente; meça primeiro.
+**4. Bundle de 500kb é ruim?** Depende. 500kb gzipped é alto - alvo é < 200kb gzipped para inicial. Para apps complexos, code split é a saída. Não otimize bundle prematuramente; meça primeiro.
 
 **5. SSR é sempre melhor que CSR?** Não. SSR melhora LCP e SEO, mas tem custos (infraestrutura, complexidade). Para app interno autenticado, CSR pode ser melhor. Decisão por contexto.
 
-**6. Quando preciso virtualizar lista?** ~100 itens: pode pensar. 500 itens: provavelmente sim. 1000+: certeza. Mas teste — depende do peso de cada item. Lista de strings simples vai bem com 1000 itens; lista de cards complexos pode sofrer com 100.
+**6. Quando preciso virtualizar lista?** ~100 itens: pode pensar. 500 itens: provavelmente sim. 1000+: certeza. Mas teste - depende do peso de cada item. Lista de strings simples vai bem com 1000 itens; lista de cards complexos pode sofrer com 100.
 
 **7. Imagens lazy degradam UX?** Não, se feitas certo. Use `loading="lazy"` em imagens fora da viewport. Para imagens above-the-fold (hero), use `loading="eager"` ou ausência (default). Imagens críticas para LCP podem ter `fetchpriority="high"`.
 
-**8. Devo usar React Query / SWR?** Para apps com muito fetch, sim — cache + dedup + revalidação sai grátis. Para app simples com 2-3 endpoints, fetch nativo + hook próprio pode bastar. Decisão por escala.
+**8. Devo usar React Query / SWR?** Para apps com muito fetch, sim - cache + dedup + revalidação sai grátis. Para app simples com 2-3 endpoints, fetch nativo + hook próprio pode bastar. Decisão por escala.
 
-**9. Animações no `transform` são sempre ok?** Quase. `transform` + `opacity` rodam na GPU (compositing), não bloqueiam main thread. Animar `width`, `height`, `top`, `left` força layout/paint — pesado. Use `transform: translateX()` em vez de `left`, etc.
+**9. Animações no `transform` são sempre ok?** Quase. `transform` + `opacity` rodam na GPU (compositing), não bloqueiam main thread. Animar `width`, `height`, `top`, `left` força layout/paint - pesado. Use `transform: translateX()` em vez de `left`, etc.
 
-**10. Otimização premature é tão ruim quanto dizem?** Sim. Código mais complexo, mais bugs, manutenção mais cara — sem ganho real. **Sempre meça primeiro**. Se não tem dado mostrando problema, provavelmente não há problema que justifique otimização.
+**10. Otimização premature é tão ruim quanto dizem?** Sim. Código mais complexo, mais bugs, manutenção mais cara - sem ganho real. **Sempre meça primeiro**. Se não tem dado mostrando problema, provavelmente não há problema que justifique otimização.
 
 ---
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) — Checklist master
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) — Checklist de segurança
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) — Checklist de acessibilidade
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) — Conceitos detalhados
-- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) — Padrões React que afetam performance
+- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master
+- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist de segurança
+- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist de acessibilidade
+- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Conceitos detalhados
+- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrões React que afetam performance

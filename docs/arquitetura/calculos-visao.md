@@ -1,12 +1,12 @@
-# MotoCalc RJ — Visão da Camada de Cálculo
+# MotoCalc RJ - Visão da Camada de Cálculo
 
-> **Propósito:** mapa de alto nível das funções de cálculo, suas assinaturas atuais e o pipeline de orquestração. **Não é referência detalhada de implementação** — para isso, ler diretamente `src/utils/calculos.ts` e `src/types/calculos.ts`.
+> **Propósito:** mapa de alto nível das funções de cálculo, suas assinaturas atuais e o pipeline de orquestração. **Não é referência detalhada de implementação** - para isso, ler diretamente `src/utils/calculos.ts` e `src/types/calculos.ts`.
 > **Última atualização:** 2026-05-24 (TASK-DOC-009).
 > **Verdade primária:** `src/utils/calculos.ts`, `src/types/calculos.ts`, `src/hooks/useCustos.ts`.
 
 ---
 
-## I — Princípios
+## I - Princípios
 
 1. **Modo único (ADR-003):** não há mais Registros nem `modoExibicao`. Override sempre se aplica quando presente; sem override, cai no Preset JSON.
 2. **`calculos.ts` é puro:** sem side-effects, sem state externo. Todas as funções recebem dados e retornam resultados.
@@ -16,26 +16,26 @@
 
 ---
 
-## II — Pipeline (top-down)
+## II - Pipeline (top-down)
 
 ```
 ENTRADAS
   perfil (PerfilUsuario) + preset (PresetMoto) + dadosRJ + valorFipe + tabelaLicenciamento
                             │
                             ▼
-ETAPA 1 — Rodagem
+ETAPA 1 - Rodagem
   calcularKmAnual(kmDia, diasSemana)          → kmAnual
   calcularDiasAno(diasSemana)                 → diasAno (não 365!)
                             │
                             ▼
-ETAPA 2 — CPK por peça
+ETAPA 2 - CPK por peça
   calcularCpkPorPeca({preset, tipoUso, perfilPecas, modoRevisao,
                       kmAtual, kmAnual, kmUltimaTrocas,
                       pecasOverrides, servicosIndependentes})
     → Map<pecaId, CustoPeca>
                             │
                             ▼
-ETAPA 3 — Custos por categoria
+ETAPA 3 - Custos por categoria
   calcularCustosPorCategoria(perfil, preset, dadosRJ, valorFipe,
                              tabelaLicenciamento)
     → CustosPorCategoria { documentos, revisao, manutencao,
@@ -43,7 +43,7 @@ ETAPA 3 — Custos por categoria
                            financiamento, gastosCustom }
                             │
                             ▼
-ETAPA 4 — Resultado completo
+ETAPA 4 - Resultado completo
   calcularResultado(...)
     → ResultadoCalculo { custos, granularidades, granularidadesMoto,
                          kmAnual, diasAno }
@@ -56,11 +56,11 @@ USO NA UI
 
 ---
 
-## III — Catálogo de funções públicas
+## III - Catálogo de funções públicas
 
-Todas exportadas de `src/utils/calculos.ts`. Assinaturas resumidas — ler o arquivo para corpo e edge cases.
+Todas exportadas de `src/utils/calculos.ts`. Assinaturas resumidas - ler o arquivo para corpo e edge cases.
 
-### III.1 — Rodagem (modo único, sem registros)
+### III.1 - Rodagem (modo único, sem registros)
 
 ```typescript
 resolverKmDia(kmPorDia: number): number
@@ -68,7 +68,7 @@ calcularKmAnual(kmDia: number, diasSemana: number): number   // kmDia × diasSem
 calcularDiasAno(diasSemana: number): number                  // diasSemana × 52
 ```
 
-### III.2 — Combustível
+### III.2 - Combustível
 
 ```typescript
 resolverConsumoEfetivo(preset: PresetMoto, usaBau: boolean): number
@@ -76,7 +76,7 @@ calcularCpkCombustivel(precoGasolina: number, consumoKmL: number): number
 calcularCustoCombustivelAnual(cpkCombustivel: number, kmAnual: number): number
 ```
 
-### III.3 — CPK por peça
+### III.3 - CPK por peça
 
 ```typescript
 resolverIntervaloPeca(pecaId, preset, tipoUso, pecasOverrides?, servicosIndependentes?): number
@@ -98,7 +98,7 @@ calcularCustoManutencaoAnual(cpkPecasTotal: number, kmAnual: number): number
 2. Preset JSON (`precoOriginal` ou `precoParalela`)
 3. Fallback `0`
 
-### III.4 — Documentos
+### III.4 - Documentos
 
 ```typescript
 calcularIPVA(valorFipe, aliquota, anoMoto, anoAtual): number  // 0 se moto >= 15 anos
@@ -106,7 +106,7 @@ calcularLicenciamento(anoAtual, tabela): number
 calcularCustoDocumentosAnual(ipva, licenciamento): number
 ```
 
-### III.5 — Revisão periódica (dois modos)
+### III.5 - Revisão periódica (dois modos)
 
 ```typescript
 calcularDetalhesRevisaoAnual(modoRevisao, kmAnual, opcoes): CustosPorCategoria['revisao']
@@ -116,7 +116,7 @@ calcularCustoRevisaoAnual(modoRevisao, kmAnual, opcoes): number
 - **`autorizadas`:** `(custoCicloCompleto / 36000) × kmAnual`. Defaults: `custoCicloCompleto = 3334.62`, `quantidadeRevisoesCicloHonda = 7`.
 - **`independentes`:** soma `(precoMaoDeObra / intervalKm) × kmAnual` para cada `ServicoIndependente` com `ativo: true && !ehExcepcional`.
 
-### III.6 — Custos fixos e operacionais
+### III.6 - Custos fixos e operacionais
 
 ```typescript
 calcularCustoInternetAnual(temInternet: boolean, precoInternet: number): number
@@ -132,7 +132,7 @@ calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): number  // soma de 
 - `financiada` + parcela → `parcela × 12`
 - `alugada` + valor → `aluguel × 12` (mensal) ou `aluguel × 52` (semanal)
 
-### III.7 — Agregação
+### III.7 - Agregação
 
 ```typescript
 calcularCustosPorCategoria(perfil, preset, dadosRJ, valorFipe, tabelaLicenciamento): CustosPorCategoria
@@ -151,18 +151,18 @@ categoriasParaFiltros(cat: CategoriaDisplay, imprevistosSugeridosAtivos, filtros
 
 ---
 
-## IV — Tipos de saída (em `src/types/calculos.ts`)
+## IV - Tipos de saída (em `src/types/calculos.ts`)
 
-`CustosPorCategoria`, `CustoPeca`, `CustoServicoRevisao`, `CustoImprevistoSugerido`, `GranularidadesCusto`, `FiltrosCategorias`, `ResultadoCalculo`. Ler o arquivo — é curto (183 linhas) e autoexplicativo.
+`CustosPorCategoria`, `CustoPeca`, `CustoServicoRevisao`, `CustoImprevistoSugerido`, `GranularidadesCusto`, `FiltrosCategorias`, `ResultadoCalculo`. Ler o arquivo - é curto (183 linhas) e autoexplicativo.
 
 **Convenções importantes:**
 - Em `manutencaoPorPeca` e `revisaoPorServico`: item é **ativo** se valor é `true` ou `undefined` (default-active).
 - Em `imprevistosSugeridos`: item só é ativo se valor é `true` explícito (default-off).
-- `CustoPeca.fonte: 'preset' | 'registro'` — semântica atual é "tem override" (apesar do nome `registro` herdado). Não renomear sem nova ADR.
+- `CustoPeca.fonte: 'preset' | 'registro'` - semântica atual é "tem override" (apesar do nome `registro` herdado). Não renomear sem nova ADR.
 
 ---
 
-## V — Função → Componente → Tela
+## V - Função → Componente → Tela
 
 | Função / Tipo                        | Hook ou consumidor    | Componente / Tela            |
 | ------------------------------------ | --------------------- | ---------------------------- |
@@ -172,12 +172,12 @@ categoriasParaFiltros(cat: CategoriaDisplay, imprevistosSugeridosAtivos, filtros
 | `calcularBreakdownPercentual`        | `PaginaDetalhamento`  | donut chart                  |
 | `calcularCpkPorPeca`                 | `useCustos`           | `PaginaInsumos` (CPK por peça) |
 | `calcularCpkCombustivel`             | `useCustos`           | `PaginaInsumos` (card combustível) |
-| `calcularCicloPeca`                  | `calcularCpkPorPeca`  | indireto — `proximaTrocaKm` em CustoPeca |
+| `calcularCicloPeca`                  | `calcularCpkPorPeca`  | indireto - `proximaTrocaKm` em CustoPeca |
 | `categoriasParaFiltros`              | `PaginaDetalhamento`  | filtros do donut e total     |
 
 ---
 
-## VI — Riscos e armadilhas
+## VI - Riscos e armadilhas
 
 | Risco                                            | Mitigação atual                                                          |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
@@ -192,8 +192,8 @@ categoriasParaFiltros(cat: CategoriaDisplay, imprevistosSugeridosAtivos, filtros
 
 ---
 
-## VII — Histórico
+## VII - Histórico
 
 | Data       | Mudança |
 | ---------- | ------- |
-| 2026-05-24 | Criação (TASK-DOC-009) — substitui `calculos-api.md` (espec pré-implementação obsoleta deletada na mesma task) |
+| 2026-05-24 | Criação (TASK-DOC-009) - substitui `calculos-api.md` (espec pré-implementação obsoleta deletada na mesma task) |

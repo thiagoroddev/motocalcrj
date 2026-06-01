@@ -11,7 +11,7 @@ description: "Tradução de design (Figma) para código: análise visual, spec t
 
 # 🎨 Figma para Código
 
-> Traduzir design para código é onde **dois mundos se encontram**: pensamento visual do designer e pensamento estrutural do dev. A maioria dos bugs de implementação não vem de falta de skill técnico — vem de **tradução descuidada**.
+> Traduzir design para código é onde **dois mundos se encontram**: pensamento visual do designer e pensamento estrutural do dev. A maioria dos bugs de implementação não vem de falta de skill técnico - vem de **tradução descuidada**.
 
 ---
 
@@ -108,7 +108,7 @@ Esta é a parte que **mais é esquecida**. Toda tela tem mais que um estado:
 |Estado|O que mostrar|
 |---|---|
 |**Padrão (com dados)**|O design "normal" que você está vendo|
-|**Vazio**|Quando não há dados — mensagem, ilustração, CTA|
+|**Vazio**|Quando não há dados - mensagem, ilustração, CTA|
 |**Carregando**|Spinner, skeleton, indicador de progresso|
 |**Erro**|Mensagem + ação (tentar novamente, reportar)|
 |**Sem permissão**|Quando usuário não pode ver/fazer|
@@ -131,7 +131,7 @@ Você termina a análise com:
 
 ## 3. Fase 2: Especificação Técnica
 
-Agora você transforma a análise visual em **documento técnico** — antes de codar.
+Agora você transforma a análise visual em **documento técnico** - antes de codar.
 
 ### 3.1 Template de Spec
 
@@ -161,9 +161,9 @@ Agora você transforma a análise visual em **documento técnico** — antes de 
 | Estado | Condição | O que renderiza | Tem design? |
 |---|---|---|---|
 | Padrão | `dados.length > 0` | Lista de cards | Sim |
-| Vazio | `dados.length === 0` | `EstadoVazio` com CTA | **Não — propor** |
-| Carregando | `isLoading` | Skeleton de 3 cards | **Não — propor** |
-| Erro | `erro` | Alerta com retry | **Não — propor** |
+| Vazio | `dados.length === 0` | `EstadoVazio` com CTA | **Não - propor** |
+| Carregando | `isLoading` | Skeleton de 3 cards | **Não - propor** |
+| Erro | `erro` | Alerta com retry | **Não - propor** |
 
 ### Navegação
 | Ação do Usuário | Destino |
@@ -173,13 +173,13 @@ Agora você transforma a análise visual em **documento técnico** — antes de 
 | Clicar em um card | `/produtos/:id` |
 
 ### Componentes Novos (vão exigir criação)
-- `CardProduto` — não existe versão equivalente. Vai em `components/produtos/`
-- `EstadoVazio` — existe? Verificar antes de criar
+- `CardProduto` - não existe versão equivalente. Vai em `components/produtos/`
+- `EstadoVazio` - existe? Verificar antes de criar
 
 ### Perguntas Pendentes ao Designer
-1. Estado vazio — qual mensagem e CTA?
-2. Mobile — design tem versão? Se não, posso adaptar como?
-3. Loading — spinner ou skeleton?
+1. Estado vazio - qual mensagem e CTA?
+2. Mobile - design tem versão? Se não, posso adaptar como?
+3. Loading - spinner ou skeleton?
 ```
 
 ### 3.2 Por Que Spec Antes de Código
@@ -391,7 +391,7 @@ Manter um catálogo de componentes facilita reuso. Opções:
 |**Página de showcase** (`pages/dev/components.tsx`)|Projeto solo/pequeno|
 |**`docs/arquitetura/componentes-ui.md`**|Lista textual mínima|
 
-Para projeto solo, página de showcase é prática — você vê todos os componentes existentes antes de criar duplicata.
+Para projeto solo, página de showcase é prática - você vê todos os componentes existentes antes de criar duplicata.
 
 ---
 
@@ -404,12 +404,12 @@ Design mostra estado "ideal". Você precisa pensar em **todos os outros**.
 Para qualquer tela com dados:
 
 ```
-1. Padrão        — design mostra
-2. Vazio         — frequentemente esquecido
-3. Carregando    — quase sempre esquecido (skeleton vs spinner)
-4. Erro          — quase sempre esquecido
-5. Sem permissão — depende do contexto
-6. Parcial       — alguns dados, outros faltam
+1. Padrão        - design mostra
+2. Vazio         - frequentemente esquecido
+3. Carregando    - quase sempre esquecido (skeleton vs spinner)
+4. Erro          - quase sempre esquecido
+5. Sem permissão - depende do contexto
+6. Parcial       - alguns dados, outros faltam
 ```
 
 Para tela com formulário:
@@ -462,7 +462,7 @@ Conversar com designer é **parte do trabalho**, não interrupção. Saber quand
 |Design parece inconsistente com outras telas|Pode ser intencional ou bug do designer|
 |Cor não está no design system|Confirmar se é nova oficial ou se é por engano|
 |Componente parece duplicar existente|Confirmar se é mesmo um novo|
-|Responsividade não está clara|Mobile/tablet — como adapta?|
+|Responsividade não está clara|Mobile/tablet - como adapta?|
 |Acessibilidade comprometida|Contraste baixo, foco invisível, etc.|
 
 ### 8.2 Pode Decidir Sozinho
@@ -564,7 +564,7 @@ Proponha. Lista de opções no formato da seção 8.3.
 
 #### Inconsistência interna
 
-Pergunte ao designer qual é a fonte da verdade. **Não escolha sozinho** — pode estar consertando o errado.
+Pergunte ao designer qual é a fonte da verdade. **Não escolha sozinho** - pode estar consertando o errado.
 
 #### Inconsistência com sistema
 
@@ -628,7 +628,7 @@ Página
 **Cores e tokens:**
 
 - Tudo dentro do design system existente
-- Estrelas dourado (#FFC107) — verificar se existe token
+- Estrelas dourado (#FFC107) - verificar se existe token
 - Texto secundário (data) em cinza
 
 **Estados:**
@@ -640,10 +640,10 @@ Página
 
 **Perguntas:**
 
-1. Estado vazio — mensagem? CTA?
-2. Loading — skeleton ou spinner?
-3. Paginação — todas de uma vez ou paginado?
-4. Click no card — abre detalhe ou nada?
+1. Estado vazio - mensagem? CTA?
+2. Loading - skeleton ou spinner?
+3. Paginação - todas de uma vez ou paginado?
+4. Click no card - abre detalhe ou nada?
 
 ### 11.3 Fase 2: Spec Técnica
 
@@ -687,7 +687,7 @@ Página
 
 |Componente|Onde|Por quê|
 |---|---|---|
-|`ExibicaoEstrelas`|`ui/`|Genérico — pode aparecer em qualquer rating|
+|`ExibicaoEstrelas`|`ui/`|Genérico - pode aparecer em qualquer rating|
 |`FiltroNotas`|`avaliacao/`|Específico desse domínio|
 |`CardAvaliacao`|`avaliacao/`|Conhece estrutura da avaliação|
 |`EstadoVazio`|`ui/`|Já existe? Verificar|
@@ -806,8 +806,8 @@ export function PaginaAvaliacoes() {
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Onde cada componente vai
-- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) — Padrão de page limpa + hook de feature
-- [`13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) — Componentes UI vs domínio
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) — Spec entra no plano da tarefa
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) — Para mudanças em features existentes
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde cada componente vai
+- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrão de page limpa + hook de feature
+- [`13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Componentes UI vs domínio
+- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Spec entra no plano da tarefa
+- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Para mudanças em features existentes

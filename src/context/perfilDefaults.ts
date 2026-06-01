@@ -18,7 +18,7 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 // Defaults de serviços independentes (campo RJ)
 // ──────────────────────────────────────────────
 
-// Retíficas não existem no modo autorizado — Honda substitui por troca de kit
+// Retíficas não existem no modo autorizado - Honda substitui por troca de kit
 // cilindro (ver TASK-RF-6.14). precoTotalAutorizada=0 garante que esses
 // serviços não apareçam na seção autorizada nem nos imprevistos (ADR-007).
 export const SERVICO_RETIFICA_CABECOTE_PADRAO: ServicoIndependente = {
@@ -43,7 +43,7 @@ export const SERVICO_RETIFICA_COMPLETA_PADRAO: ServicoIndependente = {
   ehExcepcional: true,
 };
 
-// Presets fixos da seção Imprevistos. Lista fechada — usuário não adiciona
+// Presets fixos da seção Imprevistos. Lista fechada - usuário não adiciona
 // nem remove, apenas edita o valorAnual e o toggle (ver ADR-006).
 export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
   { id: 'preset-multa', nome: 'Multa', valorAnual: 0, ativo: false, ehPreset: true },
@@ -76,7 +76,7 @@ export const KM_ULTIMA_TROCAS_PADRAO: KmUltimaTrocas = {
 // Valores de precoTotalAutorizada são "peça documentada Honda + M.O. estimada"
 // e devem ser ajustados pelo usuário no primeiro uso real. Itens com
 // incluidoNaRevisaoAutorizada=true têm precoTotalAutorizada=0 (não somam
-// extra — já vêm no pacote revisaoAutorizada do Preset). ADR-007.
+// extra - já vêm no pacote revisaoAutorizada do Preset). ADR-007.
 export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
   {
     id: 'troca-oleo',
@@ -171,7 +171,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
   {
     id: 'troca-bateria',
     nome: 'Troca de bateria',
-    // Driver temporal — não há intervalo em km. Bateria envelhece por tempo.
+    // Driver temporal - não há intervalo em km. Bateria envelhece por tempo.
     intervalKm: 0,
     precoIndependente: 50,
     precoTotalAutorizada: 567.34,

@@ -4,6 +4,7 @@ description: "Ciclo de vida das tarefas: pendente, em andamento, concluída. Mod
 
 - "01-nucleo.md"
 - "21-revisao-codigo.md"
+- "27-revisao-geral.md"
 - "../templates/30-task-em-andamento.md"
 - "../templates/31-task-concluida.md"
 
@@ -46,7 +47,7 @@ Antes de entrar no ciclo, lembre dos modos definidos no [núcleo](https://claude
 |**Standard**|Ciclo completo: pendentes → em-andamento → concluidas|Este módulo aplica|
 |**Strict**|Standard + ADR + análise de impacto antes|Standard + extras|
 
-**Este módulo descreve o ciclo Standard.** Para Light, não há ciclo — apenas o registro mínimo no commit. Para Strict, este ciclo se aplica com adições documentadas em [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) e [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md).
+**Este módulo descreve o ciclo Standard.** Para Light, não há ciclo - apenas o registro mínimo no commit. Para Strict, este ciclo se aplica com adições documentadas em [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) e [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md).
 
 ### 2.1 Exemplos Concretos
 
@@ -63,7 +64,7 @@ Antes de entrar no ciclo, lembre dos modos definidos no [núcleo](https://claude
 
 ---
 
-## 3. Estágio 1 — Pendente
+## 3. Estágio 1 - Pendente
 
 **Arquivo:** `docs/tarefas/pendentes.md`
 
@@ -76,7 +77,7 @@ Tarefas com urgência **Normal** entram como linha em tabela no backlog prioriza
 ```markdown
 | TASK-ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR | Status | Data origem - hora |
 |---|---|:---:|:---:|:---:|:---:|---|---|:---:|---|
-| TASK-RF-5.1 | Registros — lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 - 09:39 |
+| TASK-RF-5.1 | Registros - lista e sub-abas | Standard | Importante | Normal | G/G | TASK-RF-1 | RF-2, ADR-3, DT-14 | `[ ]` | 10/05/26 - 09:39 |
 ```
 
 
@@ -103,7 +104,7 @@ Derivadas: TASK-RF-005.1
 Tarefas com urgência **Imediata** não cabem em uma linha de tabela porque carregam contexto adicional (motivo da urgência, observações). Entram como **bloco em lista**, no topo do arquivo:
 
 ```markdown
-## TASK-PREFIXO-XXX — Título
+## TASK-PREFIXO-XXX - Título
 - **Status:** Pendente
 - **Modo:** Standard
 - **Valor:** Crítico
@@ -127,9 +128,9 @@ Tarefas com urgência **Imediata** não cabem em uma linha de tabela porque carr
 | **Valor**                     | Crítico / Importante / Desejável                                                                                                                                                                                                           |
 | **Urgência**                  | Imediata / Normal                                                                                                                                                                                                                          |
 | **Esforço-H/IA**              | Duas medidas separadas por `/`. Humano (H) e IA. Exemplo: `M/G` = médio para humano, grande para IA. Valores: P / M / G / XG. Detalhes na [seção 3.4](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#34-esfor%C3%A7o-para-ia) |
-| **Dependências**              | IDs de outras tarefas que precisam ser concluídas antes. `—` se nenhuma                                                                                                                                                                    |
-| **REQ/ADR/DT**                | Referências a requisitos (RF/RN/RNF), ADRs e dívidas técnicas (DT) relacionadas. Exemplo: `RF-2, ADR-3, DT-14`. `—` se nenhuma                                                                                                             |
-| **Status**                    | `[ ]` pendente / `[x]` concluída (raramente aparece aqui — tarefa concluída sai do arquivo)                                                                                                                                                |
+| **Dependências**              | IDs de outras tarefas que precisam ser concluídas antes. `-` se nenhuma                                                                                                                                                                    |
+| **REQ/ADR/DT**                | Referências a requisitos (RF/RN/RNF), ADRs, revisões gerais (`REV-NNN-Axx`) e dívidas técnicas (DT) relacionadas. Exemplo: `RF-2, ADR-3, REV-001-A02, DT-14`. `-` se nenhuma                                                                |
+| **Status**                    | `[ ]` pendente / `[x]` concluída (raramente aparece aqui - tarefa concluída sai do arquivo)                                                                                                                                                |
 | **Data origem**               | `DD/MM/AA HH:MM` quando a tarefa foi criada                                                                                                                                                                                                |
 | **Observações** (só Imediata) | Texto livre explicando contexto/motivo da urgência                                                                                                                                                                                         |
 
@@ -146,7 +147,7 @@ O esforço de uma tarefa para IA **não deve ser medido por tempo humano**, mas 
 
 **Tokens são apenas sinal auxiliar.** Uma tarefa com muitos tokens pode ser simples; uma tarefa com poucos tokens pode ser arriscada.
 
-**Use `XG-IA` quando a tarefa precisar ser quebrada antes de executar.** É sinal de divisão obrigatória — não tente avançar com tarefa nesse tamanho.
+**Use `XG-IA` quando a tarefa precisar ser quebrada antes de executar.** É sinal de divisão obrigatória - não tente avançar com tarefa nesse tamanho.
 
 ### 3.5 Princípio: Pendentes é Catálogo, Não Plano
 
@@ -164,6 +165,7 @@ O **plano** vem depois, no estágio "Em Andamento", quando alguém vai executar.
 |---|---|
 |Requisito documentado|IA, ao processar `docs/requisitos/`|
 |Bug descoberto em revisão|IA, registrando em "Tarefas Geradas pela Revisão"|
+|Achado de revisão geral completa|IA, se o humano pediu a REV e aprovou/criou a tarefa; registrar `REV-NNN-Axx` na tarefa e na REV|
 |Dívida técnica que disparou gatilho|IA, ao detectar o gatilho|
 |Solicitação do humano|Humano ou IA registrando em nome do humano|
 |Refatoração identificada|IA ou humano|
@@ -177,7 +179,7 @@ Tarefas são listadas por **prioridade combinada** (Valor + Urgência), não por
 
 ---
 
-## 4. Estágio 2 — Em Andamento
+## 4. Estágio 2 - Em Andamento
 
 **Arquivo:** `docs/tarefas/em-andamento.md`
 
@@ -190,7 +192,7 @@ Template completo em [`../templates/30-task-em-andamento.md`](https://claude.ai/
 Estrutura mínima:
 
 ```markdown
-# TASK-RF-5.1 — Registros: lista e sub-abas
+# TASK-RF-5.1 - Registros: lista e sub-abas
 
 - **Status:** EM DESENVOLVIMENTO
 - **Modo:** Standard
@@ -210,13 +212,13 @@ Estrutura mínima:
 - 14:15: Plano aprovado
 - 14:30: Iniciada implementação do componente CardRegistro
 - 15:45: CardRegistro pronto. Iniciando lista paginada
-- 16:00: Bloqueio — paginação API retorna formato inesperado
+- 16:00: Bloqueio - paginação API retorna formato inesperado
   
 ## Testes
 - `1º npm run test`: 82 verdes 
 ```
 
-**Observação sobre datas:** todas as datas usam formato `DD/MM/AA HH:MM`. Inclua hora desde o início — facilita reconstruir a sequência depois.
+**Observação sobre datas:** todas as datas usam formato `DD/MM/AA HH:MM`. Inclua hora desde o início - facilita reconstruir a sequência depois.
 
 ### 4.2 Regras
 
@@ -254,7 +256,7 @@ Bloqueio é situação onde a tarefa **não pode prosseguir** sem informação o
 
 ### 4.5 Regra das 2 Tentativas
 
-Conforme o núcleo: **após 2 tentativas sem sucesso no mesmo problema, pare e peça orientação**. Não é falha — é maturidade.
+Conforme o núcleo: **após 2 tentativas sem sucesso no mesmo problema, pare e peça orientação**. Não é falha - é maturidade.
 
 ```markdown
 ## Bloqueio em 2026-05-13 16:30 (após 2 tentativas)
@@ -269,7 +271,7 @@ Tarefa pausada por mais de 24h sem progresso **volta para pendentes**. Não fica
 
 ---
 
-## 5. Estágio 3 — Concluída
+## 5. Estágio 3 - Concluída
 
 **Local do Arquivo:** `docs/tarefas/concluidas/[YYYY-MM-DD]--[HHhMM]--[TASK-PREFIXO]-[NUMERO].md`
 
@@ -318,7 +320,7 @@ Template completo em [`../templates/31-task-concluida.md`](https://claude.ai/tem
 Estrutura essencial:
 
 ```markdown
-# TASK-RF-5.1 — Registros: lista e sub-abas
+# TASK-RF-5.1 - Registros: lista e sub-abas
 
 - **Status:** Concluído
 - **Modo:** Standard
@@ -360,7 +362,7 @@ Estrutura essencial:
 - RNF-13: [descrição] (adicionado em docs/requisitos/nao-funcionais.md)
 
 ## ADRs Geradas pela Revisão
-- —
+- -
 ## Aprendizados Para o Projeto
 - [algo que vale a equipe saber]
 ```
@@ -401,7 +403,7 @@ Alternativa seria um único `concluidas.md` enorme. Por que separar?
 |Criar entrada em pendentes (origem em solicitação)|Sim, em nome do humano|Solicita|
 |Mover de pendentes para em-andamento|Sim, ao iniciar|Confirma com "pode iniciar"|
 |Atualizar log em em-andamento|Sim, em tempo real|Lê quando quiser|
-|Aprovar plano detalhado|—|Sim, obrigatório|
+|Aprovar plano detalhado|-|Sim, obrigatório|
 |Tomar decisões durante execução|Sim para óbvias|Sim para não-óbvias|
 |Mover para concluida|Sim, após critérios atendidos|Valida transição|
 |Atualizar requisitos|Sim|Aprova mudanças significativas|
@@ -421,19 +423,21 @@ Tarefas raramente terminam isoladas. Frequentemente geram:
 |Novo requisito (descobriu necessidade)|Adicionar em `docs/requisitos/` + tarefa que implementa|
 |ADR (decisão arquitetural)|Criar em `docs/arquitetura/ADR/` + listar na concluída|
 
+Se a origem for uma revisão geral, a tarefa deve citar `REV-NNN-Axx` no campo `REQ/ADR/DT` ou nas observações, e a REV deve listar a tarefa no achado correspondente. Revisão geral só existe quando o humano pediu revisão completa do projeto; para detalhes, ver [`27-revisao-geral.md`](https://claude.ai/chat/27-revisao-geral.md).
+
 ### 7.1 Exemplo: Tarefa Que Gera Outra
 
 ```markdown
 ## Tarefas Geradas pela Revisão
 - TASK-BG-12: Corrigir cálculo de total quando há desconto cumulativo (encontrado durante implementação de TASK-RF-5.1)
-- TASK-REF-03: Extrair lógica de paginação para hook reutilizável (após 3ª ocorrência — Regra de Três)
+- TASK-REF-03: Extrair lógica de paginação para hook reutilizável (após 3ª ocorrência - Regra de Três)
 ```
 
 E em `pendentes.md`, novas linhas:
 
 ```markdown
-| TASK-BG-12 | Corrigir cálculo de total com desconto cumulativo | Standard | Crítico | Imediata | P/P | — | — | `[ ]` | 13/05/26 09:00 |
-| TASK-REF-03 | Extrair lógica de paginação para hook | Standard | Importante | Normal | M/M | — | — | `[ ]` | 13/05/26 09:00 |
+| TASK-BG-12 | Corrigir cálculo de total com desconto cumulativo | Standard | Crítico | Imediata | P/P | - | - | `[ ]` | 13/05/26 09:00 |
+| TASK-REF-03 | Extrair lógica de paginação para hook | Standard | Importante | Normal | M/M | - | - | `[ ]` | 13/05/26 09:00 |
 ```
 
 ---
@@ -460,7 +464,7 @@ A tarefa fica viva, esperando.
 Tarefa **volta para pendentes**, marcada como bloqueada:
 
 ```markdown
-| TASK-RF-5.1 | Registros — lista e sub-abas (BLOQUEADO: aguardando def API) | Standard | Importante | Normal | G/G | — | — | `[!]` | 10/05/26 09:39 |
+| TASK-RF-5.1 | Registros - lista e sub-abas (BLOQUEADO: aguardando def API) | Standard | Importante | Normal | G/G | - | - | `[!]` | 10/05/26 09:39 |
 ```
 
 Status `[!]` indica bloqueio. Quando destravar, volta para `[ ]` e segue normalmente.
@@ -474,7 +478,7 @@ Se o bloqueio depende de algo que não vai resolver (decisão pendente do stakeh
 
 | ID | Descrição | Impacto | Gatilho | ADR |
 |---|---|---|---|---|
-| DT-04 | TASK-RF-5.1 não implementada porque API não suporta paginação cursor | Médio | Quando API for atualizada para v3 | — |
+| DT-04 | TASK-RF-5.1 não implementada porque API não suporta paginação cursor | Médio | Quando API for atualizada para v3 | - |
 ```
 
 Tarefa sai de pendentes. Volta quando o gatilho disparar.
@@ -537,7 +541,7 @@ Você começa a implementar TASK-RF-5.1 e percebe que o requisito mudou de natur
 
 1. **Pare a execução.** Volte ao humano.
 2. **Reformule** o entendimento.
-3. **Se humano confirma a mudança:** atualize o requisito em `docs/requisitos/` E o plano na tarefa atual. Não crie tarefa nova — é a mesma com escopo redefinido.
+3. **Se humano confirma a mudança:** atualize o requisito em `docs/requisitos/` E o plano na tarefa atual. Não crie tarefa nova - é a mesma com escopo redefinido.
 
 ### 10.4 Tarefa Cancelada
 
@@ -547,7 +551,7 @@ Tarefa começou mas decidiu-se não fazer:
 2. **Documentar por quê** na seção "O Que NÃO Foi Feito".
 3. **Remover de pendentes** se ainda estiver lá.
 
-Não é fracasso — é decisão. Registrar evita revisitar depois.
+Não é fracasso - é decisão. Registrar evita revisitar depois.
 
 ### 10.5 Dúvida do Humano Sobre Tarefa Antiga
 
@@ -577,9 +581,9 @@ Se o arquivo não existe ou está incompleto, é um sinal de que o ciclo foi que
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) — Processo `ENTENDER → PLANEJAR → APROVAR → EXECUTAR → REGISTRAR` e modos de cerimônia
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) — Revisão obrigatória ao concluir
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) — Análise prévia em tarefas Strict
-- [`../templates/30-task-em-andamento.md`](https://claude.ai/templates/30-task-em-andamento.md) — Template para em-andamento
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) — Template para concluída
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) — Quando tarefa gera decisão arquitetural
+- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Processo `ENTENDER → PLANEJAR → APROVAR → EXECUTAR → REGISTRAR` e modos de cerimônia
+- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão obrigatória ao concluir
+- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Análise prévia em tarefas Strict
+- [`../templates/30-task-em-andamento.md`](https://claude.ai/templates/30-task-em-andamento.md) - Template para em-andamento
+- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Template para concluída
+- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Quando tarefa gera decisão arquitetural

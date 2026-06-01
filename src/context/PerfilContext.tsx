@@ -18,7 +18,7 @@ import {
   FILTROS_MANUTENCAO_PADRAO,
 } from './perfilDefaults';
 
-// Re-export para consumidores existentes (componentes/páginas/testes) — mantém
+// Re-export para consumidores existentes (componentes/páginas/testes) - mantém
 // a API pública de PerfilContext estável após a extração da TASK-REF-28.
 export {
   perfilPadrao,
@@ -430,7 +430,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
                   valorAnual: action.valorAnual,
                   // Conveniência: ao informar um valor > 0 num item desligado,
                   // ativa o toggle (o usuário acabou de declarar o custo).
-                  // Não desativa automaticamente ao zerar — quem zera mantém
+                  // Não desativa automaticamente ao zerar - quem zera mantém
                   // controle explícito do toggle.
                   ativo: action.valorAnual > 0 && !g.ativo ? true : g.ativo,
                 }
@@ -497,7 +497,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       });
 
     case 'SET_PARCELA': {
-      // Re-stampa a dataReferenciaParcelas SÓ quando parcelasRestantes muda — editar
+      // Re-stampa a dataReferenciaParcelas SÓ quando parcelasRestantes muda - editar
       // apenas o valor da parcela não pode resetar o relógio de decremento (RF-6.18).
       const restantesMudou = action.parcelasRestantes !== state.perfil.financeiro.parcelasRestantes;
       const dataReferenciaParcelas =
@@ -570,7 +570,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     case 'RESETAR_AJUSTES_PADRAO':
       // ADR-005: o reset ZERA os custos; o app não presume gastos.
       // Uso (kmPorDia, diasPorSemana) e modo de revisão voltam ao padrão por serem
-      // parâmetros de cálculo, não gastos — zerar km/dia quebraria divisões.
+      // parâmetros de cálculo, não gastos - zerar km/dia quebraria divisões.
       return comPerfil({
         ...state.perfil,
         trabalho: { ...state.perfil.trabalho, kmPorDia: 70, diasPorSemana: 5 },
@@ -669,7 +669,7 @@ export function usePerfilContext(): PerfilContextValue {
 
 interface PerfilProviderProps {
   children: React.ReactNode;
-  // Injecao do storage — facilita testes
+  // Injecao do storage - facilita testes
   storage?: IPerfilStorage;
 }
 
@@ -689,7 +689,7 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
     return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
   } catch {
     // Dado persistido inválido/corrompido: preserva o blob para diagnóstico e
-    // cai para o estado padrão — o app nunca trava (ADR-010, decisão 2).
+    // cai para o estado padrão - o app nunca trava (ADR-010, decisão 2).
     storage.preservarCorrompido();
     return estadoPadrao;
   }

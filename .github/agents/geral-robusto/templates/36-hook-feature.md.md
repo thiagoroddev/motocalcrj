@@ -51,7 +51,7 @@ return {
   // ... 15 outros
 }
 
-// ✅ Interface mínima — só o que a page consome
+// ✅ Interface mínima - só o que a page consome
 return {
   detalhes,
   expandido,
@@ -536,7 +536,7 @@ export function useListaProdutos({
 
 **Pontos importantes:**
 
-- `produtoService` mora em `services/` ou `api/` — hook não conhece detalhes do `fetch`
+- `produtoService` mora em `services/` ou `api/` - hook não conhece detalhes do `fetch`
 - Mudança em `filtro` re-dispara carregamento via `useEffect`
 - `recarregar` é exposto para reuso manual (botão "tentar novamente")
 
@@ -739,7 +739,7 @@ describe('useListaProdutos', () => {
 
 **1. Onde mora o hook de feature?** `src/hooks/` é o lugar padrão. Para projetos grandes, pode colocar junto da page (`src/pages/PaginaX/useX.ts`). Convenção do projeto vence.
 
-**2. Posso retornar 15 coisas no hook?** Tecnicamente sim, mas é sintoma de hook fazendo demais. Considere dividir em sub-hooks (variante 3). Se realmente precisa, ok — mas reflita antes.
+**2. Posso retornar 15 coisas no hook?** Tecnicamente sim, mas é sintoma de hook fazendo demais. Considere dividir em sub-hooks (variante 3). Se realmente precisa, ok - mas reflita antes.
 
 **3. Quando uso `useCallback` vs função normal?** `useCallback` quando o handler é passado como prop para componente memoizado, ou usado em dependências de `useEffect`/`useMemo`. Para handler usado só uma vez no JSX da própria page, função normal serve.
 
@@ -747,22 +747,22 @@ describe('useListaProdutos', () => {
 
 **5. Hook pode ter `useEffect` para derivação?** Não. Derivação é cálculo direto ou `useMemo`. `useEffect` para `setState` de derivado é anti-padrão. Detalhes em [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
 
-**6. E se o hook precisa de Context?** Pode consumir Context interno se for parte da feature (ex: tema, autenticação). Mas evite Context só para "evitar passar prop" — explícito é melhor.
+**6. E se o hook precisa de Context?** Pode consumir Context interno se for parte da feature (ex: tema, autenticação). Mas evite Context só para "evitar passar prop" - explícito é melhor.
 
-**7. Como nomear o retorno na page?** `const vm = useDetalhamento(...)`. Convenção: `vm` = view model. Curto e claro. Algumas pessoas usam `state` ou nomes específicos — qualquer escolha consistente serve.
+**7. Como nomear o retorno na page?** `const vm = useDetalhamento(...)`. Convenção: `vm` = view model. Curto e claro. Algumas pessoas usam `state` ou nomes específicos - qualquer escolha consistente serve.
 
 **8. Posso testar a page em vez de testar o hook?** Pode, mas é mais caro. Testar o hook diretamente com `renderHook` é mais rápido e isolado. Teste a page para fluxos integrados; teste o hook para lógica.
 
 **9. Hook pode importar componente?** Não. Hook é lógica, não JSX. Se você quer "componente pronto", virou componente, não hook.
 
-**10. Quantos `useState` é muito?** Regra empírica: 3-4 ok. 5-7 considere `useReducer` ou divisão em sub-hooks. 8+ está fazendo demais — divida.
+**10. Quantos `useState` é muito?** Regra empírica: 3-4 ok. 5-7 considere `useReducer` ou divisão em sub-hooks. 8+ está fazendo demais - divida.
 
 ---
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) — Padrões de estado React (base deste template)
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) — Onde mora cada tipo de hook
-- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) — Testes detalhados, incluindo de hooks
-- [`35-componente-ui.md`](https://claude.ai/chat/35-componente-ui.md) — Template do componente UI que este hook alimenta
-- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) — Ordem de implementação (hook antes da page)
+- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrões de estado React (base deste template)
+- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde mora cada tipo de hook
+- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) - Testes detalhados, incluindo de hooks
+- [`35-componente-ui.md`](https://claude.ai/chat/35-componente-ui.md) - Template do componente UI que este hook alimenta
+- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) - Ordem de implementação (hook antes da page)

@@ -59,7 +59,7 @@ export function Passo5Trocas() {
       <div className="flex flex-col gap-2">
         {kmUltimaRevisao == null && (
           <p className="text-xs text-muted-foreground/60 px-1 pb-1">
-            Sem km de referência — itens marcados serão salvos com km&nbsp;0.
+            Sem km de referência - itens marcados serão salvos com km&nbsp;0.
           </p>
         )}
 

@@ -102,7 +102,7 @@ export function Passo3() {
             },
           });
         } else {
-          // API falhou — tentar fallback da tabelaFipe
+          // API falhou - tentar fallback da tabelaFipe
           const valorFallback = modeloDados.tabelaFipe[String(anoNum)];
           if (valorFallback) {
             setFipeInfo({ valor: valorFallback, mesReferencia: '', estimativa: true });
@@ -196,7 +196,7 @@ export function Passo3() {
                 </div>
               ) : (
                 <p className="text-muted-foreground/50 text-xs px-1">
-                  Moto com mais de 15 anos — isenta de IPVA no RJ.
+                  Moto com mais de 15 anos - isenta de IPVA no RJ.
                 </p>
               )}
             </div>

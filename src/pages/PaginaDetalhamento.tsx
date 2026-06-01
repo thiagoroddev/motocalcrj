@@ -362,7 +362,7 @@ export function PaginaDetalhamento() {
         <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
           {restantesHoje > 0
             ? 'Projeta apenas as parcelas que ainda faltam nos próximos 12 meses.'
-            : 'Financiamento quitado — não entra mais no custo.'}
+            : 'Financiamento quitado - não entra mais no custo.'}
         </p>
       </>
     );

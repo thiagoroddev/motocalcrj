@@ -4,7 +4,7 @@ import { perfilSchema, presetEntrySchema } from './perfilSchema';
 import { perfilPadrao } from '../context/PerfilContext';
 import type { PerfilUsuario, PresetEntry } from '../types/perfil';
 
-describe('perfilSchema — compatibilidade schema ↔ tipo (ADR-010)', () => {
+describe('perfilSchema - compatibilidade schema ↔ tipo (ADR-010)', () => {
   it('z.infer<perfilSchema> é idêntico a PerfilUsuario', () => {
     // Trava de tipo: se o schema divergir de types/perfil.ts, o tsc quebra aqui.
     expectTypeOf<z.infer<typeof perfilSchema>>().toEqualTypeOf<PerfilUsuario>();
@@ -15,7 +15,7 @@ describe('perfilSchema — compatibilidade schema ↔ tipo (ADR-010)', () => {
   });
 });
 
-describe('perfilSchema — validação de runtime', () => {
+describe('perfilSchema - validação de runtime', () => {
   it('aceita o perfil padrão (dado válido passa intacto)', () => {
     const resultado = perfilSchema.parse(perfilPadrao);
     expect(resultado).toEqual(perfilPadrao);

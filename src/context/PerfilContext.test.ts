@@ -446,7 +446,7 @@ describe('perfilReducer', () => {
     const depois = Date.now();
 
     expect(resultado.perfil.financeiro.parcelasRestantes).toBe(20);
-    // âncora re-stampada para "agora" — o relógio reinicia a partir do novo valor
+    // âncora re-stampada para "agora" - o relógio reinicia a partir do novo valor
     expect(resultado.perfil.financeiro.dataReferenciaParcelas).not.toBe(refAntiga);
     const novaRef = new Date(resultado.perfil.financeiro.dataReferenciaParcelas!).getTime();
     expect(novaRef).toBeGreaterThanOrEqual(antes);

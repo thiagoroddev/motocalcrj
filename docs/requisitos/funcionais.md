@@ -170,4 +170,4 @@ Cards: "Sim, como na rua" / "Não, levo de casa". Se Sim: gasto médio por dia (
 > **Status geral:**
 > - ✅ CONCLUÍDO: Onboarding, Estimativa, Detalhamento, persistence, FIPE, IPVA/Licenciamento.
 > - [ ] PENDENTE: Mão de Obra, Autonomia, Perfil, Export/Import, Tooltips.
-> - ⚠️ ADIADO via ADR-003: Registros (RF-REG-*) e Formulários de Registro (RF-FORM-*) — backlog futuro.
+> - ⚠️ ADIADO via ADR-003: Registros (RF-REG-*) e Formulários de Registro (RF-FORM-*) - backlog futuro.

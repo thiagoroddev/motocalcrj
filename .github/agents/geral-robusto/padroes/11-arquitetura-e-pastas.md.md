@@ -10,7 +10,7 @@ description: "Estrutura de pastas, onde cada coisa vive, regras de camadas e dec
 
 # 🏛️ Arquitetura e Pastas
 
-> Esta é a planta do edifício. Antes de construir um cômodo novo, você precisa saber onde fica. Uma boa arquitetura responde rápido: _"onde colocar este arquivo?"_ — e a resposta é sempre a mesma para o mesmo tipo de arquivo.
+> Esta é a planta do edifício. Antes de construir um cômodo novo, você precisa saber onde fica. Uma boa arquitetura responde rápido: _"onde colocar este arquivo?"_ - e a resposta é sempre a mesma para o mesmo tipo de arquivo.
 
 ---
 
@@ -30,7 +30,7 @@ Toda arquitetura aqui se baseia em **separar por responsabilidade**, não por ti
 |`components/[dominio]/`|UI específica do negócio|Sim|Não (delega a hooks)|
 |`pages/`|Composição de tudo acima|Sim (orquestra)|Não (delega)|
 
-Memorize a coluna "conhece o negócio?" — é o critério mais usado para decidir entre `ui/` e `[dominio]/`.
+Memorize a coluna "conhece o negócio?" - é o critério mais usado para decidir entre `ui/` e `[dominio]/`.
 
 ---
 
@@ -154,7 +154,7 @@ São cinco. Não negociáveis.
 ### 4.1 Pages são para composição, não para lógica
 
 ```tsx
-// ❌ Errado — page faz tudo
+// ❌ Errado - page faz tudo
 export function PaginaPerfil() {
   const [perfil, setPerfil] = useState<Perfil | null>(null)
   const [carregando, setCarregando] = useState(true)
@@ -172,7 +172,7 @@ export function PaginaPerfil() {
   // ... 200+ linhas
 }
 
-// ✅ Correto — page compõe, hook faz
+// ✅ Correto - page compõe, hook faz
 export function PaginaPerfil() {
   const vm = usePerfil()
 
@@ -199,7 +199,7 @@ Um hook de feature contém:
 - Estado local (useState)
 - Derivações (useMemo)
 - Handlers (useCallback, ou função normal se não for passada para filho memoizado)
-- Efeitos de sincronização (useEffect) — quando inevitáveis
+- Efeitos de sincronização (useEffect) - quando inevitáveis
 
 Detalhes completos em [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md).
 
@@ -212,29 +212,29 @@ Tudo que toca o mundo externo (rede, storage, time, console, document, window) d
 ### 4.4 UI components não conhecem o domínio
 
 ```tsx
-// ❌ Errado — Botao com termo de negócio
+// ❌ Errado - Botao com termo de negócio
 <Botao onClick={comprarSeguro}>Comprar Seguro</Botao>
 //      ^ ok          ^ texto: ok       texto: ok
-// (o texto vem como filho, ok — o problema seria se o componente
+// (o texto vem como filho, ok - o problema seria se o componente
 // chamasse o handler "comprarSeguro" internamente)
 
-// ❌ Errado — Botao com prop de negócio
+// ❌ Errado - Botao com prop de negócio
 <Botao acaoSeguro="comprar">Comprar</Botao>
 
-// ✅ Correto — Botao é genérico, lógica fica fora
+// ✅ Correto - Botao é genérico, lógica fica fora
 <Botao onClick={handleComprar} variante="primario">
   Comprar Seguro
 </Botao>
 ```
 
-Regra prática: o nome de qualquer prop de um componente em `ui/` deve fazer sentido em **outro projeto** (qualquer um). Se a prop só faz sentido neste projeto, ela é do domínio — o componente deve estar em `components/[dominio]/`.
+Regra prática: o nome de qualquer prop de um componente em `ui/` deve fazer sentido em **outro projeto** (qualquer um). Se a prop só faz sentido neste projeto, ela é do domínio - o componente deve estar em `components/[dominio]/`.
 
 ### 4.5 Domain components conhecem o negócio
 
 O oposto também é regra: componentes de domínio **devem** usar termos do negócio.
 
 ```tsx
-// ✅ Correto — domínio na superfície
+// ✅ Correto - domínio na superfície
 <CardPerfil perfil={perfil} onEditar={handleEditar} />
 <FormularioPedido pedido={pedido} onConfirmar={handleConfirmar} />
 ```
@@ -309,7 +309,7 @@ A versão antiga dizia "pages com menos de 60 linhas". Era rígido demais e gera
 
 ### 6.3 Exceção
 
-Pages de prototipagem ou MVP **podem** começar gordas. A regra se aplica no momento de estabilização — quando você nota que a page vai ficar (não é throwaway), refatore.
+Pages de prototipagem ou MVP **podem** começar gordas. A regra se aplica no momento de estabilização - quando você nota que a page vai ficar (não é throwaway), refatore.
 
 ---
 
@@ -395,11 +395,11 @@ Regra revisitada do módulo 10:
 
 ## 9. Estrutura Padrão de `docs/`
 
-Esta seção define a **estrutura de documentação do projeto** — não do agente (que vive em `.agent/`).
+Esta seção define a **estrutura de documentação do projeto** - não do agente (que vive em `.agent/`).
 
 ```
 docs/
-├── contexto-projeto-ai.md          # Ponto de entrada para IA — link para outros docs
+├── contexto-projeto-ai.md          # Ponto de entrada para IA - link para outros docs
 ├── README.md                       # Visão geral do produto (para humanos)
 │
 ├── requisitos/
@@ -486,8 +486,8 @@ Quando exigir ADR, ver [`templates/32-adr.md`](https://claude.ai/templates/32-ad
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) — Convenções de nomenclatura usadas aqui
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) — Como construir hooks e components dentro dessa estrutura
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) — Padrão dos componentes em `ui/`
-- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) — Estrutura equivalente para backend
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) — Quando mudar de estrutura
+- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Convenções de nomenclatura usadas aqui
+- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Como construir hooks e components dentro dessa estrutura
+- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Padrão dos componentes em `ui/`
+- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) - Estrutura equivalente para backend
+- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Quando mudar de estrutura

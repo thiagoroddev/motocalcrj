@@ -24,7 +24,7 @@ A solução: **JSONs imutáveis (RN-01) + camada de Overrides no perfil (RN-02)*
 
 ## As Três Estruturas de Override
 
-### 1. `pecasOverrides[]` — Overrides por Peça
+### 1. `pecasOverrides[]` - Overrides por Peça
 
 ```typescript
 interface PecaOverride {
@@ -58,9 +58,9 @@ pecasOverrides: [
 
 🔍 **Granularidade tristate:** cada campo é `null` ou número. `null` significa "sem override, use o JSON". Sem `false` ou `undefined`.
 
-🔍 **Preço por coluna:** `resolverPrecoPeca` lê `precoEditadoOriginal` ou `precoEditadaParalela` conforme `perfilPecasGlobal`. O Motoboy pode informar valores diferentes para cada coluna — útil quando ele já comprou peças nos dois perfis. (Não há mais `perfilPecasOverride` por peça — esse conceito morreu na refatoração.)
+🔍 **Preço por coluna:** `resolverPrecoPeca` lê `precoEditadoOriginal` ou `precoEditadaParalela` conforme `perfilPecasGlobal`. O Motoboy pode informar valores diferentes para cada coluna - útil quando ele já comprou peças nos dois perfis. (Não há mais `perfilPecasOverride` por peça - esse conceito morreu na refatoração.)
 
-### 2. `servicosIndependentes[]` — Serviços de Mão de Obra (substituiu `servicosMaoDeObra` na REF-11)
+### 2. `servicosIndependentes[]` - Serviços de Mão de Obra (substituiu `servicosMaoDeObra` na REF-11)
 
 ```typescript
 interface ServicoIndependente {
@@ -75,13 +75,13 @@ interface ServicoIndependente {
 
 **Cobre:** intervalo + preço de mão de obra de cada serviço de manutenção periódica. Substituiu o tipo plano `ServicosMaoDeObra` (que tinha 5 chaves fixas).
 
-🔍 **Estrutura desta lista (defaults em `SERVICOS_INDEPENDENTES_PADRAO` — ver `docs/arquitetura/estado_inicial.md` §II.2):**
+🔍 **Estrutura desta lista (defaults em `SERVICOS_INDEPENDENTES_PADRAO` - ver `docs/arquitetura/estado_inicial.md` §II.2):**
 - 7 serviços normais ativos (`troca-oleo`, `troca-kit-transmissao`, `troca-pneu-dianteiro`, `troca-pneu-traseiro`, `revisao-geral`, `troca-vela`, `troca-filtro-ar`)
-- 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`) — `ativo: false`, `ehExcepcional: true`
+- 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`) - `ativo: false`, `ehExcepcional: true`
 
 🔍 **Fonte canônica do intervalo da peça (ADR-004):** `resolverIntervaloPeca` casa serviço com peça por `MAPA_PECA_PARA_SERVICO` (`oleo_motor` ↔ `troca-oleo`). Isso permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura.
 
-### 3. `revisaoAutorizadaOverrides[]` — Overrides de Revisão Honda
+### 3. `revisaoAutorizadaOverrides[]` - Overrides de Revisão Honda
 
 ```typescript
 interface RevisaoAutorizadaOverride {
@@ -94,7 +94,7 @@ interface RevisaoAutorizadaOverride {
 
 **Cobre:** preço de cada linha da tabela de revisões da concessionária Honda (1ª revisão, 2ª revisão, etc).
 
-🔍 **Estrutura por índice é frágil** se o Preset JSON adicionar/remover linhas. Risco aceito (manual Honda é estável, 7 revisões fixas). DT-13 endereçada em 20/05/26 (REF-12 — calculador agora aplica o override).
+🔍 **Estrutura por índice é frágil** se o Preset JSON adicionar/remover linhas. Risco aceito (manual Honda é estável, 7 revisões fixas). DT-13 endereçada em 20/05/26 (REF-12 - calculador agora aplica o override).
 
 ### 3. `revisaoAutorizadaOverrides[]` Overrides de Revisão
 
@@ -122,14 +122,14 @@ revisaoAutorizadaOverrides: [
 
 ## Lógica de Resolução
 
-A "magia" do sistema acontece em duas funções de `utils/calculos.ts` (modo único pós-ADR-003 — sem ramo de registros):
+A "magia" do sistema acontece em duas funções de `utils/calculos.ts` (modo único pós-ADR-003 - sem ramo de registros):
 
 ### `resolverPrecoPeca(pecaId, preset, perfilPecas, pecasOverrides)`
 
 ```typescript
 const override = pecasOverrides.find((o) => o.id === pecaId);
 
-// 1. Override explícito vence — lê a coluna correspondente ao perfilPecas atual
+// 1. Override explícito vence - lê a coluna correspondente ao perfilPecas atual
 const precoEditadoEfetivo =
   perfilPecas === 'original' ? override?.precoEditadoOriginal : override?.precoEditadaParalela;
 if (precoEditadoEfetivo != null) return precoEditadoEfetivo;
@@ -171,7 +171,7 @@ return 1;  // evita divisão por zero
 
 🔍 **Três fontes em ordem de prioridade:**
 1. **Override individual** (`pecasOverrides[].intervaloKmEditado`)
-2. **`ServicoIndependente.intervalKm`** ativo via `MAPA_PECA_PARA_SERVICO` (ADR-004 — edição em um lugar só)
+2. **`ServicoIndependente.intervalKm`** ativo via `MAPA_PECA_PARA_SERVICO` (ADR-004 - edição em um lugar só)
 3. **Preset JSON**
 
 ---
@@ -185,7 +185,7 @@ return 1;  // evita divisão por zero
 | `SET_SERVICO_INDEPENDENTE`          | Upsert por `id` em `servicosIndependentes[]`. Guard: rejeita `intervalKm <= 0` para serviços km-driven; permite `0` só para temporal conhecido (INV-MANUT-1) |
 | `RESET_SERVICOS_INDEPENDENTES`      | Volta a lista inteira para `SERVICOS_INDEPENDENTES_PADRAO`                   |
 | `SET_REVISAO_AUTORIZADA_OVERRIDE`   | Upsert por `index` em `revisaoAutorizadaOverrides[]`. `precoTotal` calculado automaticamente |
-| `RESET_REVISAO_AUTORIZADA_OVERRIDE` | Apaga override de uma linha — volta ao Preset JSON                           |
+| `RESET_REVISAO_AUTORIZADA_OVERRIDE` | Apaga override de uma linha - volta ao Preset JSON                           |
 
 ⚠️ **`SET_PECA_OVERRIDE` usa o `campoOverrideMap`** em `PerfilContext.tsx` para traduzir o nome amigável (`precoOriginal`, `precoParalela`, `intervaloKm`) para o nome real do tipo (`precoEditadoOriginal`, `precoEditadaParalela`, `intervaloKmEditado`).
 
@@ -201,11 +201,11 @@ return 1;  // evita divisão por zero
 
 **Onde é protegida:** ⚠️ **Não há validação automática.** Se o Preset JSON evolui e um id é removido, overrides ficam órfãos. **Dívida técnica.**
 
-### INV-OVR-2: Modo único — override sempre aplica quando presente
+### INV-OVR-2: Modo único - override sempre aplica quando presente
 
 **Regra:** Após ADR-003 não existe mais `modoExibicao`. Overrides sempre se aplicam quando definidos. Não há mais ramo "ignorar overrides para comparar com preset".
 
-**Onde é protegida:** ramos únicos em `resolverPrecoPeca` e `resolverIntervaloPeca` — não há ramificação por modo.
+**Onde é protegida:** ramos únicos em `resolverPrecoPeca` e `resolverIntervaloPeca` - não há ramificação por modo.
 
 ### INV-OVR-3: Reset isolado
 
@@ -233,7 +233,7 @@ return 1;  // evita divisão por zero
 
 ---
 
-> Seção "Diferença Entre Override e Registro" removida em 24/05/26 (TASK-DOC-009). Registros não existem mais após ADR-003 / REF-19 — Override é o único mecanismo de personalização sobre o Preset JSON.
+> Seção "Diferença Entre Override e Registro" removida em 24/05/26 (TASK-DOC-009). Registros não existem mais após ADR-003 / REF-19 - Override é o único mecanismo de personalização sobre o Preset JSON.
 
 ---
 
@@ -243,14 +243,14 @@ return 1;  // evita divisão por zero
 
 - Motoboy compra pneu paralelo
 - Vai em Mão de Obra, edita o `intervalKm` do `troca-pneu-traseiro` para 18000
-- Resultado: `servicosIndependentes` ganha entrada atualizada — `resolverIntervaloPeca('pneu_traseiro', ...)` casa pelo `MAPA_PECA_PARA_SERVICO` e devolve 18000
+- Resultado: `servicosIndependentes` ganha entrada atualizada - `resolverIntervaloPeca('pneu_traseiro', ...)` casa pelo `MAPA_PECA_PARA_SERVICO` e devolve 18000
 - Aba Insumos exibe 18000 somente leitura; CPK do pneu recalcula com 18000
 
 ### Cenário 2: "Preço diferente para original vs paralela"
 
 - Motoboy editou `precoEditadoOriginal: 45` para `oleo_motor` (no perfil global "original")
 - Trocou `perfilPecasGlobal` para `'paralela'` em Mão de Obra
-- `resolverPrecoPeca` agora lê `precoEditadaParalela` — está `null` → cai no Preset JSON (`precoParalela` da peça)
+- `resolverPrecoPeca` agora lê `precoEditadaParalela` - está `null` → cai no Preset JSON (`precoParalela` da peça)
 - Se voltar para `'original'`, o override de 45 volta a ativar
 
 ### Cenário 3: "Reset"
@@ -266,7 +266,7 @@ return 1;  // evita divisão por zero
 
 ### Estrutura por índice em `revisaoAutorizadaOverrides`
 
-Frágil se o Preset JSON adicionar/remover linhas. Risco aceito porque o manual Honda é estável. Ver `divida-tecnica.md` DT-13 (endereçada — calculador aplica o override pela REF-12).
+Frágil se o Preset JSON adicionar/remover linhas. Risco aceito porque o manual Honda é estável. Ver `divida-tecnica.md` DT-13 (endereçada - calculador aplica o override pela REF-12).
 
 ### Validação de orfãos
 
@@ -309,13 +309,13 @@ export interface RevisaoAutorizadaOverride {
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` — `PecaOverride`, `ServicoIndependente`, `RevisaoAutorizadaOverride`
-- `src/utils/calculos.ts` — `resolverPrecoPeca`, `resolverIntervaloPeca`, `MAPA_PECA_PARA_SERVICO`
-- `src/context/PerfilContext.tsx` — `SERVICOS_INDEPENDENTES_PADRAO`, `campoOverrideMap`, actions
-- `Requisitos v6` — RN-01 a RN-05, RN-10, RN-11
+- `src/types/perfil.ts` - `PecaOverride`, `ServicoIndependente`, `RevisaoAutorizadaOverride`
+- `src/utils/calculos.ts` - `resolverPrecoPeca`, `resolverIntervaloPeca`, `MAPA_PECA_PARA_SERVICO`
+- `src/context/PerfilContext.tsx` - `SERVICOS_INDEPENDENTES_PADRAO`, `campoOverrideMap`, actions
+- `Requisitos v6` - RN-01 a RN-05, RN-10, RN-11
 
 **Divergências encontradas:**
 
-- INV-OVR-1 (overrides órfãos) não protegida — DT-11
+- INV-OVR-1 (overrides órfãos) não protegida - DT-11
 - INV-OVR-4 (anoFimOriginal força paralela) mencionada em RN-11 mas não implementada em `calculos.ts`
 - Documentação atualizada em 24/05/26 (TASK-DOC-009): `PecaOverride` reescrito (precoEditadoOriginal/Paralela em vez de precoEditado único; remoção de `perfilPecasOverride`); `servicosMaoDeObra` substituído por `servicosIndependentes` (REF-11); seção "Override vs Registro" removida (Registros eliminados).

@@ -19,7 +19,7 @@ description: "Análise de impacto: blast radius, áreas afetadas, features em ri
 
 ### 1.1 Definição
 
-> **Análise de impacto** é o processo de mapear, **antes da implementação**, todas as áreas que uma mudança pode afetar — e decidir o que fazer com cada risco identificado.
+> **Análise de impacto** é o processo de mapear, **antes da implementação**, todas as áreas que uma mudança pode afetar - e decidir o que fazer com cada risco identificado.
 
 É documento curto (1-2 páginas), produzido **antes** do plano de implementação, em tarefas Standard significativas ou Strict.
 
@@ -414,7 +414,7 @@ Toda mudança não-trivial tem **algum risco que você não vai eliminar**. List
 
 1. **Dados legados em localStorage podem ter CPF inválido**
    - **Mitigação parcial:** ao ler, validar e marcar como pendente de correção
-   - **Dívida técnica:** DT-15 — migração de dados legados
+   - **Dívida técnica:** DT-15 - migração de dados legados
    - **Gatilho:** quando 50+ usuários reportarem campo "pendente"
 ```
 
@@ -464,7 +464,7 @@ Na revisão, você compara:
 - **Os riscos identificados** (análise) **vs os que se materializaram** (revisão)
 - **Decisões tomadas** (análise) **vs como foram implementadas** (código)
 
-Divergências grandes entre análise e implementação são sinal de que algo escapou — e merecem atenção na revisão.
+Divergências grandes entre análise e implementação são sinal de que algo escapou - e merecem atenção na revisão.
 
 ---
 
@@ -502,7 +502,7 @@ Tarefa **RF-9.2:** _"Adicionar autenticação por OAuth Google ao app"_
 
 **Toca arquivos:** authService, perfilService, FormularioLogin, env vars, novo provider
 **Áreas críticas:** autenticação (claro), persistência (sessão do usuário)
-**Outras features dependem da auth:** sim — todo o app
+**Outras features dependem da auth:** sim - todo o app
 
 **Decisão:** Análise completa obrigatória.
 ```
@@ -510,7 +510,7 @@ Tarefa **RF-9.2:** _"Adicionar autenticação por OAuth Google ao app"_
 ### 10.3 Análise Completa
 
 ```markdown
-## Análise de Impacto: RF-9.2 — Autenticação OAuth Google
+## Análise de Impacto: RF-9.2 - Autenticação OAuth Google
 
 **Tarefa:** RF-9.2
 **Modo:** Strict
@@ -532,7 +532,7 @@ Adicionar autenticação por OAuth Google como **alternativa** ao login email/se
 | components/auth/ | `FormularioLogin.tsx` | Modificar (adicionar botão) |
 | pages/ | `PaginaLogin.tsx` | Modificar (layout) |
 | config/ | `env.ts` | Modificar (vars Google OAuth) |
-| .env.example | — | Modificar |
+| .env.example | - | Modificar |
 
 **Total:** 11 arquivos afetados
 **Nível de risco:** Alto (autenticação)
@@ -568,11 +568,11 @@ Adicionar autenticação por OAuth Google como **alternativa** ao login email/se
 ### Riscos Não-Mitigáveis
 1. **Conta Google deletada pelo usuário externamente**
    - Mitigação parcial: marcar conta como "inativa" no próximo login fail
-   - **Dívida técnica:** DT-19 — política de contas órfãs
+   - **Dívida técnica:** DT-19 - política de contas órfãs
 
 2. **Backend stub não valida tokens Google**
    - Mitigação parcial: validação básica no frontend
-   - **Dívida técnica:** DT-20 — validação server-side de OAuth tokens
+   - **Dívida técnica:** DT-20 - validação server-side de OAuth tokens
 
 ### Plano de Mitigação
 - [ ] Escrever testes de regressão do login email/senha atual
@@ -600,7 +600,7 @@ Humano lê a análise. Toma as 3 decisões. A IA volta:
 2. Cria ADR-007 (decisão de armazenamento de token)
 3. Cria DT-19 e DT-20 em `divida-tecnica.md`
 4. Divide em 4 sub-tarefas (RF-9.2.1 a 9.2.4) em `pendentes.md`
-5. **Tarefa RF-9.2 pai** vira "tarefa guarda-chuva" — não tem implementação direta, só rastreia as 4 sub-tarefas
+5. **Tarefa RF-9.2 pai** vira "tarefa guarda-chuva" - não tem implementação direta, só rastreia as 4 sub-tarefas
 
 Cada sub-tarefa tem sua própria análise (menor agora) e plano.
 
@@ -637,7 +637,7 @@ Cada sub-tarefa tem sua própria análise (menor agora) e plano.
 
 ## 🔗 Módulos Relacionados
 
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) — Análise faz parte de tarefas Strict
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) — Revisão complementa análise
-- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) — Refatoração grande precisa de análise
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) — Análises grandes viram ADR
+- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Análise faz parte de tarefas Strict
+- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão complementa análise
+- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) - Refatoração grande precisa de análise
+- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Análises grandes viram ADR

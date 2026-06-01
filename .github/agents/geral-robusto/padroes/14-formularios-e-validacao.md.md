@@ -90,7 +90,7 @@ const schemaPerfil = z.object({
 Em vez de definir tipo + schema separadamente, **derive o tipo do schema**:
 
 ```typescript
-// ❌ Errado — duplica a verdade
+// ❌ Errado - duplica a verdade
 type Perfil = {
   nome: string
   email: string
@@ -103,7 +103,7 @@ const schemaPerfil = z.object({
   idade: z.number().int().optional(),
 })
 
-// ✅ Certo — schema é a fonte da verdade
+// ✅ Certo - schema é a fonte da verdade
 const schemaPerfil = z.object({
   nome: z.string().min(3),
   email: z.string().email(),
@@ -398,7 +398,7 @@ Comparado ao código original, é muito menos repetição. E como o componente g
 |Campo inválido|`aria-invalid="true"` quando há erro|
 |Campo obrigatório|`aria-required="true"` + indicador visual|
 |Foco visível|`focus-visible:ring-2` claro|
-|`inputMode` correto|Numérico, email, etc. — afeta teclado mobile|
+|`inputMode` correto|Numérico, email, etc. - afeta teclado mobile|
 |`autoComplete` semântico|Permite browser sugerir valores corretos|
 
 ### 4.4 Sobre Placeholders
@@ -406,7 +406,7 @@ Comparado ao código original, é muito menos repetição. E como o componente g
 Placeholders **não substituem labels**. Eles servem como exemplo, não como rótulo:
 
 ```tsx
-// ❌ Placeholder como label — desaparece quando começa a digitar
+// ❌ Placeholder como label - desaparece quando começa a digitar
 <input placeholder="Email" />
 
 // ✅ Label + placeholder com exemplo
@@ -598,7 +598,7 @@ function EtapaUm({ onAvancar, valoresIniciais }: Props) {
 - **Indicador visual de progresso** (1 de 3, 2 de 3)
 - **Permitir voltar** sem perder dados
 - **Salvar rascunho** se o form é longo (localStorage)
-- **Não esconder etapas restantes** — deixe usuário saber quanto falta
+- **Não esconder etapas restantes** - deixe usuário saber quanto falta
 
 ---
 
@@ -620,7 +620,7 @@ return (
 )
 ```
 
-`watch` é reativo — re-renderiza quando o valor muda. Use com moderação em forms grandes (cada watch causa re-render).
+`watch` é reativo - re-renderiza quando o valor muda. Use com moderação em forms grandes (cada watch causa re-render).
 
 ### 8.2 Arrays Dinâmicos (`useFieldArray`)
 
@@ -701,7 +701,7 @@ useEffect(() => {
 |---|---|
 |Lib de form?|react-hook-form|
 |Lib de validação?|Zod|
-|Tipo do form?|`z.infer<typeof schema>` — nunca duplique|
+|Tipo do form?|`z.infer<typeof schema>` - nunca duplique|
 |Quando validar?|`onBlur` + `reValidateMode: 'onChange'`|
 |Label opcional?|Nunca. Sempre visível e associada|
 |Placeholder como label?|Não. Placeholder é exemplo|
@@ -713,7 +713,7 @@ useEffect(() => {
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) — Hooks de feature que coordenam forms complexos
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) — Componentes UI consumidos pelos campos
-- [`15-testes.md`](https://claude.ai/chat/15-testes.md) — Como testar formulários com user-event
-- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) — Validação no servidor e dados sensíveis
+- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Hooks de feature que coordenam forms complexos
+- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Componentes UI consumidos pelos campos
+- [`15-testes.md`](https://claude.ai/chat/15-testes.md) - Como testar formulários com user-event
+- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) - Validação no servidor e dados sensíveis

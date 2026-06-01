@@ -563,7 +563,7 @@ Checklist rápido:
 - todo input tem label visível;
 - botão só com ícone tem `aria-label`;
 - ícone decorativo usa `aria-hidden="true"`;
-- elementos interativos têm área de toque confortável, idealmente 44–48px;
+- elementos interativos têm área de toque confortável, idealmente 44-48px;
 - foco visível com `:focus-visible`;
 - erros de formulário são anunciáveis;
 - animações respeitam `prefers-reduced-motion` quando forem intensas.

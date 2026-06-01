@@ -3,6 +3,7 @@
 description: "Checklist principal de revisão de código. Versão essencial (sempre) + completa por dimensão. Aponta para checklists especializados." modulo: "40" categoria: "checklists" versao: "1.0" relacionado:
 
 - "21-revisao-codigo.md"
+- "27-revisao-geral.md"
 - "41-seguranca.md"
 - "42-acessibilidade.md"
 - "43-performance.md"
@@ -25,17 +26,18 @@ O checklist tem duas profundidades:
 |---|---|---|
 |**Essencial**|Toda mudança que não seja Light|~15 itens|
 |**Completo**|Mudança Standard relevante ou Strict|Essencial + grupos por dimensão|
+|**Revisão Geral**|Somente quando o humano pedir revisão completa do projeto|Essencial + grupos relevantes, registrado em `REV-NNN.md`|
 
-Para mudanças Light (typo, formatação isolada), você não precisa nem deste checklist — `N/A — mudança trivial` na revisão basta.
+Para mudanças Light (typo, formatação isolada), você não precisa nem deste checklist - `N/A - mudança trivial` na revisão basta.
 
 ### Marcação
 
 Para cada item:
 
-- `[x]` — cumpre
-- `[ ]` — não cumpre (vira **achado** na revisão)
-- `[~]` — parcialmente cumpre / com exceção (precisa justificar)
-- `[N/A]` — não se aplica a esta mudança
+- `[x]` - cumpre
+- `[ ]` - não cumpre (vira **achado** na revisão)
+- `[~]` - parcialmente cumpre / com exceção (precisa justificar)
+- `[N/A]` - não se aplica a esta mudança
 
 Itens marcados `[ ]` viram achados classificados conforme [módulo 21](https://claude.ai/processos/21-revisao-codigo.md#6-os-3-n%C3%ADveis-de-achados):
 
@@ -55,7 +57,7 @@ Itens marcados `[ ]` viram achados classificados conforme [módulo 21](https://c
 - [ ] O typecheck passa (`npm run typecheck`)?
 - [ ] O lint passa (`npm run lint`)?
 
-Se algum desses falha, **pare**. Não é momento de revisar — é momento de consertar.
+Se algum desses falha, **pare**. Não é momento de revisar - é momento de consertar.
 
 ### Convenções Críticas
 
@@ -103,7 +105,7 @@ Detalhes: [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md).
 - [ ] Idioma 100% consistente (variáveis, funções, comentários, testes)
 - [ ] Booleans com prefixo `is`/`has`/`tem`/`eh` conforme convenção do projeto
 - [ ] Funções com 5+ parâmetros usam objeto de opções
-- [ ] Sem números mágicos (`* 52`, `+ 0.05`) — constantes nomeadas
+- [ ] Sem números mágicos (`* 52`, `+ 0.05`) - constantes nomeadas
 - [ ] Sem `else` quando `early return` é mais claro
 - [ ] Sem comentários redundantes (`// soma a e b` em `a + b`)
 - [ ] Comentários, quando existem, explicam **por quê**, não **o quê**
@@ -138,7 +140,7 @@ Detalhes: [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
 - [ ] Keys de listas são estáveis e únicas (não `index` em lista que muda)
 - [ ] Componente não monta efeitos que deveriam estar em hooks ou services
 - [ ] Estado mais profundo que necessário foi elevado apenas até onde compartilhado
-- [ ] Sem mutação direta de state (`array.push`, `obj.x = y`) — sempre imutabilidade
+- [ ] Sem mutação direta de state (`array.push`, `obj.x = y`) - sempre imutabilidade
 
 ### 4. UI e Design System
 
@@ -223,7 +225,9 @@ Detalhes: [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md).
 
 ## Reportando Resultado
 
-Após rodar o checklist, transcreva achados para o formato de revisão do [módulo 21, seção 7.1](https://claude.ai/processos/21-revisao-codigo.md#71-estrutura):
+Após rodar o checklist em uma tarefa, transcreva achados para o formato de revisão do [módulo 21, seção 7.1](https://claude.ai/processos/21-revisao-codigo.md#71-estrutura).
+
+Se, e somente se, o humano pediu revisão geral completa do projeto, transcreva os achados para `docs/arquitetura/revisoes-gerais/REV-NNN.md` usando [`../templates/37-revisao-geral.md`](https://claude.ai/templates/37-revisao-geral.md). Nesse caso, cada achado recebe ID `REV-NNN-Axx` e relaciona tarefas/ADRs geradas quando existirem.
 
 ```markdown
 ## Revisão
@@ -232,7 +236,7 @@ Após rodar o checklist, transcreva achados para o formato de revisão do [módu
 Auto-revisão IA + validação humana
 
 ### ✅ Bom
-- [pontos que ficaram bem feitos — sempre liste algo]
+- [pontos que ficaram bem feitos - sempre liste algo]
 
 ### 🔴 Bloqueante
 **[Título]**
@@ -259,9 +263,9 @@ Auto-revisão IA + validação humana
 Marque `[N/A]` e, se não for óbvio, justifique:
 
 ```
-- [N/A] Schema Zod existe — esta mudança não toca formulário
-- [N/A] aria-live em loading — componente não tem estado de loading
-- [N/A] testes de hook — não há hook novo
+- [N/A] Schema Zod existe - esta mudança não toca formulário
+- [N/A] aria-live em loading - componente não tem estado de loading
+- [N/A] testes de hook - não há hook novo
 ```
 
 `[N/A]` honesto é melhor que checklist cheio de `[x]` mentirosos.
@@ -272,15 +276,15 @@ Marque `[N/A]` e, se não for óbvio, justifique:
 
 **1. Preciso rodar TODO o checklist em toda revisão?** Não. Versão essencial sempre. Versão completa para Strict ou mudança grande. Versão essencial cobre 80% dos casos.
 
-**2. Quanto tempo dura uma revisão com este checklist?** Essencial: 5-10 minutos. Completa: 20-30 minutos. Se passar de 1 hora, o escopo da mudança é grande demais — divida.
+**2. Quanto tempo dura uma revisão com este checklist?** Essencial: 5-10 minutos. Completa: 20-30 minutos. Se passar de 1 hora, o escopo da mudança é grande demais - divida.
 
 **3. E se um item parece "subjetivo"?** Cada item deveria ter critério objetivo. Se você está em dúvida, marque `[~]` com observação. Algum item recorrentemente vago é candidato a refinar.
 
 **4. Posso adicionar itens específicos do meu projeto?** Sim. Crie checklist próprio (ex: `docs/arquitetura/checklist-projeto.md`) com regras específicas. Este checklist do pacote é base, não limite.
 
-**5. Quando NÃO usar este checklist?** Mudança Light (typo, formatação isolada, comentário). `N/A — mudança trivial` na revisão basta.
+**5. Quando NÃO usar este checklist?** Mudança Light (typo, formatação isolada, comentário). `N/A - mudança trivial` na revisão basta.
 
-**6. A IA pode rodar este checklist sozinha?** Sim, para verificações objetivas (testes passam, há `any`, idioma consistente). Para verificações subjetivas (qualidade dos nomes, decisões de design), prefira validação humana.
+**6. A IA pode rodar este checklist sozinha?** Sim, para verificações objetivas (testes passam, há `any`, idioma consistente). Para verificações subjetivas (qualidade dos nomes, decisões de design), prefira validação humana. A IA não usa este checklist para abrir uma REV sozinha; REV só existe com pedido humano de revisão completa do projeto.
 
 **7. Item marcado `[ ]` é sempre bloqueante?** Não. Depende do item e do contexto. Item de segurança crítico `[ ]` é 🔴 Bloqueante. Item de "performance pode melhorar" `[ ]` pode ser 🟡 Importante ou 🟢 Sugestão. Use o [módulo 21](https://claude.ai/processos/21-revisao-codigo.md) para classificar.
 
@@ -290,8 +294,9 @@ Marque `[N/A]` e, se não for óbvio, justifique:
 
 ## 🔗 Checklists Especializados e Módulos Relacionados
 
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) — Checklist detalhado de segurança
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) — Checklist detalhado de acessibilidade
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) — Checklist detalhado de performance
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) — Processo completo de revisão
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) — Onde o resultado é registrado
+- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist detalhado de segurança
+- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist detalhado de acessibilidade
+- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist detalhado de performance
+- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Processo completo de revisão
+- [`../processos/27-revisao-geral.md`](https://claude.ai/processos/27-revisao-geral.md) - Revisão completa do projeto sob pedido humano
+- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Onde o resultado é registrado

@@ -23,11 +23,11 @@
 | TASK-REF-02 | Refatorar PaginaDetalhamento.tsx | [2026-05-17--22h30--TASK-REF-02.md](./2026-05-17--22h30--TASK-REF-02.md) |
 | TASK-REF-04 | Extrair CardCpk e CabecalhoVoltar | [2026-05-17--23h30--TASK-REF-04.md](./2026-05-17--23h30--TASK-REF-04.md) |
 | TASK-REF-05 | Alinhar --radius ao shadcn e adotar shadcn Card | [2026-05-18--00h10--TASK-REF-05.md](./2026-05-18--00h10--TASK-REF-05.md) |
-| TASK-REF-06 | PassoLayout — shadcn Button + padrão de altura (min-h-touch) | [2026-05-18--20h44--TASK-REF-06.md](./2026-05-18--20h44--TASK-REF-06.md) |
-| TASK-REF-07 | Onboarding Passo1-3 — shadcn + correção IPVA + dual-track FIPE | [2026-05-18--21h02--TASK-REF-07.md](./2026-05-18--21h02--TASK-REF-07.md) |
-| TASK-REF-08 | Onboarding Passo4, Passo5 — shadcn + min-h-touch | [2026-05-18--21h11--TASK-REF-08.md](./2026-05-18--21h11--TASK-REF-08.md) |
-| TASK-REF-09 | Onboarding Passo6, 6Financiamento, 6Aluguel, 6Responsabilidade — shadcn + min-h-touch | [2026-05-18--21h24--TASK-REF-09.md](./2026-05-18--21h24--TASK-REF-09.md) |
-| TASK-REF-10 | Onboarding Passo7, 8, 9 e PassoConfirmacao — shadcn + min-h-touch | [2026-05-18--21h31--TASK-REF-10.md](./2026-05-18--21h31--TASK-REF-10.md) |
+| TASK-REF-06 | PassoLayout - shadcn Button + padrão de altura (min-h-touch) | [2026-05-18--20h44--TASK-REF-06.md](./2026-05-18--20h44--TASK-REF-06.md) |
+| TASK-REF-07 | Onboarding Passo1-3 - shadcn + correção IPVA + dual-track FIPE | [2026-05-18--21h02--TASK-REF-07.md](./2026-05-18--21h02--TASK-REF-07.md) |
+| TASK-REF-08 | Onboarding Passo4, Passo5 - shadcn + min-h-touch | [2026-05-18--21h11--TASK-REF-08.md](./2026-05-18--21h11--TASK-REF-08.md) |
+| TASK-REF-09 | Onboarding Passo6, 6Financiamento, 6Aluguel, 6Responsabilidade - shadcn + min-h-touch | [2026-05-18--21h24--TASK-REF-09.md](./2026-05-18--21h24--TASK-REF-09.md) |
+| TASK-REF-10 | Onboarding Passo7, 8, 9 e PassoConfirmacao - shadcn + min-h-touch | [2026-05-18--21h31--TASK-REF-10.md](./2026-05-18--21h31--TASK-REF-10.md) |
 | TASK-CHORE-010 | Remover aba Registros do menu inferior e desativar rota | [2026-05-18--22h00--TASK-CHORE-010.md](./2026-05-18--22h00--TASK-CHORE-010.md) |
 | TASK-REF-11 | Reestruturar tipos de MO: ServicoIndependente[], actions, schema migration 5→6 | [2026-05-20--09h00--TASK-REF-11.md](./2026-05-20--09h00--TASK-REF-11.md) |
 | TASK-REF-12 | Fix calculador: Honda km-based + overrides + CPK independente por serviço | [2026-05-20--TASK-REF-12.md](./2026-05-20--TASK-REF-12.md) |
@@ -36,8 +36,8 @@
 | TASK-DOC-005 | Criar INV-VIDA-UTIL-1 em invariantes.md | [2026-05-20--08h57--TASK-DOC-005.md](./2026-05-20--08h57--TASK-DOC-005.md) |
 | TASK-DOC-006 | Atualizar ADR-004 com defaults reais de SERVICOS_INDEPENDENTES_PADRAO | [2026-05-20--09h00--TASK-DOC-006.md](./2026-05-20--09h00--TASK-DOC-006.md) |
 | TASK-DOC-007 | Registrar simplificação: excepcionais não distinguidos no calculador (DT-16) | [2026-05-20--09h06--TASK-DOC-007.md](./2026-05-20--09h06--TASK-DOC-007.md) |
-| TASK-RF-6.3 | Tela Perfil — página de perfil com gestão de predefinição | [2026-05-20--10h47--TASK-RF-6.3.md](./2026-05-20--10h47--TASK-RF-6.3.md) |
-| TASK-RF-6.3.1 | Tela Ajustes — 5 seções inline + 8 actions + reset | [2026-05-20--11h51--TASK-RF-6.3.1.md](./2026-05-20--11h51--TASK-RF-6.3.1.md) |
+| TASK-RF-6.3 | Tela Perfil - página de perfil com gestão de predefinição | [2026-05-20--10h47--TASK-RF-6.3.md](./2026-05-20--10h47--TASK-RF-6.3.md) |
+| TASK-RF-6.3.1 | Tela Ajustes - 5 seções inline + 8 actions + reset | [2026-05-20--11h51--TASK-RF-6.3.1.md](./2026-05-20--11h51--TASK-RF-6.3.1.md) |
 | TASK-RF-6.3.2 | Modelo de dados: `kmUltimaTrocas` + `kmMotorRefeito` + schema v6→v7 | [2026-05-20--13h47--TASK-RF-6.3.2.md](./2026-05-20--13h47--TASK-RF-6.3.2.md) |
 | TASK-RF-6.3.3 | Ajustes: seção Histórico de Manutenção (accordion km por componente) | [2026-05-20--13h58--TASK-RF-6.3.3.md](./2026-05-20--13h58--TASK-RF-6.3.3.md) |
 | TASK-RF-6.3.4 | Onboarding: checkpoint "o que foi trocado na última revisão" | [2026-05-20--14h12--TASK-RF-6.3.4.md](./2026-05-20--14h12--TASK-RF-6.3.4.md) |
@@ -56,18 +56,18 @@
 | TASK-RF-6.10 | Substituir "fazer motor" por retífica de cabeçote e retífica completa | [2026-05-23--13h08--TASK-RF-6.10.md](./2026-05-23--13h08--TASK-RF-6.10.md) |
 | TASK-RF-6.12 | Retíficas explícitas no Detalhamento com toggle | [2026-05-23--13h36--TASK-RF-6.12.md](./2026-05-23--13h36--TASK-RF-6.12.md) |
 | TASK-BG-005 | Retíficas como imprevistos sugeridos desativados | [2026-05-23--14h14--TASK-BG-005.md](./2026-05-23--14h14--TASK-BG-005.md) |
-| TASK-RF-6.9 | Imprevistos: presets editáveis (Multa, Sinistros, Outros) — valor único acumulado, popup de edição, lista fechada | [2026-05-23--21h55--TASK-RF-6.9.md](./2026-05-23--21h55--TASK-RF-6.9.md) |
+| TASK-RF-6.9 | Imprevistos: presets editáveis (Multa, Sinistros, Outros) - valor único acumulado, popup de edição, lista fechada | [2026-05-23--21h55--TASK-RF-6.9.md](./2026-05-23--21h55--TASK-RF-6.9.md) |
 | TASK-RF-6.11 | Detalhamento: lápis por categoria abre popup com cards reaproveitados (sincronizados via dispatch); Revisão Autorizada navega com scroll/destaque | [2026-05-24--04h52--TASK-RF-6.11.md](./2026-05-24--04h52--TASK-RF-6.11.md) |
 | TASK-RNF-10 | Acessibilidade dos inputs (Ajustes + Custos & Peças): `<Label htmlFor>` shadcn + `id` via `useId()` + `inputMode` apropriado em 15 campos | [2026-05-24--08h19--TASK-RNF-10.md](./2026-05-24--08h19--TASK-RNF-10.md) |
 | TASK-BG-006 | Responsabilidade do aluguel editável em Ajustes: novo card condicional + action `SET_RESPONSABILIDADE_ALUGUEL`; Passo6 refatorado para dispatch direto | [2026-05-24--08h57--TASK-BG-006.md](./2026-05-24--08h57--TASK-BG-006.md) |
-| TASK-DOC-008 | Padronizar nome da tela (4 nomes diferentes) como **"Insumos"** — rota `/insumos`, `PaginaInsumos`, label `INSUMOS`; engloba combustível + peças + pneus sem reabrir ADR-005 | [2026-05-24--10h36--TASK-DOC-008.md](./2026-05-24--10h36--TASK-DOC-008.md) |
-| TASK-REF-13 | Linha (PaginaAjustes): `gap-4` → `gap-2` + `flex-1 min-w-0` no label — fechamento por validação visual implícita em uso real | [2026-05-24--15h35--TASK-REF-13.md](./2026-05-24--15h35--TASK-REF-13.md) |
-| TASK-REF-14 | Extração de 10 componentes inline de PaginaAjustes (572→73 linhas): Segmentado, Stepper, Linha + 7 seções + 4 campos — fechamento por validação visual implícita | [2026-05-24--15h35--TASK-REF-14.md](./2026-05-24--15h35--TASK-REF-14.md) |
+| TASK-DOC-008 | Padronizar nome da tela (4 nomes diferentes) como **"Insumos"** - rota `/insumos`, `PaginaInsumos`, label `INSUMOS`; engloba combustível + peças + pneus sem reabrir ADR-005 | [2026-05-24--10h36--TASK-DOC-008.md](./2026-05-24--10h36--TASK-DOC-008.md) |
+| TASK-REF-13 | Linha (PaginaAjustes): `gap-4` → `gap-2` + `flex-1 min-w-0` no label - fechamento por validação visual implícita em uso real | [2026-05-24--15h35--TASK-REF-13.md](./2026-05-24--15h35--TASK-REF-13.md) |
+| TASK-REF-14 | Extração de 10 componentes inline de PaginaAjustes (572→73 linhas): Segmentado, Stepper, Linha + 7 seções + 4 campos - fechamento por validação visual implícita | [2026-05-24--15h35--TASK-REF-14.md](./2026-05-24--15h35--TASK-REF-14.md) |
 | TASK-REF-23 | Cleanup pós-revisão geral: remove `IconRegistros` morto, corrige `_descricao` da fixture, lint format (`--fix` em 3 arquivos) | [2026-05-24--15h35--TASK-REF-23.md](./2026-05-24--15h35--TASK-REF-23.md) |
 | TASK-DOC-009 | Sincronizar docs/dominio + docs/arquitetura com código pós-ADR-003: 3 deletados, 2 reescritos (estado_inicial + novo calculos-visao), 10 atualizados cirurgicamente. 4 ondas com commits. Spin-off: TASK-DOC-010 para requisitos | [2026-05-24--16h30--TASK-DOC-009.md](./2026-05-24--16h30--TASK-DOC-009.md) |
 | TASK-DOC-010 | Sincronizar docs/requisitos + docs/contexto-projeto-ai.md com ADR-003 (estratégia Híbrida): banner ADIADO em Requisitos_v6.md (spec congelada); deletar em funcionais/regras-negocio/nao-funcionais/contexto-projeto-ai (operacionais); XII.1 substituído por pointer enxuto para src/types. 4 ondas | [2026-05-25--00h03--TASK-DOC-010.md](./2026-05-25--00h03--TASK-DOC-010.md) |
-| TASK-DOC-011 | Sincronizar índice I- de Requisitos_MotoCalc_RJ_v6.md com a numeração real do corpo (I–XV → II–XVI); spin-off Light da DOC-010 | [2026-05-25--00h30--TASK-DOC-011.md](./2026-05-25--00h30--TASK-DOC-011.md) |
-| TASK-DOC-012 | Métricas de teste em `contexto-projeto-ai.md` substituídas por pointer ao `npm run test` (Opção A — pointer > snapshot); spin-off Light da DOC-010 | [2026-05-25--01h45--TASK-DOC-012.md](./2026-05-25--01h45--TASK-DOC-012.md) |
+| TASK-DOC-011 | Sincronizar índice I- de Requisitos_MotoCalc_RJ_v6.md com a numeração real do corpo (I-XV → II-XVI); spin-off Light da DOC-010 | [2026-05-25--00h30--TASK-DOC-011.md](./2026-05-25--00h30--TASK-DOC-011.md) |
+| TASK-DOC-012 | Métricas de teste em `contexto-projeto-ai.md` substituídas por pointer ao `npm run test` (Opção A - pointer > snapshot); spin-off Light da DOC-010 | [2026-05-25--01h45--TASK-DOC-012.md](./2026-05-25--01h45--TASK-DOC-012.md) |
 | TASK-RF-6.22 | M.O. por modo + `precoTotalAutorizada` (peça+M.O. juntos como Honda cobra) em `ServicoIndependente`; cálculo autorizado soma serviços fora do pacote sem duplicar peça via `MAPA_PECA_PARA_SERVICO`; imprevistos respeitam modo (retífica some no autorizado); migration v14→v15; ADR-007 (Strict) | [2026-05-25--14h00--TASK-RF-6.22.md](./2026-05-25--14h00--TASK-RF-6.22.md) |
 | TASK-BG-013 | Detalhamento: Manutenção no modo autorizado separa pacote Honda de serviços avulsos fora do pacote | [2026-05-25--17h16--TASK-BG-013.md](./2026-05-25--17h16--TASK-BG-013.md) |
 | TASK-BG-014 | Detalhamento: toggles finos de Manutenção persistem no perfil e sobrevivem à navegação | [2026-05-25--17h55--TASK-BG-014.md](./2026-05-25--17h55--TASK-BG-014.md) |

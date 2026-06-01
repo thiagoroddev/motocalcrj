@@ -4,13 +4,14 @@ description: "Revisão de código: filosofia, quem revisa, dimensões, checklist
 
 - "20-ciclo-tarefa.md"
 - "22-refatoracao.md"
+- "27-revisao-geral.md"
 - "../checklists/40-revisao-rapida.md"
 
 ---
 
 # 🔍 Revisão de Código
 
-> Revisão não é burocracia nem caça às bruxas. É **conversa estruturada** sobre o que ficou bom, o que falta, e o que pode ser melhor — com critério claro do que é bloqueante e do que é sugestão.
+> Revisão não é burocracia nem caça às bruxas. É **conversa estruturada** sobre o que ficou bom, o que falta, e o que pode ser melhor - com critério claro do que é bloqueante e do que é sugestão.
 
 ---
 
@@ -29,7 +30,7 @@ description: "Revisão de código: filosofia, quem revisa, dimensões, checklist
 
 - **Não é prova de QI.** Encontrar problema não é vitória; **não encontrar** não é falha.
 - **Não é teste.** Testes pegam regressão; revisão pega design e legibilidade.
-- **Não é ego.** Não importa quem escreveu — importa que está certo.
+- **Não é ego.** Não importa quem escreveu - importa que está certo.
 - **Não é checklist mecânico.** Itens são guia, julgamento humano (ou da IA) ainda importa.
 
 ### 1.3 No Contexto Deste Pacote
@@ -40,7 +41,7 @@ Em projeto solo com IA executora, revisão tem dinâmica especial:
 IA escreve código → IA auto-revisa por checklist objetivo → Humano valida ou pede ajustes
 ```
 
-A IA não pode "se aprovar emocionalmente" — ela aplica **critérios documentados** contra o código que escreveu. O humano valida olhando o output da revisão, não revisando linha por linha (a menos que queira).
+A IA não pode "se aprovar emocionalmente" - ela aplica **critérios documentados** contra o código que escreveu. O humano valida olhando o output da revisão, não revisando linha por linha (a menos que queira).
 
 ---
 
@@ -48,7 +49,7 @@ A IA não pode "se aprovar emocionalmente" — ela aplica **critérios documenta
 
 |Camada|Quem revisa|Tipo|
 |---|---|---|
-|Mudança Light (typo, formatação)|IA (auto, mínima)|`N/A — mudança trivial`|
+|Mudança Light (typo, formatação)|IA (auto, mínima)|`N/A - mudança trivial`|
 |Mudança Standard (feature, bug)|IA (auto, completa) + Humano (valida)|Revisão formal|
 |Mudança Strict (decisão arquitetural)|IA + Humano + (idealmente) outro humano|Revisão formal + ADR|
 
@@ -82,9 +83,9 @@ A seção `## Revisão` **sempre existe** no arquivo da tarefa concluída. Mas o
 |Tarefa toca código de segurança ou autenticação|✅ Sim|Revisão + atenção extra em segurança|
 |Tarefa gerada por revisão anterior|✅ Sim|A revisão que gerou é o gatilho|
 |Tarefa Standard típica|✅ Sim|Revisão completa|
-|Mudança Light (typo, formatação isolada)|❌ Não|`N/A — mudança trivial (especificar)`|
-|Atualização de documentação isolada|❌ Não|`N/A — apenas documentação`|
-|Renomear arquivo sem mudar conteúdo|❌ Não|`N/A — refactor mecânico`|
+|Mudança Light (typo, formatação isolada)|❌ Não|`N/A - mudança trivial (especificar)`|
+|Atualização de documentação isolada|❌ Não|`N/A - apenas documentação`|
+|Renomear arquivo sem mudar conteúdo|❌ Não|`N/A - refactor mecânico`|
 
 ### 3.2 A Regra do "N/A com Motivo"
 
@@ -92,7 +93,7 @@ Se a tarefa não tem revisão formal, a seção fica:
 
 ```markdown
 ## Revisão
-N/A — Mudança trivial (correção de typo na linha 42 do README, sem impacto funcional).
+N/A - Mudança trivial (correção de typo na linha 42 do README, sem impacto funcional).
 ```
 
 **Nunca** simplesmente "N/A" sem justificativa. O motivo precisa estar explícito.
@@ -110,11 +111,19 @@ Mesmo em mudança que parece trivial, se ela:
 
 Nesses casos, "trivial" é miragem. Reviewer vai olhar de qualquer jeito.
 
+### 3.4 Revisão Geral do Projeto
+
+Revisão geral do projeto **não** é a seção `## Revisão` de uma tarefa.
+
+Use `docs/arquitetura/revisoes-gerais/REV-NNN.md` somente quando o humano pedir uma **revisão completa do projeto inteiro**. Esse fluxo vive no [`processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md) e usa o template [`../templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md).
+
+Se a revisão é de uma tarefa, grupo local de arquivos, ADR específica, feature ou módulo isolado, registre no fluxo normal de tarefa/análise/ADR. Não crie REV.
+
 ---
 
 ## 4. Dimensões da Revisão
 
-Revisão não é uma lista única — é **múltiplas perspectivas** sobre o mesmo código. Cada uma pode achar problemas que as outras não.
+Revisão não é uma lista única - é **múltiplas perspectivas** sobre o mesmo código. Cada uma pode achar problemas que as outras não.
 
 |Dimensão|O que olhar|
 |---|---|
@@ -127,7 +136,7 @@ Revisão não é uma lista única — é **múltiplas perspectivas** sobre o mes
 |**Testes**|Cobertura mínima, padrão AAA, testa comportamento ([módulo 15](https://claude.ai/padroes/15-testes.md))|
 |**Legibilidade**|Outro dev (ou você em 6 meses) consegue entender?|
 
-Para revisão completa, **passe por cada uma**. Nem todas precisam ser detalhadas em todo arquivo — mas todas devem ser **consideradas**.
+Para revisão completa, **passe por cada uma**. Nem todas precisam ser detalhadas em todo arquivo - mas todas devem ser **consideradas**.
 
 ---
 
@@ -160,10 +169,10 @@ O coração da auto-revisão. Cada item tem resposta sim/não/N/A. Detalhamento 
 
 Marque cada item:
 
-- `[x]` — cumpre
-- `[ ]` — não cumpre (vira achado)
-- `[~]` — parcialmente cumpre / com exceção (justifica)
-- `[N/A]` — não se aplica a esta tarefa
+- `[x]` - cumpre
+- `[ ]` - não cumpre (vira achado)
+- `[~]` - parcialmente cumpre / com exceção (justifica)
+- `[N/A]` - não se aplica a esta tarefa
 
 Itens não cumpridos viram **achados** que entram no formato de revisão (seção 7).
 
@@ -231,7 +240,7 @@ A seção `## Revisão` no arquivo da tarefa concluída segue formato uniforme. 
 [Auto-revisão IA / Revisão IA + Humano / Revisão humana completa]
 
 ### ✅ Bom
-- [algo que ficou bem feito — não só lista vazia]
+- [algo que ficou bem feito - não só lista vazia]
 
 ### 🔴 Bloqueante
 **[Título do problema]**
@@ -314,10 +323,10 @@ REPROVADO (bloqueante em status)
 - REF-04: Extrair lógica de PaginaDetalhamento para hook próprio (180 → < 80 linhas)
 
 ### Requisitos Gerados pela Revisão
-- —
+- -
 
 ### ADRs Geradas
-- —
+- -
 ```
 
 ---
@@ -330,44 +339,44 @@ Achados não desaparecem. Eles se transformam.
 
 A versão do documento original já tratava bem isso. Vou consolidar.
 
-#### Cenário 1 — Código viola requisito existente
+#### Cenário 1 - Código viola requisito existente
 
 **Exemplo:** `RevisaoGeral.status` tem 2 estados, mas `RF-REG-05` exige 3.
 
 **Ação:** criar tarefa `BG` referenciando o requisito violado.
 
 ```markdown
-| TASK-BG-07 | status da RevisaoGeral com 2 estados (viola RF-REG-05) | Crítico | Imediata | P | — | `[ ]` | 13/05/26 |
+| TASK-BG-07 | status da RevisaoGeral com 2 estados (viola RF-REG-05) | Crítico | Imediata | P | - | `[ ]` | 13/05/26 |
 ```
 
-O requisito já existe — foi descumprido. Tarefa corrige.
+O requisito já existe - foi descumprido. Tarefa corrige.
 
-#### Cenário 2 — Problema de qualidade interna
+#### Cenário 2 - Problema de qualidade interna
 
 **Exemplo:** `PaginaDetalhamento.tsx` tem 537 linhas. Convenção do projeto pede composição (lógica em hooks).
 
 **Ação:** criar tarefa `REF`.
 
 ```markdown
-| TASK-REF-02 | Refatorar PaginaDetalhamento.tsx para extrair lógica em hook | Importante | Esta Semana | G | — | `[ ]` | 13/05/26 |
+| TASK-REF-02 | Refatorar PaginaDetalhamento.tsx para extrair lógica em hook | Importante | Esta Semana | G | - | `[ ]` | 13/05/26 |
 ```
 
 Código funciona, mas viola padrão. Refatoração programada.
 
-#### Cenário 3 — Problema que nenhum requisito cobre
+#### Cenário 3 - Problema que nenhum requisito cobre
 
 **Exemplo:** o gráfico donut não tem `aria-label`. Nenhum RNF explicitamente obriga isso.
 
 **Ação:** criar **tarefa + requisito** no mesmo passo.
 
 ```markdown
-| TASK-RNF-13 | Todos os gráficos devem ter aria-label descritivo | Importante | Este Mês | P | — | `[ ]` | 13/05/26 |
+| TASK-RNF-13 | Todos os gráficos devem ter aria-label descritivo | Importante | Este Mês | P | - | `[ ]` | 13/05/26 |
 ```
 
 E em `docs/requisitos/nao-funcionais.md`, adicionar:
 
 ```markdown
-| TASK-RNF-13 | Gráficos têm aria-label descritivo | A11y | [ ] | RNF-A11Y-01 | — | 13/05/26 |
+| TASK-RNF-13 | Gráficos têm aria-label descritivo | A11y | [ ] | RNF-A11Y-01 | - | 13/05/26 |
 ```
 
 ### 8.2 Árvore de Decisão
@@ -407,8 +416,8 @@ Auto-revisão tem limites. Reconhecê-los honestamente é parte do processo.
 
 ### 9.2 O Que a IA Faz Mal (e precisa do humano)
 
-- **Avaliar valor de produto.** "Esse botão deveria estar aqui?" — humano sabe melhor
-- **Avaliar decisões arquiteturais maiores.** "Deveria ser Context ou Zustand?" — humano decide
+- **Avaliar valor de produto.** "Esse botão deveria estar aqui?" - humano sabe melhor
+- **Avaliar decisões arquiteturais maiores.** "Deveria ser Context ou Zustand?" - humano decide
 - **Detectar problemas em código que ela mesma escreveu errado.** Se a IA tem viés (escreveu `useEffect` para derivar), ela pode ter o mesmo viés ao revisar
 - **Validar regras de negócio não-documentadas.** Se não está escrito em algum lugar, IA não sabe
 
@@ -424,7 +433,7 @@ Quando algum desses casos aparece, a IA deve **explicitamente sinalizar incertez
 - Ação sugerida: validação humana para decisão arquitetural
 ```
 
-Sinalizar incerteza não é fraqueza — é honestidade.
+Sinalizar incerteza não é fraqueza - é honestidade.
 
 ---
 
@@ -464,8 +473,9 @@ Quando algum desses aparece, a IA finaliza a auto-revisão mas **deixa a tarefa 
 
 ## 🔗 Módulos Relacionados
 
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) — Revisão é etapa antes de concluir tarefa
-- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) — Tarefas REF geradas pela revisão
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) — Análise prévia que reduz achados de revisão
-- [`../checklists/40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) — Checklist detalhado
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) — Template com seção Revisão
+- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Revisão é etapa antes de concluir tarefa
+- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) - Tarefas REF geradas pela revisão
+- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Análise prévia que reduz achados de revisão
+- [`27-revisao-geral.md`](https://claude.ai/chat/27-revisao-geral.md) - Revisão completa do projeto por pedido humano, registrada em REV
+- [`../checklists/40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) - Checklist detalhado
+- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Template com seção Revisão

@@ -31,11 +31,11 @@ Cada projeto adota **um único idioma** para tudo que é seu: variáveis, funç�
 APIs de bibliotecas externas vêm em inglês. Isso é inevitável e aceito:
 
 ```typescript
-// ✅ Correto — projeto em português, API React em inglês
+// ✅ Correto - projeto em português, API React em inglês
 const [perfil, setPerfil] = useState<Perfil | null>(null)
 const handleClickSalvar = useCallback(() => { /* ... */ }, [])
 
-// ✅ Correto — projeto em inglês
+// ✅ Correto - projeto em inglês
 const [profile, setProfile] = useState<Profile | null>(null)
 const handleSaveClick = useCallback(() => { /* ... */ }, [])
 ```
@@ -45,12 +45,12 @@ A regra: **o que você nomeia é no idioma do projeto. O que a biblioteca expõe
 ### 1.3 O Que É Mistura (e Deve Ser Evitado)
 
 ```typescript
-// ❌ Errado — projeto português misturado com inglês
+// ❌ Errado - projeto português misturado com inglês
 const [userPerfil, setUserPerfil] = useState()  // userPerfil é portinglês
 function calculateTotalGasto() { }              // verbo inglês + objeto português
 const isAtivo = true                            // is + atributo PT
 
-// ❌ Errado — projeto inglês com leak de português
+// ❌ Errado - projeto inglês com leak de português
 const [profile, setPerfil] = useState()         // inconsistência interna
 function calculateGastoTotal() { }              // mesma função, dois idiomas
 ```
@@ -62,11 +62,11 @@ function calculateGastoTotal() { }              // mesma função, dois idiomas
 |Português|`eh`, `tem`, `deve`, `esta`, `pode`|`temSeguro`, `estaAtivo`, `podeEditar`|
 |Inglês|`is`, `has`, `should`, `can`|`hasInsurance`, `isActive`, `canEdit`|
 
-Booleans **nunca** começam por verbo no infinitivo (`verificar`, `validate`) — esses são nomes de função.
+Booleans **nunca** começam por verbo no infinitivo (`verificar`, `validate`) - esses são nomes de função.
 
 ### 1.5 Migração de Idioma (raro mas possível)
 
-Se o projeto precisar mudar de idioma, isso é uma decisão **Strict** (exige ADR). Nunca migre parcialmente — ou todo o código novo segue o idioma novo (com refatoração programada do antigo), ou não migra.
+Se o projeto precisar mudar de idioma, isso é uma decisão **Strict** (exige ADR). Nunca migre parcialmente - ou todo o código novo segue o idioma novo (com refatoração programada do antigo), ou não migra.
 
 ---
 
@@ -370,12 +370,12 @@ i++
 
 |Situação|Não comente|
 |---|---|
-|Código que descreve o que ele faz|❌ Não — refatore para nome claro|
-|Comentário que vira mentira ao mudar código|❌ Não — sinal de que vai desatualizar|
-|Marcar fim de bloco (`// fim do if`)|❌ Não — IDE faz isso|
-|Mudanças com data ("alterado em 12/03")|❌ Não — usa Git para isso|
+|Código que descreve o que ele faz|❌ Não - refatore para nome claro|
+|Comentário que vira mentira ao mudar código|❌ Não - sinal de que vai desatualizar|
+|Marcar fim de bloco (`// fim do if`)|❌ Não - IDE faz isso|
+|Mudanças com data ("alterado em 12/03")|❌ Não - usa Git para isso|
 
-### 5.4 JSDoc — Quando Usar
+### 5.4 JSDoc - Quando Usar
 
 Use JSDoc apenas em **APIs públicas** (funções exportadas usadas em outros módulos):
 
@@ -383,14 +383,14 @@ Use JSDoc apenas em **APIs públicas** (funções exportadas usadas em outros m�
 /**
  * Calcula o custo total mensal considerando combustível, manutenção e seguro.
  *
- * @param perfil — Perfil do usuário com configurações de veículo
+ * @param perfil - Perfil do usuário com configurações de veículo
  * @returns Custo total em reais. Sempre >= 0.
  * @throws {ValidacaoError} Se o perfil não tiver km_por_dia definido
  */
 export function calcularCustoMensal(perfil: Perfil): number { }
 ```
 
-Funções privadas e componentes React **não precisam** de JSDoc — o tipo já documenta.
+Funções privadas e componentes React **não precisam** de JSDoc - o tipo já documenta.
 
 ---
 
@@ -426,14 +426,14 @@ import './estilo.css'
 |Importando tipos compartilhados|Importando arquivo irmão|
 
 ```typescript
-// ✅ Cruzando domínios — absoluto
+// ✅ Cruzando domínios - absoluto
 import { useAuth } from '@/hooks/useAuth'
 
-// ✅ Mesma feature — relativo
+// ✅ Mesma feature - relativo
 import { CardItem } from './CardItem'
 ```
 
-### 6.3 Barrel Imports — Cautela
+### 6.3 Barrel Imports - Cautela
 
 Arquivos `index.ts` que reexportam tudo (`barrel files`) podem **inflar o bundle**:
 
@@ -526,7 +526,7 @@ try {
 
 > **Não crie abstração até a terceira duplicação.**
 
-A primeira vez que um código aparece, escreva direto. A segunda vez, copie e cole — pode parecer feio mas é tolerável. **Só na terceira ocorrência você extrai a abstração** (função, hook, componente).
+A primeira vez que um código aparece, escreva direto. A segunda vez, copie e cole - pode parecer feio mas é tolerável. **Só na terceira ocorrência você extrai a abstração** (função, hook, componente).
 
 ### 8.1 Por Que Esperar
 
@@ -535,17 +535,17 @@ Abstrações prematuras são piores que duplicação. Você tipicamente não sab
 ### 8.2 Exemplo
 
 ```typescript
-// 1ª vez — escreve direto
+// 1ª vez - escreve direto
 function FormCadastro() {
   return <input className="border rounded p-2" />
 }
 
-// 2ª vez — copia e cola, OK
+// 2ª vez - copia e cola, OK
 function FormLogin() {
   return <input className="border rounded p-2" />
 }
 
-// 3ª vez — agora extrai
+// 3ª vez - agora extrai
 function CampoTexto({ className, ...props }) {
   return <input className={cn('border rounded p-2', className)} {...props} />
 }
@@ -595,9 +595,9 @@ chore: atualizar Vite para 5.4
 
 ### 9.3 Por Que
 
-- **Histórico legível** — você lê o log e entende o projeto.
-- **Changelog automático** — ferramentas geram release notes.
-- **Versionamento semântico** — `feat` = minor, `fix` = patch, `feat!` = major.
+- **Histórico legível** - você lê o log e entende o projeto.
+- **Changelog automático** - ferramentas geram release notes.
+- **Versionamento semântico** - `feat` = minor, `fix` = patch, `feat!` = major.
 
 ---
 
@@ -622,6 +622,6 @@ chore: atualizar Vite para 5.4
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) — Princípios que orientam estas convenções
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) — Onde colocar cada arquivo
-- [`50-anti-padroes.md`](https://claude.ai/referencias/50-anti-padroes.md) — Catálogo completo de anti-padrões
+- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Princípios que orientam estas convenções
+- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde colocar cada arquivo
+- [`50-anti-padroes.md`](https://claude.ai/referencias/50-anti-padroes.md) - Catálogo completo de anti-padrões

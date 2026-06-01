@@ -25,12 +25,12 @@ Testes bem-feitos respondem três perguntas:
 2. **Continuou fazendo depois das mudanças?** (regressão)
 3. **Como esse código é usado?** (documentação executável)
 
-Quando alguém lê um teste, está vendo um exemplo real de uso da função/componente. Testes são a melhor documentação que existe — porque se ficarem desatualizados, **falham**.
+Quando alguém lê um teste, está vendo um exemplo real de uso da função/componente. Testes são a melhor documentação que existe - porque se ficarem desatualizados, **falham**.
 
 ### 1.2 Para Que NÃO Servem Testes
 
 - **Não servem para perseguir 100% de cobertura.** Cobertura é métrica, não objetivo. Você pode ter 100% com asserts ruins.
-- **Não servem para testar a biblioteca.** Você não precisa testar que `useState` funciona — o React testa isso.
+- **Não servem para testar a biblioteca.** Você não precisa testar que `useState` funciona - o React testa isso.
 - **Não servem para "garantir qualidade".** Garantem ausência de **um conjunto específico** de bugs. Bugs novos vão escapar.
 - **Não substituem revisão humana.** Testes verdes + código ruim = código ruim.
 
@@ -44,7 +44,7 @@ Quando alguém lê um teste, está vendo um exemplo real de uso da função/comp
 |"Total inválido lança erro de validação"|"função interna foo() foi chamada"|
 |Refatorar não quebra o teste|Refatorar quebra o teste|
 
-Quando você testa **comportamento**, refatorar internamente o código (mudar nomes, extrair funções, otimizar) **não quebra os testes**. Quando testa **implementação**, qualquer mudança quebra. O segundo te desencoraja de refatorar — exatamente o oposto do que testes deveriam fazer.
+Quando você testa **comportamento**, refatorar internamente o código (mudar nomes, extrair funções, otimizar) **não quebra os testes**. Quando testa **implementação**, qualquer mudança quebra. O segundo te desencoraja de refatorar - exatamente o oposto do que testes deveriam fazer.
 
 ### 1.4 Quem Testa o Quê
 
@@ -122,7 +122,7 @@ import '@testing-library/jest-dom/vitest'
 }
 ```
 
-`vitest` (sem `run`) entra em watch mode — bom para desenvolvimento. `vitest run` executa uma vez — bom para CI.
+`vitest` (sem `run`) entra em watch mode - bom para desenvolvimento. `vitest run` executa uma vez - bom para CI.
 
 ---
 
@@ -137,13 +137,13 @@ import { describe, it, expect } from 'vitest'
 
 describe('calcularTotal', () => {
   it('soma todos os custos quando há múltiplas categorias', () => {
-    // Arrange — prepara o cenário
+    // Arrange - prepara o cenário
     const custos = { combustivel: 100, manutencao: 50, seguro: 30 }
 
-    // Act — executa o comportamento
+    // Act - executa o comportamento
     const total = calcularTotal(custos)
 
-    // Assert — verifica o resultado
+    // Assert - verifica o resultado
     expect(total).toBe(180)
   })
 })
@@ -159,12 +159,12 @@ describe('calcularTotal', () => {
 ### 3.3 Convenção de Nomenclatura
 
 ```typescript
-// ❌ Vago — não diz o que está testando
+// ❌ Vago - não diz o que está testando
 it('funciona')
 it('teste 1')
 it('caso 2')
 
-// ✅ Frase declarativa — descreve o comportamento esperado
+// ✅ Frase declarativa - descreve o comportamento esperado
 it('soma todos os custos quando há múltiplas categorias')
 it('retorna 0 quando não há custos')
 it('lança erro de validação quando km é negativo')
@@ -202,7 +202,7 @@ it('lança erro quando valor é negativo', () => {
 
 ## 4. O Que Testar (Cobertura Mínima Concreta)
 
-Esta é a parte que o documento original era vago — vamos concretizar.
+Esta é a parte que o documento original era vago - vamos concretizar.
 
 ### 4.1 Funções Puras (`utils/`)
 
@@ -248,7 +248,7 @@ Para cada hook:
 |Renderiza children|`<Botao>Salvar</Botao>` → texto "Salvar" visível|
 |Click dispara handler|`userEvent.click(botao)` → `handler` chamado 1x|
 |Disabled bloqueia click|`<Botao disabled>` + click → handler não chamado|
-|Variantes geram classes corretas|(opcional — só se variantes têm comportamento diferente)|
+|Variantes geram classes corretas|(opcional - só se variantes têm comportamento diferente)|
 |Acessibilidade básica|Tem `role="button"`, aceita `aria-label`|
 
 **Não precisa testar:**
@@ -279,7 +279,7 @@ Para cada hook:
 
 ### 4.6 Pages
 
-**Opcional para a maioria dos casos.** Page é composição — se hooks e componentes funcionam, page funciona. Teste apenas:
+**Opcional para a maioria dos casos.** Page é composição - se hooks e componentes funcionam, page funciona. Teste apenas:
 
 - Smoke test (renderiza sem crashar)
 - Integração de hook + componente em fluxo crítico
@@ -329,19 +329,19 @@ Use queries nesta ordem de preferência:
 |Prioridade|Query|Quando|
 |---|---|---|
 |1|`getByRole`|Quase sempre. Reflete como leitores de tela acessam|
-|2|`getByLabelText`|Formulários — campo associado a label|
+|2|`getByLabelText`|Formulários - campo associado a label|
 |3|`getByText`|Conteúdo textual visível|
 |4|`getByPlaceholderText`|Quando não há label (raro)|
 |5|`getByTestId`|Último recurso. Use `data-testid`|
 
 ```typescript
-// ✅ Bom — usa role acessível
+// ✅ Bom - usa role acessível
 screen.getByRole('button', { name: 'Salvar' })
 
-// 🟡 OK — quando role não funciona
+// 🟡 OK - quando role não funciona
 screen.getByText('Salvar')
 
-// ❌ Ruim — quebra acoplamento com implementação
+// ❌ Ruim - quebra acoplamento com implementação
 screen.getByTestId('botao-salvar')
 ```
 
@@ -366,11 +366,11 @@ expect(await screen.findByText('Salvo!')).toBeInTheDocument()
 **Use sempre `user-event`.**
 
 ```typescript
-// ❌ fireEvent — dispara o evento bruto, mas não simula sequência real
+// ❌ fireEvent - dispara o evento bruto, mas não simula sequência real
 fireEvent.click(botao)
 fireEvent.change(input, { target: { value: 'oi' } })
 
-// ✅ user-event — simula a sequência completa de eventos do navegador
+// ✅ user-event - simula a sequência completa de eventos do navegador
 const user = userEvent.setup()
 await user.click(botao)
 await user.type(input, 'oi')  // dispara keydown, keypress, input, keyup para cada tecla
@@ -444,9 +444,9 @@ it('exibe mensagem após 1 segundo', () => {
 
 ### 7.4 Quando NÃO Mockar
 
-- **Funções puras de `utils/`** — chamar direto é mais simples e seguro
-- **Componentes filhos** — render do componente inteiro com filhos reais é melhor (a menos que filhos sejam pesados)
-- **Tipos** — `as` ou `satisfies` no TypeScript, não mock
+- **Funções puras de `utils/`** - chamar direto é mais simples e seguro
+- **Componentes filhos** - render do componente inteiro com filhos reais é melhor (a menos que filhos sejam pesados)
+- **Tipos** - `as` ou `satisfies` no TypeScript, não mock
 
 ---
 
@@ -690,7 +690,7 @@ Teste falhou.
 |Sinal|O que significa|
 |---|---|
 |"É só atualizar a assertion" sem investigar|Você está mascarando bug|
-|"Esse teste já vivia falhando"|Teste flaky — investigue antes|
+|"Esse teste já vivia falhando"|Teste flaky - investigue antes|
 |"Vou comentar o teste"|Nunca. Delete ou conserte|
 |Atualizar valor esperado sem entender o cálculo|Bug silencioso em produção|
 
@@ -705,12 +705,12 @@ it('calcula total considerando seguro', () => {
 // Mudança no código: agora seguro é prorrateado
 // Resultado novo: 100 + (50 / 12) ≈ 104.17
 
-// ❌ Errado — atualizar sem entender
+// ❌ Errado - atualizar sem entender
 it('calcula total considerando seguro', () => {
   expect(calcularTotal({ km: 100, seguro: 50 })).toBe(104.17)
 })
 
-// ✅ Certo — entender, documentar e atualizar
+// ✅ Certo - entender, documentar e atualizar
 /**
  * Mudança feita em PR #123: seguro anual agora é prorrateado mensalmente.
  * Antes: 50 somava direto. Agora: 50/12 ≈ 4.17 por mês.
@@ -768,8 +768,8 @@ it('divide dois números', () => {
 
 - **Cobertura é dica de onde olhar**, não meta.
 - Trechos com **baixa cobertura** são candidatos a testar.
-- Trechos com **alta cobertura mas asserts ruins** são pior que zero cobertura — falsa confiança.
-- Não force 100% — algumas linhas (error branches improváveis, defaults) não valem o esforço.
+- Trechos com **alta cobertura mas asserts ruins** são pior que zero cobertura - falsa confiança.
+- Não force 100% - algumas linhas (error branches improváveis, defaults) não valem o esforço.
 
 ### 13.4 Meta Pragmática
 
@@ -777,10 +777,10 @@ Para projeto típico:
 
 |Camada|Cobertura útil|
 |---|---|
-|`utils/` (cálculos)|90%+ — fácil de cobrir|
-|`services/`|80%+ — vale o investimento|
-|`hooks/`|70%+ — lógica complexa|
-|Componentes|60%+ — foque em interação|
+|`utils/` (cálculos)|90%+ - fácil de cobrir|
+|`services/`|80%+ - vale o investimento|
+|`hooks/`|70%+ - lógica complexa|
+|Componentes|60%+ - foque em interação|
 |Pages|Não persiga cobertura|
 
 **Mas:** prefira menos código com asserts fortes a mais código com asserts vagos.
@@ -821,7 +821,7 @@ npx vitest related --run
 - [ ] Usa queries acessíveis (`getByRole`, `getByLabelText`)
 - [ ] Mocks são mínimos (só dependências externas)
 - [ ] `act` envolvendo mudanças de estado
-- [ ] Roda em < 100ms (idealmente — testes lentos viram peso morto)
+- [ ] Roda em < 100ms (idealmente - testes lentos viram peso morto)
 - [ ] Falha por motivo claro (mensagem útil)
 
 ---
@@ -843,7 +843,7 @@ npx vitest related --run
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) — Hooks que são testados aqui
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) — Componentes UI testados
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Forms testados com user-event
-- [`22-refatoracao.md`](https://claude.ai/processos/22-refatoracao.md) — Testes são rede de segurança para refatorar
+- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Hooks que são testados aqui
+- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Componentes UI testados
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Forms testados com user-event
+- [`22-refatoracao.md`](https://claude.ai/processos/22-refatoracao.md) - Testes são rede de segurança para refatorar

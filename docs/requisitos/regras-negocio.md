@@ -94,4 +94,4 @@ As regras abaixo são também listadas em `docs/dominio/invariantes.md` por sere
 
 ---
 
-> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-24, RN-25 e RN-26 foram adiadas via ADR-003 (dependiam de Registros) — DT-7 já marcada ENDEREÇADA em `docs/dominio/divida-tecnica.md` pela TASK-DOC-009.
+> **Status geral das RNs:** todas documentadas. Invariantes implementadas no código atual. RN-24, RN-25 e RN-26 foram adiadas via ADR-003 (dependiam de Registros) - DT-7 já marcada ENDEREÇADA em `docs/dominio/divida-tecnica.md` pela TASK-DOC-009.

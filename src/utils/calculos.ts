@@ -40,7 +40,7 @@ export function calcularKmAnual(kmDia: number, diasSemana: number): number {
   return valorNaoNegativo(kmDia) * valorNaoNegativo(diasSemana) * 52;
 }
 
-// Dias trabalhados no ano — não usar 365
+// Dias trabalhados no ano - não usar 365
 export function calcularDiasAno(diasSemana: number): number {
   return valorNaoNegativo(diasSemana) * 52;
 }
@@ -72,8 +72,8 @@ export function resolverIntervaloPeca(
   }
 
   // ServicoIndependente ativo vinculado à peça sobrepõe o intervalo do preset APENAS
-  // quando o usuário editou (intervalo ≠ default). Sem edição, o preset — que conhece
-  // entrega/passageiro — segue canônico (Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1).
+  // quando o usuário editou (intervalo ≠ default). Sem edição, o preset - que conhece
+  // entrega/passageiro - segue canônico (Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1).
   const servico = resolverServicoComIntervaloEditado(pecaId, servicosIndependentes);
   if (servico) {
     return valorNaoNegativo(servico.intervalKm);
@@ -144,7 +144,7 @@ const MAPA_SERVICO_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = 
 // Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
 // a mão de obra de troca. Usado também por calcularCpkPorPeca para evitar
 // dupla contagem no modo autorizado (ADR-007): se o serviço associado tem
-// precoTotalAutorizada > 0 e está ativo, a peça é pulada — o serviço cobre
+// precoTotalAutorizada > 0 e está ativo, a peça é pulada - o serviço cobre
 // peça + M.O. juntos no orçamento Honda.
 export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   oleo_motor: 'troca-oleo',
@@ -168,14 +168,14 @@ export function resolverServicoIndependentePorPeca(
   return servicosIndependentes.find((servico) => servico.id === servicoId && servico.ativo);
 }
 
-// Intervalos default por serviço — base para detectar edição do usuário (Decisão C).
+// Intervalos default por serviço - base para detectar edição do usuário (Decisão C).
 const INTERVALOS_PADRAO_SERVICO = new Map<string, number>(
   SERVICOS_INDEPENDENTES_PADRAO.map((servico) => [servico.id, servico.intervalKm]),
 );
 
 // Retorna o serviço vinculado à peça SOMENTE quando o usuário editou o intervalo
 // (difere do default). Sem edição, o intervalo canônico segue o do preset (que conhece
-// entrega/passageiro) — Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1.
+// entrega/passageiro) - Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1.
 export function resolverServicoComIntervaloEditado(
   pecaId: string,
   servicosIndependentes: ServicoIndependente[] = [],
@@ -314,7 +314,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
   // No modo autorizado, pula peças por dois critérios (ADR-006 + ADR-007):
   //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote Honda;
   //  (b) peça associada a um ServicoIndependente com `precoTotalAutorizada > 0`
-  //      e ativo — o serviço cobre peça + M.O. juntos (modelo Honda) e somar a
+  //      e ativo - o serviço cobre peça + M.O. juntos (modelo Honda) e somar a
   //      peça aqui duplica o custo.
   const ehPecaCobertaPorServicoAutorizada = (pecaId: string): boolean => {
     if (modoRevisao !== 'autorizadas') return false;
@@ -482,7 +482,7 @@ export function calcularDetalhesRevisaoAnual(
     const basePacoteHonda = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnualSeguro;
     // ADR-007: soma serviços fora do pacote Honda (kit transmissão, pneus, etc.)
     // usando precoTotalAutorizada (peça + M.O. cobradas em conjunto pela Honda).
-    // Excepcionais (retíficas) ficam fora aqui — saem por imprevistos sugeridos.
+    // Excepcionais (retíficas) ficam fora aqui - saem por imprevistos sugeridos.
     const servicosForaDoPacote = servicosNormaisAtivos.filter(
       (s) => !s.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada > 0 && s.intervalKm > 0,
     );
@@ -540,7 +540,7 @@ export function calcularDetalhesRevisaoAnual(
   }
 
   // Serviços com intervalKm <= 0 (ex.: troca-bateria, driver temporal puro)
-  // ficam fora do cálculo de revisão — o custo da peça já entra via
+  // ficam fora do cálculo de revisão - o custo da peça já entra via
   // `calcularCpkPorPeca` no caminho de manutenção. M.O. dessas trocas
   // (~R$ 25/ano para bateria) é débito técnico assumido pela TASK-RF-6.14.
   const base = servicosNormaisAtivos
@@ -604,7 +604,7 @@ export function fatorResponsabilidade(resp: ResponsabilidadeCusto): number {
 }
 
 // Deriva quantas parcelas faltam HOJE a partir do valor informado e do mês de
-// referência, sem mutar o perfil (modelagem Snapshot — TASK-RF-6.18 / ADR-009).
+// referência, sem mutar o perfil (modelagem Snapshot - TASK-RF-6.18 / ADR-009).
 // Granularidade de mês (ano*12+mês) evita ruído de fuso. Edge cases: meses
 // decorridos > restantes → 0; dataReferencia no futuro → não infla (clamp ao
 // informado). `agora` é injetável para testes determinísticos.
@@ -672,7 +672,7 @@ function calcularImprevistosSugeridosAnual(
 ): Map<string, CustoImprevistoSugerido> {
   // ADR-007: imprevistos sugeridos respeitam o modo. No autorizado, o preço é
   // o total Honda (peça + M.O.); valor 0 indica que a Honda não executa o
-  // serviço (caso das retíficas, substituídas por troca de kit cilindro) — o
+  // serviço (caso das retíficas, substituídas por troca de kit cilindro) - o
   // imprevisto some do mapa nesse modo.
   return new Map<string, CustoImprevistoSugerido>(
     servicosIndependentes
@@ -746,7 +746,7 @@ export function calcularCustosPorCategoria(
   const ipva = calcularIPVA(valorFipe, dadosRJ.ipva.aliquotaMotos, perfil.moto.ano, anoAtual);
   const licenciamento = calcularLicenciamento(anoAtual, dadosRJ.licenciamento.tabela);
 
-  // Revisão — aplica overrides individuais ao ciclo Honda antes de calcular
+  // Revisão - aplica overrides individuais ao ciclo Honda antes de calcular
   const custoCicloCompleto = preset.revisaoAutorizada.reduce((s, r, idx) => {
     const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
     return s + valorNaoNegativo(override?.precoTotal ?? r.precoTotal);
@@ -773,7 +773,7 @@ export function calcularCustosPorCategoria(
   });
   const cpkPecasTotal = calcularCpkPecasTotal(detalhePecas);
 
-  // Combustível — usa autonomia já gravada no perfil (commitada no onboarding)
+  // Combustível - usa autonomia já gravada no perfil (commitada no onboarding)
   const tipoComb = perfil.financeiro.tipoGasolinaPreferida;
   const configComb = perfil.financeiro.combustiveis[tipoComb];
   const consumoEfetivo = configComb.autonomia;
@@ -1039,7 +1039,7 @@ export function categoriasParaFiltros(
     revisaoPorServico: filtrosManutencao.revisaoPorServico,
     // Categoria Imprevistos respeita o toggle persistido. Dentro dela, cada
     // sugerido (retífica) e cada gasto custom (Multa/Sinistros/Outros) ainda
-    // precisa estar ativo individualmente — categoria off zera tudo.
+    // precisa estar ativo individualmente - categoria off zera tudo.
     imprevistosSugeridos: cat.imprevistos ? imprevistosSugeridosAtivos : {},
     combustivel: cat.combustivel,
     internet: cat.internet,
@@ -1071,7 +1071,7 @@ export function calcularResultado(
   );
 
   const total = calcularTotalFiltrado(custos, filtrosAtivos);
-  // Só desconta alimentação se ela entrou no total (filtro ativo) — senão subtrairia 2x (BG-018).
+  // Só desconta alimentação se ela entrou no total (filtro ativo) - senão subtrairia 2x (BG-018).
   const alimentacaoNoTotal = filtrosAtivos.alimentacao ? custos.alimentacao.total : 0;
   const totalMoto = calcularCustoMotoAnual(total, alimentacaoNoTotal);
 

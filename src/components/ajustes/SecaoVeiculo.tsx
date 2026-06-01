@@ -69,7 +69,7 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
             inputMode="numeric"
             value={moto.kmUltimaRevisao ?? ''}
             min={0}
-            placeholder="—"
+            placeholder="-"
             onChange={(e) => {
               const raw = e.target.value;
               const v = parseInt(raw, 10);

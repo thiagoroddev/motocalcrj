@@ -21,7 +21,7 @@ function criarLocalStorageFalso(): Storage {
   };
 }
 
-describe('LocalStoragePerfilStorage — namespace pré-lançamento', () => {
+describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
   let localStorageFalso: Storage;
 
   beforeEach(() => {

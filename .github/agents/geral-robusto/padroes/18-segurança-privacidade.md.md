@@ -31,8 +31,8 @@ Os dois se sobrepõem mas pedem ações diferentes. Bons projetos cuidam dos doi
 Nunca confie em **uma única camada** de proteção. Múltiplas camadas erram menos juntas:
 
 - **Frontend valida** (UX, feedback rápido)
-- **Backend revalida** (não confia no frontend — assuma cliente malicioso)
-- **Banco tem constraints** (UNIQUE, CHECK, NOT NULL — última linha)
+- **Backend revalida** (não confia no frontend - assuma cliente malicioso)
+- **Banco tem constraints** (UNIQUE, CHECK, NOT NULL - última linha)
 - **Logs filtram PII** (mesmo se algo escapar, não vaza)
 
 Se uma camada falha, a próxima ainda protege. Não basta a primeira ser boa.
@@ -80,7 +80,7 @@ Dois dados isolados podem ser inofensivos. Combinados, identificam uma pessoa.
 
 - "João" não identifica
 - "João, 35 anos" não identifica
-- "João, 35 anos, mora em Rio de Janeiro, trabalha na empresa X" — **identifica**
+- "João, 35 anos, mora em Rio de Janeiro, trabalha na empresa X" - **identifica**
 
 Cuidado com endpoints que retornam **muita informação correlacionada**. Quanto mais campos, mais fácil identificar.
 
@@ -148,17 +148,17 @@ Iniciantes confundem os dois. **São coisas diferentes com objetivos diferentes.
 ### 4.3 Não Substituem Um ao Outro
 
 ```typescript
-// ❌ Errado — sanitiza mas não valida
+// ❌ Errado - sanitiza mas não valida
 const bio = sanitize(req.body.bio)  // remove HTML perigoso
 salvar(bio)
 // E se bio tiver 10MB? Sem validação de tamanho.
 
-// ❌ Errado — valida mas não sanitiza
+// ❌ Errado - valida mas não sanitiza
 const bio = z.string().max(500).parse(req.body.bio)
 salvar(bio)
 // E se bio tiver <img onerror=...>? Validou, mas pode causar XSS.
 
-// ✅ Certo — valida E sanitiza
+// ✅ Certo - valida E sanitiza
 const bio = z.string().max(500).parse(req.body.bio)
 const bioLimpa = sanitizeHtml(bio)
 salvar(bioLimpa)
@@ -185,7 +185,7 @@ Um XSS bem-sucedido permite ao atacante:
 React **escapa automaticamente** valores em JSX:
 
 ```tsx
-// ✅ Seguro — React escapa
+// ✅ Seguro - React escapa
 const nome = "<script>alert('XSS')</script>"
 return <div>{nome}</div>
 // Renderiza literalmente "<script>alert('XSS')</script>" como texto
@@ -196,14 +196,14 @@ return <div>{nome}</div>
 Sempre que você **contorna** a proteção do React:
 
 ```tsx
-// ⚠️ Perigoso — injeta HTML cru
+// ⚠️ Perigoso - injeta HTML cru
 <div dangerouslySetInnerHTML={{ __html: conteudo }} />
 
-// ⚠️ Perigoso — href ou src dinâmico com URL
+// ⚠️ Perigoso - href ou src dinâmico com URL
 <a href={urlDoUsuario}>Link</a>
 // Se urlDoUsuario = "javascript:alert('XSS')", executa!
 
-// ⚠️ Perigoso — manipulação direta do DOM
+// ⚠️ Perigoso - manipulação direta do DOM
 elementoRef.current.innerHTML = conteudo
 ```
 
@@ -252,7 +252,7 @@ Os três são prevenidos pela mesma regra: **nunca confie em entrada do usuário
 
 ## 6. CSP (Content Security Policy)
 
-CSP é um header HTTP que diz ao navegador: _"só execute código dessas origens específicas"_. É **defense in depth** — se XSS conseguir injetar código, CSP pode impedir execução.
+CSP é um header HTTP que diz ao navegador: _"só execute código dessas origens específicas"_. É **defense in depth** - se XSS conseguir injetar código, CSP pode impedir execução.
 
 ### 6.1 Header Básico
 
@@ -346,7 +346,7 @@ Já tratado no módulo 17, mas a regra merece repetição: **segredos nunca vão
 ### 8.1 Onde Segredos NÃO Devem Estar
 
 - ❌ Código-fonte (incluindo arquivos de exemplo committados)
-- ❌ Repositório Git (mesmo apagado depois — está no histórico)
+- ❌ Repositório Git (mesmo apagado depois - está no histórico)
 - ❌ Logs de aplicação
 - ❌ Variáveis JavaScript no frontend (`process.env.X` no Vite é embarcado no bundle)
 - ❌ Mensagens de erro mostradas ao usuário
@@ -367,7 +367,7 @@ Já tratado no módulo 17, mas a regra merece repetição: **segredos nunca vão
 Se você commitou segredo por engano:
 
 1. **Revogue imediatamente** o segredo (gere novo)
-2. **Não confie em deletar do Git** — o histórico ainda tem
+2. **Não confie em deletar do Git** - o histórico ainda tem
 3. **Reescreva o histórico** se for repo privado e crítico (`git filter-repo`)
 4. **Documente** a ocorrência para o time
 
@@ -378,11 +378,11 @@ Se você commitou segredo por engano:
 Cuidado especial: **variáveis do bundle do frontend são públicas**. Tudo que vai pro Vite/Next via `VITE_*` ou `NEXT_PUBLIC_*` é embarcado no JavaScript final.
 
 ```bash
-# ❌ NUNCA — vai pro bundle
+# ❌ NUNCA - vai pro bundle
 VITE_DB_PASSWORD=segredo123
 VITE_AWS_SECRET=...
 
-# ✅ OK — destinado a ser público
+# ✅ OK - destinado a ser público
 VITE_API_URL=https://api.exemplo.com
 VITE_GOOGLE_MAPS_KEY=AIza...  # chave restrita por domínio
 ```
@@ -393,7 +393,7 @@ Chaves de API no frontend devem ter **restrição de domínio** no provedor (Goo
 
 ## 9. Logs Sem Dados Sensíveis
 
-Logs são essenciais para debug e observabilidade — mas frequentemente são onde **dados pessoais vazam**.
+Logs são essenciais para debug e observabilidade - mas frequentemente são onde **dados pessoais vazam**.
 
 ### 9.1 O Problema
 
@@ -541,7 +541,7 @@ app.post('/usuarios', (req, res) => {
 Não confie em "esconder botão no frontend" para impedir ação.
 
 ```tsx
-// ❌ Frontend só esconde — atacante pode chamar endpoint diretamente
+// ❌ Frontend só esconde - atacante pode chamar endpoint diretamente
 {usuario.admin && <BotaoExcluir />}
 
 // ✅ Frontend esconde + Backend verifica
@@ -612,9 +612,9 @@ Dependências desatualizadas acumulam vulnerabilidades. Mas atualizações grand
 
 Ferramentas úteis:
 
-- **Dependabot** (GitHub) — PRs automáticos
-- **Renovate** — mais configurável
-- **npm outdated** — lista o que está desatualizado
+- **Dependabot** (GitHub) - PRs automáticos
+- **Renovate** - mais configurável
+- **npm outdated** - lista o que está desatualizado
 
 ---
 
@@ -682,7 +682,7 @@ await db.usuario.create({ data: { email, senhaHash: hash } })
 const valido = await bcrypt.compare(senha, usuario.senhaHash)
 ```
 
-Hash é **unidirecional** — você não recupera a senha, só verifica se bate.
+Hash é **unidirecional** - você não recupera a senha, só verifica se bate.
 
 ---
 
@@ -738,7 +738,7 @@ Detalhamento adicional em [`../checklists/41-seguranca.md`](https://claude.ai/ch
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) — Proibições de código (`dangerouslySetInnerHTML`, dados em URL)
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) — Validação no frontend que precisa repetir no servidor
-- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) — Estrutura backend onde muitas dessas práticas aplicam
-- [`../checklists/41-seguranca.md`](https://claude.ai/checklists/41-seguranca.md) — Checklist detalhado de segurança
+- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Proibições de código (`dangerouslySetInnerHTML`, dados em URL)
+- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Validação no frontend que precisa repetir no servidor
+- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) - Estrutura backend onde muitas dessas práticas aplicam
+- [`../checklists/41-seguranca.md`](https://claude.ai/checklists/41-seguranca.md) - Checklist detalhado de segurança

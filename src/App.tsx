@@ -18,10 +18,10 @@ function App() {
         <BrowserRouter>
           <div className="min-h-screen bg-background text-foreground">
             <Routes>
-              {/* Onboarding — nao protegido */}
+              {/* Onboarding - nao protegido */}
               <Route path="/onboarding/*" element={<FluxoOnboarding />} />
 
-              {/* App principal — protegido */}
+              {/* App principal - protegido */}
               <Route element={<RotaProtegida />}>
                 {/* Rotas com header + NavBar */}
                 <Route element={<LayoutApp />}>
