@@ -26,8 +26,8 @@ export interface EstadoApp {
 
 Persistencia em duas chaves:
 
-- `motocalc:v5:presets` → `PresetEntry[]`
-- `motocalc:v5:presetAtivo` → `string | null`
+- `estimamoto:v1:presets` → `PresetEntry[]`
+- `estimamoto:v1:presetAtivo` → `string | null`
 
 ---
 

@@ -2,6 +2,8 @@
 // Enums / literais
 // ──────────────────────────────────────────────
 
+export const VERSAO_SCHEMA_ATUAL = 1 as const;
+
 export type PerfilUso = 'entrega' | 'passageiro';
 export type ModoRevisao = 'autorizadas' | 'independentes';
 export type TipoCombustivel = 'comum' | 'aditivada' | 'etanol';
@@ -126,7 +128,7 @@ export interface KmUltimaTrocas {
 // ──────────────────────────────────────────────
 
 export interface PerfilUsuario {
-  schemaVersion: number;
+  schemaVersion: typeof VERSAO_SCHEMA_ATUAL;
   userId: string | null;
   onboardingConcluido: boolean;
   apelido: string | null;

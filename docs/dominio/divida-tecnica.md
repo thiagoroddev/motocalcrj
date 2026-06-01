@@ -132,9 +132,9 @@ Motoboy com moto não-listada não consegue usar o app. Em V1 isso é aceitável
 
 ---
 
-## ~~DT-6: Sem Versionamento de Schema do Storage~~ ENDEREÇADA (TASK-REF-11)
+## ~~DT-6: Sem Versionamento de Schema do Storage~~ ENDEREÇADA (TASK-REF-30)
 
-> **Resolvida parcialmente em 19/05/26 por TASK-REF-11.** Migração v5→v6 implementada inline em `criarEstadoInicial` (PerfilContext.tsx). `migrarPerfil.ts` ainda não existe como arquivo separado — permanece como recomendação para TASK-8.x.
+> **Resolvida em 31/05/26 por TASK-REF-30.** Como o app ainda não tinha lançamento público, a cadeia histórica de migração foi descartada. O storage passou para `estimamoto:v1:*`, `schemaVersion` foi resetado para `1`, e blobs antigos/inválidos caem no fallback recuperável.
 
 ---
 
@@ -226,7 +226,7 @@ Não há mecanismo para limpar overrides cujo `id` não existe mais no Preset JS
 
 ### Recomendação
 
-Função de limpeza em `migrarPerfil.ts` quando ele for criado.
+Quando houver usuários públicos ou dados reais a preservar, criar migração explícita junto com o bump de schema.
 
 ---
 

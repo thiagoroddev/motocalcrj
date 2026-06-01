@@ -2,8 +2,8 @@
 
 > **Status:** Engenharia reversa baseada em código real (`src/types/perfil.ts`).
 > **Tipo:** Aggregate Root raiz do aggregate de dados persistidos.
-> **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `motocalc:v5:presets`.
-> **Última atualização:** 2026-05-24 (TASK-DOC-009).
+> **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `estimamoto:v1:presets`.
+> **Última atualização:** 2026-05-31 (TASK-REF-30).
 
 ---
 
@@ -42,7 +42,7 @@ export interface PresetEntry {
 
 | Atributo       | Tipo            | Descrição                                                                        |
 | -------------- | --------------- | -------------------------------------------------------------------------------- |
-| `presetId`     | string          | Identificador único usado em `motocalc:v5:presetAtivo` para apontar qual está ativo |
+| `presetId`     | string          | Identificador único usado em `estimamoto:v1:presetAtivo` para apontar qual está ativo |
 | `nome`         | string          | Nome amigável dado pelo Motoboy ("Honda Pop 2024", "Biz Reserva")                |
 | `criadoEm`     | string (ISO)    | Data de criação do PresetEntry                                                   |
 | `atualizadoEm` | string (ISO)    | Última modificação                                                               |
@@ -58,8 +58,8 @@ export interface PresetEntry {
 
 | Chave                  | Conteúdo                                     |
 | ---------------------- | -------------------------------------------- |
-| `motocalc:v5:presets`     | Array `PresetEntry[]` em JSON                |
-| `motocalc:v5:presetAtivo` | String com o `presetId` do PresetEntry ativo |
+| `estimamoto:v1:presets`     | Array `PresetEntry[]` em JSON                |
+| `estimamoto:v1:presetAtivo` | String com o `presetId` do PresetEntry ativo |
 
 ### Acesso isolado
 
@@ -67,7 +67,7 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace contém `:v5:` por razões históricas (era a versão do schema quando o storage foi definido). **A versão real do schema vive em `perfil.schemaVersion`** dentro de cada `PresetEntry` — **atual: v17.** O namespace ficou como string opaca para não invalidar storage de usuários a cada bump de schema; migrações em cascata em `criarEstadoInicial` (PerfilContext.tsx) cuidam de normalizar perfis antigos no carregamento. Ver `docs/arquitetura/estado_inicial.md` §VI para tabela completa.
+O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` — atual: `1`.
 
 ---
 
@@ -93,7 +93,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 
 ### INV-PRESET-1: Consistência do Preset Ativo
 
-**Regra:** Se a chave `motocalc:v5:presetAtivo` no localStorage tem valor, então existe um `PresetEntry` em `motocalc:v5:presets` cujo `presetId` é igual a esse valor.
+**Regra:** Se a chave `estimamoto:v1:presetAtivo` no localStorage tem valor, então existe um `PresetEntry` em `estimamoto:v1:presets` cujo `presetId` é igual a esse valor.
 
 **Por quê:** Apontar para um Preset que não existe causa tela em branco ou erro ao tentar carregar. Esta é a invariante mais crítica do aggregate.
 
@@ -145,8 +145,8 @@ export interface PresetEntry {
 }
 
 // Uso típico no localStorage:
-// motocalc:v5:presets    → JSON.stringify(PresetEntry[])
-// motocalc:v5:presetAtivo → string (presetId)
+// estimamoto:v1:presets    → JSON.stringify(PresetEntry[])
+// estimamoto:v1:presetAtivo → string (presetId)
 ```
 
 ```typescript
@@ -161,7 +161,7 @@ export interface IPerfilStorage {
 }
 
 export class LocalStoragePerfilStorage implements IPerfilStorage {
-  // implementação real lê/escreve em motocalc:v5:*
+  // implementação real lê/escreve em estimamoto:v1:*
 }
 ```
 
@@ -212,7 +212,7 @@ Invariantes de consistência local podem se quebrar se houver merge com dados re
 
 ### Schema migration (RNF-LR-06)
 
-Cada nova versão de schema precisa de função em `src/utils/migrarPerfil.ts` (ainda não criada está em pendente da Fase 2). O `schemaVersion` dentro de `PerfilUsuario` é o gatilho.
+Pré-lançamento não preserva versões antigas: schema diferente da versão atual é rejeitado com fallback recuperável. Criar migração explícita apenas depois de haver dado real a preservar.
 
 ### Compactação do storage
 

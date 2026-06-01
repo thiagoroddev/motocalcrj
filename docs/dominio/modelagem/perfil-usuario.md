@@ -52,7 +52,7 @@ export interface PerfilUsuario {
 
 | Atributo              | Tipo             | Descrição                                                                            |
 | --------------------- | ---------------- | ------------------------------------------------------------------------------------ |
-| `schemaVersion`       | number           | Versão do schema. **Atual: 23.** Migrações em cascata aplicadas inline em `criarEstadoInicial` (PerfilContext.tsx) ao carregar |
+| `schemaVersion`       | number           | Versão do schema. **Atual: 1.** Baseline público inicial; versões diferentes são rejeitadas com fallback recuperável |
 | `userId`              | `string \| null` | Login-ready (RNF-LR-02). Sempre `null` em V1. UUID do backend em V2                  |
 | `onboardingConcluido` | boolean          | Gatilho de `RotaProtegida` se `false`, app redireciona para `/onboarding/1`          |
 | `apelido`             | `string \| null` | Apelido do Motoboy. Opcional. Aparece no header se preenchido                        |
@@ -156,7 +156,7 @@ Invariantes que envolvem **múltiplos blocos simultaneamente** vivem aqui. Invar
 
 ### INV-PERFIL-1: schemaVersion compatível
 
-**Regra:** Ao carregar um `PerfilUsuario` do storage, se `schemaVersion < versão atual`, executar `migrarPerfil()`. Schema futuro nunca abre em versão antiga (deve avisar incompatibilidade).
+**Regra:** Ao carregar um `PerfilUsuario` do storage, `schemaVersion` precisa ser exatamente a versão atual. Versões antigas/futuras não são migradas no pré-lançamento; caem no fallback recuperável.
 
 ### INV-PERFIL-2: userId condicional ao backend
 

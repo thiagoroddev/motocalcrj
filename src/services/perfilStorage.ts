@@ -13,9 +13,9 @@ export interface IPerfilStorage {
 }
 
 export class LocalStoragePerfilStorage implements IPerfilStorage {
-  private readonly CHAVE_PRESETS = 'motocalc:v5:presets';
-  private readonly CHAVE_ATIVO = 'motocalc:v5:presetAtivo';
-  private readonly CHAVE_CORROMPIDO = 'motocalc:v5:presets.corrupted';
+  private readonly CHAVE_PRESETS = 'estimamoto:v1:presets';
+  private readonly CHAVE_ATIVO = 'estimamoto:v1:presetAtivo';
+  private readonly CHAVE_CORROMPIDO = 'estimamoto:v1:presets.corrupted';
 
   carregarPresets(): PresetEntry[] {
     try {

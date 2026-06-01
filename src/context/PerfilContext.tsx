@@ -10,7 +10,6 @@ import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { perfilSchema, presetEntrySchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
-import { migrarPerfil } from '../services/migracoes';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
   perfilPadrao,
@@ -683,12 +682,9 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
       return estadoPadrao;
     }
 
-    // Carregar → migrar → validar (ADR-010). A migração leva qualquer versão
-    // antiga até o shape atual; o schema confere o resultado final. Qualquer
-    // preset inválido (ou exceção na migração) cai no catch abaixo.
-    const presets = presetsRaw.map((p) =>
-      presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) }),
-    );
+    // Pré-lançamento: não há contrato de migração histórica. Carrega apenas o
+    // schema atual; qualquer blob antigo/inválido cai no fallback abaixo.
+    const presets = presetsRaw.map((p) => presetEntrySchema.parse(p));
     const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
     return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
   } catch {

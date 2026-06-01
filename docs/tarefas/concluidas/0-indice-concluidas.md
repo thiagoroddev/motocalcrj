@@ -108,3 +108,5 @@
 | TASK-BG-021 | criarEstadoInicial recupera presets válidos quando presetAtivo está ausente | [2026-05-31--14h53--TASK-BG-021.md](./2026-05-31--14h53--TASK-BG-021.md) |
 | TASK-RNF-012 | Validação de domínio numérico em inputs, schema, reducer e cálculos | [2026-05-31--15h25--TASK-RNF-012.md](./2026-05-31--15h25--TASK-RNF-012.md) |
 | TASK-REF-29 | Resolver DT-15: intervalos de peça usam serviço vinculado via MAPA_PECA_PARA_SERVICO | [2026-05-31--18h01--TASK-REF-29.md](./2026-05-31--18h01--TASK-REF-29.md) |
+| TASK-DOC-013 | Corrigir README: remover rascunhos, contagem fixa de testes e claim PWA/offline | [2026-05-31--19h14--TASK-DOC-013.md](./2026-05-31--19h14--TASK-DOC-013.md) |
+| TASK-REF-30 | Resetar schema pré-lançamento: storage `estimamoto:v1:*`, `schemaVersion` 1 e sem migrations históricas | [2026-05-31--20h00--TASK-REF-30.md](./2026-05-31--20h00--TASK-REF-30.md) |

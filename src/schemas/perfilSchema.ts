@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
+import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 
 // ──────────────────────────────────────────────
 // Schema de validação de runtime do PerfilUsuario (ADR-010).
@@ -9,8 +10,8 @@ import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
 // (ver perfilSchema.test.ts) — se o tipo e o schema divergirem, o tsc quebra.
 //
 // É deliberadamente tolerante onde o tipo permite (`.nullable()`), para não
-// gerar falso-positivo que rejeite dado bom. Validar é a saída da migração:
-// carregar → migrar → validar (ADR-010, decisão 3).
+// gerar falso-positivo que rejeite dado bom. Validar é a fronteira de carga:
+// carregar → validar; dado antigo/corrompido volta para o onboarding.
 // ──────────────────────────────────────────────
 
 // Enums / literais
@@ -141,7 +142,7 @@ const kmUltimaTrocas = z.object({
 
 // Perfil principal
 export const perfilSchema = z.object({
-  schemaVersion: inteiroPositivo,
+  schemaVersion: z.literal(VERSAO_SCHEMA_ATUAL),
   userId: z.string().nullable(),
   onboardingConcluido: z.boolean(),
   apelido: z.string().nullable(),

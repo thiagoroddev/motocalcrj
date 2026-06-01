@@ -16,53 +16,29 @@ Obedeça essa ordem:
 > verificado contra o código antes de registrar. Severidades reclassificadas após
 > verificação. Ordem abaixo é por prioridade combinada (Valor + risco).
 
-## TASK-DOC-013 — Corrigir README (notas coladas, contagem de testes, claim "funciona offline")
+## TASK-TEST-001 — Testes do fipeService (BrasilAPI: parsing, rota rápida, fallback e erro)
 - **Status:** Pendente
 - **Modo:** Standard
 - **Valor:** Importante
 - **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data-hora origem:** 31/05/26 12:20
+- **Esforço-H/IA:** P/M
+- **Data-hora origem:** 31/05/26 12:20; extraída da antiga TASK-TEST-001 em 31/05/26
 - **Dependências:** —
-- **REQ/ADR/DT:** RNF-8.2 (PWA completo — já no backlog)
+- **REQ/ADR/DT:** —
 - **Observações:**
-  **Sintoma:** o `README.md` contém informação errada e rascunho pessoal vazado.
-  **Detalhes:** (1) das linhas ~50 em diante há notas coladas por acidente (snippets de
-  `localStorage.removeItem`, "Ou num liner só", tabela de "amortizado" com markdown quebrado) que
-  não deveriam estar no README público (mover para `docs/` se útil, senão remover); (2)
-  `README.md:22` diz "Vitest (92 testes)" — hoje são 202; (3) `README.md:11` afirma "Funciona
-  offline após o primeiro acesso (PWA)" mas NÃO há PWA implementado: não existe `vite-plugin-pwa`
-  em `package.json`, não há service worker/manifest, e `index.html:8-10` carrega a fonte Inter do
-  CDN do Google (peso contra offline). A implementação real do PWA já está rastreada em
-  **TASK-RNF-8.2** — esta tarefa é só alinhar o README à realidade. **Correção sugerida:** remover
-  as notas vazadas, corrigir contagem de testes (ou remover número fixo), e ou remover a afirmação
-  de offline ou marcá-la como "planejado (TASK-RNF-8.2)". **Aceite:** README sem rascunhos, sem
-  afirmações falsas; números coerentes com o estado atual.
+  **Motivação:** mesmo descartando migrations históricas, `src/services/fipeService.ts` continua sem
+  teste direto. Ele faz parsing de valor BRL, decide entre rota rápida por `codigoFipe` e rota
+  completa por marca/modelo/ano, e retorna `null` em erro/timeout. Uma regressão aqui pode quebrar
+  a consulta FIPE do onboarding sem afetar a suíte atual.
 
-## TASK-TEST-001 — Testes da cadeia de migração (migrarPerfil v5→v23) e do parsing do fipeService
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 31/05/26 12:20
-- **Dependências:** —
-- **REQ/ADR/DT:** ADR-010
-- **Observações:**
-  **Motivação (proteção, não é bug vivo):** os caminhos que podem corromper dados do usuário
-  silenciosamente não têm teste direto. `src/services/migracoes.ts` (395 linhas, 18 passos v5→v23)
-  só é exercitado de raspão via `criarEstadoInicial.test.ts`; uma regressão num passo antigo
-  estraga perfis reais sem ninguém perceber. `src/services/fipeService.ts` (parsing de
-  `"R$ 9.999,00"` → número e fallback de rota) também não tem teste. **Escopo sugerido:** (1)
-  `migracoes.test.ts` table-driven — para cada versão N, um blob de entrada mínimo no shape vN e a
-  asserção do shape esperado vN+1 (campos adicionados/removidos/renomeados conforme cada `if`),
-  além de um teste end-to-end v5→v23 e idempotência (rodar 2× = mesmo resultado); validar o
-  resultado final contra `perfilSchema`. (2) `fipeService.test.ts` — mockar `fetch` e cobrir:
-  parsing de valor BRL, rota rápida por código, fallback de 4 chamadas, timeout/erro → retorna null.
-  **Aceite:** cobertura dos 18 passos de migração e dos ramos do fipeService; `npm run test` verde.
-  **Nota:** itens de qualidade adicionais da revisão (code-splitting do bundle de 650 KB, fontes
-  text-[9px], tema claro inacabado) já são cobertos por TASK-RNF-9.1; `resolverKmDia` identidade e
-  memoização são triviais e ficam fora de tarefa formal.
+  **Plano proposto:** criar `src/services/fipeService.test.ts`, mockando `global.fetch` sem rede
+  real, para cobrir: (1) rota rápida `/preco/v1/{codigoFipe}` com parsing de `"R$ 9.999,00"` →
+  `9999`; (2) rota rápida sem ano compatível cai para rota completa; (3) rota completa marcas →
+  modelos → anos → preço; (4) HTTP não-ok/fetch reject retorna `null`; (5) timeout/abort retorna
+  `null`. Isolar cache interno com `vi.resetModules()` ou dados únicos por teste.
+
+  **Aceite:** fluxos principais e falhas do `fipeService` cobertos; nenhum acesso real à BrasilAPI
+  durante testes; `npm run test` verde.
 
 ## TASK-CHORE-014 — Guarda catálogo↔preset: todo id do CATALOGO precisa ter preset JSON
 - **Status:** Pendente
@@ -102,7 +78,7 @@ Obedeça essa ordem:
   cobrem lógica/contexto/schema/ErrorBoundary, nenhum componente/página. O cluster recente de bugs
   era justamente de UI (TASK-BG-017 seguro, BG-019 onboarding, BG-020 bateria), exatamente o que
   testes de componente/integração pegariam. A `TASK-RNF-9.2` é QA **manual**, não cobre isto.
-  Complementa a `TASK-TEST-001` (que cobre lógica de migração/FIPE).
+  Complementa a `TASK-TEST-001` (FIPE) e a `TASK-REF-30` (contrato limpo de storage/schema).
   **Escopo sugerido:** (1) integração com `@testing-library/react` (já é devDep): fluxo de
   onboarding feliz (preencher passos → `COMMIT_ONBOARDING` → `/estimativa` renderiza SEM "Modelo
   não encontrado"); render de `PaginaEstimativa` e `PaginaDetalhamento` com preset de fixture

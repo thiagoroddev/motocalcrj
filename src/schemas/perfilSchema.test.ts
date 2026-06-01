@@ -21,6 +21,14 @@ describe('perfilSchema — validação de runtime', () => {
     expect(resultado).toEqual(perfilPadrao);
   });
 
+  it('rejeita schemaVersion diferente da versão atual', () => {
+    const antigo = { ...perfilPadrao, schemaVersion: 23 };
+    const futuro = { ...perfilPadrao, schemaVersion: 999 };
+
+    expect(() => perfilSchema.parse(antigo)).toThrow();
+    expect(() => perfilSchema.parse(futuro)).toThrow();
+  });
+
   it('rejeita perfil sem o bloco `moto`', () => {
     const semMoto: Record<string, unknown> = { ...perfilPadrao };
     delete semMoto.moto;

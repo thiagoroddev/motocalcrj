@@ -45,7 +45,7 @@ Um Motoboy pode ter múltiplos Presets (ex: "Honda Pop 110i da Semana", "Biz Res
 
 ### Preset Ativo
 
-O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocalc:v5:presetAtivo` (apenas o id, não o objeto — o `:v5:` no namespace é histórico; a versão real do schema vive em `perfil.schemaVersion`, atualmente v20).
+O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `estimamoto:v1:presetAtivo` (apenas o id, não o objeto). O schema atual é o baseline público inicial v1.
 
 ### Preset JSON / Preset Técnico
 

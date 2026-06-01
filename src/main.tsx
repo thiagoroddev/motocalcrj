@@ -12,8 +12,8 @@ if (import.meta.env.DEV) {
   if (storage.carregarPresets().length === 0) {
     import('./fixtures/usuario_teste.json').then((fixture) => {
       const dados = fixture as Record<string, unknown>;
-      storage.salvarPresets(dados['motocalc:v5:presets'] as PresetEntry[]);
-      storage.setPresetAtivo(String(dados['motocalc:v5:presetAtivo'] ?? ''));
+      storage.salvarPresets(dados['estimamoto:v1:presets'] as PresetEntry[]);
+      storage.setPresetAtivo(String(dados['estimamoto:v1:presetAtivo'] ?? ''));
       console.info('[DEV] Fixture carregado: 2 presets disponiveis');
     });
   }

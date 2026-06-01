@@ -112,9 +112,25 @@ describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)',
     expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
   });
 
-  it('versão futura desconhecida não quebra → cai para padrão e preserva', () => {
-    // schemaVersion acima do conhecido: nenhuma migração casa, mas o shape pode
-    // não bater com o schema atual. Em vez de brickar, recupera.
+  it('schemaVersion antigo não migra → cai para padrão e preserva', () => {
+    const presetAntigo = {
+      ...presetValido('p1'),
+      perfil: {
+        ...perfilPadrao,
+        schemaVersion: 23,
+      } as unknown as PerfilUsuario,
+    };
+    const storage = criarStorageFalso([presetAntigo], 'p1');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
+  });
+
+  it('schemaVersion futuro não quebra → cai para padrão e preserva', () => {
     const presetFuturo = {
       ...presetValido('p1'),
       perfil: {
@@ -125,8 +141,12 @@ describe('criarEstadoInicial — validação + fallback recuperável (ADR-010)',
     };
     const storage = criarStorageFalso([presetFuturo], 'p1');
 
-    // Não deve lançar em nenhuma hipótese.
-    expect(() => criarEstadoInicial(storage)).not.toThrow();
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
   });
 
   it('nunca lança mesmo com lixo total no storage', () => {

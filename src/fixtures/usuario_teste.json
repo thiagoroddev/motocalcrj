@@ -1,18 +1,18 @@
 {
   "_descricao": "Fixture de teste — simula o conteúdo do localStorage após onboarding completo",
-  "_uso": "Carregar via usePerfil.ts em modo dev: if (import.meta.env.DEV) localStorage.setItem('motocalc:v5:presets', JSON.stringify(fixture['motocalc:v5:presets']))",
+  "_uso": "Carregado em modo dev por src/main.tsx usando LocalStoragePerfilStorage (estimamoto:v1:*)",
   "_usuario": "João da Silva — motoboy fictício RJ, Pop 110i 2024",
 
-  "motocalc:v5:presetAtivo": "preset_trabalho_001",
+  "estimamoto:v1:presetAtivo": "preset_trabalho_001",
 
-  "motocalc:v5:presets": [
+  "estimamoto:v1:presets": [
     {
       "presetId": "preset_trabalho_001",
       "nome": "Trabalho — Pop 110i",
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 23,
+        "schemaVersion": 1,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho — Pop 110i",
@@ -137,7 +137,9 @@
           "valor": 11000,
           "dataConsulta": "2026-04-28",
           "codigoFipe": "810285-3",
-          "anoModelo": 2024
+          "anoModelo": 2024,
+          "marca": "Honda",
+          "modelo": "Pop 110i"
         }
       }
     },
@@ -147,7 +149,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 23,
+        "schemaVersion": 1,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal — Pop 110i",
@@ -262,7 +264,9 @@
           "valor": 11000,
           "dataConsulta": "2026-04-28",
           "codigoFipe": "810285-3",
-          "anoModelo": 2024
+          "anoModelo": 2024,
+          "marca": "Honda",
+          "modelo": "Pop 110i"
         }
       }
     }

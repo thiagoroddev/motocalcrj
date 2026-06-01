@@ -5,14 +5,13 @@ import type {
   FiltrosManutencaoDisplay,
   KmUltimaTrocas,
 } from '../types/perfil';
+import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 
 // ──────────────────────────────────────────────
 // Defaults do perfil (extraídos de PerfilContext pela TASK-REF-28).
 //
-// Módulo-folha: depende só de `types/perfil`. Tanto o `PerfilContext` (reducer,
-// estado inicial) quanto o `services/migracoes` (migrarPerfil) importam daqui —
-// concentrar os defaults aqui evita o import circular que existiria se
-// `migracoes` os buscasse de volta no `PerfilContext`.
+// Módulo-folha: depende só de `types/perfil`. O contexto, schema e serviços
+// leem os defaults daqui sem criar ciclos de import.
 // ──────────────────────────────────────────────
 
 // ──────────────────────────────────────────────
@@ -209,7 +208,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
 // ──────────────────────────────────────────────
 
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 23,
+  schemaVersion: VERSAO_SCHEMA_ATUAL,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
