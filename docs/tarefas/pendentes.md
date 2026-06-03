@@ -21,40 +21,6 @@ Obedeça essa ordem:
 
 > TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
-### TASK-REF-32.2 UI de Mão de Obra somente Concessionária + Excepcional
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 02/06/26 22:24
-- **Dependências:** TASK-REF-31 (concluída), TASK-REF-32.1
-- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012
-- **Observações:** A tela `PaginaMaoDeObra` deve esconder a aba `Independente` no MVP. A UI fica com apenas duas abas: `Concessionária` e `Excepcional`.
-  - Trocar textos visíveis com `Honda` por `Concessionária`, incluindo títulos, labels, popups e navegação a partir do Detalhamento.
-  - Renomear nomenclatura de código específica de marca quando tocar o arquivo: `LinhaRevisaoHonda` → `LinhaRevisaoConcessionaria` ou `LinhaRevisaoAutorizada`; `irParaRevisaoHonda` → nome genérico; `abaInicial: 'honda'` deve receber compatibilidade temporária ou migração segura.
-  - `CardServico` em modo autorizada deve exibir `Preço concessionária (R$)` ou equivalente, não `Preço total Honda (R$)`.
-  - O estado efetivo do MVP não pode ficar em `independentes` escondido. Se a UI não permite escolher independente, cálculo/display devem usar `autorizadas` ou normalizar o perfil para esse modo.
-  - Manter código/tipos de independente preservados para futuro; não remover `ServicoIndependente` nem campos ligados ao modo independente nesta task.
-
-### TASK-REF-32.3 UI de Insumos original-only e grid compacto
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 02/06/26 22:24
-- **Dependências:** TASK-REF-31 (concluída), TASK-REF-32.1
-- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; DT-18
-- **Observações:** A tela `PaginaInsumos` deve esconder inputs de peça paralela no MVP e mostrar apenas valores de peças originais. Os campos `precoParalela` e overrides paralelos ficam no código/preset para futuro.
-  - `CardItemPreco` deve renderizar apenas `Original (R$)` no MVP.
-  - Reduzir a largura visual dos cards de peças/pneus e permitir dois cards por linha quando houver largura suficiente; em mobile estreito, manter uma coluna se necessário.
-  - Em Insumos, listar apenas peças/pneus relevantes fora dos pacotes fixos de revisão autorizada/concessionária.
-  - Peças com `incluidoNaRevisaoAutorizada === true`, como vela de ignição e filtro de ar quando cobertas pelo pacote, não devem aparecer como insumo avulso editável do MVP.
-  - Pneus continuam podendo ser insumo de desgaste se entram no custo do usuário, mas não devem aparecer como serviço avulso de concessionária quando a concessionária não executa. Exemplo da Factor/Yamaha: consultora informou que não trocam pneus.
-
 ### TASK-REF-32.4 Política de custo incompleto no Detalhamento
 
 - **Status:** Pendente

@@ -23,7 +23,7 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
     modo === 'autorizada' ? padrao?.precoTotalAutorizada : padrao?.precoIndependente;
   const rotuloPreco =
     modo === 'autorizada'
-      ? 'Preço total Honda (R$)'
+      ? 'Preço concessionária (R$)'
       : servico.ehExcepcional
         ? 'Peças + Mão de Obra (R$)'
         : 'Preço Mão de Obra (R$)';

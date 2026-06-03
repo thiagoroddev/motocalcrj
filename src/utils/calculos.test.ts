@@ -1727,6 +1727,10 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
     };
     const perfil = {
       ...perfilPadrao,
+      perfilManutencao: {
+        ...perfilPadrao.perfilManutencao,
+        modoRevisao: 'independentes' as const,
+      },
       moto: {
         ...perfilPadrao.moto,
         kmAtual: 13000,

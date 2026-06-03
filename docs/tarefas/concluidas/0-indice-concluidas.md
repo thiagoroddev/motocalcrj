@@ -115,3 +115,5 @@
 | TASK-TEST-002 | Smoke tests de UI: onboarding→estimativa, Detalhamento e perfilStorage | [2026-06-01--17h20--TASK-TEST-002.md](./2026-06-01--17h20--TASK-TEST-002.md) |
 | TASK-REF-31 | Preset/modelo como fonte única da verdade | [2026-06-02--20h16--TASK-REF-31.md](./2026-06-02--20h16--TASK-REF-31.md) |
 | TASK-REF-32.1 | ADR-012 e replanejamento MVP da manutenção | [2026-06-02--22h28--TASK-REF-32.1.md](./2026-06-02--22h28--TASK-REF-32.1.md) |
+| TASK-REF-32.2 | UI de Mão de Obra somente Concessionária + Excepcional | [2026-06-03--08h51--TASK-REF-32.2.md](./2026-06-03--08h51--TASK-REF-32.2.md) |
+| TASK-REF-32.3 | UI de Insumos original-only e grid compacto | [2026-06-03--09h22--TASK-REF-32.3.md](./2026-06-03--09h22--TASK-REF-32.3.md) |

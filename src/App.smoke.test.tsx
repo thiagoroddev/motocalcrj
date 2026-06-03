@@ -243,6 +243,23 @@ describe('App - smoke UI', () => {
     expect(screen.queryByText(/Modelo não encontrado/i)).not.toBeInTheDocument();
   });
 
+  it('renderiza Insumos do MVP sem paralelas e sem peças cobertas pela revisão', async () => {
+    salvarPresetNoStorage();
+
+    renderizarAppEm('/insumos');
+
+    await screen.findByText('Peças e Pneus');
+    expect(screen.queryByText('Paralela (R$)')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Original (R$)').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Óleo do motor')).not.toBeInTheDocument();
+    expect(screen.queryByText('Vela de ignição')).not.toBeInTheDocument();
+    expect(screen.queryByText('Filtro de ar (tipo viscoso)')).not.toBeInTheDocument();
+    expect(screen.getByText('Kit relação (corrente + coroa + pinhão)')).toBeInTheDocument();
+    expect(screen.getByText('Pneu dianteiro')).toBeInTheDocument();
+    expect(screen.getByText('Pneu traseiro')).toBeInTheDocument();
+    expect(screen.getByTestId('lista-insumos-pecas')).toHaveClass('sm:grid-cols-2');
+  });
+
   it('renderiza detalhamento e alternar Alimentação muda total sem quebrar CPK', async () => {
     salvarPresetNoStorage();
 

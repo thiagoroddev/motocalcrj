@@ -395,7 +395,7 @@ describe('perfilReducer', () => {
     // Uso e modo de revisão voltam ao padrão (não são custos)
     expect(resultado.perfil.trabalho.kmPorDia).toBe(70);
     expect(resultado.perfil.trabalho.diasPorSemana).toBe(5);
-    expect(resultado.perfil.perfilManutencao.modoRevisao).toBe('independentes');
+    expect(resultado.perfil.perfilManutencao.modoRevisao).toBe('autorizadas');
 
     // Filtros do Detalhamento para custos zerados ficam desligados
     expect(resultado.perfil.configuracaoDisplay.categoriasAtivas.internet).toBe(false);

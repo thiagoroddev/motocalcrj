@@ -227,7 +227,7 @@ export const perfilPadrao: PerfilUsuario = {
 
   perfilManutencao: {
     perfilPecasGlobal: 'original',
-    modoRevisao: 'independentes',
+    modoRevisao: 'autorizadas',
   },
 
   trabalho: {

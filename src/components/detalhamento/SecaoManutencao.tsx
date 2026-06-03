@@ -219,9 +219,7 @@ export function SecaoManutencao({
             </span>
             <span className="flex-1 text-muted-foreground/70 text-xs truncate">
               Revisão Geral
-              <span className="ml-1 text-[10px] text-muted-foreground/40">
-                ({ehAutorizada ? 'autorizada' : 'independente'})
-              </span>
+              <span className="ml-1 text-[10px] text-muted-foreground/40">(concessionária)</span>
             </span>
             <span
               className={`text-xs font-medium tabular-nums ${filtroRevisao ? 'text-muted-foreground' : 'text-muted-foreground/30'}`}
@@ -231,7 +229,7 @@ export function SecaoManutencao({
             {ehAutorizada && (
               <BotaoLapisEdicao
                 onClick={onEditarRevisaoGeral}
-                ariaLabel="Editar Revisão Geral autorizada"
+                ariaLabel="Editar Revisão Geral concessionária"
               />
             )}
           </div>

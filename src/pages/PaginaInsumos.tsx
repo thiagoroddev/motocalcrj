@@ -50,16 +50,18 @@ export function PaginaInsumos() {
 
   const itensPecas = preset
     ? [
-        ...preset.pecas.map((p) => ({
-          id: p.id,
-          nome: p.nome,
-          precoOriginal: p.precoOriginal,
-          precoParalela: p.precoParalela,
-          intervaloKm: resolverIntervalo(
-            p.id,
-            (usaComBau ? p.intervaloKmEntrega : p.intervaloKm) ?? 0,
-          ),
-        })),
+        ...preset.pecas
+          .filter((p) => !p.incluidoNaRevisaoAutorizada)
+          .map((p) => ({
+            id: p.id,
+            nome: p.nome,
+            precoOriginal: p.precoOriginal,
+            precoParalela: p.precoParalela,
+            intervaloKm: resolverIntervalo(
+              p.id,
+              (usaComBau ? p.intervaloKmEntrega : p.intervaloKm) ?? 0,
+            ),
+          })),
         ...preset.pneus.map((p) => ({
           id: p.id,
           nome: `Pneu ${p.posicao}`,
@@ -89,14 +91,16 @@ export function PaginaInsumos() {
       {preset ? (
         <section className="space-y-2">
           <TituloSecao icone={Cog}>Peças e Pneus</TituloSecao>
-          {itensPecas.map((item) => (
-            <CardItemPreco
-              key={item.id}
-              {...item}
-              override={perfil.pecasOverrides.find((o) => o.id === item.id) ?? null}
-              dispatch={dispatch}
-            />
-          ))}
+          <div data-testid="lista-insumos-pecas" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {itensPecas.map((item) => (
+              <CardItemPreco
+                key={item.id}
+                {...item}
+                override={perfil.pecasOverrides.find((o) => o.id === item.id) ?? null}
+                dispatch={dispatch}
+              />
+            ))}
+          </div>
         </section>
       ) : (
         <p className="text-muted-foreground text-sm">Preset não encontrado para este modelo.</p>

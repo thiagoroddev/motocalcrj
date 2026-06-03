@@ -55,7 +55,7 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
     case 'usoDiario':
       return 'Uso diário';
     case 'preferencias':
-      return 'Modo de revisão';
+      return 'Preferências';
     case 'pecaComMO': {
       const preset = obterPreset(perfil.moto.modelo);
       const peca = preset?.pecas.find((p) => p.id === alvo.pecaId);
@@ -178,7 +178,7 @@ function ConteudoServicoAutorizada({
       <div className="flex items-center gap-2 px-px">
         <Wrench className="w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          Serviço avulso Honda
+          Serviço avulso concessionária
         </span>
       </div>
       <CardServico servico={servico} dispatch={dispatch} modo="autorizada" />

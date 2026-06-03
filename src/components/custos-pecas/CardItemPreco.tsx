@@ -15,6 +15,7 @@ interface Props {
   override: PecaOverride | null;
   dispatch: Dispatch<PerfilAction>;
   mostrarDicaAbaMO?: boolean;
+  mostrarParalela?: boolean;
 }
 
 export function CardItemPreco({
@@ -26,6 +27,7 @@ export function CardItemPreco({
   override,
   dispatch,
   mostrarDicaAbaMO = true,
+  mostrarParalela = false,
 }: Props) {
   const idOriginal = useId();
   const idParalela = useId();
@@ -45,7 +47,8 @@ export function CardItemPreco({
   }, [paralelaEfetiva]);
 
   const temOverride =
-    override?.precoEditadoOriginal != null || override?.precoEditadaParalela != null;
+    override?.precoEditadoOriginal != null ||
+    (mostrarParalela && override?.precoEditadaParalela != null);
 
   function handleBlurOriginal() {
     const num = parseFloat(localOriginal.replace(',', '.'));
@@ -88,7 +91,7 @@ export function CardItemPreco({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className={`grid gap-2${mostrarParalela ? ' grid-cols-2' : ' grid-cols-1'}`}>
         <div className="space-y-1">
           <Label htmlFor={idOriginal} className="label-neutro block font-normal">
             Original (R$)
@@ -105,22 +108,24 @@ export function CardItemPreco({
             step={0.01}
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor={idParalela} className="label-neutro block font-normal">
-            Paralela (R$)
-          </Label>
-          <Input
-            id={idParalela}
-            type="number"
-            inputMode="decimal"
-            className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditadaParalela != null ? ' border-primary' : ''}`}
-            value={localParalela}
-            onChange={(e) => setLocalParalela(e.target.value)}
-            onBlur={handleBlurParalela}
-            min={0}
-            step={0.01}
-          />
-        </div>
+        {mostrarParalela && (
+          <div className="space-y-1">
+            <Label htmlFor={idParalela} className="label-neutro block font-normal">
+              Paralela (R$)
+            </Label>
+            <Input
+              id={idParalela}
+              type="number"
+              inputMode="decimal"
+              className={`rounded-input bg-input min-h-touch text-sm${override?.precoEditadaParalela != null ? ' border-primary' : ''}`}
+              value={localParalela}
+              onChange={(e) => setLocalParalela(e.target.value)}
+              onBlur={handleBlurParalela}
+              min={0}
+              step={0.01}
+            />
+          </div>
+        )}
       </div>
 
       {mostrarDicaAbaMO && (

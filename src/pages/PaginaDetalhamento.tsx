@@ -191,8 +191,7 @@ export function PaginaDetalhamento() {
   const kmNoPeriodo = cvt(kmAnual);
   const diasTrabalhadosNoPeriodo = cvt(diasAno);
   const tipoUsoLabel = perfil.moto.perfilUso === 'entrega' ? 'Entrega' : 'Passageiro';
-  const modoRevisaoLabel =
-    perfil.perfilManutencao.modoRevisao === 'autorizadas' ? 'Autorizada' : 'Independente';
+  const modoRevisaoLabel = 'Concessionária';
   const precoCombustivel =
     perfil.financeiro.combustiveis[perfil.financeiro.tipoGasolinaPreferida].preco;
   const kmCombustivelNoPeriodo = cvt(custos.combustivel.detalhes.kmAnual);
@@ -229,8 +228,8 @@ export function PaginaDetalhamento() {
 
   const toggleAcordeao = (id: string) => setExpandido((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  function irParaRevisaoHonda(destaqueIndex?: number) {
-    navigate('/mao-de-obra', { state: { abaInicial: 'honda', destaqueIndex } });
+  function irParaRevisaoConcessionaria(destaqueIndex?: number) {
+    navigate('/mao-de-obra', { state: { abaInicial: 'concessionaria', destaqueIndex } });
   }
 
   function labelCategoriaSimples(label: string, chave: ChaveCategoriaSimples): string {
@@ -449,7 +448,7 @@ export function PaginaDetalhamento() {
           onToggleServicoRevisao={toggleServicoRevisao}
           onTogglePeca={togglePeca}
           onEditarPeca={(pecaId) => setEdicao({ tipo: 'pecaComMO', pecaId })}
-          onEditarRevisaoGeral={() => irParaRevisaoHonda()}
+          onEditarRevisaoGeral={() => irParaRevisaoConcessionaria()}
           onEditarServicoRevisao={(servicoId) =>
             setEdicao({ tipo: 'servicoAutorizada', servicoId })
           }

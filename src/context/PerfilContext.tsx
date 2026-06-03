@@ -574,7 +574,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       return comPerfil({
         ...state.perfil,
         trabalho: { ...state.perfil.trabalho, kmPorDia: 70, diasPorSemana: 5 },
-        perfilManutencao: { ...state.perfil.perfilManutencao, modoRevisao: 'independentes' },
+        perfilManutencao: { ...state.perfil.perfilManutencao, modoRevisao: 'autorizadas' },
         financeiro: {
           ...state.perfil.financeiro,
           internet: 0,

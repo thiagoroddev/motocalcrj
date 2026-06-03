@@ -1,5 +1,5 @@
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, ModoRevisao, PerfilUso } from '../../types/perfil';
+import type { PerfilUsuario, PerfilAction, PerfilUso } from '../../types/perfil';
 import { SlidersHorizontal } from 'lucide-react';
 import { Segmentado } from '../Segmentado';
 import { BotaoReset } from '../BotaoReset';
@@ -13,10 +13,10 @@ interface Props {
 
 export function SecaoPreferencias({ perfilManutencao, moto, dispatch }: Props) {
   const temAlteracao =
-    perfilManutencao.modoRevisao !== 'independentes' || moto.perfilUso !== 'entrega';
+    perfilManutencao.modoRevisao !== 'autorizadas' || moto.perfilUso !== 'entrega';
 
   function resetar() {
-    dispatch({ type: 'SET_MODO_REVISAO', modo: 'independentes' });
+    dispatch({ type: 'SET_MODO_REVISAO', modo: 'autorizadas' });
     dispatch({ type: 'SET_PERFIL_USO', perfilUso: 'entrega' });
   }
 
@@ -26,15 +26,6 @@ export function SecaoPreferencias({ perfilManutencao, moto, dispatch }: Props) {
         <TituloSecao icone={SlidersHorizontal}>Preferências</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
       </div>
-      <p className="text-xs text-muted-foreground uppercase tracking-wider">Manutenção / Peças</p>
-      <Segmentado
-        opcoes={[
-          { label: 'Autorizada', valor: 'autorizadas' },
-          { label: 'Independente', valor: 'independentes' },
-        ]}
-        valor={perfilManutencao.modoRevisao}
-        onChange={(v) => dispatch({ type: 'SET_MODO_REVISAO', modo: v as ModoRevisao })}
-      />
       <p className="text-xs text-muted-foreground uppercase tracking-wider">Perfil de trabalho</p>
       <Segmentado
         opcoes={[

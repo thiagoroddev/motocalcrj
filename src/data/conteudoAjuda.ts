@@ -76,17 +76,12 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
   maoDeObra: {
     titulo: 'Mão de Obra',
     intro:
-      'Aqui você define quanto paga de mão de obra (o serviço, sem a peça) nas manutenções. Esses valores alimentam a categoria Manutenção da estimativa.',
+      'Aqui você ajusta os valores das revisões de concessionária e dos serviços excepcionais. Esses valores alimentam a categoria Manutenção da estimativa.',
     secoes: [
       {
-        titulo: 'Aba Honda',
+        titulo: 'Aba Concessionária',
         texto:
-          'As revisões da tabela da concessionária (autorizada), por km (1.000, 6.000, 12.000...). Use se revisa na Honda.',
-      },
-      {
-        titulo: 'Aba Independente',
-        texto:
-          'Serviços de oficina de bairro, cada um com seu intervalo de km. Use se cuida da moto fora da concessionária.',
+          'As revisões da tabela da concessionária, por km (1.000, 6.000, 12.000...). Use para conferir ou ajustar os valores publicados/informados pela concessionária.',
       },
       {
         titulo: 'Aba Excepcional',
@@ -94,9 +89,9 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
           'Serviços raros e caros, fora da rotina (ex.: retífica de motor). Vêm desligados e você ativa quando precisar.',
       },
       {
-        titulo: 'Modo ativo e edição',
+        titulo: 'Edição',
         texto:
-          'O ponto (●) marca o modo de revisão ativo, definido em Ajustes. Cada card mostra o preço da mão de obra e o intervalo. "Restaurar tudo" devolve os padrões.',
+          'Cada card mostra o preço e, quando aplicável, o intervalo. "Restaurar tudo" devolve os padrões do preset.',
       },
     ],
   },
@@ -113,7 +108,7 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       {
         titulo: 'Peças e Pneus',
         texto:
-          'Cada item tem preço Original e Paralela - escolha qual usa. A vida útil em km define de quanto em quanto o custo se repete. O intervalo de troca é editado na aba Mão de Obra.',
+          'No MVP, cada item mostra apenas o preço original. Peças cobertas pelas revisões fixas da concessionária ficam fora desta lista; pneus e itens de desgaste fora do pacote continuam editáveis.',
       },
     ],
   },
@@ -134,8 +129,7 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       },
       {
         titulo: 'Preferências',
-        texto:
-          'O modo de revisão - Autorizada (Honda) ou Independente. Define qual conjunto de preços da Mão de Obra entra no cálculo.',
+        texto: 'Perfil de trabalho usado no cálculo: entrega ou passageiro.',
       },
       {
         titulo: 'Uso diário',

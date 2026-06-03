@@ -1,24 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Store, Wrench, TriangleAlert, Tag } from 'lucide-react';
+import { Store, TriangleAlert, Tag } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { TituloSecao } from '@/components/TituloSecao';
 import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { CardServico } from '@/components/mao-de-obra/CardServico';
-import { LinhaRevisaoHonda } from '@/components/mao-de-obra/LinhaRevisaoHonda';
+import { LinhaRevisaoConcessionaria } from '@/components/mao-de-obra/LinhaRevisaoConcessionaria';
 import { usePerfil } from '../hooks/usePerfil';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/PerfilContext';
 import { obterPreset } from '../data/repositorioPresets';
 import type { ServicoIndependente, PerfilAction } from '../types/perfil';
 
+type AbaMaoDeObra = 'concessionaria' | 'excepcional';
+
 type LocationStateMaoDeObra = {
-  abaInicial?: 'honda' | 'independente' | 'excepcional';
+  abaInicial?: AbaMaoDeObra | 'honda' | 'independente';
   destaqueIndex?: number;
 };
 
 const DURACAO_DESTAQUE_MS = 2000;
+
+function normalizarAbaInicial(abaInicial?: LocationStateMaoDeObra['abaInicial']): AbaMaoDeObra {
+  return abaInicial === 'excepcional' ? 'excepcional' : 'concessionaria';
+}
 
 // ── BotaoRestaurarTudo ───────────────────────────────────────
 
@@ -79,10 +85,8 @@ export function PaginaMaoDeObra() {
   const location = useLocation();
   const navState = (location.state ?? null) as LocationStateMaoDeObra | null;
   const preset = obterPreset(perfil.moto.modelo);
-  const modoAtivo = perfil.perfilManutencao.modoRevisao;
 
-  const abaInicial =
-    navState?.abaInicial ?? (modoAtivo === 'autorizadas' ? 'honda' : 'independente');
+  const abaInicial = normalizarAbaInicial(navState?.abaInicial);
   const destaqueIndex = navState?.destaqueIndex ?? null;
   const refDestaque = useRef<HTMLDivElement | null>(null);
   const [indiceDestacado, setIndiceDestacado] = useState<number | null>(destaqueIndex);
@@ -97,7 +101,7 @@ export function PaginaMaoDeObra() {
 
   const servicosNormais = perfil.servicosIndependentes.filter((s) => !s.ehExcepcional);
   const servicosExcepcionais = perfil.servicosIndependentes.filter((s) => s.ehExcepcional);
-  // Aba Honda: serviços avulsos fora das revisões (ADR-007) - só os que a
+  // Aba Concessionária: serviços avulsos fora das revisões (ADR-007) - só os que a
   // concessionária cobra à parte, com precoTotalAutorizada > 0 no preset.
   const servicosAvulsosAutorizada = servicosNormais.filter(
     (s) => !s.incluidoNaRevisaoAutorizada && (s.precoTotalAutorizada > 0 || ehAvulsoEditado(s)),
@@ -110,7 +114,7 @@ export function PaginaMaoDeObra() {
     menorIntervaloExcepcional !== null && perfil.moto.kmAtual >= menorIntervaloExcepcional;
   const limiteExcepcionalFormatado = menorIntervaloExcepcional?.toLocaleString('pt-BR') ?? '0';
 
-  const temOverridesHonda = perfil.revisaoAutorizadaOverrides.length > 0;
+  const temOverridesConcessionaria = perfil.revisaoAutorizadaOverrides.length > 0;
 
   function ehAvulsoEditado(s: ServicoIndependente): boolean {
     const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
@@ -131,7 +135,6 @@ export function PaginaMaoDeObra() {
     return s.precoTotalAutorizada !== p.precoTotalAutorizada || s.intervalKm !== p.intervalKm;
   }
 
-  const temOverridesNormais = servicosNormais.some(servicoDifereDopadraoIndependente);
   const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadraoIndependente);
   const temOverridesAvulsosAutorizada = servicosAvulsosAutorizada.some(
     servicoDifereDopadraoAutorizada,
@@ -144,7 +147,7 @@ export function PaginaMaoDeObra() {
     });
   }
 
-  function restaurarHonda() {
+  function restaurarConcessionaria() {
     perfil.revisaoAutorizadaOverrides.forEach((o) => {
       dispatch({ type: 'RESET_REVISAO_AUTORIZADA_OVERRIDE', index: o.index });
     });
@@ -153,28 +156,25 @@ export function PaginaMaoDeObra() {
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue={abaInicial} className="flex flex-col flex-1">
-        <TabsList className="grid grid-cols-3 mx-4 mt-4 shrink-0">
-          <TabsTrigger value="honda">{modoAtivo === 'autorizadas' ? '● ' : ''}Honda</TabsTrigger>
-          <TabsTrigger value="independente">
-            {modoAtivo === 'independentes' ? '● ' : ''}Independente
-          </TabsTrigger>
+        <TabsList className="grid grid-cols-2 mx-4 mt-4 shrink-0">
+          <TabsTrigger value="concessionaria">Concessionária</TabsTrigger>
           <TabsTrigger value="excepcional">Excepcional</TabsTrigger>
         </TabsList>
 
         <div className="flex-1 overflow-y-auto">
-          <TabsContent value="honda" className="px-4 pb-4 pt-3">
+          <TabsContent value="concessionaria" className="px-4 pb-4 pt-3">
             {!preset ? (
               <p className="text-muted-foreground text-sm">
                 Preset não encontrado para este modelo.
               </p>
             ) : (
               <div className="space-y-2">
-                <TituloSecao icone={Store}>Mão de Obra - Oficina Autorizada</TituloSecao>
+                <TituloSecao icone={Store}>Mão de Obra - Concessionária</TituloSecao>
                 {preset.revisaoAutorizada.map((revisao, idx) => {
                   const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
                   const ehDestacado = indiceDestacado === idx;
                   return (
-                    <LinhaRevisaoHonda
+                    <LinhaRevisaoConcessionaria
                       key={idx}
                       ref={ehDestacado ? refDestaque : undefined}
                       index={idx}
@@ -185,7 +185,9 @@ export function PaginaMaoDeObra() {
                     />
                   );
                 })}
-                {temOverridesHonda && <BotaoRestaurarTudo onRestaurar={restaurarHonda} />}
+                {temOverridesConcessionaria && (
+                  <BotaoRestaurarTudo onRestaurar={restaurarConcessionaria} />
+                )}
 
                 {servicosAvulsosAutorizada.length > 0 && (
                   <div className="space-y-2 pt-4">
@@ -201,18 +203,6 @@ export function PaginaMaoDeObra() {
                 )}
               </div>
             )}
-          </TabsContent>
-
-          <TabsContent value="independente" className="px-4 pb-4 pt-3">
-            <div className="space-y-2">
-              <TituloSecao icone={Wrench}>Mão de Obra - Oficina Independente</TituloSecao>
-              <ListaServicos
-                servicos={servicosNormais}
-                dispatch={dispatch}
-                temOverrides={temOverridesNormais}
-                onRestaurarTudo={() => restaurarGrupo(servicosNormais)}
-              />
-            </div>
           </TabsContent>
 
           <TabsContent value="excepcional" className="px-4 pb-4 pt-3">
