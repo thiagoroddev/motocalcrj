@@ -10,7 +10,7 @@ import { CardServico } from '@/components/mao-de-obra/CardServico';
 import { LinhaRevisaoHonda } from '@/components/mao-de-obra/LinhaRevisaoHonda';
 import { usePerfil } from '../hooks/usePerfil';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/PerfilContext';
-import type { PresetMoto } from '../types/calculos';
+import { obterPreset } from '../data/repositorioPresets';
 import type { ServicoIndependente, PerfilAction } from '../types/perfil';
 
 type LocationStateMaoDeObra = {
@@ -19,17 +19,6 @@ type LocationStateMaoDeObra = {
 };
 
 const DURACAO_DESTAQUE_MS = 2000;
-
-// ── Carregamento de presets ──────────────────────────────────
-
-const _rawPresets = import.meta.glob('../presets/*.json', { eager: true });
-
-const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
-  Object.entries(_rawPresets).map(([path, mod]) => [
-    path.split('/').pop()!.replace('.json', ''),
-    (mod as { default: PresetMoto }).default,
-  ]),
-);
 
 // ── BotaoRestaurarTudo ───────────────────────────────────────
 
@@ -89,7 +78,7 @@ export function PaginaMaoDeObra() {
   const { perfil, dispatch } = usePerfil();
   const location = useLocation();
   const navState = (location.state ?? null) as LocationStateMaoDeObra | null;
-  const preset = PRESETS[perfil.moto.modelo];
+  const preset = obterPreset(perfil.moto.modelo);
   const modoAtivo = perfil.perfilManutencao.modoRevisao;
 
   const abaInicial =

@@ -90,7 +90,7 @@ Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (ma
 Tipo: `'entrega' | 'passageiro'`. Define como a moto é usada:
 
 - **`entrega`:** entregador com baú/caixa. Usa `consumoKmLComBau` (consumo menor por causa do baú).
-- **`passageiro`:** transporte de passageiros (Uber Moto, etc). Aplica fator de desgaste extra em pneus, freios, suspensão.
+- **`passageiro`:** transporte de passageiros (Uber Moto, etc). Hoje usa o consumo/intervalo base; o desgaste extra esperado em pneus, freios e suspensão está registrado como DT-18.
 
 ### Situação da Moto (`SituacaoMoto`)
 

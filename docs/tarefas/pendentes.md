@@ -17,36 +17,76 @@ Obedeça essa ordem:
 > verificação. Ordem abaixo é por prioridade combinada (Valor + risco).
 > Origem rastreável: `docs/arquitetura/revisoes-gerais/REV-001.md` (achados REV-001-A01..A09).
 
-### TASK-REF-31 Preset/modelo como fonte única da verdade
+### Pacote TASK-REF-32 - MVP manutenção por concessionária
+
+> TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
+
+### TASK-REF-32.2 UI de Mão de Obra somente Concessionária + Excepcional
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 02/06/26 22:24
+- **Dependências:** TASK-REF-31 (concluída), TASK-REF-32.1
+- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012
+- **Observações:** A tela `PaginaMaoDeObra` deve esconder a aba `Independente` no MVP. A UI fica com apenas duas abas: `Concessionária` e `Excepcional`.
+  - Trocar textos visíveis com `Honda` por `Concessionária`, incluindo títulos, labels, popups e navegação a partir do Detalhamento.
+  - Renomear nomenclatura de código específica de marca quando tocar o arquivo: `LinhaRevisaoHonda` → `LinhaRevisaoConcessionaria` ou `LinhaRevisaoAutorizada`; `irParaRevisaoHonda` → nome genérico; `abaInicial: 'honda'` deve receber compatibilidade temporária ou migração segura.
+  - `CardServico` em modo autorizada deve exibir `Preço concessionária (R$)` ou equivalente, não `Preço total Honda (R$)`.
+  - O estado efetivo do MVP não pode ficar em `independentes` escondido. Se a UI não permite escolher independente, cálculo/display devem usar `autorizadas` ou normalizar o perfil para esse modo.
+  - Manter código/tipos de independente preservados para futuro; não remover `ServicoIndependente` nem campos ligados ao modo independente nesta task.
+
+### TASK-REF-32.3 UI de Insumos original-only e grid compacto
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Crítico
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 02/06/26 22:24
+- **Dependências:** TASK-REF-31 (concluída), TASK-REF-32.1
+- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; DT-18
+- **Observações:** A tela `PaginaInsumos` deve esconder inputs de peça paralela no MVP e mostrar apenas valores de peças originais. Os campos `precoParalela` e overrides paralelos ficam no código/preset para futuro.
+  - `CardItemPreco` deve renderizar apenas `Original (R$)` no MVP.
+  - Reduzir a largura visual dos cards de peças/pneus e permitir dois cards por linha quando houver largura suficiente; em mobile estreito, manter uma coluna se necessário.
+  - Em Insumos, listar apenas peças/pneus relevantes fora dos pacotes fixos de revisão autorizada/concessionária.
+  - Peças com `incluidoNaRevisaoAutorizada === true`, como vela de ignição e filtro de ar quando cobertas pelo pacote, não devem aparecer como insumo avulso editável do MVP.
+  - Pneus continuam podendo ser insumo de desgaste se entram no custo do usuário, mas não devem aparecer como serviço avulso de concessionária quando a concessionária não executa. Exemplo da Factor/Yamaha: consultora informou que não trocam pneus.
+
+### TASK-REF-32.4 Política de custo incompleto no Detalhamento
 
 - **Status:** Pendente
 - **Modo:** Strict
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** G/G
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A01; ADR a avaliar em conjunto com TASK-REF-32
-- **Observações:** Hoje `src/data/catalogoModelos.ts` monta o `CATALOGO` à mão e duplica campos que já vivem no preset (`consumoKmL`, `consumoKmLComBau`, `tabelaFipe`, `codigoFipe`), enquanto `nomeFipe` e `aceitaEtanol` só existem no catálogo TS. Vários consumidores remontam `import.meta.glob('../presets/*.json')` por conta própria (`src/hooks/useCustos.ts`, `src/pages/PaginaInsumos.tsx`, `src/pages/PaginaMaoDeObra.tsx`, `src/components/detalhamento/DialogEdicaoCusto.tsx`, `src/data/catalogoPresets.test.ts`). Resultado: "adicionar uma moto" exige editar `.ts` e manter metadados em dois lugares, contradizendo o objetivo "novo modelo = novo JSON" (`docs/requisitos/nao-funcionais.md`).
-  - **Objetivo:** criar um repositório único de presets (ex.: `src/data/repositorioPresets.ts`) que varra os JSONs uma vez e exponha tanto `PresetMoto` quanto o catálogo derivado; mover `nomeFipe`/`aceitaEtanol`/`codigoFipe` para dentro de cada preset JSON; eliminar os `import.meta.glob` espalhados.
-  - **Critério de aceite:** adicionar um 2º preset JSON deve aparecer no catálogo e no onboarding sem tocar em `.ts`. Guard `catalogoPresets.test.ts` (TASK-CHORE-014) segue verde.
-  - **Cuidado:** TASK-REF-30 resetou o schema pré-lançamento; não reintroduzir migrations históricas. Coordenar com TASK-RNF-013 (presetSchema valida o shape unificado).
+- **Data-hora origem:** 02/06/26 22:24
+- **Dependências:** TASK-REF-32.2, TASK-REF-32.3
+- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; INV-CALC-3
+- **Observações:** O Detalhamento não pode somar mão de obra ausente como `R$ 0` silencioso. Valores de mão de obra só entram quando informados por fonte pública/confiável ou pelo usuário.
+  - Se faltar mão de obra necessária para o custo total, mostrar aviso amarelo/vermelho e indicar que o valor precisa ser consultado/inserido.
+  - Diferenciar pelo menos: `valor informado`, `valor informado pelo usuário`, `valor desconhecido` e `não executa na concessionária`.
+  - Total/categoria afetada deve ficar visualmente marcada como parcial quando o dado ausente altera o custo.
+  - Esta task provavelmente toca `src/utils/calculos.ts`; antes de executar, pedir aprovação explícita conforme `docs/contexto-projeto-ai.md`.
+  - Não deduzir valor de mão de obra. Vida útil/intervalo pode ser estimado quando houver base técnica, mas preço de mão de obra não.
 
-### TASK-REF-32 Manutenção/peças/histórico data-driven por preset
+### TASK-REF-32.5 Dados dos presets sob o novo MVP
 
 - **Status:** Pendente
-- **Modo:** Strict
+- **Modo:** Standard
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
-- **Esforço-H/IA:** XG/XG (dividir antes de executar)
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:** TASK-REF-31
-- **REQ/ADR/DT:** REV-001-A02; ADR-011 a criar ("modelo como fonte única de manutenção")
-- **Observações:** Dados de manutenção que deveriam variar por modelo estão espalhados e fixos na Pop 110i: `src/context/perfilDefaults.ts` (`SERVICOS_INDEPENDENTES_PADRAO` com preços/IDs da Pop, gravados em todo perfil novo), `src/types/perfil.ts` (`KmUltimaTrocas` com chaves fixas oleo/velaIgnicao/kitCilindro/retificaCabecote…), `src/schemas/perfilSchema.ts` (espelha essas chaves), `src/utils/calculos.ts` (`MAPA_PECA_PARA_KM_ULTIMA_TROCA`, `MAPA_SERVICO_PARA_KM_ULTIMA_TROCA`, `MAPA_PECA_PARA_SERVICO` + constante `KM_CICLO_REVISAO_HONDA = 36000` e fallbacks `?? 3334.62`/`?? 7`), e `src/components/mao-de-obra/LinhaRevisaoHonda.tsx` (nomenclatura de marca).
-  - **Bug latente concreto:** `KM_CICLO_REVISAO_HONDA = 36000` é divisor do pacote autorizado; para qualquer moto cujo ciclo ≠ 36.000 km a revisão calcula errado. O dado correto já existe no preset: `revisaoAutorizada[última].intervaloKm`.
-  - **Direção:** `KmUltimaTrocas` evolui para `Record<pecaId, km>` orientado pelo preset; serviços independentes, mapas peça↔serviço↔histórico e constantes de ciclo passam a vir do preset. Migrar incrementalmente em sub-tarefas REF-32.x XG exige divisão obrigatória (ver `20-ciclo-tarefa` §3.4).
-  - **Decisão arquitetural:** criar ADR-011 antes da migração em massa (citar origem `REV-001-A02`). Não reabrir o modelo anêmico de `calculos.ts` (decisão correta ver Recomendações Gerais do REV-001).
-  - **Constraint:** vocabulário "autorizada/independente" é genérico e fica; só "Honda" vaza renomear `LinhaRevisaoHonda` → `LinhaRevisaoAutorizada` faz parte. Depende de TASK-REF-31 (fundação preset-fonte-única).
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 02/06/26 22:24
+- **Dependências:** TASK-REF-32.2, TASK-REF-32.3, TASK-REF-32.4
+- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; TASK-RNF-013
+- **Observações:** Alinhar o contrato prático dos presets ao MVP: novos presets podem ter apenas revisão autorizada/concessionária, pacotes fixos, preços originais de peças relevantes e alguns serviços avulsos de concessionária quando houver dado público.
+  - Dados de oficina independente e peças paralelas podem permanecer nos presets existentes, mas não bloqueiam novos modelos.
+  - Não limpar campos futuros sem necessidade.
+  - Para presets novos, não inventar mão de obra avulsa. Registrar somente valores encontrados em site, rede social, tabela pública, material de concessionária, orçamento divulgado ou fonte direta documentada.
+  - Coordenar com TASK-RNF-013 para que a validação aceite dados opcionais/futuros sem exigir independente/paralela completos no MVP.
 
 ### TASK-RNF-013 Validação Zod de presets e dados regionais (contrato)
 
@@ -56,11 +96,11 @@ Obedeça essa ordem:
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** M/M
 - **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A03; coordenar com TASK-REF-31
+- **Dependências:** TASK-REF-31 (concluída)
+- **REQ/ADR/DT:** REV-001-A03; ADR-011; ADR-012; coordenar com TASK-REF-32.5
 - **Observações:** O perfil do usuário é validado por Zod, mas presets e `dados_rj.json` entram por cast (`as PresetMoto`, `as unknown as DadosRJ` em `src/hooks/useCustos.ts`; `as Record<string, number>` em `src/data/catalogoModelos.ts`). Com vários JSONs, um campo ausente/inválido quebra em runtime em vez de falhar no build/teste.
   - **Objetivo:** criar `presetSchema` e `dadosLocaisSchema` (Zod), validar todos os JSONs em teste de contrato (estendendo `src/data/catalogoPresets.test.ts`), reusando o padrão de `perfilSchema` (schema amarrado ao tipo por `expectTypeOf`).
-  - **Coordenação:** valida o shape unificado do preset depois que TASK-REF-31 mover os metadados para o JSON; pode começar pelo shape atual.
+  - **Coordenação:** validar o shape unificado do preset depois da TASK-REF-31 e respeitar a ADR-012: dados de revisão independente/paralela devem ser opcionais/futuros no MVP, não bloqueadores de preset.
 
 ### TASK-REF-33 CARREGAR_PERFIL por presetId + invariantes relacionais no schema
 

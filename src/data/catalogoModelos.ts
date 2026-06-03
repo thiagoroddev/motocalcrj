@@ -1,4 +1,4 @@
-import pop110i from '../presets/pop110i.json';
+import { LISTA_PRESETS } from './repositorioPresets';
 
 export interface DadosModeloCatalogo {
   id: string;
@@ -12,19 +12,17 @@ export interface DadosModeloCatalogo {
   aceitaEtanol: boolean;
 }
 
-const LISTA: DadosModeloCatalogo[] = [
-  {
-    id: 'pop110i',
-    marca: pop110i.marca,
-    nome: pop110i.nomeCurto,
-    nomeFipe: 'POP 110I',
-    codigoFipe: pop110i.codigoFipe,
-    tabelaFipe: pop110i.tabelaFipe as Record<string, number>,
-    consumoKmL: pop110i.consumoKmL,
-    consumoKmLComBau: pop110i.consumoKmLComBau,
-    aceitaEtanol: false,
-  },
-];
+const LISTA: DadosModeloCatalogo[] = LISTA_PRESETS.map(({ id, preset }) => ({
+  id,
+  marca: preset.marca,
+  nome: preset.nomeCurto,
+  nomeFipe: preset.nomeFipe,
+  codigoFipe: preset.codigoFipe,
+  tabelaFipe: preset.tabelaFipe,
+  consumoKmL: preset.consumoKmL,
+  consumoKmLComBau: preset.consumoKmLComBau,
+  aceitaEtanol: preset.aceitaEtanol,
+})).sort((a, b) => a.marca.localeCompare(b.marca) || a.nome.localeCompare(b.nome));
 
 export const CATALOGO: Record<string, DadosModeloCatalogo> = Object.fromEntries(
   LISTA.map((m) => [m.id, m]),

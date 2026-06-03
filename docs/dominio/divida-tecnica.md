@@ -341,6 +341,63 @@ As classes do plugin eram referenciadas mas não geravam CSS, o que tornava o di
 
 ---
 
+## DT-18: Perfil de uso simplificado demais para carga, finalidade e desgaste
+
+### Situação atual
+
+`PerfilUso` aceita apenas `'entrega' | 'passageiro'`. O código atual usa essa escolha de forma parcial:
+
+- `entrega` usa `consumoKmLComBau` e, para peças com `intervaloKmEntrega`, usa o intervalo de entrega.
+- `passageiro` cai no consumo sem baú (`consumoKmL`) e nos intervalos base (`intervaloKm`).
+- Pneus ainda usam apenas `vidaUtilKm`.
+- Driver temporal por uso, como bateria em rotina severa, ainda não tem modelagem.
+- Campos paralelos por modo (`vidaUtilKmEntrega`, `intervaloMesesEntrega`, etc.) não devem virar contrato: duplicam a fonte de verdade e multiplicariam os inputs editáveis do usuário.
+- `intervaloKmEntrega` já existe no preset Pop 110i e é consumido pelo cálculo atual, mas deve ser tratado como compatibilidade do modelo antigo até a decisão da TASK-REF-32.x.
+- Suspensão não está modelada como item de custo/desgaste.
+- A tela de Detalhamento mostra o modo selecionado, mas não compara claramente quanto `entrega`, `passageiro` e um possível uso `casual` mudariam nos custos.
+
+### Por que é dívida técnica
+
+O domínio mistura duas dimensões diferentes em um único enum:
+
+- **Finalidade de uso:** entrega, passageiro, casual/commute.
+- **Condição física de carga/aerodinâmica:** baú, passageiro frequente, peso extra, trânsito severo.
+
+Na prática, modo passageiro tende a aumentar peso e desgaste de pneu, freio e suspensão; entrega tende a piorar consumo por baú e rotina severa; uso casual para trabalho/escola deveria ter desgaste menor. O modelo atual não representa essas diferenças com precisão.
+
+Além disso, há dois métodos concorrentes para expressar a mesma coisa: campo separado por modo (`intervaloKmEntrega`) e fator aplicado sobre uma vida útil base. Para preservar editabilidade simples, a direção preferida é **vida útil base única editável pelo usuário + fatores de uso calculados pelo app**, não um input por modo.
+
+### Por que NÃO endereçar agora
+
+- TASK-REF-31 e TASK-REF-32 já tratam a fundação de múltiplos modelos e manutenção data-driven.
+- Mudar `PerfilUso` agora exige alteração em schema, onboarding, ajustes, cálculo, docs e possivelmente migração de storage.
+- A regra correta precisa de decisão de produto: enum simples (`casual | entrega | passageiro`) ou fatores independentes (`temBau`, `levaPassageiro`, `usoSevero`, etc.).
+
+### Gatilho que justificaria endereçar
+
+- Implementar comparação no Detalhamento mostrando diferença de custo entre modos.
+- Adicionar modo `casual`.
+- Substituir campos paralelos por fatores de desgaste por uso/categoria/peça.
+- Modelar suspensão como item de manutenção.
+- Evidência de usuário de que o custo de passageiro/entrega está subestimado.
+
+### Recomendação
+
+Tratar junto ou logo após TASK-REF-32.x, quando manutenção já estiver orientada por preset. Antes de codar, decidir se `PerfilUso` continua sendo um enum de finalidade ou se o domínio separa finalidade, baú/carga e severidade em campos próprios.
+
+Preferir este desenho:
+
+- Preset guarda vida útil base (`intervaloKm`, `intervaloMeses`, `vidaUtilKm`).
+- Usuário edita a vida útil base uma vez por peça/pneu.
+- App aplica fatores por modo/categoria/peça para estimar `casual`, `entrega` e `passageiro`.
+- Detalhamento mostra o impacto por categoria: combustível, pneus, freios, suspensão/manutenção e total.
+
+Evitar este desenho:
+
+- Um campo editável por modo, como `intervaloKmEntrega`, `intervaloKmPassageiro`, `vidaUtilKmEntrega`, `vidaUtilKmPassageiro`, etc.
+
+---
+
 ## Como Esta Lista Evolui
 
 ### Adicionar item
@@ -384,3 +441,4 @@ A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) perm
 | 2026-05-20 (v5) | DT-13 endereçada - override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
 | 2026-05-20 (v6) | DT-16 adicionada - excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
 | 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada - várias actions específicas já criadas, DT considerada endereçada na prática. |
+| 2026-06-02 (v8) | DT-18 adicionada - perfil de uso simplificado demais para carga, finalidade e desgaste; inclui lacuna de modo casual e comparação no Detalhamento. |

@@ -44,12 +44,31 @@ export interface RevisaoAutorizadaPreset {
 }
 
 export interface PresetMoto {
+  // Metadados de catálogo ficam opcionais aqui para permitir mocks pequenos nos
+  // testes de cálculo. O repositório de presets exige esses campos no JSON real.
+  marca?: string;
+  modelo?: string;
+  nomeCurto?: string;
+  nomeFipe?: string;
+  codigoFipe?: string;
+  tabelaFipe?: Record<string, number>;
+  aceitaEtanol?: boolean;
   consumoKmL: number;
   consumoKmLComBau: number;
   pecas: PecaPreset[];
   pneus: PneuPreset[];
   revisaoAutorizada: RevisaoAutorizadaPreset[];
 }
+
+export type PresetMotoCatalogo = PresetMoto & {
+  marca: string;
+  modelo: string;
+  nomeCurto: string;
+  nomeFipe: string;
+  codigoFipe: string;
+  tabelaFipe: Record<string, number>;
+  aceitaEtanol: boolean;
+};
 
 // ──────────────────────────────────────────────
 // Dados estáticos do estado

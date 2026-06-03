@@ -1,0 +1,756 @@
+{
+  "marca": "Yamaha",
+  "modelo": "Factor 125i",
+  "nomeCurto": "Factor 125i",
+  "nomeFipe": "YBR 125i FACTOR ED/FLEX",
+  "consumoKmL": 42.0,
+  "consumoKmLComBau": 38.0,
+  "aceitaEtanol": true,
+  "codigoFipe": "827104-6",
+  "tabelaFipe": {
+    "2017": 11312,
+    "2018": 11595,
+    "2019": 12479,
+    "2020": 12791,
+    "2021": 14070,
+    "2022": 14422,
+    "2023": 15116,
+    "2024": 15954,
+    "2025": 17277
+  },
+  "_fonte": {
+    "manual": "Yamaha Serviços + manual Factor 125i UBS 2024 (consultados em 02/06/2026)",
+    "precos": "Mercado Livre RJ + Shopee + cotações FIPE oficial (jan/2026) + oficina",
+    "dataColeta": "2026-06",
+    "anoModelo": {
+      "inicio": 2017,
+      "fim": 2025
+    },
+    "codigoFipeNota": "Coletado via site oficial FIPE. Código: 827104-6. Modelo: YBR 125i FACTOR ED/FLEX.",
+    "consumoNota": "Estimativa operacional para motor Blueflex 125cc em trânsito urbano com e sem baú; validar com fonte específica quando disponível.",
+    "fontesLocais": [
+      "outros/dados yamaha/factor-125-i-ubs-2024/fipe-factor-125i.md",
+      "outros/dados yamaha/factor-125-i-ubs-2024/precos-pecas.md",
+      "outros/dados yamaha/factor-125-i-ubs-2024/revisoes-especificacoes/factor-125i-ubs-2024-revisoes-autorizada.md"
+    ]
+  },
+  "pecas": [
+    {
+      "id": "oleo_motor",
+      "nome": "Óleo do motor",
+      "intervaloKm": 5000,
+      "intervaloKmEntrega": 1750,
+      "intervaloMeses": 6,
+      "precoOriginal": 57.98,
+      "precoParalela": 55.30,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "As verificações devem ser efetuadas a cada 5.000 km ou 6 meses.",
+        "intervaloKmEntregaNota": "Uso severo (entregas RJ): antecipar para 1.500-2.000 km. Média: 1.750 km.",
+        "precoOriginalNota": "Média consolidada da tabela de peças originais: Yamalube 1L (R$ 59,90 / R$ 56,05). Cotação de troca simples completa registrada à parte: R$ 116,58.",
+        "precoParalelaNota": "Apenas o litro do óleo Motul 5100 ou Mobil Super Moto Semissintético (sem mão de obra)."
+      }
+    },
+    {
+      "id": "filtro_oleo",
+      "nome": "Filtro de óleo",
+      "intervaloKm": 10000,
+      "intervaloKmEntrega": 10000,
+      "intervaloMeses": 0,
+      "precoOriginal": 29.43,
+      "precoParalela": 19.08,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Manual: Substituir a cada 10.000 km.",
+        "precoOriginalNota": "Média de filtros de óleo originais Yamaha (Factor/Fazer/Crosser): R$ 33,15 / R$ 27,35 / R$ 27,80.",
+        "precoParalelaNota": "Média de filtros de óleo paralelos (Wega, Vedamotors, mod. original): R$ 21,00 / R$ 21,34 / R$ 14,90."
+      }
+    },
+    {
+      "id": "filtro_combustivel",
+      "nome": "Filtro de combustível",
+      "intervaloKm": 15000,
+      "intervaloKmEntrega": 15000,
+      "intervaloMeses": 0,
+      "precoOriginal": 58.95,
+      "precoParalela": 33.98,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Manual: Substituir a cada 15.000 km. Não exceder para proteger a bomba injetora.",
+        "precoOriginalNota": "Filtro Yamaha Original / Yamalube.",
+        "precoParalelaNota": "Wega ou similar genérico."
+      }
+    },
+    {
+      "id": "vela_ignicao",
+      "nome": "Vela de ignição",
+      "intervaloKm": 10000,
+      "intervaloKmEntrega": 10000,
+      "intervaloMeses": 18,
+      "precoOriginal": 46.27,
+      "precoParalela": 26.49,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Manual: substituição programada aos 10.000 km.",
+        "precoOriginalNota": "NGK CR7HSA / Y-TEQ OEM.",
+        "precoParalelaNota": "Marcas genéricas. (Upgrade Irídio NGK custa aprox. R$ 85,00)."
+      }
+    },
+    {
+      "id": "filtro_ar",
+      "nome": "Filtro de ar (tipo viscoso)",
+      "intervaloKm": 15000,
+      "intervaloKmEntrega": 11000,
+      "intervaloMeses": 24,
+      "precoOriginal": 115.00,
+      "precoParalela": 37.62,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Inspecionar com mais frequência em áreas com muita poeira.",
+        "intervaloKmEntregaNota": "Devido à poluição urbana no RJ, a saturação do papel ocorre aos 11.000 km.",
+        "precoOriginalNota": "Genuíno Yamaha Y-TEQ.",
+        "precoParalelaNota": "Marcas premium compatíveis (Tecfil, Fram)."
+      }
+    },
+    {
+      "id": "kit_relacao",
+      "nome": "Kit relação (corrente + coroa + pinhão)",
+      "intervaloKm": 30000,
+      "intervaloKmEntrega": 25000,
+      "intervaloMeses": 0,
+      "precoOriginal": 194.08,
+      "precoParalela": 101.68,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Manual: Ajustar e lubrificar a cada 500 km.",
+        "intervaloKmEntregaNota": "Kits com retentor rodam ~25.000 km nas entregas.",
+        "precoOriginalNota": "Kit Y-TEQ / D.I.D. Nota: Estimativa de Mão de Obra cobrada por fora na oficina é de R$ 220,00.",
+        "precoParalelaNota": "Média do mercado paralelo."
+      }
+    },
+    {
+      "id": "pastilha_freio_dianteiro",
+      "nome": "Pastilha de freio dianteiro",
+      "intervaloKm": 15000,
+      "intervaloKmEntrega": 11500,
+      "intervaloMeses": 0,
+      "precoOriginal": 68.60,
+      "precoParalela": 32.77,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Manual: Trocar sempre que gastas até o limite.",
+        "intervaloKmEntregaNota": "Frenagem severa (para-e-anda) reduz o TTL. Mock: 11.500 km.",
+        "precoOriginalNota": "Y-TEQ Original.",
+        "precoParalelaNota": "Cobreq ou similar."
+      }
+    },
+    {
+      "id": "disco_freio_dianteiro",
+      "nome": "Disco de freio dianteiro",
+      "intervaloKm": 60000,
+      "intervaloKmEntrega": 50000,
+      "intervaloMeses": 0,
+      "precoOriginal": 679.26,
+      "precoParalela": 160.03,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Troca ao atingir a espessura mínima de segurança (3.5mm).",
+        "precoOriginalNota": "Preço de balcão concessionária Yamaha.",
+        "precoParalelaNota": "Scud, Diafrag."
+      }
+    },
+    {
+      "id": "sapata_freio_traseiro",
+      "nome": "Sapata de freio traseiro",
+      "intervaloKm": 25000,
+      "intervaloKmEntrega": 20000,
+      "intervaloMeses": 0,
+      "precoOriginal": 56.88,
+      "precoParalela": 30.80,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Ajuste obrigatório a cada 5.000 km. Troca por desgaste no tambor.",
+        "intervaloKmEntregaNota": "Freio traseiro dura mais devido à menor carga estática.",
+        "precoOriginalNota": "Y-TEQ Original. Nota: Custo de Mão de Obra orçado por fora: R$ 70,00.",
+        "precoParalelaNota": "Lona compatível Cobreq."
+      }
+    },
+    {
+      "id": "bateria",
+      "nome": "Bateria",
+      "intervaloMeses": 36,
+      "precoOriginal": 231.78,
+      "precoParalela": 169.99,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloMesesNota": "Vida útil baseada em tempo (bateria VRLA/AGM): 36 meses no uso leve/OEM. Referência de rotina severa/entregas: 27 meses; deve virar fator de uso, não campo paralelo.",
+        "precoOriginalNota": "Yuasa ou Heliar OEM.",
+        "precoParalelaNota": "Moura MA5-D 5Ah."
+      }
+    },
+    {
+      "id": "kit_embreagem",
+      "nome": "Kit embreagem (Discos, Platô, Cubo)",
+      "intervaloKm": 60000,
+      "intervaloKmEntrega": 40000,
+      "intervaloMeses": 0,
+      "precoOriginal": 426.03,
+      "precoParalela": 132.62,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Verificar o funcionamento e ajustar a cada 5.000 km.",
+        "intervaloKmEntregaNota": "Desgaste real (patinação) aos 40.000 km pelo excesso de trocas de marcha em ladeiras.",
+        "precoOriginalNota": "Y-TEQ / FCC (completo).",
+        "precoParalelaNota": "Magnetron, Scud."
+      }
+    },
+    {
+      "id": "kit_cilindro",
+      "nome": "Kit cilindro (Motor Superior)",
+      "intervaloKm": 150000,
+      "intervaloKmEntrega": 115000,
+      "intervaloMeses": 0,
+      "precoOriginal": 358.98,
+      "precoParalela": 234.84,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Corretiva. Verificação de válvulas previne o desgaste precoce.",
+        "precoOriginalNota": "Mahle/Metal Leve na caixa original Yamaha.",
+        "precoParalelaNota": "Kit Metal Leve (vendido fora da rede) ou KMP."
+      }
+    }
+  ],
+  "pneus": [
+    {
+      "id": "pneu_dianteiro",
+      "posicao": "dianteiro",
+      "vidaUtilKm": 30000,
+      "precoOriginal": 288.07,
+      "precoParalela": 118.97,
+      "_fonte": {
+        "especificacao": "2.75-18 ou 80/100-18 Tubeless",
+        "vidaUtilNota": "Base passeio/OEM: 30.000 km. Referência de rotina severa/entregas: 22.500 km; deve virar fator de uso, não campo paralelo.",
+        "precoOriginalNota": "Michelin Pilot Street 2, Levorin Dakar.",
+        "precoParalelaNota": "Marcas genéricas asiáticas/nacionais."
+      }
+    },
+    {
+      "id": "pneu_traseiro",
+      "posicao": "traseiro",
+      "vidaUtilKm": 20000,
+      "precoOriginal": 311.41,
+      "precoParalela": 128.35,
+      "_fonte": {
+        "especificacao": "90/90-18 Tubeless",
+        "vidaUtilNota": "Base passeio/OEM: 20.000 km. Referência de rotina severa/entregas: 15.000 km por torque, tração contínua e peso do baú; deve virar fator de uso, não campo paralelo.",
+        "precoOriginalNota": "Metzeler ME Street, Levorin Matrix.",
+        "precoParalelaNota": "Marcas de entrada."
+      }
+    }
+  ],
+  "revisaoAutorizada": [
+    {
+      "intervaloKm": 1000,
+      "intervaloMeses": 6,
+      "precoPecas": 174.00,
+      "precoMaoDeObra": 0.00,
+      "precoTotal": 174.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "FILTRO DE OLEO",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "RODAS",
+            "ROLAMENTOS DA DIREÇÃO",
+            "SISTEMA DE FREIO UNIFICADO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra Paga pela YAMAHA"
+      }
+    },
+    {
+      "intervaloKm": 5000,
+      "intervaloMeses": 12,
+      "precoPecas": 120.00,
+      "precoMaoDeObra": 0.00,
+      "precoTotal": 120.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VÁLVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "ELEMENTO DO FILTRO DE AR",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra Paga pela YAMAHA"
+      }
+    },
+    {
+      "intervaloKm": 10000,
+      "intervaloMeses": 18,
+      "precoPecas": 220.00,
+      "precoMaoDeObra": 200.00,
+      "precoTotal": 420.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "FILTRO DE OLEO",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "VELA DE IGNICAO (NGK MR8D 9)",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "BALANÇA TRASEIRA"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VÁLVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "ELEMENTO DO FILTRO DE AR",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+      }
+    },
+    {
+      "intervaloKm": 15000,
+      "intervaloMeses": 24,
+      "precoPecas": 260.00,
+      "precoMaoDeObra": 250.00,
+      "precoTotal": 510.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "FILTRO DE AR",
+        "FILTRO DE GASOLINA",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "SISTEMA DE ESCAPE",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VALVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+      }
+    },
+    {
+      "intervaloKm": 20000,
+      "intervaloMeses": 30,
+      "precoPecas": 220.00,
+      "precoMaoDeObra": 200.00,
+      "precoTotal": 420.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "FILTRO DE OLEO",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "VELA DE IGNICAO (NGK MR8D 9)",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES",
+            "PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VÁLVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "ELEMENTO DO FILTRO DE AR",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+      }
+    },
+    {
+      "intervaloKm": 25000,
+      "intervaloMeses": 36,
+      "precoPecas": 130.00,
+      "precoMaoDeObra": 128.00,
+      "precoTotal": 258.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VÁLVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "ELEMENTO DO FILTRO DE AR",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "MANOPLA DO ACELERADOR",
+            "CABOS E PEÇAS MOVEIS"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+      }
+    },
+    {
+      "intervaloKm": 30000,
+      "intervaloMeses": 42,
+      "precoPecas": 350.00,
+      "precoMaoDeObra": 334.00,
+      "precoTotal": 684.00,
+      "itensSubstituidos": [
+        "YAMALUBE 20W50",
+        "GAXETA DRENO",
+        "FILTRO DE OLEO",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "VELA DE IGNICAO (NGK MR8D 9)",
+        "FILTRO DE AR",
+        "FILTRO DE GASOLINA",
+        "CONTRAPINO UBS"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "FIXAÇÕES DO CHASSI",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
+            "LUZES",
+            "PISCAS",
+            "INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": [
+            "VÁLVULAS",
+            "INJEÇÃO DE COMBUSTÍVEL",
+            "EMBREAGEM",
+            "FREIO TRASEIRO",
+            "CORRENTE DE TRANSMISSÃO"
+          ]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": [
+            "ELEMENTO DO FILTRO DE AR",
+            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "SISTEMA DE FREIO UNIFICADO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTO DA DIREÇÃO"
+          ]
+        }
+      ],
+      "_fonte": {
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+      }
+    }
+  ],
+  "_servicosSemPecas": [
+    {
+      "id": "ajuste_valvulas",
+      "nome": "Ajuste de válvulas",
+      "intervaloKm": 5000,
+      "nota": "Regulagem incluída na mão de obra da revisão a partir dos 10.000 km."
+    },
+    {
+      "id": "ajuste_corrente",
+      "nome": "Ajuste e lubrificação da corrente de transmissão",
+      "intervaloKm": 500,
+      "nota": "Preventivo frequente realizado pelo próprio usuário. Limpar com querosene e aplicar óleo de motor."
+    },
+    {
+      "id": "sistema_freio_hidraulico",
+      "nome": "Manutenção do freio hidráulico",
+      "intervaloKm": 24000,
+      "nota": "A cada 2 anos (ou 24.000 km), drenar o fluido DOT4 e substituir reparos internos do cilindro mestre/pinça."
+    },
+    {
+      "id": "servico_avulso_relacao",
+      "nome": "Mão de Obra: Troca da Relação",
+      "intervaloKm": 25000,
+      "nota": "Estimativa de mão de obra em oficina independente: R$ 220,00."
+    },
+    {
+      "id": "servico_avulso_freio",
+      "nome": "Mão de Obra: Troca de Sapata de Freio Traseiro",
+      "intervaloKm": 20000,
+      "nota": "Estimativa de mão de obra em oficina independente: R$ 70,00."
+    }
+  ]
+}

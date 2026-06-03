@@ -12,22 +12,14 @@ import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
 import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
+import { obterPreset } from '../../data/repositorioPresets';
 import { MAPA_PECA_PARA_SERVICO, resolverServicoComIntervaloEditado } from '../../utils/calculos';
-import type { PresetMoto } from '../../types/calculos';
 import type {
   PerfilUsuario,
   PerfilAction,
   TipoCombustivel,
   ConfiguracaoCombustivel,
 } from '../../types/perfil';
-
-const _rawPresets = import.meta.glob('../../presets/*.json', { eager: true });
-const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
-  Object.entries(_rawPresets).map(([path, mod]) => [
-    path.split('/').pop()!.replace('.json', ''),
-    (mod as { default: PresetMoto }).default,
-  ]),
-);
 
 export type EdicaoAlvo =
   | { tipo: 'combustivel' }
@@ -65,7 +57,7 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
     case 'preferencias':
       return 'Modo de revisão';
     case 'pecaComMO': {
-      const preset = PRESETS[perfil.moto.modelo];
+      const preset = obterPreset(perfil.moto.modelo);
       const peca = preset?.pecas.find((p) => p.id === alvo.pecaId);
       if (peca) return peca.nome;
       const pneu = preset?.pneus.find((p) => p.id === alvo.pecaId);
@@ -251,7 +243,7 @@ function ConteudoPecaComMO({
   perfil: PerfilUsuario;
   dispatch: Dispatch<PerfilAction>;
 }) {
-  const preset = PRESETS[perfil.moto.modelo];
+  const preset = obterPreset(perfil.moto.modelo);
   if (!preset) {
     return <p className="text-sm text-muted-foreground">Preset não encontrado.</p>;
   }

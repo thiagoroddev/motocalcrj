@@ -2,8 +2,10 @@
   "marca": "Honda",
   "modelo": "Pop 110i",
   "nomeCurto": "Pop 110i",
+  "nomeFipe": "POP 110I",
   "consumoKmL": 36.0,
   "consumoKmLComBau": 33.0,
+  "aceitaEtanol": false,
   "codigoFipe": "",
   "tabelaFipe": {
     "2022": 11800,

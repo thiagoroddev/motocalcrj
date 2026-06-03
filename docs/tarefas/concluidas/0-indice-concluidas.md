@@ -113,3 +113,5 @@
 | TASK-CHORE-014 | Guarda catálogo↔preset: todo id do CATALOGO precisa ter preset JSON | [2026-06-01--13h52--TASK-CHORE-014.md](./2026-06-01--13h52--TASK-CHORE-014.md) |
 | TASK-TEST-001 | Testes do fipeService: parsing, rota rápida, fallback e erro | [2026-06-01--14h05--TASK-TEST-001.md](./2026-06-01--14h05--TASK-TEST-001.md) |
 | TASK-TEST-002 | Smoke tests de UI: onboarding→estimativa, Detalhamento e perfilStorage | [2026-06-01--17h20--TASK-TEST-002.md](./2026-06-01--17h20--TASK-TEST-002.md) |
+| TASK-REF-31 | Preset/modelo como fonte única da verdade | [2026-06-02--20h16--TASK-REF-31.md](./2026-06-02--20h16--TASK-REF-31.md) |
+| TASK-REF-32.1 | ADR-012 e replanejamento MVP da manutenção | [2026-06-02--22h28--TASK-REF-32.1.md](./2026-06-02--22h28--TASK-REF-32.1.md) |

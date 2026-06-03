@@ -1,30 +1,19 @@
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import { CATALOGO } from '../data/catalogoModelos';
+import { obterPreset } from '../data/repositorioPresets';
 import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
 import { TituloSecao } from '@/components/TituloSecao';
 import { resolverServicoComIntervaloEditado } from '../utils/calculos';
-import type { PresetMoto } from '../types/calculos';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
-
-// ── Carregamento de presets ──────────────────────────────────
-
-const _rawPresets = import.meta.glob('../presets/*.json', { eager: true });
-
-const PRESETS: Record<string, PresetMoto> = Object.fromEntries(
-  Object.entries(_rawPresets).map(([path, mod]) => [
-    path.split('/').pop()!.replace('.json', ''),
-    (mod as { default: PresetMoto }).default,
-  ]),
-);
 
 // ── PaginaInsumos ────────────────────────────────────────────
 
 export function PaginaInsumos() {
   const { perfil, dispatch } = usePerfil();
-  const preset = PRESETS[perfil.moto.modelo];
+  const preset = obterPreset(perfil.moto.modelo);
   const catalogo = CATALOGO[perfil.moto.modelo];
   const aceitaEtanol = catalogo?.aceitaEtanol ?? true;
   const usaComBau = perfil.moto.perfilUso === 'entrega';

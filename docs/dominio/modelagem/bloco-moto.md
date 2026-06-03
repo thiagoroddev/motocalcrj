@@ -41,6 +41,8 @@ moto: {
 | `kmAtual`         | number           | Quilometragem atual do hodômetro                                                                               | Onboarding P5 + atualizado pelos Registros de Rodagem (RN-24) |
 | `kmUltimaRevisao` | `number \| null` | KM da última revisão. `null` se Motoboy não soube informar                                                     | Onboarding P5                                                 |
 
+> **Nota de modelagem:** `perfilUso` ainda é simplificado demais para representar finalidade, baú/carga, passageiro frequente e uso casual. O código atual diferencia principalmente entrega vs. não-entrega. A evolução está registrada como DT-18.
+
 ---
 
 ## Atualização do `kmAtual`
@@ -114,7 +116,7 @@ O `Math.max` garante que `kmAtual` **nunca regrida** mesmo se o Motoboy registra
 PerfilUsuario.moto
 ├── marca/modelo → referencia src/presets/{modelo}.json (Preset JSON)
 ├── ano → afeta cálculo de IPVA (isenção em moto ≥ 15 anos no RJ)
-├── perfilUso → afeta cálculo de combustível (consumoKmL vs consumoKmLComBau)
+├── perfilUso → afeta cálculo de combustível (consumoKmL vs consumoKmLComBau) e alguns intervalos de manutenção; modelagem completa de carga/desgaste está em DT-18
 ├── kmAtual → entra em vários cálculos (alertas, intervalos)
 └── kmUltimaRevisao → base para calcularKmParaProximaRevisao()
 ```
