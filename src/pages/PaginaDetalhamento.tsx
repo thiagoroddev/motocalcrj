@@ -190,6 +190,11 @@ export function PaginaDetalhamento() {
   const totalFiltradoNoPeriodo = cvt(totalFiltrado);
   const kmNoPeriodo = cvt(kmAnual);
   const diasTrabalhadosNoPeriodo = cvt(diasAno);
+  const pendenciasMaoDeObra = custos.revisao.detalhes.pendenciasMaoDeObra;
+  const custoManutencaoIncompleto = custos.revisao.detalhes.custoIncompleto;
+  const avisoCustoParcial = custoManutencaoIncompleto
+    ? `Custo parcial: falta valor de concessionária para ${pendenciasMaoDeObra.length} serviço${pendenciasMaoDeObra.length === 1 ? '' : 's'} de manutenção.`
+    : undefined;
   const tipoUsoLabel = perfil.moto.perfilUso === 'entrega' ? 'Entrega' : 'Passageiro';
   const modoRevisaoLabel = 'Concessionária';
   const precoCombustivel =
@@ -377,6 +382,7 @@ export function PaginaDetalhamento() {
           totalPeriodo={totalFiltradoNoPeriodo}
           kmPeriodo={formatarKmNoPeriodo(kmNoPeriodo, periodo)}
           porKm={gran.porKm}
+          avisoCustoParcial={avisoCustoParcial}
           detalhesFixos={[
             {
               label: `${formatarKm(perfil.trabalho.kmPorDia)}/dia`,
@@ -436,6 +442,8 @@ export function PaginaDetalhamento() {
           kmAtual={perfil.moto.kmAtual}
           kmAnual={kmAnual}
           servicosRevisao={[...custos.revisao.detalhes.servicos.entries()]}
+          custoIncompleto={custoManutencaoIncompleto}
+          pendenciasMaoDeObra={pendenciasMaoDeObra}
           pecas={[...custos.manutencao.detalhes.entries()]}
           filtroAtivo={filtros.manutencao}
           filtroRevisao={filtros.revisao}

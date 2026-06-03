@@ -6,6 +6,7 @@
   "consumoKmL": 42.0,
   "consumoKmLComBau": 38.0,
   "aceitaEtanol": true,
+  "fatorMaoDeObra": 1.0,
   "codigoFipe": "827104-6",
   "tabelaFipe": {
     "2017": 11312,
@@ -719,6 +720,152 @@
       "_fonte": {
         "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
       }
+    }
+  ],
+  "_notaServicosManutencao": "Yamaha: consultora informou que a concessionária não realiza troca de pneus. Por isso os serviços troca-pneu-dianteiro e troca-pneu-traseiro não entram como avulsos de concessionária no MVP.",
+  "servicosManutencao": [
+    {
+      "id": "troca-oleo",
+      "nome": "Troca de óleo",
+      "intervalKm": 5000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-transmissao",
+      "nome": "Troca kit transmissão",
+      "intervalKm": 25000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 414.08,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-sapata-traseira",
+      "nome": "Troca sapata de freio traseira",
+      "intervalKm": 20000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 126.88,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "revisao-geral",
+      "nome": "Revisão geral (independente)",
+      "intervalKm": 5000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-vela",
+      "nome": "Troca de vela",
+      "intervalKm": 10000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-filtro-ar",
+      "nome": "Troca filtro de ar",
+      "intervalKm": 15000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-bateria",
+      "nome": "Troca de bateria",
+      "intervalKm": 0,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-embreagem",
+      "nome": "Troca kit embreagem",
+      "intervalKm": 40000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-cilindro",
+      "nome": "Troca kit cilindro",
+      "intervalKm": 115000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "retifica-cabecote",
+      "nome": "Retífica de cabeçote",
+      "intervalKm": 90000,
+      "precoIndependente": 800,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "retifica-completa",
+      "nome": "Retífica completa",
+      "intervalKm": 130000,
+      "precoIndependente": 1500,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "troca-pneu-dianteiro",
+      "nome": "Troca de pneu dianteiro (fora da concessionária)",
+      "intervalKm": 30000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "troca-pneu-traseiro",
+      "nome": "Troca de pneu traseiro (fora da concessionária)",
+      "intervalKm": 20000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
     }
   ],
   "_servicosSemPecas": [

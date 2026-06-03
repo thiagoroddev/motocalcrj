@@ -23,6 +23,7 @@ const situacaoMoto = z.enum(['quitada', 'financiada', 'alugada']);
 const periodicidadeSeguro = z.enum(['anual', 'mensal']);
 const periodicidadeAluguel = z.enum(['mensal', 'semanal']);
 const responsabilidadeCusto = z.enum(['eu', 'locador', 'dividido']);
+const statusPrecoAutorizada = z.enum(['informado', 'nao_informado', 'informado_usuario']);
 
 const numeroFinito = z.number().finite();
 const dinheiroNaoNegativo = numeroFinito.min(0);
@@ -92,6 +93,7 @@ const servicoIndependente = z
     intervalKm: inteiroNaoNegativo,
     precoIndependente: dinheiroNaoNegativo,
     precoTotalAutorizada: dinheiroNaoNegativo,
+    statusPrecoAutorizada: statusPrecoAutorizada.optional(),
     incluidoNaRevisaoAutorizada: z.boolean(),
     ativo: z.boolean(),
     ehExcepcional: z.boolean(),
@@ -162,6 +164,7 @@ export const perfilSchema = z.object({
   perfilManutencao: z.object({
     perfilPecasGlobal: perfilPecas,
     modoRevisao,
+    incluirEstimativaMaoDeObra: z.boolean().optional(),
   }),
 
   trabalho: z.object({

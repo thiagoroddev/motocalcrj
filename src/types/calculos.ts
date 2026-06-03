@@ -1,4 +1,4 @@
-import type { ModoRevisao } from './perfil';
+import type { ModoRevisao, ServicoIndependente, StatusPrecoAutorizada } from './perfil';
 
 // ──────────────────────────────────────────────
 // Tipos do preset (pop110i.json e futuros)
@@ -58,6 +58,12 @@ export interface PresetMoto {
   pecas: PecaPreset[];
   pneus: PneuPreset[];
   revisaoAutorizada: RevisaoAutorizadaPreset[];
+  // Lista de serviços de manutenção aplicáveis ao modelo. No MVP, controla
+  // quais avulsos de concessionária aparecem e podem gerar pendência de preço.
+  servicosManutencao?: ServicoIndependente[];
+  // Fator multiplicador da mão de obra estimada do modelo (proxy de cilindrada).
+  // Ver ADR-013 / docs/arquitetura/estimativa-mao-de-obra.md. Default 1.0.
+  fatorMaoDeObra?: number;
 }
 
 export type PresetMotoCatalogo = PresetMoto & {
@@ -122,11 +128,21 @@ export interface CustoServicoRevisao {
   intervalKm: number;
   precoMaoDeObra: number;
   precoServico: number;
+  statusPrecoAutorizada: StatusPrecoAutorizada;
+  // true = M.O. veio da estimativa opt-in (ADR-013), não de valor real.
+  maoDeObraEstimada?: boolean;
   eventosNoAno: number;
   ehExcepcional: boolean;
   modo: 'amortizado' | 'ancorado';
   kmUltimaTroca: number;
   kmDasProximasTrocas: number[];
+}
+
+export interface PendenciaMaoDeObraConcessionaria {
+  servicoId: string;
+  label: string;
+  intervalKm: number;
+  statusPrecoAutorizada: 'nao_informado';
 }
 
 export interface CustoImprevistoSugerido {
@@ -136,6 +152,8 @@ export interface CustoImprevistoSugerido {
   intervalKm: number;
   precoServico: number;
   eventosNoAno: number;
+  // true = M.O. veio da estimativa opt-in (ADR-013), não de valor real.
+  maoDeObraEstimada?: boolean;
 }
 
 export interface CustosPorCategoria {
@@ -150,6 +168,8 @@ export interface CustosPorCategoria {
       base: number;
       eventosNoAno: number;
       servicos: Map<string, CustoServicoRevisao>;
+      custoIncompleto: boolean;
+      pendenciasMaoDeObra: PendenciaMaoDeObraConcessionaria[];
     };
   };
   manutencao: {

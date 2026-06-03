@@ -117,3 +117,4 @@
 | TASK-REF-32.1 | ADR-012 e replanejamento MVP da manutenção | [2026-06-02--22h28--TASK-REF-32.1.md](./2026-06-02--22h28--TASK-REF-32.1.md) |
 | TASK-REF-32.2 | UI de Mão de Obra somente Concessionária + Excepcional | [2026-06-03--08h51--TASK-REF-32.2.md](./2026-06-03--08h51--TASK-REF-32.2.md) |
 | TASK-REF-32.3 | UI de Insumos original-only e grid compacto | [2026-06-03--09h22--TASK-REF-32.3.md](./2026-06-03--09h22--TASK-REF-32.3.md) |
+| TASK-REF-32.4 | Política de custo incompleto no Detalhamento | [2026-06-03--10h04--TASK-REF-32.4.md](./2026-06-03--10h04--TASK-REF-32.4.md) |

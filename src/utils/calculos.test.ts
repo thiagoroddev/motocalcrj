@@ -756,6 +756,130 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(resultado.total).toBeCloseTo(baseEsperada + 313.56 * 2, 2);
   });
 
+  it('modo autorizadas: serviço avulso nao_informado gera pendência sem somar R$ 0 silencioso', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoIndependente: 60,
+        precoTotalAutorizada: 0,
+        statusPrecoAutorizada: 'nao_informado',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicos,
+    });
+    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+
+    expect(resultado.total).toBeCloseTo(baseEsperada, 2);
+    expect(resultado.detalhes.servicos.size).toBe(0);
+    expect(resultado.detalhes.custoIncompleto).toBe(true);
+    expect(resultado.detalhes.pendenciasMaoDeObra).toEqual([
+      {
+        servicoId: 'troca-kit-transmissao',
+        label: 'Troca kit transmissão',
+        intervalKm: 12000,
+        statusPrecoAutorizada: 'nao_informado',
+      },
+    ]);
+  });
+
+  it('modo autorizadas: serviço avulso informado_usuario entra no cálculo sem pendência', () => {
+    const kmAnual = 12000;
+    const cicloHonda = 3334.62;
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoIndependente: 60,
+        precoTotalAutorizada: 410,
+        statusPrecoAutorizada: 'informado_usuario',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: cicloHonda,
+      servicosIndependentes: servicos,
+    });
+    const servico = resultado.detalhes.servicos.get('troca-kit-transmissao');
+
+    expect(servico?.statusPrecoAutorizada).toBe('informado_usuario');
+    expect(servico?.custoAnual).toBeCloseTo(410, 2);
+    expect(resultado.detalhes.custoIncompleto).toBe(false);
+    expect(resultado.detalhes.pendenciasMaoDeObra).toEqual([]);
+  });
+
+  it('modo autorizadas: estimativa opt-in soma M.O. estimada no nao_informado e zera a pendência', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoIndependente: 60,
+        precoTotalAutorizada: 0,
+        statusPrecoAutorizada: 'nao_informado',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', 12000, {
+      custoCicloCompleto: 3334.62,
+      servicosIndependentes: servicos,
+      marca: 'Yamaha',
+      fatorMaoDeObra: 1,
+      incluirEstimativaMaoDeObra: true,
+    });
+    const servico = resultado.detalhes.servicos.get('troca-kit-transmissao');
+
+    // kit transmissão: 2h × 110 × 1.0 = 220 de M.O. (só M.O.), 1 troca/ano
+    expect(servico?.maoDeObraEstimada).toBe(true);
+    expect(servico?.precoServico).toBe(220);
+    expect(servico?.custoAnual).toBeCloseTo(220, 2);
+    expect(resultado.detalhes.custoIncompleto).toBe(false);
+    expect(resultado.detalhes.pendenciasMaoDeObra).toEqual([]);
+  });
+
+  it('modo autorizadas: estimativa ligada mas sem tempário mantém a pendência', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'servico-sem-tempario',
+        nome: 'Serviço sem tempário',
+        intervalKm: 10000,
+        precoIndependente: 0,
+        precoTotalAutorizada: 0,
+        statusPrecoAutorizada: 'nao_informado',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', 12000, {
+      custoCicloCompleto: 3334.62,
+      servicosIndependentes: servicos,
+      marca: 'Yamaha',
+      incluirEstimativaMaoDeObra: true,
+    });
+
+    expect(resultado.detalhes.servicos.size).toBe(0);
+    expect(resultado.detalhes.custoIncompleto).toBe(true);
+    expect(resultado.detalhes.pendenciasMaoDeObra[0]?.servicoId).toBe('servico-sem-tempario');
+  });
+
   it('modo independentes: mantém serviços agregados em Revisão Geral', () => {
     const kmAnual = 12000;
     const resultado = calcularDetalhesRevisaoAnual('independentes', kmAnual, {
@@ -876,6 +1000,7 @@ const custosMock: CustosPorCategoria = {
             intervalKm: 12000,
             precoMaoDeObra: 53,
             precoServico: 53,
+            statusPrecoAutorizada: 'informado',
             eventosNoAno: 0.2,
             ehExcepcional: false,
             modo: 'amortizado',
@@ -884,6 +1009,8 @@ const custosMock: CustosPorCategoria = {
           },
         ],
       ]),
+      custoIncompleto: false,
+      pendenciasMaoDeObra: [],
     },
   },
   manutencao: {
@@ -1171,7 +1298,14 @@ describe('calcularBreakdownPercentual', () => {
       documentos: { total: 0, detalhes: { ipva: 0, licenciamento: 0 } },
       revisao: {
         total: 0,
-        detalhes: { modo: 'independentes', base: 0, eventosNoAno: 0, servicos: new Map() },
+        detalhes: {
+          modo: 'independentes',
+          base: 0,
+          eventosNoAno: 0,
+          servicos: new Map(),
+          custoIncompleto: false,
+          pendenciasMaoDeObra: [],
+        },
       },
       manutencao: { total: 0, detalhes: new Map() },
       combustivel: { total: 0, detalhes: { cpk: 0, kmAnual: 0, consumoEfetivo: 0 } },
@@ -1557,7 +1691,7 @@ describe('calcularCustosPorCategoria - modo autorizado não duplica peças da re
     };
   }
 
-  it('modo autorizado: manutenção exclui óleo e vela (cobertos pela revisão) e exclui kit_relacao/pneus quando serviço associado tem precoTotalAutorizada > 0 (ADR-007)', () => {
+  it('modo autorizado: manutenção exclui itens do pacote, mas mantém avulsos com preço de concessionária não informado', () => {
     const resultado = calcularCustosPorCategoria(
       perfilComModo('autorizadas'),
       presetMock,
@@ -1566,10 +1700,11 @@ describe('calcularCustosPorCategoria - modo autorizado não duplica peças da re
     // ADR-006: óleo e vela são pacote Honda.
     expect(resultado.manutencao.detalhes.has('oleo_motor')).toBe(false);
     expect(resultado.manutencao.detalhes.has('vela_ignicao')).toBe(false);
-    // ADR-007: kit_relacao e pneus saem do CPK quando o serviço associado
-    // tem precoTotalAutorizada > 0 e está ativo (perfilPadrao v15 satisfaz).
-    expect(resultado.manutencao.detalhes.has('kit_relacao')).toBe(false);
-    expect(resultado.manutencao.detalhes.has('pneu_traseiro')).toBe(false);
+    // ADR-012/TASK-REF-32.4: enquanto a mão de obra de concessionária do
+    // avulso está `nao_informado`, a peça original continua no CPK.
+    expect(resultado.manutencao.detalhes.has('kit_relacao')).toBe(true);
+    expect(resultado.manutencao.detalhes.has('pneu_traseiro')).toBe(true);
+    expect(resultado.revisao.detalhes.custoIncompleto).toBe(true);
   });
 
   it('modo independente: manutenção inclui óleo e vela', () => {

@@ -17,6 +17,7 @@ import type {
   GranularidadesCusto,
   CustoPeca,
   CustoServicoRevisao,
+  PendenciaMaoDeObraConcessionaria,
   CustoImprevistoSugerido,
   CustosPorCategoria,
   FiltrosCategorias,
@@ -24,6 +25,11 @@ import type {
   Periodo,
 } from '../types/calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
+import {
+  resolverStatusPrecoAutorizada,
+  temPrecoAutorizadaInformado,
+} from './statusPrecoAutorizada';
+import { estimarMaoDeObra } from './maoDeObraEstimada';
 
 function valorNaoNegativo(valor: number): number {
   return Number.isFinite(valor) && valor > 0 ? valor : 0;
@@ -144,8 +150,9 @@ const MAPA_SERVICO_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = 
 // Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
 // a mão de obra de troca. Usado também por calcularCpkPorPeca para evitar
 // dupla contagem no modo autorizado (ADR-007): se o serviço associado tem
-// precoTotalAutorizada > 0 e está ativo, a peça é pulada - o serviço cobre
-// peça + M.O. juntos no orçamento Honda.
+// preço completo de concessionária informado e está ativo, a peça é pulada - o
+// serviço cobre peça + M.O. juntos. Se o preço está `nao_informado`, a peça
+// original permanece no cálculo e a pendência aparece no Detalhamento.
 export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   oleo_motor: 'troca-oleo',
   vela_ignicao: 'troca-vela',
@@ -321,7 +328,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
     if (!servicoId) return false;
     const servico = servicosIndependentes.find((s) => s.id === servicoId);
-    return !!servico && servico.ativo && servico.precoTotalAutorizada > 0;
+    return !!servico && servico.ativo && temPrecoAutorizadaInformado(servico);
   };
   const pecasConsideradas =
     modoRevisao === 'autorizadas'
@@ -468,6 +475,9 @@ export function calcularDetalhesRevisaoAnual(
     servicosIndependentes?: ServicoIndependente[];
     kmAtual?: number;
     kmUltimaTrocas?: KmUltimaTrocas;
+    marca?: string;
+    fatorMaoDeObra?: number;
+    incluirEstimativaMaoDeObra?: boolean;
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
@@ -480,45 +490,77 @@ export function calcularDetalhesRevisaoAnual(
     const ciclo = valorNaoNegativo(opcoes.custoCicloCompleto ?? 3334.62);
     const quantidadeRevisoesCicloHonda = opcoes.quantidadeRevisoesCicloHonda ?? 7;
     const basePacoteHonda = (ciclo / KM_CICLO_REVISAO_HONDA) * kmAnualSeguro;
-    // ADR-007: soma serviços fora do pacote Honda (kit transmissão, pneus, etc.)
-    // usando precoTotalAutorizada (peça + M.O. cobradas em conjunto pela Honda).
+    // ADR-007/012: soma serviços fora do pacote fixo apenas quando o preço
+    // completo da concessionária foi informado. Se falta M.O., a peça original
+    // continua no cálculo por peça e a pendência é exposta ao Detalhamento.
     // Excepcionais (retíficas) ficam fora aqui - saem por imprevistos sugeridos.
-    const servicosForaDoPacote = servicosNormaisAtivos.filter(
-      (s) => !s.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada > 0 && s.intervalKm > 0,
+    const marca = opcoes.marca;
+    const fatorMaoDeObra = opcoes.fatorMaoDeObra ?? 1;
+    const incluirEstimativa = opcoes.incluirEstimativaMaoDeObra ?? false;
+
+    const servicosAvulsosKm = servicosNormaisAtivos.filter(
+      (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
     );
-    const detalhesServicos = new Map<string, CustoServicoRevisao>(
-      servicosForaDoPacote.map((s): [string, CustoServicoRevisao] => {
-        const chaveKmUltimaTroca = resolverChaveKmUltimaTrocaServico(s.id);
-        const kmUltimaTroca = chaveKmUltimaTroca
-          ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca])
-          : 0;
-        const ciclo = calcularCicloPeca(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro);
-        const modo =
-          kmUltimaTroca > 0 && chaveKmUltimaTroca !== undefined ? 'ancorado' : 'amortizado';
-        const kmDasProximasTrocas =
-          modo === 'ancorado'
-            ? calcularKmDasProximasTrocas(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro)
-            : [];
-        const precoServico = valorNaoNegativo(s.precoTotalAutorizada);
-        const custoAnual = precoServico * ciclo.trocasNoAno;
-        return [
-          s.id,
-          {
-            servicoId: s.id,
-            label: s.nome,
-            custoAnual,
-            intervalKm: s.intervalKm,
-            precoMaoDeObra: precoServico,
-            precoServico,
-            eventosNoAno: ciclo.trocasNoAno,
-            ehExcepcional: s.ehExcepcional,
-            modo,
-            kmUltimaTroca,
-            kmDasProximasTrocas,
-          },
-        ];
-      }),
+    // informado / informado_usuario: soma peça + M.O. real; a peça é pulada do CPK.
+    const servicosInformados = servicosAvulsosKm.filter(temPrecoAutorizadaInformado);
+    // nao_informado: a peça continua no CPK. Com estimativa opt-in (ADR-013),
+    // soma só a M.O. estimada (~); sem estimativa, vira pendência no Detalhamento.
+    const naoInformados = servicosAvulsosKm.filter(
+      (s) => resolverStatusPrecoAutorizada(s) === 'nao_informado',
     );
+    const moEstimada = (s: ServicoIndependente): number =>
+      incluirEstimativa ? estimarMaoDeObra(s.id, marca, fatorMaoDeObra) : 0;
+    const servicosEstimados = naoInformados.filter((s) => moEstimada(s) > 0);
+    const pendenciasMaoDeObra: PendenciaMaoDeObraConcessionaria[] = naoInformados
+      .filter((s) => moEstimada(s) <= 0)
+      .map((s) => ({
+        servicoId: s.id,
+        label: s.nome,
+        intervalKm: s.intervalKm,
+        statusPrecoAutorizada: 'nao_informado',
+      }));
+
+    const montarCustoServico = (
+      s: ServicoIndependente,
+      precoBruto: number,
+      maoDeObraEstimadaFlag: boolean,
+    ): [string, CustoServicoRevisao] => {
+      const chaveKmUltimaTroca = resolverChaveKmUltimaTrocaServico(s.id);
+      const kmUltimaTroca = chaveKmUltimaTroca
+        ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca])
+        : 0;
+      const cicloServico = calcularCicloPeca(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro);
+      const modo =
+        kmUltimaTroca > 0 && chaveKmUltimaTroca !== undefined ? 'ancorado' : 'amortizado';
+      const kmDasProximasTrocas =
+        modo === 'ancorado'
+          ? calcularKmDasProximasTrocas(kmUltimaTroca, s.intervalKm, kmAtual, kmAnualSeguro)
+          : [];
+      const precoServico = valorNaoNegativo(precoBruto);
+      return [
+        s.id,
+        {
+          servicoId: s.id,
+          label: s.nome,
+          custoAnual: precoServico * cicloServico.trocasNoAno,
+          intervalKm: s.intervalKm,
+          precoMaoDeObra: precoServico,
+          precoServico,
+          statusPrecoAutorizada: resolverStatusPrecoAutorizada(s),
+          maoDeObraEstimada: maoDeObraEstimadaFlag,
+          eventosNoAno: cicloServico.trocasNoAno,
+          ehExcepcional: s.ehExcepcional,
+          modo,
+          kmUltimaTroca,
+          kmDasProximasTrocas,
+        },
+      ];
+    };
+
+    const detalhesServicos = new Map<string, CustoServicoRevisao>([
+      ...servicosInformados.map((s) => montarCustoServico(s, s.precoTotalAutorizada, false)),
+      ...servicosEstimados.map((s) => montarCustoServico(s, moEstimada(s), true)),
+    ]);
     const totalServicosForaDoPacote = [...detalhesServicos.values()].reduce(
       (sum, s) => sum + s.custoAnual,
       0,
@@ -535,6 +577,8 @@ export function calcularDetalhesRevisaoAnual(
           quantidadeRevisoesCicloHonda,
         ),
         servicos: detalhesServicos,
+        custoIncompleto: pendenciasMaoDeObra.length > 0,
+        pendenciasMaoDeObra,
       },
     };
   }
@@ -556,6 +600,8 @@ export function calcularDetalhesRevisaoAnual(
       base,
       eventosNoAno: calcularEventosRevisaoNoAno(modoRevisao, kmAnualSeguro, 0),
       servicos: new Map(),
+      custoIncompleto: false,
+      pendenciasMaoDeObra: [],
     },
   };
 }
@@ -669,18 +715,32 @@ function calcularImprevistosSugeridosAnual(
   modoRevisao: ModoRevisao,
   kmAtual: number,
   kmUltimaTrocas: KmUltimaTrocas,
+  opcoesEstimativa: {
+    marca?: string;
+    fatorMaoDeObra?: number;
+    incluirEstimativaMaoDeObra?: boolean;
+  } = {},
 ): Map<string, CustoImprevistoSugerido> {
-  // ADR-007: imprevistos sugeridos respeitam o modo. No autorizado, o preço é
-  // o total Honda (peça + M.O.); valor 0 indica que a Honda não executa o
-  // serviço (caso das retíficas, substituídas por troca de kit cilindro) - o
-  // imprevisto some do mapa nesse modo.
+  // ADR-007/012/013: excepcionais somam só mão de obra - a peça, quando existe
+  // (ex.: pneu), já conta em Insumos. No autorizado usa o valor real informado;
+  // com estimativa opt-in ligada, a falta de valor vira M.O. estimada (~). Sem
+  // valor nem estimativa, o imprevisto some do mapa (ex.: retífica no autorizado).
   return new Map<string, CustoImprevistoSugerido>(
     servicosIndependentes
       .filter((servico) => servico.ehExcepcional && servico.intervalKm > 0)
       .map((servico): [string, CustoImprevistoSugerido] | null => {
-        const preco =
+        const real =
           modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;
-        const precoSeguro = valorNaoNegativo(preco);
+        let precoSeguro = valorNaoNegativo(real);
+        let maoDeObraEstimada = false;
+        if (precoSeguro <= 0 && opcoesEstimativa.incluirEstimativaMaoDeObra) {
+          precoSeguro = estimarMaoDeObra(
+            servico.id,
+            opcoesEstimativa.marca,
+            opcoesEstimativa.fatorMaoDeObra ?? 1,
+          );
+          maoDeObraEstimada = precoSeguro > 0;
+        }
         if (precoSeguro <= 0) return null;
 
         const chaveKmUltimaTroca = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
@@ -703,6 +763,7 @@ function calcularImprevistosSugeridosAnual(
             intervalKm: servico.intervalKm,
             precoServico: precoSeguro,
             eventosNoAno: ciclo.trocasNoAno,
+            maoDeObraEstimada,
           },
         ];
       })
@@ -757,6 +818,9 @@ export function calcularCustosPorCategoria(
     servicosIndependentes: perfil.servicosIndependentes,
     kmAtual: perfil.moto.kmAtual,
     kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
+    marca: preset.marca,
+    fatorMaoDeObra: preset.fatorMaoDeObra,
+    incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
   });
 
   // Manutenção por peça
@@ -812,6 +876,11 @@ export function calcularCustosPorCategoria(
         perfil.perfilManutencao.modoRevisao,
         perfil.moto.kmAtual,
         perfil.moto.kmUltimaTrocas,
+        {
+          marca: preset.marca,
+          fatorMaoDeObra: preset.fatorMaoDeObra,
+          incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
+        },
       ).entries(),
     ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [
       id,

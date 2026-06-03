@@ -9,8 +9,10 @@ import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { CardServico } from '@/components/mao-de-obra/CardServico';
 import { LinhaRevisaoConcessionaria } from '@/components/mao-de-obra/LinhaRevisaoConcessionaria';
 import { usePerfil } from '../hooks/usePerfil';
-import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/PerfilContext';
 import { obterPreset } from '../data/repositorioPresets';
+import { normalizarPerfilMvp } from '../hooks/useCustos';
+import { obterServicosManutencaoBase } from '../utils/servicosManutencaoPreset';
+import { resolverStatusPrecoAutorizada } from '../utils/statusPrecoAutorizada';
 import type { ServicoIndependente, PerfilAction } from '../types/perfil';
 
 type AbaMaoDeObra = 'concessionaria' | 'excepcional';
@@ -56,6 +58,7 @@ function BotaoRestaurarTudo({ onRestaurar }: { onRestaurar: () => void }) {
 interface PropsListaServicos {
   servicos: ServicoIndependente[];
   dispatch: Dispatch<PerfilAction>;
+  servicosPadrao: ServicoIndependente[];
   temOverrides: boolean;
   onRestaurarTudo: () => void;
   modo?: 'independente' | 'autorizada';
@@ -64,6 +67,7 @@ interface PropsListaServicos {
 function ListaServicos({
   servicos,
   dispatch,
+  servicosPadrao,
   temOverrides,
   onRestaurarTudo,
   modo = 'independente',
@@ -71,7 +75,13 @@ function ListaServicos({
   return (
     <div className="space-y-2">
       {servicos.map((s) => (
-        <CardServico key={s.id} servico={s} dispatch={dispatch} modo={modo} />
+        <CardServico
+          key={s.id}
+          servico={s}
+          servicoPadrao={servicosPadrao.find((padrao) => padrao.id === s.id)}
+          dispatch={dispatch}
+          modo={modo}
+        />
       ))}
       {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
     </div>
@@ -85,6 +95,8 @@ export function PaginaMaoDeObra() {
   const location = useLocation();
   const navState = (location.state ?? null) as LocationStateMaoDeObra | null;
   const preset = obterPreset(perfil.moto.modelo);
+  const perfilMvp = normalizarPerfilMvp(perfil, preset);
+  const servicosPadrao = obterServicosManutencaoBase(preset);
 
   const abaInicial = normalizarAbaInicial(navState?.abaInicial);
   const destaqueIndex = navState?.destaqueIndex ?? null;
@@ -99,12 +111,13 @@ export function PaginaMaoDeObra() {
     return () => clearTimeout(timer);
   }, [destaqueIndex]);
 
-  const servicosNormais = perfil.servicosIndependentes.filter((s) => !s.ehExcepcional);
-  const servicosExcepcionais = perfil.servicosIndependentes.filter((s) => s.ehExcepcional);
-  // Aba Concessionária: serviços avulsos fora das revisões (ADR-007) - só os que a
-  // concessionária cobra à parte, com precoTotalAutorizada > 0 no preset.
+  const servicosNormais = perfilMvp.servicosIndependentes.filter((s) => !s.ehExcepcional);
+  const servicosExcepcionais = perfilMvp.servicosIndependentes.filter((s) => s.ehExcepcional);
+  // Aba Concessionária: serviços avulsos km-driven fora das revisões fixas.
+  // Mesmo quando o preço ainda está `nao_informado`, o card aparece para o
+  // usuário conseguir preencher o valor da concessionária.
   const servicosAvulsosAutorizada = servicosNormais.filter(
-    (s) => !s.incluidoNaRevisaoAutorizada && (s.precoTotalAutorizada > 0 || ehAvulsoEditado(s)),
+    (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
   );
   const menorIntervaloExcepcional = servicosExcepcionais.reduce<number | null>(
     (menor, servico) => (menor === null ? servico.intervalKm : Math.min(menor, servico.intervalKm)),
@@ -116,23 +129,20 @@ export function PaginaMaoDeObra() {
 
   const temOverridesConcessionaria = perfil.revisaoAutorizadaOverrides.length > 0;
 
-  function ehAvulsoEditado(s: ServicoIndependente): boolean {
-    const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
-    return (
-      !!p && !p.incluidoNaRevisaoAutorizada && s.precoTotalAutorizada !== p.precoTotalAutorizada
-    );
-  }
-
   function servicoDifereDopadraoIndependente(s: ServicoIndependente): boolean {
-    const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
+    const p = servicosPadrao.find((ps) => ps.id === s.id);
     if (!p) return false;
     return s.precoIndependente !== p.precoIndependente || s.intervalKm !== p.intervalKm;
   }
 
   function servicoDifereDopadraoAutorizada(s: ServicoIndependente): boolean {
-    const p = SERVICOS_INDEPENDENTES_PADRAO.find((ps) => ps.id === s.id);
+    const p = servicosPadrao.find((ps) => ps.id === s.id);
     if (!p) return false;
-    return s.precoTotalAutorizada !== p.precoTotalAutorizada || s.intervalKm !== p.intervalKm;
+    return (
+      s.precoTotalAutorizada !== p.precoTotalAutorizada ||
+      resolverStatusPrecoAutorizada(s) !== resolverStatusPrecoAutorizada(p) ||
+      s.intervalKm !== p.intervalKm
+    );
   }
 
   const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadraoIndependente);
@@ -142,7 +152,7 @@ export function PaginaMaoDeObra() {
 
   function restaurarGrupo(servicos: ServicoIndependente[]) {
     servicos.forEach((s) => {
-      const padrao = SERVICOS_INDEPENDENTES_PADRAO.find((p) => p.id === s.id);
+      const padrao = servicosPadrao.find((p) => p.id === s.id);
       if (padrao) dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload: { ...padrao } });
     });
   }
@@ -195,6 +205,7 @@ export function PaginaMaoDeObra() {
                     <ListaServicos
                       servicos={servicosAvulsosAutorizada}
                       dispatch={dispatch}
+                      servicosPadrao={servicosPadrao}
                       temOverrides={temOverridesAvulsosAutorizada}
                       onRestaurarTudo={() => restaurarGrupo(servicosAvulsosAutorizada)}
                       modo="autorizada"
@@ -217,6 +228,7 @@ export function PaginaMaoDeObra() {
               <ListaServicos
                 servicos={servicosExcepcionais}
                 dispatch={dispatch}
+                servicosPadrao={servicosPadrao}
                 temOverrides={temOverridesExcepcionais}
                 onRestaurarTudo={() => restaurarGrupo(servicosExcepcionais)}
               />

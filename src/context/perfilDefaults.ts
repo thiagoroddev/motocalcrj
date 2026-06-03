@@ -27,6 +27,7 @@ export const SERVICO_RETIFICA_CABECOTE_PADRAO: ServicoIndependente = {
   intervalKm: 80000,
   precoIndependente: 800,
   precoTotalAutorizada: 0,
+  statusPrecoAutorizada: 'nao_informado',
   incluidoNaRevisaoAutorizada: false,
   ativo: false,
   ehExcepcional: true,
@@ -38,6 +39,7 @@ export const SERVICO_RETIFICA_COMPLETA_PADRAO: ServicoIndependente = {
   intervalKm: 120000,
   precoIndependente: 1500,
   precoTotalAutorizada: 0,
+  statusPrecoAutorizada: 'nao_informado',
   incluidoNaRevisaoAutorizada: false,
   ativo: false,
   ehExcepcional: true,
@@ -73,10 +75,9 @@ export const KM_ULTIMA_TROCAS_PADRAO: KmUltimaTrocas = {
   retificaCompleta: 0,
 };
 
-// Valores de precoTotalAutorizada são "peça documentada Honda + M.O. estimada"
-// e devem ser ajustados pelo usuário no primeiro uso real. Itens com
-// incluidoNaRevisaoAutorizada=true têm precoTotalAutorizada=0 (não somam
-// extra - já vêm no pacote revisaoAutorizada do Preset). ADR-007.
+// No MVP (ADR-012), serviços avulsos de concessionária sem fonte documentada
+// não entram como estimativa: ficam `nao_informado` até o usuário preencher.
+// Itens incluídos no pacote fixo seguem com preço 0 porque já vêm na revisão.
 export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
   {
     id: 'troca-oleo',
@@ -84,6 +85,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     intervalKm: 3000,
     precoIndependente: 25,
     precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'informado',
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
     ehExcepcional: false,
@@ -93,7 +95,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca kit transmissão',
     intervalKm: 12000,
     precoIndependente: 60,
-    precoTotalAutorizada: 313.56,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -103,7 +106,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca pneu dianteiro',
     intervalKm: 25000,
     precoIndependente: 30,
-    precoTotalAutorizada: 249.0,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -113,7 +117,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca pneu traseiro',
     intervalKm: 15000,
     precoIndependente: 30,
-    precoTotalAutorizada: 285.0,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -123,7 +128,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca sapata de freio dianteira',
     intervalKm: 20000,
     precoIndependente: 40,
-    precoTotalAutorizada: 268.65,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -133,7 +139,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca sapata de freio traseira',
     intervalKm: 20000,
     precoIndependente: 40,
-    precoTotalAutorizada: 191.65,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -144,6 +151,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     intervalKm: 6000,
     precoIndependente: 400,
     precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'informado',
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
     ehExcepcional: false,
@@ -154,6 +162,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     intervalKm: 6000,
     precoIndependente: 15,
     precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'informado',
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
     ehExcepcional: false,
@@ -164,6 +173,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     intervalKm: 6000,
     precoIndependente: 15,
     precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'informado',
     incluidoNaRevisaoAutorizada: true,
     ativo: true,
     ehExcepcional: false,
@@ -174,7 +184,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     // Driver temporal - não há intervalo em km. Bateria envelhece por tempo.
     intervalKm: 0,
     precoIndependente: 50,
-    precoTotalAutorizada: 567.34,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -184,7 +195,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca kit embreagem',
     intervalKm: 40000,
     precoIndependente: 50,
-    precoTotalAutorizada: 450.33,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -194,7 +206,8 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     nome: 'Troca kit cilindro',
     intervalKm: 100000,
     precoIndependente: 50,
-    precoTotalAutorizada: 510.83,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
     incluidoNaRevisaoAutorizada: false,
     ativo: true,
     ehExcepcional: false,
@@ -228,6 +241,7 @@ export const perfilPadrao: PerfilUsuario = {
   perfilManutencao: {
     perfilPecasGlobal: 'original',
     modoRevisao: 'autorizadas',
+    incluirEstimativaMaoDeObra: false,
   },
 
   trabalho: {

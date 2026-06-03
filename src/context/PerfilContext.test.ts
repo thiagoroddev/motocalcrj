@@ -258,6 +258,25 @@ describe('perfilReducer', () => {
     expect(bateria?.precoIndependente).toBe(75);
   });
 
+  it('SET_SERVICO_INDEPENDENTE preserva status informado_usuario no preço de concessionária', () => {
+    const kitPadrao = servicoPadrao('troca-kit-transmissao');
+
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: {
+        ...kitPadrao,
+        precoTotalAutorizada: 410,
+        statusPrecoAutorizada: 'informado_usuario',
+      },
+    });
+    const kit = resultado.perfil.servicosIndependentes.find(
+      (s) => s.id === 'troca-kit-transmissao',
+    );
+
+    expect(kit?.precoTotalAutorizada).toBe(410);
+    expect(kit?.statusPrecoAutorizada).toBe('informado_usuario');
+  });
+
   it('SET_SERVICO_INDEPENDENTE continua rejeitando intervalKm 0 em serviço normal', () => {
     const oleoPadrao = servicoPadrao('troca-oleo');
 

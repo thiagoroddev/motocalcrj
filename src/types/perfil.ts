@@ -12,6 +12,7 @@ export type SituacaoMoto = 'quitada' | 'financiada' | 'alugada';
 export type PeriodicidadeSeguro = 'anual' | 'mensal';
 export type PeriodicidadeAluguel = 'mensal' | 'semanal';
 export type ResponsabilidadeCusto = 'eu' | 'locador' | 'dividido';
+export type StatusPrecoAutorizada = 'informado' | 'nao_informado' | 'informado_usuario';
 
 // ──────────────────────────────────────────────
 // Interfaces auxiliares
@@ -84,6 +85,9 @@ export interface ServicoIndependente {
   // apresentado). 0 = não aplicável (ex.: serviços incluídos no pacote ou
   // serviços que Honda não executa, como retíficas). ADR-007.
   precoTotalAutorizada: number;
+  // Status do preço total de concessionária para serviços fora do pacote fixo
+  // no MVP (ADR-012 / TASK-REF-32.4). Ausente em dados legados pré-MVP.
+  statusPrecoAutorizada?: StatusPrecoAutorizada;
   // true = serviço já consta no pacote revisaoAutorizada do Preset; o cálculo
   // do modo autorizado não soma precoTotalAutorizada para esses. ADR-007.
   incluidoNaRevisaoAutorizada: boolean;
@@ -148,6 +152,8 @@ export interface PerfilUsuario {
   perfilManutencao: {
     perfilPecasGlobal: PerfilPecas;
     modoRevisao: ModoRevisao;
+    // Estimativa de M.O. opt-in (ADR-013). Ausente/false = só valor real.
+    incluirEstimativaMaoDeObra?: boolean;
   };
 
   trabalho: {

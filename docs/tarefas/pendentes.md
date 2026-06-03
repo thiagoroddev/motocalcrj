@@ -21,23 +21,6 @@ Obedeça essa ordem:
 
 > TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
-### TASK-REF-32.4 Política de custo incompleto no Detalhamento
-
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/G
-- **Data-hora origem:** 02/06/26 22:24
-- **Dependências:** TASK-REF-32.2, TASK-REF-32.3
-- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; INV-CALC-3
-- **Observações:** O Detalhamento não pode somar mão de obra ausente como `R$ 0` silencioso. Valores de mão de obra só entram quando informados por fonte pública/confiável ou pelo usuário.
-  - Se faltar mão de obra necessária para o custo total, mostrar aviso amarelo/vermelho e indicar que o valor precisa ser consultado/inserido.
-  - Diferenciar pelo menos: `valor informado`, `valor informado pelo usuário`, `valor desconhecido` e `não executa na concessionária`.
-  - Total/categoria afetada deve ficar visualmente marcada como parcial quando o dado ausente altera o custo.
-  - Esta task provavelmente toca `src/utils/calculos.ts`; antes de executar, pedir aprovação explícita conforme `docs/contexto-projeto-ai.md`.
-  - Não deduzir valor de mão de obra. Vida útil/intervalo pode ser estimado quando houver base técnica, mas preço de mão de obra não.
-
 ### TASK-REF-32.5 Dados dos presets sob o novo MVP
 
 - **Status:** Pendente
@@ -52,6 +35,9 @@ Obedeça essa ordem:
   - Dados de oficina independente e peças paralelas podem permanecer nos presets existentes, mas não bloqueiam novos modelos.
   - Não limpar campos futuros sem necessidade.
   - Para presets novos, não inventar mão de obra avulsa. Registrar somente valores encontrados em site, rede social, tabela pública, material de concessionária, orçamento divulgado ou fonte direta documentada.
+  - Correção pós-revisão da TASK-REF-32.4 já introduziu `servicosManutencao` por preset: Honda/Pop registra avulsos explícitos do site (`A partir de R$` = `informado`, `A combinar` = `nao_informado`); Yamaha/Factor não expõe pneus porque a concessionária não realiza o serviço.
+  - Tratar serviços avulsos temporais, especialmente bateria Honda (`A partir de R$ 577,74` no site), sem zerar ou duplicar o cálculo da peça temporal.
+  - Planejamento inicial: consolidar o contrato de `servicosManutencao`/campos opcionais nos presets, revisar `factor125i.json` contra dados reais coletados, remover ou isolar estimativas de oficina independente que não entram no MVP, e ajustar testes de contrato para travar o recorte autorizado/original.
   - Coordenar com TASK-RNF-013 para que a validação aceite dados opcionais/futuros sem exigir independente/paralela completos no MVP.
 
 ### TASK-RNF-013 Validação Zod de presets e dados regionais (contrato)

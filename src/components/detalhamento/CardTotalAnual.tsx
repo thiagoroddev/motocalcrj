@@ -1,4 +1,4 @@
-import { Wallet } from 'lucide-react';
+import { TriangleAlert, Wallet } from 'lucide-react';
 import { moeda, cpkFormatado } from '../../utils/formatters';
 import type { Periodo } from '../SeletorPeriodo';
 
@@ -14,6 +14,7 @@ type Props = {
   kmPeriodo: string;
   porKm: number;
   detalhesFixos: ChipDetalhe[];
+  avisoCustoParcial?: string;
 };
 
 const ROTULO_PERIODO: Record<Periodo, string> = {
@@ -24,7 +25,14 @@ const ROTULO_PERIODO: Record<Periodo, string> = {
   hora: 'hora',
 };
 
-export function CardTotalAnual({ periodo, totalPeriodo, kmPeriodo, porKm, detalhesFixos }: Props) {
+export function CardTotalAnual({
+  periodo,
+  totalPeriodo,
+  kmPeriodo,
+  porKm,
+  detalhesFixos,
+  avisoCustoParcial,
+}: Props) {
   return (
     <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
       <p className="text-muted-foreground/60 text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
@@ -36,6 +44,12 @@ export function CardTotalAnual({ periodo, totalPeriodo, kmPeriodo, porKm, detalh
         <span>{kmPeriodo}</span>
         <span>{cpkFormatado(porKm)}</span>
       </div>
+      {avisoCustoParcial && (
+        <div className="mt-3 flex items-start gap-2 rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-warning">
+          <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <p className="text-xs leading-relaxed">{avisoCustoParcial}</p>
+        </div>
+      )}
       <div className="mt-3 flex flex-wrap gap-2 border-t border-primary/15 pt-2">
         {detalhesFixos.map((chip) =>
           chip.onClick ? (

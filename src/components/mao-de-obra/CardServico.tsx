@@ -4,26 +4,38 @@ import { Input } from '@/components/ui/input';
 import { BotaoReset } from '@/components/BotaoReset';
 import { iconePeca } from '../icons/pecas';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
+import { resolverStatusPrecoAutorizada } from '../../utils/statusPrecoAutorizada';
 import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
 
 type ModoCard = 'independente' | 'autorizada';
 
 interface Props {
   servico: ServicoIndependente;
+  servicoPadrao?: ServicoIndependente;
   dispatch: Dispatch<PerfilAction>;
   modo?: ModoCard;
 }
 
-export function CardServico({ servico, dispatch, modo = 'independente' }: Props) {
-  const padrao = SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
+export function CardServico({ servico, servicoPadrao, dispatch, modo = 'independente' }: Props) {
+  const padrao = servicoPadrao ?? SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
+  const statusAutorizada = resolverStatusPrecoAutorizada(servico);
+  const statusPadrao = padrao ? resolverStatusPrecoAutorizada(padrao) : undefined;
 
   const valorAtual =
-    modo === 'autorizada' ? servico.precoTotalAutorizada : servico.precoIndependente;
+    modo === 'autorizada'
+      ? statusAutorizada === 'nao_informado'
+        ? 0
+        : servico.precoTotalAutorizada
+      : servico.precoIndependente;
   const valorPadrao =
-    modo === 'autorizada' ? padrao?.precoTotalAutorizada : padrao?.precoIndependente;
+    modo === 'autorizada'
+      ? statusPadrao === 'nao_informado'
+        ? 0
+        : padrao?.precoTotalAutorizada
+      : padrao?.precoIndependente;
   const rotuloPreco =
     modo === 'autorizada'
-      ? 'Preço concessionária (R$)'
+      ? 'Preço completo concessionária (R$)'
       : servico.ehExcepcional
         ? 'Peças + Mão de Obra (R$)'
         : 'Preço Mão de Obra (R$)';
@@ -41,7 +53,9 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
     setIntervalo(String(servico.intervalKm));
   }, [servico.intervalKm]);
 
-  const temOverridePreco = valorPadrao !== undefined && valorAtual !== valorPadrao;
+  const temOverridePreco =
+    valorPadrao !== undefined &&
+    (valorAtual !== valorPadrao || (modo === 'autorizada' && statusAutorizada !== statusPadrao));
   const temOverrideIntervalo = padrao !== undefined && servico.intervalKm !== padrao.intervalKm;
   const temOverride = temOverridePreco || temOverrideIntervalo;
 
@@ -53,7 +67,11 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
     }
     const payload: ServicoIndependente =
       modo === 'autorizada'
-        ? { ...servico, precoTotalAutorizada: num }
+        ? {
+            ...servico,
+            precoTotalAutorizada: num,
+            statusPrecoAutorizada: num > 0 ? 'informado_usuario' : 'nao_informado',
+          }
         : { ...servico, precoIndependente: num };
     dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload });
   }
@@ -95,6 +113,11 @@ export function CardServico({ servico, dispatch, modo = 'independente' }: Props)
             min={0}
             step={0.01}
           />
+          {modo === 'autorizada' && statusAutorizada === 'nao_informado' && (
+            <p className="text-[10px] leading-tight text-warning">
+              Valor de concessionária ainda não informado.
+            </p>
+          )}
         </div>
         <div className="space-y-1">
           <span className="label-neutro block">Intervalo (km)</span>

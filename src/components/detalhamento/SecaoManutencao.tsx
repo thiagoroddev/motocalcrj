@@ -1,6 +1,10 @@
 import { useState } from 'react';
-import { Eye, HelpCircle } from 'lucide-react';
-import type { CustoPeca, CustoServicoRevisao } from '../../types/calculos';
+import { Eye, HelpCircle, TriangleAlert } from 'lucide-react';
+import type {
+  CustoPeca,
+  CustoServicoRevisao,
+  PendenciaMaoDeObraConcessionaria,
+} from '../../types/calculos';
 import type { ModoRevisao } from '../../types/perfil';
 import { CategoriaAccordion } from './CategoriaAccordion';
 import { Toggle } from './Toggle';
@@ -18,6 +22,8 @@ type Props = {
   kmAtual: number;
   kmAnual: number;
   servicosRevisao: [string, CustoServicoRevisao][];
+  custoIncompleto: boolean;
+  pendenciasMaoDeObra: PendenciaMaoDeObraConcessionaria[];
   pecas: [string, CustoPeca][];
   filtroAtivo: boolean;
   filtroRevisao: boolean;
@@ -44,6 +50,8 @@ export function SecaoManutencao({
   kmAtual,
   kmAnual,
   servicosRevisao,
+  custoIncompleto,
+  pendenciasMaoDeObra,
   pecas,
   filtroAtivo,
   filtroRevisao,
@@ -201,7 +209,7 @@ export function SecaoManutencao({
   return (
     <>
       <CategoriaAccordion
-        label="Manutenção"
+        label={custoIncompleto ? 'Manutenção (parcial)' : 'Manutenção'}
         categoriaId="manutencao"
         corClasse="bg-amber-400"
         valorExibido={pp(totalManutencaoComRevisao)}
@@ -212,6 +220,21 @@ export function SecaoManutencao({
         onToggleExpandido={onToggleExpandido}
       >
         <div className="space-y-2.5">
+          {custoIncompleto && (
+            <div className="rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-warning">
+              <div className="flex items-start gap-2">
+                <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <div className="space-y-1">
+                  <p className="text-xs font-medium">Custo parcial de manutenção</p>
+                  <p className="text-xs leading-relaxed">
+                    Falta valor de concessionária para{' '}
+                    {pendenciasMaoDeObra.map((p) => p.label).join(', ')}. Consulte a mão de
+                    obra/serviço e informe na aba M. Obra.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Toggle ativo={filtroRevisao} onClick={onToggleRevisao} />
             <span className="w-5 text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums">
