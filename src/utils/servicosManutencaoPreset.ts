@@ -33,9 +33,9 @@ function mesclarComOverrideDoPerfil(
     return servicoBase;
   }
 
-  const temOverridePrecoAutorizada =
-    servicoPerfil.precoTotalAutorizada !== padraoGlobal.precoTotalAutorizada ||
-    resolverStatusPrecoAutorizada(servicoPerfil) !== resolverStatusPrecoAutorizada(padraoGlobal);
+  // Preço de concessionária só é override do usuário quando foi edição consciente
+  // (informado_usuario). Valor legado pré-32.4 não vence o preset (ADR-014, B2).
+  const temOverridePrecoAutorizada = servicoPerfil.statusPrecoAutorizada === 'informado_usuario';
 
   return {
     ...servicoBase,
@@ -68,8 +68,8 @@ function servicoTemOverrideDoPerfil(
   return (
     servicoPerfil.intervalKm !== padraoGlobal.intervalKm ||
     servicoPerfil.precoIndependente !== padraoGlobal.precoIndependente ||
-    servicoPerfil.precoTotalAutorizada !== padraoGlobal.precoTotalAutorizada ||
-    resolverStatusPrecoAutorizada(servicoPerfil) !== resolverStatusPrecoAutorizada(padraoGlobal) ||
+    // Só edição consciente do preço de concessionária conta como override (B2).
+    servicoPerfil.statusPrecoAutorizada === 'informado_usuario' ||
     servicoPerfil.ativo !== padraoGlobal.ativo
   );
 }

@@ -521,7 +521,7 @@
     {
       "id": "troca-kit-transmissao",
       "nome": "Troca kit transmissão",
-      "intervalKm": 12000,
+      "intervalKm": 18000,
       "precoIndependente": 60,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
@@ -532,7 +532,7 @@
     {
       "id": "troca-pneu-dianteiro",
       "nome": "Troca pneu dianteiro",
-      "intervalKm": 25000,
+      "intervalKm": 24000,
       "precoIndependente": 30,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
@@ -543,7 +543,7 @@
     {
       "id": "troca-pneu-traseiro",
       "nome": "Troca pneu traseiro",
-      "intervalKm": 15000,
+      "intervalKm": 18000,
       "precoIndependente": 30,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
@@ -554,10 +554,11 @@
     {
       "id": "troca-sapata-dianteira",
       "nome": "Troca sapata de freio dianteira",
-      "intervalKm": 20000,
+      "intervalKm": 12000,
       "precoIndependente": 40,
       "precoTotalAutorizada": 289.45,
       "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": true,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false
@@ -565,10 +566,11 @@
     {
       "id": "troca-sapata-traseira",
       "nome": "Troca sapata de freio traseira",
-      "intervalKm": 20000,
+      "intervalKm": 12000,
       "precoIndependente": 40,
       "precoTotalAutorizada": 212.45,
       "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": true,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false
@@ -620,7 +622,7 @@
     {
       "id": "troca-kit-embreagem",
       "nome": "Troca kit embreagem",
-      "intervalKm": 40000,
+      "intervalKm": 42000,
       "precoIndependente": 50,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
@@ -631,7 +633,7 @@
     {
       "id": "troca-kit-cilindro",
       "nome": "Troca kit cilindro",
-      "intervalKm": 100000,
+      "intervalKm": 102000,
       "precoIndependente": 50,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",

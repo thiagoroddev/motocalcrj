@@ -162,6 +162,8 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   pneu_traseiro: 'troca-pneu-traseiro',
   sapata_freio_dianteiro: 'troca-sapata-dianteira',
   sapata_freio_traseiro: 'troca-sapata-traseira',
+  disco_freio_dianteiro: 'troca-disco-dianteiro',
+  pastilha_freio_dianteiro: 'troca-pastilha-dianteira',
   bateria: 'troca-bateria',
   kit_embreagem: 'troca-kit-embreagem',
   kit_cilindro: 'troca-kit-cilindro',
@@ -328,7 +330,17 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
     if (!servicoId) return false;
     const servico = servicosIndependentes.find((s) => s.id === servicoId);
-    return !!servico && servico.ativo && temPrecoAutorizadaInformado(servico);
+    // Pula a peça só quando o preço OFICIAL da concessionária já inclui a peça
+    // (Honda, status `informado`). Yamaha informa só M.O. (`concessionariaIncluiPeca:
+    // false`) → a peça permanece e soma com a M.O. no item. Edição do usuário
+    // (`informado_usuario`) é sempre só M.O. → a peça também permanece e soma
+    // (ADR-014, adendo: editado = M.O. + peça).
+    return (
+      !!servico &&
+      servico.ativo &&
+      resolverStatusPrecoAutorizada(servico) === 'informado' &&
+      servico.concessionariaIncluiPeca !== false
+    );
   };
   const pecasConsideradas =
     modoRevisao === 'autorizadas'
@@ -478,6 +490,7 @@ export function calcularDetalhesRevisaoAnual(
     marca?: string;
     fatorMaoDeObra?: number;
     incluirEstimativaMaoDeObra?: boolean;
+    estimativaMaoDeObraPorServico?: Record<string, boolean>;
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
@@ -497,19 +510,23 @@ export function calcularDetalhesRevisaoAnual(
     const marca = opcoes.marca;
     const fatorMaoDeObra = opcoes.fatorMaoDeObra ?? 1;
     const incluirEstimativa = opcoes.incluirEstimativaMaoDeObra ?? false;
+    const estimativaPorServico = opcoes.estimativaMaoDeObraPorServico ?? {};
 
     const servicosAvulsosKm = servicosNormaisAtivos.filter(
       (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
     );
     // informado / informado_usuario: soma peça + M.O. real; a peça é pulada do CPK.
     const servicosInformados = servicosAvulsosKm.filter(temPrecoAutorizadaInformado);
-    // nao_informado: a peça continua no CPK. Com estimativa opt-in (ADR-013),
-    // soma só a M.O. estimada (~); sem estimativa, vira pendência no Detalhamento.
+    // nao_informado: a peça continua no CPK. Com estimativa ligada (global OU
+    // por-serviço, ADR-013/014), soma só a M.O. estimada (~); sem estimativa,
+    // vira pendência no Detalhamento.
     const naoInformados = servicosAvulsosKm.filter(
       (s) => resolverStatusPrecoAutorizada(s) === 'nao_informado',
     );
     const moEstimada = (s: ServicoIndependente): number =>
-      incluirEstimativa ? estimarMaoDeObra(s.id, marca, fatorMaoDeObra) : 0;
+      incluirEstimativa || estimativaPorServico[s.id] === true
+        ? estimarMaoDeObra(s.id, marca, fatorMaoDeObra)
+        : 0;
     const servicosEstimados = naoInformados.filter((s) => moEstimada(s) > 0);
     const pendenciasMaoDeObra: PendenciaMaoDeObraConcessionaria[] = naoInformados
       .filter((s) => moEstimada(s) <= 0)
@@ -719,6 +736,7 @@ function calcularImprevistosSugeridosAnual(
     marca?: string;
     fatorMaoDeObra?: number;
     incluirEstimativaMaoDeObra?: boolean;
+    estimativaMaoDeObraPorServico?: Record<string, boolean>;
   } = {},
 ): Map<string, CustoImprevistoSugerido> {
   // ADR-007/012/013: excepcionais somam só mão de obra - a peça, quando existe
@@ -733,7 +751,10 @@ function calcularImprevistosSugeridosAnual(
           modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;
         let precoSeguro = valorNaoNegativo(real);
         let maoDeObraEstimada = false;
-        if (precoSeguro <= 0 && opcoesEstimativa.incluirEstimativaMaoDeObra) {
+        const estimativaLigada =
+          opcoesEstimativa.incluirEstimativaMaoDeObra === true ||
+          opcoesEstimativa.estimativaMaoDeObraPorServico?.[servico.id] === true;
+        if (precoSeguro <= 0 && estimativaLigada) {
           precoSeguro = estimarMaoDeObra(
             servico.id,
             opcoesEstimativa.marca,
@@ -821,6 +842,7 @@ export function calcularCustosPorCategoria(
     marca: preset.marca,
     fatorMaoDeObra: preset.fatorMaoDeObra,
     incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
+    estimativaMaoDeObraPorServico: perfil.perfilManutencao.estimativaMaoDeObraPorServico,
   });
 
   // Manutenção por peça
@@ -880,6 +902,7 @@ export function calcularCustosPorCategoria(
           marca: preset.marca,
           fatorMaoDeObra: preset.fatorMaoDeObra,
           incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
+          estimativaMaoDeObraPorServico: perfil.perfilManutencao.estimativaMaoDeObraPorServico,
         },
       ).entries(),
     ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [

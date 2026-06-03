@@ -93,4 +93,25 @@ describe('normalizarPerfilMvp', () => {
     expect(kitRelacao?.intervalKm).toBe(25000);
     expect(kitRelacao?.precoIndependente).toBe(0);
   });
+
+  it('descarta preço de concessionária legado (sem informado_usuario) e segue o preset (B2)', () => {
+    // Perfil pré-32.4: precoTotalAutorizada chutado e sem statusPrecoAutorizada.
+    const perfil = {
+      ...perfilPadrao,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+        servico.id === 'troca-sapata-dianteira'
+          ? { ...servico, precoTotalAutorizada: 268.65, statusPrecoAutorizada: undefined }
+          : servico,
+      ),
+    };
+
+    const normalizado = normalizarPerfilMvp(perfil, PRESETS.pop110i);
+    const sapata = normalizado.servicosIndependentes.find(
+      (servico) => servico.id === 'troca-sapata-dianteira',
+    );
+
+    // O preset Pop publica R$ 289,45 informado; o 268,65 legado não vence.
+    expect(sapata?.precoTotalAutorizada).toBe(289.45);
+    expect(sapata?.statusPrecoAutorizada).toBe('informado');
+  });
 });

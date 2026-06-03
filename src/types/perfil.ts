@@ -88,6 +88,10 @@ export interface ServicoIndependente {
   // Status do preço total de concessionária para serviços fora do pacote fixo
   // no MVP (ADR-012 / TASK-REF-32.4). Ausente em dados legados pré-MVP.
   statusPrecoAutorizada?: StatusPrecoAutorizada;
+  // O valor oficial da concessionária inclui a peça? Honda informa peça+M.O.
+  // juntas (true → esconde a peça avulsa de Insumos); Yamaha informa só M.O.
+  // (false → soma a peça). Ausente = true (compat Honda). Ver adendo ADR-014.
+  concessionariaIncluiPeca?: boolean;
   // true = serviço já consta no pacote revisaoAutorizada do Preset; o cálculo
   // do modo autorizado não soma precoTotalAutorizada para esses. ADR-007.
   incluidoNaRevisaoAutorizada: boolean;
@@ -154,6 +158,9 @@ export interface PerfilUsuario {
     modoRevisao: ModoRevisao;
     // Estimativa de M.O. opt-in (ADR-013). Ausente/false = só valor real.
     incluirEstimativaMaoDeObra?: boolean;
+    // Estimativa por serviço (ADR-014, A): liga a estimativa só para serviços
+    // específicos sem valor real. Efetivo = global OU este. Ausente = vazio.
+    estimativaMaoDeObraPorServico?: Record<string, boolean>;
   };
 
   trabalho: {
@@ -279,6 +286,8 @@ export type PerfilAction =
   | { type: 'SET_KM_ULTIMA_REVISAO'; km: number | null }
   | { type: 'SET_PERFIL_USO'; perfilUso: PerfilUso }
   | { type: 'SET_MODO_REVISAO'; modo: ModoRevisao }
+  | { type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA'; valor: boolean }
+  | { type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO'; id: string }
   | { type: 'SET_SITUACAO_MOTO'; situacao: SituacaoMoto }
   | { type: 'SET_PARCELA'; parcelaMensal: number | null; parcelasRestantes: number | null }
   | {

@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { estimarMaoDeObra, taxaHoraDaMarca } from './maoDeObraEstimada';
+import { estimarMaoDeObra, montarEstimativaMaoDeObra, taxaHoraDaMarca } from './maoDeObraEstimada';
+import { perfilPadrao } from '../context/perfilDefaults';
+import type { PerfilUsuario } from '../types/perfil';
+import type { PresetMoto } from '../types/calculos';
 
 describe('estimarMaoDeObra', () => {
   it('estima horas × taxa × fator (kit transmissão 2h × 110 × 1.0 = 220)', () => {
@@ -21,5 +24,38 @@ describe('estimarMaoDeObra', () => {
   it('usa a taxa padrão para marca desconhecida e fator inválido vira 1', () => {
     expect(taxaHoraDaMarca('Suzuki')).toBe(110);
     expect(estimarMaoDeObra('troca-sapata-traseira', undefined, 0)).toBeCloseTo(71.5, 1);
+  });
+});
+
+describe('montarEstimativaMaoDeObra', () => {
+  const preset = { marca: 'Yamaha', fatorMaoDeObra: 1 } as PresetMoto;
+
+  function perfilCom(over: Partial<PerfilUsuario['perfilManutencao']>): PerfilUsuario {
+    return {
+      ...perfilPadrao,
+      perfilManutencao: { ...perfilPadrao.perfilManutencao, ...over },
+    };
+  }
+
+  it('reflete global, por-serviço e valor estimado do preset', () => {
+    const perfil = perfilCom({
+      incluirEstimativaMaoDeObra: false,
+      estimativaMaoDeObraPorServico: { 'troca-kit-transmissao': true },
+    });
+
+    expect(montarEstimativaMaoDeObra(perfil, preset, 'troca-kit-transmissao')).toEqual({
+      globalLigado: false,
+      porServicoLigado: true,
+      valorEstimado: 220,
+    });
+  });
+
+  it('porServicoLigado=false quando o serviço não está no mapa', () => {
+    const perfil = perfilCom({ incluirEstimativaMaoDeObra: true });
+    const bundle = montarEstimativaMaoDeObra(perfil, preset, 'troca-kit-embreagem');
+
+    expect(bundle.globalLigado).toBe(true);
+    expect(bundle.porServicoLigado).toBe(false);
+    expect(bundle.valorEstimado).toBeGreaterThan(0);
   });
 });

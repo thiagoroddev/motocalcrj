@@ -34,6 +34,7 @@ import {
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import pop110i from '../presets/pop110i.json';
+import factor125i from '../presets/factor125i.json';
 import type {
   CategoriaDisplay,
   PerfilUsuario,
@@ -851,6 +852,52 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(servico?.custoAnual).toBeCloseTo(220, 2);
     expect(resultado.detalhes.custoIncompleto).toBe(false);
     expect(resultado.detalhes.pendenciasMaoDeObra).toEqual([]);
+  });
+
+  it('modo autorizadas: estimativa por-serviço liga só o serviço escolhido (global off)', () => {
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoIndependente: 60,
+        precoTotalAutorizada: 0,
+        statusPrecoAutorizada: 'nao_informado',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+      {
+        id: 'troca-kit-embreagem',
+        nome: 'Troca kit embreagem',
+        intervalKm: 40000,
+        precoIndependente: 50,
+        precoTotalAutorizada: 0,
+        statusPrecoAutorizada: 'nao_informado',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+
+    const resultado = calcularDetalhesRevisaoAnual('autorizadas', 12000, {
+      custoCicloCompleto: 3334.62,
+      servicosIndependentes: servicos,
+      marca: 'Yamaha',
+      fatorMaoDeObra: 1,
+      incluirEstimativaMaoDeObra: false,
+      estimativaMaoDeObraPorServico: { 'troca-kit-transmissao': true },
+    });
+
+    // Só o kit transmissão recebe estimativa (~); o kit embreagem segue pendência.
+    const kit = resultado.detalhes.servicos.get('troca-kit-transmissao');
+    expect(kit?.maoDeObraEstimada).toBe(true);
+    expect(kit?.precoServico).toBe(220);
+    expect(resultado.detalhes.servicos.has('troca-kit-embreagem')).toBe(false);
+    expect(resultado.detalhes.custoIncompleto).toBe(true);
+    expect(resultado.detalhes.pendenciasMaoDeObra.map((p) => p.servicoId)).toEqual([
+      'troca-kit-embreagem',
+    ]);
   });
 
   it('modo autorizadas: estimativa ligada mas sem tempário mantém a pendência', () => {
@@ -1676,6 +1723,35 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
     });
     expect(resultado.has('kit_relacao')).toBe(true);
   });
+
+  it('modo autorizado: serviço informado_usuario mantém a peça (edição é só M.O.)', () => {
+    // Edição consciente do usuário entra como só M.O. (ADR-014, adendo). A peça
+    // avulsa permanece no CPK e soma com a M.O. no item — diferente do preço
+    // OFICIAL Honda (informado), que já embute a peça e por isso a pula.
+    const servicos: ServicoIndependente[] = [
+      {
+        id: 'troca-kit-transmissao',
+        nome: 'Troca kit transmissão',
+        intervalKm: 12000,
+        precoIndependente: 60,
+        precoTotalAutorizada: 220,
+        statusPrecoAutorizada: 'informado_usuario',
+        incluidoNaRevisaoAutorizada: false,
+        ativo: true,
+        ehExcepcional: false,
+      },
+    ];
+    const resultado = calcularCpkPorPeca({
+      preset: presetMock,
+      tipoUso: 'entrega',
+      perfilPecas: 'paralela',
+      modoRevisao: 'autorizadas',
+      kmAtual: 0,
+      kmAnual: 7280,
+      servicosIndependentes: servicos,
+    });
+    expect(resultado.has('kit_relacao')).toBe(true);
+  });
 });
 
 describe('calcularCustosPorCategoria - modo autorizado não duplica peças da revisão', () => {
@@ -2194,17 +2270,23 @@ describe('TASK-RF-6.13 - retíficas usam kmUltimaTrocas em Imprevistos', () => {
 });
 
 describe('MAPA_PECA_PARA_SERVICO', () => {
-  it('cada serviço apontado existe em SERVICOS_INDEPENDENTES_PADRAO', () => {
-    const idsServicos = new Set(SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id));
+  it('cada serviço apontado existe nos defaults ou no servicosManutencao de algum preset', () => {
+    const idsServicos = new Set<string>([
+      ...SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id),
+      ...(pop110i.servicosManutencao ?? []).map((s) => s.id),
+      ...(factor125i.servicosManutencao ?? []).map((s) => s.id),
+    ]);
     for (const servicoId of Object.values(MAPA_PECA_PARA_SERVICO)) {
       expect(idsServicos.has(servicoId)).toBe(true);
     }
   });
 
-  it('cada peça/pneu apontado existe no preset Pop 110i', () => {
+  it('cada peça/pneu apontado existe em algum preset (Pop ou Factor)', () => {
     const idsPecasEPneus = new Set<string>([
       ...pop110i.pecas.map((p) => p.id),
       ...pop110i.pneus.map((p) => p.id),
+      ...factor125i.pecas.map((p) => p.id),
+      ...factor125i.pneus.map((p) => p.id),
     ]);
     for (const pecaId of Object.keys(MAPA_PECA_PARA_SERVICO)) {
       expect(idsPecasEPneus.has(pecaId)).toBe(true);

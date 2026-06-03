@@ -5,6 +5,7 @@ import { BotaoReset } from '@/components/BotaoReset';
 import { iconePeca } from '../icons/pecas';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
 import { resolverStatusPrecoAutorizada } from '../../utils/statusPrecoAutorizada';
+import type { EstimativaMaoDeObraItem } from '../../utils/maoDeObraEstimada';
 import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
 
 type ModoCard = 'independente' | 'autorizada';
@@ -14,9 +15,19 @@ interface Props {
   servicoPadrao?: ServicoIndependente;
   dispatch: Dispatch<PerfilAction>;
   modo?: ModoCard;
+  // Estimativa de M.O. por-item (ADR-014, A). Só faz sentido no modo autorizada
+  // quando o serviço está sem valor real. `globalLigado` reflete o toggle de
+  // Preferências; `porServicoLigado`, o flag específico deste serviço.
+  estimativaMaoDeObra?: EstimativaMaoDeObraItem;
 }
 
-export function CardServico({ servico, servicoPadrao, dispatch, modo = 'independente' }: Props) {
+export function CardServico({
+  servico,
+  servicoPadrao,
+  dispatch,
+  modo = 'independente',
+  estimativaMaoDeObra,
+}: Props) {
   const padrao = servicoPadrao ?? SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
   const statusAutorizada = resolverStatusPrecoAutorizada(servico);
   const statusPadrao = padrao ? resolverStatusPrecoAutorizada(padrao) : undefined;
@@ -41,6 +52,16 @@ export function CardServico({ servico, servicoPadrao, dispatch, modo = 'independ
         : 'Preço Mão de Obra (R$)';
 
   const IconePeca = iconePeca(servico.id);
+
+  // Estimativa por-item só se aplica a um avulso de concessionária sem valor.
+  const podeEstimar =
+    estimativaMaoDeObra != null && modo === 'autorizada' && statusAutorizada === 'nao_informado';
+  // Efetivo = global OU por-serviço (ADR-014, A). Quando efetivo, o campo de
+  // preço vira read-only exibindo o valor estimado (~).
+  const estimativaEfetiva =
+    estimativaMaoDeObra != null &&
+    podeEstimar &&
+    (estimativaMaoDeObra.globalLigado || estimativaMaoDeObra.porServicoLigado);
 
   const [preco, setPreco] = useState(valorAtual.toFixed(2));
   const [intervalo, setIntervalo] = useState(String(servico.intervalKm));
@@ -103,21 +124,52 @@ export function CardServico({ servico, servicoPadrao, dispatch, modo = 'independ
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
-          <span className="label-neutro block">{rotuloPreco}</span>
+          <span className="label-neutro block">
+            {rotuloPreco}
+            {estimativaEfetiva && (
+              <span className="ml-1 text-warning" title="Mão de obra estimada">
+                ~
+              </span>
+            )}
+          </span>
           <Input
             type="number"
             className={`rounded-input bg-input min-h-touch text-sm${temOverridePreco ? ' border-primary' : ''}`}
-            value={preco}
+            value={estimativaEfetiva ? (estimativaMaoDeObra?.valorEstimado ?? 0).toFixed(2) : preco}
             onChange={(e) => setPreco(e.target.value)}
             onBlur={handleBlurPreco}
+            readOnly={estimativaEfetiva}
             min={0}
             step={0.01}
           />
-          {modo === 'autorizada' && statusAutorizada === 'nao_informado' && (
-            <p className="text-[10px] leading-tight text-warning">
-              Valor de concessionária ainda não informado.
-            </p>
-          )}
+          {modo === 'autorizada' &&
+            statusAutorizada === 'nao_informado' &&
+            (estimativaMaoDeObra == null ? (
+              <p className="text-[10px] leading-tight text-warning">
+                Valor de concessionária ainda não informado.
+              </p>
+            ) : estimativaMaoDeObra.globalLigado ? (
+              <p className="text-[10px] leading-tight text-warning">
+                Estimativa de mão de obra (~) ligada em Preferências.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() =>
+                  dispatch({ type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO', id: servico.id })
+                }
+                aria-pressed={estimativaMaoDeObra.porServicoLigado}
+                className={`w-full rounded-input min-h-touch px-2 text-[11px] font-medium transition-colors ${
+                  estimativaMaoDeObra.porServicoLigado
+                    ? 'bg-warning/15 text-warning'
+                    : 'bg-input text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {estimativaMaoDeObra.porServicoLigado
+                  ? 'Usando estimativa (~) - tocar para desligar'
+                  : 'Estimar mão de obra (~)'}
+              </button>
+            ))}
         </div>
         <div className="space-y-1">
           <span className="label-neutro block">Intervalo (km)</span>

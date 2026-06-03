@@ -94,6 +94,7 @@ const servicoIndependente = z
     precoIndependente: dinheiroNaoNegativo,
     precoTotalAutorizada: dinheiroNaoNegativo,
     statusPrecoAutorizada: statusPrecoAutorizada.optional(),
+    concessionariaIncluiPeca: z.boolean().optional(),
     incluidoNaRevisaoAutorizada: z.boolean(),
     ativo: z.boolean(),
     ehExcepcional: z.boolean(),
@@ -165,6 +166,7 @@ export const perfilSchema = z.object({
     perfilPecasGlobal: perfilPecas,
     modoRevisao,
     incluirEstimativaMaoDeObra: z.boolean().optional(),
+    estimativaMaoDeObraPorServico: z.record(z.string(), z.boolean()).optional(),
   }),
 
   trabalho: z.object({

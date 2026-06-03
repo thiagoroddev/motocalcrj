@@ -13,6 +13,10 @@ import { obterPreset } from '../data/repositorioPresets';
 import { normalizarPerfilMvp } from '../hooks/useCustos';
 import { obterServicosManutencaoBase } from '../utils/servicosManutencaoPreset';
 import { resolverStatusPrecoAutorizada } from '../utils/statusPrecoAutorizada';
+import {
+  montarEstimativaMaoDeObra,
+  type EstimativaMaoDeObraItem,
+} from '../utils/maoDeObraEstimada';
 import type { ServicoIndependente, PerfilAction } from '../types/perfil';
 
 type AbaMaoDeObra = 'concessionaria' | 'excepcional';
@@ -62,6 +66,9 @@ interface PropsListaServicos {
   temOverrides: boolean;
   onRestaurarTudo: () => void;
   modo?: 'independente' | 'autorizada';
+  // Quando fornecido, cada card recebe seu bundle de estimativa por-item (A) —
+  // mantém a aba Mão de Obra sincronizada com o popup do Detalhamento.
+  montarEstimativa?: (servico: ServicoIndependente) => EstimativaMaoDeObraItem;
 }
 
 function ListaServicos({
@@ -71,6 +78,7 @@ function ListaServicos({
   temOverrides,
   onRestaurarTudo,
   modo = 'independente',
+  montarEstimativa,
 }: PropsListaServicos) {
   return (
     <div className="space-y-2">
@@ -81,6 +89,7 @@ function ListaServicos({
           servicoPadrao={servicosPadrao.find((padrao) => padrao.id === s.id)}
           dispatch={dispatch}
           modo={modo}
+          estimativaMaoDeObra={montarEstimativa?.(s)}
         />
       ))}
       {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
@@ -209,6 +218,7 @@ export function PaginaMaoDeObra() {
                       temOverrides={temOverridesAvulsosAutorizada}
                       onRestaurarTudo={() => restaurarGrupo(servicosAvulsosAutorizada)}
                       modo="autorizada"
+                      montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
                     />
                   </div>
                 )}

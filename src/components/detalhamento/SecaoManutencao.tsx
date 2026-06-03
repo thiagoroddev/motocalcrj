@@ -6,13 +6,16 @@ import type {
   PendenciaMaoDeObraConcessionaria,
 } from '../../types/calculos';
 import type { ModoRevisao } from '../../types/perfil';
+import {
+  montarItensManutencao,
+  type ItemManutencaoComposto,
+  type StatusItemManutencao,
+} from '../../utils/itensManutencao';
 import { CategoriaAccordion } from './CategoriaAccordion';
 import { Toggle } from './Toggle';
 import { BotaoLapisEdicao } from './BotaoLapisEdicao';
 import { PopoverDetalhesPeca } from './PopoverDetalhesPeca';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
-
-type ItemDetalheManutencao = CustoPeca | CustoServicoRevisao;
 
 type Props = {
   totalManutencaoComRevisao: number;
@@ -25,6 +28,9 @@ type Props = {
   custoIncompleto: boolean;
   pendenciasMaoDeObra: PendenciaMaoDeObraConcessionaria[];
   pecas: [string, CustoPeca][];
+  // Nome de exibição por peça (do preset), para itens só-serviço usarem o nome
+  // do componente em vez do nome do serviço (F).
+  nomePorPeca: Record<string, string>;
   filtroAtivo: boolean;
   filtroRevisao: boolean;
   filtrosServicosRevisao: Record<string, boolean>;
@@ -42,6 +48,31 @@ type Props = {
   pct: (valor: number, ativo?: boolean) => string;
 };
 
+// Marcador de status do item, visível sem clique (TASK-REF-32.6 — C).
+// Cada item tem um único status; `oficial` e `semMaoDeObra` não marcam nada
+// (estado esperado). Precedência faltando > estimado > editado já vem resolvida
+// no view-model.
+function MarcadorStatus({ status }: { status: StatusItemManutencao }) {
+  if (status === 'faltando') {
+    return (
+      <span
+        className="ml-1 font-semibold text-warning"
+        title="Falta o valor de mão de obra da concessionária"
+      >
+        !
+      </span>
+    );
+  }
+  if (status === 'estimado') {
+    return (
+      <span className="ml-1 text-warning/80" title="Mão de obra estimada (~)">
+        ~
+      </span>
+    );
+  }
+  return null;
+}
+
 export function SecaoManutencao({
   totalManutencaoComRevisao,
   totalRevisao,
@@ -53,6 +84,7 @@ export function SecaoManutencao({
   custoIncompleto,
   pendenciasMaoDeObra,
   pecas,
+  nomePorPeca,
   filtroAtivo,
   filtroRevisao,
   filtrosServicosRevisao,
@@ -69,17 +101,16 @@ export function SecaoManutencao({
   pp,
   pct,
 }: Props) {
-  const [itemDetalhado, setItemDetalhado] = useState<ItemDetalheManutencao | null>(null);
+  const [itemDetalhado, setItemDetalhado] = useState<ItemManutencaoComposto | null>(null);
   const [ajudaAberta, setAjudaAberta] = useState<CustoPeca['modo'] | null>(null);
   const ehAutorizada = modoRevisao === 'autorizadas';
-  const servicosVisiveis = servicosRevisao.filter(([, servico]) => servico.custoAnual > 0);
-  const pecasVisiveis = pecas.filter(([, peca]) => peca.custoAnual > 0);
-  const servicosAncorados = servicosVisiveis.filter(([, servico]) => servico.modo === 'ancorado');
-  const servicosAmortizados = servicosVisiveis.filter(
-    ([, servico]) => servico.modo === 'amortizado',
-  );
-  const pecasAncoradas = pecasVisiveis.filter(([, peca]) => peca.modo === 'ancorado');
-  const pecasAmortizadas = pecasVisiveis.filter(([, peca]) => peca.modo === 'amortizado');
+
+  // Fusão peça + M.O. em um item por componente (ADR-014). O total continua
+  // somando os mapas separados no cálculo; aqui é só a visão.
+  const itens = montarItensManutencao(pecas, servicosRevisao, pendenciasMaoDeObra, nomePorPeca);
+  const itensVisiveis = itens.filter((item) => item.custoAnual > 0);
+  const itensAncorados = itensVisiveis.filter((item) => item.modo === 'ancorado');
+  const itensAmortizados = itensVisiveis.filter((item) => item.modo === 'amortizado');
 
   function multiplicadorAmortizado(valor: number): string {
     return `≈${valor.toLocaleString('pt-BR', {
@@ -88,86 +119,83 @@ export function SecaoManutencao({
     })}×`;
   }
 
-  function abrirDetalhes(item: ItemDetalheManutencao) {
+  function abrirDetalhes(item: ItemManutencaoComposto) {
     setItemDetalhado(item);
   }
 
-  function renderizarLinhaPeca(id: string, peca: CustoPeca) {
-    const ativa = filtrosPecas[id] ?? true;
+  // A linha-componente controla os dois filtros (peça + serviço) de uma vez.
+  // Dispara só os toggles necessários para convergir ambos ao mesmo estado,
+  // mesmo que um perfil legado os tenha dessincronizados.
+  function itemAtivo(item: ItemManutencaoComposto): boolean {
+    const pecaAtiva = item.pecaId ? (filtrosPecas[item.pecaId] ?? true) : true;
+    const servicoAtivo = item.servicoId ? (filtrosServicosRevisao[item.servicoId] ?? true) : true;
+    return pecaAtiva && servicoAtivo;
+  }
+
+  function alternarItem(item: ItemManutencaoComposto) {
+    const alvo = !itemAtivo(item);
+    if (item.pecaId && (filtrosPecas[item.pecaId] ?? true) !== alvo) {
+      onTogglePeca(item.pecaId);
+    }
+    if (item.servicoId && (filtrosServicosRevisao[item.servicoId] ?? true) !== alvo) {
+      onToggleServicoRevisao(item.servicoId);
+    }
+  }
+
+  function editarItem(item: ItemManutencaoComposto) {
+    if (item.pecaId) {
+      onEditarPeca(item.pecaId);
+    } else if (item.servicoId) {
+      onEditarServicoRevisao(item.servicoId);
+    }
+  }
+
+  function renderizarLinhaItem(item: ItemManutencaoComposto) {
+    const ativo = itemAtivo(item);
     const freq =
-      peca.modo === 'ancorado'
-        ? `${peca.trocasNoAno.toLocaleString('pt-BR')}×`
-        : multiplicadorAmortizado(peca.trocasNoAno);
+      item.modo === 'ancorado'
+        ? `${item.freq.toLocaleString('pt-BR')}×`
+        : multiplicadorAmortizado(item.freq);
 
     return (
-      <div key={id} className="flex items-center gap-2">
-        <Toggle ativo={ativa} onClick={() => onTogglePeca(id)} />
+      <div key={item.id} className="flex items-center gap-2">
+        <Toggle ativo={ativo} onClick={() => alternarItem(item)} />
         <span
-          className={`text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ${peca.modo === 'ancorado' ? 'w-5' : 'w-11'}`}
+          className={`text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ${item.modo === 'ancorado' ? 'w-5' : 'w-11'}`}
         >
           {freq}
         </span>
         <span className="flex-1 min-w-0 text-muted-foreground/70 text-xs truncate">
-          {peca.label}
+          {item.label}
+          <MarcadorStatus status={item.status} />
         </span>
-        {peca.fonte === 'registro' && (
+        {item.status === 'editado' && (
+          <span
+            className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full shrink-0"
+            title="Mão de obra informada por você"
+          >
+            M.O.
+          </span>
+        )}
+        {item.pecaEditada && (
           <span className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full shrink-0">
             real
           </span>
         )}
         <span
-          className={`text-xs font-medium tabular-nums ${ativa ? 'text-muted-foreground' : 'text-muted-foreground/30'}`}
-        >
-          {pp(peca.custoAnual)}
-        </span>
-        <button
-          type="button"
-          onClick={() => abrirDetalhes(peca)}
-          aria-label={`Ver detalhes de ${peca.label}`}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/40 transition-colors hover:bg-muted/40 hover:text-foreground"
-        >
-          <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
-        <BotaoLapisEdicao onClick={() => onEditarPeca(id)} ariaLabel={`Editar ${peca.label}`} />
-      </div>
-    );
-  }
-
-  function renderizarLinhaServico(id: string, servico: CustoServicoRevisao) {
-    const ativo = filtrosServicosRevisao[id] ?? true;
-    const freq =
-      servico.modo === 'ancorado'
-        ? `${servico.eventosNoAno.toLocaleString('pt-BR')}×`
-        : multiplicadorAmortizado(servico.eventosNoAno);
-
-    return (
-      <div key={id} className="flex items-center gap-2">
-        <Toggle ativo={ativo} onClick={() => onToggleServicoRevisao(id)} />
-        <span
-          className={`text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ${servico.modo === 'ancorado' ? 'w-5' : 'w-11'}`}
-        >
-          {freq}
-        </span>
-        <span className="flex-1 min-w-0 text-muted-foreground/70 text-xs truncate">
-          {servico.label}
-        </span>
-        <span
           className={`text-xs font-medium tabular-nums ${ativo ? 'text-muted-foreground' : 'text-muted-foreground/30'}`}
         >
-          {pp(servico.custoAnual)}
+          {pp(item.custoAnual)}
         </span>
         <button
           type="button"
-          onClick={() => abrirDetalhes(servico)}
-          aria-label={`Ver detalhes de ${servico.label}`}
+          onClick={() => abrirDetalhes(item)}
+          aria-label={`Ver detalhes de ${item.label}`}
           className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/40 transition-colors hover:bg-muted/40 hover:text-foreground"
         >
           <Eye className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
-        <BotaoLapisEdicao
-          onClick={() => onEditarServicoRevisao(id)}
-          ariaLabel={`Editar ${servico.label}`}
-        />
+        <BotaoLapisEdicao onClick={() => editarItem(item)} ariaLabel={`Editar ${item.label}`} />
       </div>
     );
   }
@@ -175,11 +203,9 @@ export function SecaoManutencao({
   function renderizarGrupoItens(
     titulo: string,
     modo: CustoPeca['modo'],
-    itensPecas: [string, CustoPeca][],
-    itensServicos: [string, CustoServicoRevisao][],
+    itensGrupo: ItemManutencaoComposto[],
   ) {
-    const totalItens = itensPecas.length + itensServicos.length;
-    if (totalItens === 0) return null;
+    if (itensGrupo.length === 0) return null;
     const descricaoCurta =
       modo === 'ancorado' ? 'Projeção real por km informado' : 'Provisão proporcional ao km rodado';
 
@@ -187,7 +213,7 @@ export function SecaoManutencao({
       <div className="rounded-md border border-border/70 bg-background/25">
         <div className="flex items-center gap-1.5 border-b border-border/70 px-2 py-2">
           <span className="text-[11px] font-medium text-muted-foreground">{titulo}</span>
-          <span className="text-[10px] text-muted-foreground/40">({totalItens})</span>
+          <span className="text-[10px] text-muted-foreground/40">({itensGrupo.length})</span>
           <button
             type="button"
             onClick={() => setAjudaAberta(modo)}
@@ -198,10 +224,7 @@ export function SecaoManutencao({
           </button>
           <span className="ml-auto text-[10px] text-muted-foreground/35">{descricaoCurta}</span>
         </div>
-        <div className="space-y-2 px-2 py-2">
-          {itensServicos.map(([id, servico]) => renderizarLinhaServico(id, servico))}
-          {itensPecas.map(([id, peca]) => renderizarLinhaPeca(id, peca))}
-        </div>
+        <div className="space-y-2 px-2 py-2">{itensGrupo.map(renderizarLinhaItem)}</div>
       </div>
     );
   }
@@ -227,9 +250,9 @@ export function SecaoManutencao({
                 <div className="space-y-1">
                   <p className="text-xs font-medium">Custo parcial de manutenção</p>
                   <p className="text-xs leading-relaxed">
-                    Falta valor de concessionária para{' '}
-                    {pendenciasMaoDeObra.map((p) => p.label).join(', ')}. Consulte a mão de
-                    obra/serviço e informe na aba M. Obra.
+                    Falta valor de mão de obra da concessionária para{' '}
+                    {pendenciasMaoDeObra.map((p) => p.label).join(', ')}. Informe na aba M. Obra ou
+                    ative a estimativa.
                   </p>
                 </div>
               </div>
@@ -256,8 +279,8 @@ export function SecaoManutencao({
               />
             )}
           </div>
-          {renderizarGrupoItens('Ancorados', 'ancorado', pecasAncoradas, servicosAncorados)}
-          {renderizarGrupoItens('Amortizados', 'amortizado', pecasAmortizadas, servicosAmortizados)}
+          {renderizarGrupoItens('Ancorados', 'ancorado', itensAncorados)}
+          {renderizarGrupoItens('Amortizados', 'amortizado', itensAmortizados)}
         </div>
       </CategoriaAccordion>
 

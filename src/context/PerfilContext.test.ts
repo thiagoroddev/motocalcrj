@@ -608,6 +608,24 @@ describe('perfilReducer', () => {
     expect(religado.perfil.configuracaoDisplay.filtrosManutencao.revisaoPorServico).toEqual({});
   });
 
+  it('TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO liga e desliga a estimativa por serviço', () => {
+    const ligado = perfilReducer(estadoVazio, {
+      type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO',
+      id: 'troca-kit-transmissao',
+    });
+    const desligado = perfilReducer(ligado, {
+      type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO',
+      id: 'troca-kit-transmissao',
+    });
+
+    expect(
+      ligado.perfil.perfilManutencao.estimativaMaoDeObraPorServico?.['troca-kit-transmissao'],
+    ).toBe(true);
+    expect(
+      desligado.perfil.perfilManutencao.estimativaMaoDeObraPorServico?.['troca-kit-transmissao'],
+    ).toBe(false);
+  });
+
   it('TOGGLE_CATEGORIA manutencao não apaga filtros finos persistidos', () => {
     const estadoComFiltros: EstadoApp = {
       ...estadoVazio,

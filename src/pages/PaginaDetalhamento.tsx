@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
+import { obterPreset } from '../data/repositorioPresets';
 import {
   calcularTotalFiltrado,
   calcularGranularidades,
@@ -171,6 +172,16 @@ export function PaginaDetalhamento() {
 
   const { custos, kmAnual, diasAno } = resultado;
   const horasDia = perfil.trabalho.horasPorDia;
+  // Nome de exibição por peça (do preset), para a Manutenção nomear itens
+  // só-serviço (Honda) pelo componente, não pelo nome do serviço (F).
+  const presetAtual = obterPreset(perfil.moto.modelo);
+  const nomePorPeca: Record<string, string> = {};
+  if (presetAtual) {
+    for (const p of presetAtual.pecas) nomePorPeca[p.id] = p.nome;
+    for (const pn of presetAtual.pneus) {
+      nomePorPeca[pn.id] = pn.posicao === 'dianteiro' ? 'Pneu dianteiro' : 'Pneu traseiro';
+    }
+  }
   const totalFiltrado = calcularTotalFiltrado(custos, filtros);
   const gran = calcularGranularidades(totalFiltrado, diasAno, kmAnual);
   const totalManutencaoComRevisao = custos.manutencao.total + custos.revisao.total;
@@ -192,9 +203,12 @@ export function PaginaDetalhamento() {
   const diasTrabalhadosNoPeriodo = cvt(diasAno);
   const pendenciasMaoDeObra = custos.revisao.detalhes.pendenciasMaoDeObra;
   const custoManutencaoIncompleto = custos.revisao.detalhes.custoIncompleto;
+  const incluiEstimativaMaoDeObra = perfil.perfilManutencao.incluirEstimativaMaoDeObra ?? false;
   const avisoCustoParcial = custoManutencaoIncompleto
-    ? `Custo parcial: falta valor de concessionária para ${pendenciasMaoDeObra.length} serviço${pendenciasMaoDeObra.length === 1 ? '' : 's'} de manutenção.`
-    : undefined;
+    ? `Custo parcial: falta valor de mão de obra da concessionária para ${pendenciasMaoDeObra.length} serviço${pendenciasMaoDeObra.length === 1 ? '' : 's'} na categoria Manutenção.${incluiEstimativaMaoDeObra ? ' Os demais usam estimativa (~).' : ''}`
+    : incluiEstimativaMaoDeObra
+      ? 'Inclui estimativas de mão de obra (~) onde a concessionária não informa o valor.'
+      : undefined;
   const tipoUsoLabel = perfil.moto.perfilUso === 'entrega' ? 'Entrega' : 'Passageiro';
   const modoRevisaoLabel = 'Concessionária';
   const precoCombustivel =
@@ -445,6 +459,7 @@ export function PaginaDetalhamento() {
           custoIncompleto={custoManutencaoIncompleto}
           pendenciasMaoDeObra={pendenciasMaoDeObra}
           pecas={[...custos.manutencao.detalhes.entries()]}
+          nomePorPeca={nomePorPeca}
           filtroAtivo={filtros.manutencao}
           filtroRevisao={filtros.revisao}
           filtrosServicosRevisao={filtros.revisaoPorServico}

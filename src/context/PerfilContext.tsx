@@ -468,6 +468,29 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         perfilManutencao: { ...state.perfil.perfilManutencao, modoRevisao: action.modo },
       });
 
+    case 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA':
+      return comPerfil({
+        ...state.perfil,
+        perfilManutencao: {
+          ...state.perfil.perfilManutencao,
+          incluirEstimativaMaoDeObra: action.valor,
+        },
+      });
+
+    case 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO': {
+      const atual = state.perfil.perfilManutencao.estimativaMaoDeObraPorServico ?? {};
+      return comPerfil({
+        ...state.perfil,
+        perfilManutencao: {
+          ...state.perfil.perfilManutencao,
+          estimativaMaoDeObraPorServico: {
+            ...atual,
+            [action.id]: !(atual[action.id] ?? false),
+          },
+        },
+      });
+    }
+
     case 'SET_SITUACAO_MOTO':
       return comPerfil({
         ...state.perfil,

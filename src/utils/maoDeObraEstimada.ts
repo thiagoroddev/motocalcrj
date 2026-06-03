@@ -2,6 +2,9 @@
 // docs/arquitetura/estimativa-mao-de-obra.md. Esta é a estimativa "chutada"
 // opt-in: só entra no cálculo quando o usuário liga, sempre rotulada como ~.
 
+import type { PerfilUsuario } from '../types/perfil';
+import type { PresetMoto } from '../types/calculos';
+
 // Tempário: horas de mão de obra por serviço (baseline ~125cc).
 const HORAS_POR_SERVICO: Record<string, number> = {
   'troca-oleo': 0.5,
@@ -43,4 +46,26 @@ export function estimarMaoDeObra(
   if (!horas) return 0;
   const fator = Number.isFinite(fatorMaoDeObra) && fatorMaoDeObra > 0 ? fatorMaoDeObra : 1;
   return Math.round(horas * taxaHoraDaMarca(marca) * fator * 100) / 100;
+}
+
+// Bundle de estimativa por-item consumido pelo CardServico (ADR-014, A).
+// `globalLigado` = toggle de Preferências; `porServicoLigado` = flag específico;
+// `valorEstimado` = M.O. estimada (~) para o serviço. Fonte única para o popup
+// de edição (Detalhamento) e a aba Mão de Obra, mantendo os dois sincronizados.
+export interface EstimativaMaoDeObraItem {
+  globalLigado: boolean;
+  porServicoLigado: boolean;
+  valorEstimado: number;
+}
+
+export function montarEstimativaMaoDeObra(
+  perfil: PerfilUsuario,
+  preset: PresetMoto | undefined,
+  servicoId: string,
+): EstimativaMaoDeObraItem {
+  return {
+    globalLigado: perfil.perfilManutencao.incluirEstimativaMaoDeObra ?? false,
+    porServicoLigado: perfil.perfilManutencao.estimativaMaoDeObraPorServico?.[servicoId] ?? false,
+    valorEstimado: estimarMaoDeObra(servicoId, preset?.marca, preset?.fatorMaoDeObra ?? 1),
+  };
 }

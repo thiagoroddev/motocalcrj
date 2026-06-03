@@ -14,9 +14,12 @@ import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
 import { obterPreset } from '../../data/repositorioPresets';
 import { MAPA_PECA_PARA_SERVICO, resolverServicoComIntervaloEditado } from '../../utils/calculos';
+import { resolverServicosManutencaoPerfil } from '../../utils/servicosManutencaoPreset';
+import { montarEstimativaMaoDeObra } from '../../utils/maoDeObraEstimada';
 import type {
   PerfilUsuario,
   PerfilAction,
+  ServicoIndependente,
   TipoCombustivel,
   ConfiguracaoCombustivel,
 } from '../../types/perfil';
@@ -134,6 +137,24 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
   return <ConteudoPecaComMO pecaId={alvo.pecaId} perfil={perfil} dispatch={dispatch} />;
 }
 
+// O perfil cru guarda os intervalos default (genéricos); o preset traz os
+// sincronizados (vida útil mora no serviço — ADR-014). A edição opera sobre o
+// serviço EFETIVO (mesclado), para o intervalo/preço baterem com o que o
+// Detalhamento e o cálculo usam — senão o popup mostraria o default defasado.
+function resolverServicoEfetivo(
+  perfil: PerfilUsuario,
+  servicoId: string,
+): ServicoIndependente | undefined {
+  const preset = obterPreset(perfil.moto.modelo);
+  return resolverServicosManutencaoPerfil(perfil, preset).find((s) => s.id === servicoId);
+}
+
+// Bundle de estimativa por-item passado ao CardServico (ADR-014, A), via o
+// helper compartilhado (mesma fonte da aba Mão de Obra).
+function estimativaDoServico(perfil: PerfilUsuario, servicoId: string) {
+  return montarEstimativaMaoDeObra(perfil, obterPreset(perfil.moto.modelo), servicoId);
+}
+
 function ConteudoServicoExcepcional({
   servicoId,
   perfil,
@@ -143,7 +164,7 @@ function ConteudoServicoExcepcional({
   perfil: PerfilUsuario;
   dispatch: Dispatch<PerfilAction>;
 }) {
-  const servico = perfil.servicosIndependentes.find((s) => s.id === servicoId);
+  const servico = resolverServicoEfetivo(perfil, servicoId);
   if (!servico) {
     return <p className="text-sm text-muted-foreground">Serviço não encontrado.</p>;
   }
@@ -169,7 +190,7 @@ function ConteudoServicoAutorizada({
   perfil: PerfilUsuario;
   dispatch: Dispatch<PerfilAction>;
 }) {
-  const servico = perfil.servicosIndependentes.find((s) => s.id === servicoId);
+  const servico = resolverServicoEfetivo(perfil, servicoId);
   if (!servico) {
     return <p className="text-sm text-muted-foreground">Serviço não encontrado.</p>;
   }
@@ -181,7 +202,12 @@ function ConteudoServicoAutorizada({
           Serviço avulso concessionária
         </span>
       </div>
-      <CardServico servico={servico} dispatch={dispatch} modo="autorizada" />
+      <CardServico
+        servico={servico}
+        dispatch={dispatch}
+        modo="autorizada"
+        estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}
+      />
     </div>
   );
 }
@@ -280,9 +306,7 @@ function ConteudoPecaComMO({
       };
 
   const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
-  const servico = servicoId
-    ? perfil.servicosIndependentes.find((s) => s.id === servicoId)
-    : undefined;
+  const servico = servicoId ? resolverServicoEfetivo(perfil, servicoId) : undefined;
   const override = perfil.pecasOverrides.find((o) => o.id === pecaId) ?? null;
 
   return (
@@ -314,7 +338,12 @@ function ConteudoPecaComMO({
               Mão de obra
             </span>
           </div>
-          <CardServico servico={servico} dispatch={dispatch} />
+          <CardServico
+            servico={servico}
+            dispatch={dispatch}
+            modo="autorizada"
+            estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}
+          />
         </div>
       ) : (
         <p className="text-xs text-muted-foreground/60 leading-relaxed px-px">

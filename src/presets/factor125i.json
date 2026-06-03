@@ -740,8 +740,9 @@
       "nome": "Troca kit transmissão",
       "intervalKm": 25000,
       "precoIndependente": 0,
-      "precoTotalAutorizada": 414.08,
+      "precoTotalAutorizada": 220,
       "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": false,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false
@@ -751,8 +752,33 @@
       "nome": "Troca sapata de freio traseira",
       "intervalKm": 20000,
       "precoIndependente": 0,
-      "precoTotalAutorizada": 126.88,
+      "precoTotalAutorizada": 70,
       "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-disco-dianteiro",
+      "nome": "Troca disco de freio dianteiro",
+      "intervalKm": 50000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pastilha-dianteira",
+      "nome": "Troca pastilha de freio dianteira",
+      "intervalKm": 10000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false
@@ -848,7 +874,7 @@
     {
       "id": "troca-pneu-dianteiro",
       "nome": "Troca de pneu dianteiro (fora da concessionária)",
-      "intervalKm": 30000,
+      "intervalKm": 22500,
       "precoIndependente": 0,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
@@ -859,7 +885,7 @@
     {
       "id": "troca-pneu-traseiro",
       "nome": "Troca de pneu traseiro (fora da concessionária)",
-      "intervalKm": 20000,
+      "intervalKm": 15000,
       "precoIndependente": 0,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
