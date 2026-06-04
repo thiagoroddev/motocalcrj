@@ -152,7 +152,7 @@ if (filtros.imprevistosSugeridos[imprevistoId] !== false) {
 #### INV-CALC-2: utils/calculos.ts requer aprovação explícita para modificação
 **Regra:** O arquivo `src/utils/calculos.ts` **nunca pode ser modificado** sem decisão explícita do usuário.
 
-**Por quê:** 98 testes passando. Modificação acidental quebraria comportamento testado e validado.
+**Por quê:** núcleo de cálculo coberto por densa suíte de testes (ver `npm run test`). Modificação acidental quebraria comportamento testado e validado. O gate foi concedido explicitamente para a série REF-32 (manutenção MVP).
 
 **Status:** Listada como **Proibição Absoluta** no `contexto-base`.
 
@@ -201,6 +201,32 @@ if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV
 - `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` - `resolverIntervalo`: usam o mesmo helper, mantendo display e cálculo consistentes.
 
 **Histórico:** DT-15 endereçada pela TASK-REF-29 com mapeamento explícito peça↔serviço; a revisão da REF-29 (31/05/26) aplicou a **Decisão C** (serviço sobrepõe só quando editado) para preservar os intervalos de entrega e a estimativa default.
+
+⚠️ **Fragilidade (DT-19, REF-32.6):** como o cálculo usa o perfil mesclado (intervalos do preset), o serviço quase sempre difere do default e acaba ditando o intervalo da peça também — unificando peça e M.O. Isso depende de o default global estar defasado vs. o preset; "corrigir" o default quebraria a unificação. Recomendado tornar a fonte explícita junto da DT-18.
+
+---
+
+#### INV-MANUT-2: Estimativa de M.O. é opt-in e sempre marcada (ADR-013)
+**Regra:** mão de obra **estimada** nunca entra no custo silenciosamente. Só conta quando o usuário liga — global (`perfilManutencao.incluirEstimativaMaoDeObra`) **ou** por serviço (`estimativaMaoDeObraPorServico[id]`) — e é sempre rotulada com `~` (`CustoServicoRevisao.maoDeObraEstimada === true`). Sem estimativa e sem valor oficial, o serviço vira **pendência** (`custoIncompleto`), não custo presumido.
+
+**Por quê:** honestidade do número (ADR-012/013). O usuário precisa distinguir valor real de estimativa aproximada.
+
+**Onde é protegida:**
+- `src/utils/calculos.ts` - `calcularDetalhesRevisaoAnual` e `calcularImprevistosSugeridosAnual`: `moEstimada` só estima quando `incluirEstimativa || estimativaPorServico[id]`.
+- `src/utils/maoDeObraEstimada.ts` - `estimarMaoDeObra` retorna 0 sem tempário (sem base, sem estimativa).
+
+---
+
+#### INV-MANUT-3: Anti-duplicação peça↔serviço por componente (ADR-014)
+**Regra:** no modo autorizado, a peça avulsa só é **pulada** do CPK quando o serviço vinculado tem preço **oficial que inclui a peça**: `resolverStatusPrecoAutorizada(servico) === 'informado' && concessionariaIncluiPeca !== false` (caso Honda). `informado_usuario` (edição = só M.O.), `nao_informado` e estimado **mantêm a peça** (somam). A fusão em **1 item por componente** é **só visão** — o cálculo mantém peça (`manutencao`) e M.O. (`revisao.servicos`) em mapas separados.
+
+**Por quê:** evitar dupla contagem (Honda informa peça+M.O. juntas) sem perder a peça nos casos em que a concessionária informa só M.O. (Yamaha) ou o valor é estimado/editado/ausente.
+
+**Onde é protegida:**
+- `src/utils/calculos.ts` - `ehPecaCobertaPorServicoAutorizada` (gate do pulo).
+- `src/utils/itensManutencao.ts` - `montarItensManutencao` (composição como visão, status `oficial`/`editado`/`estimado`/`faltando`/`semMaoDeObra`).
+
+**Origem:** ADR-014 / TASK-REF-32.6.
 
 ---
 
@@ -281,3 +307,4 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | 2026-05-20 | INV-CALC-2 | ADR-004 concluído - 96 testes; nota de autorização convertida em confirmação de execução | TASK-REF-12 concluída |
 | 2026-05-20 | INV-VIDA-UTIL-1 | Nova - fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |
 | 2026-05-22 | INV-CALC-3 | Nova - sem dupla contagem de peças no modo autorizado | TASK-BG-003 (ADR-006) |
+| 2026-06-04 | INV-MANUT-2, INV-MANUT-3 | Novas - estimativa de M.O. opt-in (`~`, ADR-013) e anti-duplicação peça↔serviço por componente (ADR-014); nota DT-19 em INV-VIDA-UTIL-1; INV-CALC-2 contagem de testes → ponteiro `npm run test` | TASK-DOC-014 |

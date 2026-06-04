@@ -21,38 +21,6 @@ Obedeça essa ordem:
 
 > TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
-### TASK-REF-32.5 Dados dos presets sob o novo MVP
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 02/06/26 22:24
-- **Dependências:** TASK-REF-32.2, TASK-REF-32.3, TASK-REF-32.4
-- **REQ/ADR/DT:** REV-001-A02; ADR-011; ADR-012; TASK-RNF-013
-- **Observações:** Alinhar o contrato prático dos presets ao MVP: novos presets podem ter apenas revisão autorizada/concessionária, pacotes fixos, preços originais de peças relevantes e alguns serviços avulsos de concessionária quando houver dado público.
-  - Dados de oficina independente e peças paralelas podem permanecer nos presets existentes, mas não bloqueiam novos modelos.
-  - Não limpar campos futuros sem necessidade.
-  - Para presets novos, não inventar mão de obra avulsa. Registrar somente valores encontrados em site, rede social, tabela pública, material de concessionária, orçamento divulgado ou fonte direta documentada.
-  - Correção pós-revisão da TASK-REF-32.4 já introduziu `servicosManutencao` por preset: Honda/Pop registra avulsos explícitos do site (`A partir de R$` = `informado`, `A combinar` = `nao_informado`); Yamaha/Factor não expõe pneus porque a concessionária não realiza o serviço.
-  - Tratar serviços avulsos temporais, especialmente bateria Honda (`A partir de R$ 577,74` no site), sem zerar ou duplicar o cálculo da peça temporal.
-  - Planejamento inicial: consolidar o contrato de `servicosManutencao`/campos opcionais nos presets, revisar `factor125i.json` contra dados reais coletados, remover ou isolar estimativas de oficina independente que não entram no MVP, e ajustar testes de contrato para travar o recorte autorizado/original.
-  - Coordenar com TASK-RNF-013 para que a validação aceite dados opcionais/futuros sem exigir independente/paralela completos no MVP.
-
-### TASK-RNF-013 Validação Zod de presets e dados regionais (contrato)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:** TASK-REF-31 (concluída)
-- **REQ/ADR/DT:** REV-001-A03; ADR-011; ADR-012; coordenar com TASK-REF-32.5
-- **Observações:** O perfil do usuário é validado por Zod, mas presets e `dados_rj.json` entram por cast (`as PresetMoto`, `as unknown as DadosRJ` em `src/hooks/useCustos.ts`; `as Record<string, number>` em `src/data/catalogoModelos.ts`). Com vários JSONs, um campo ausente/inválido quebra em runtime em vez de falhar no build/teste.
-  - **Objetivo:** criar `presetSchema` e `dadosLocaisSchema` (Zod), validar todos os JSONs em teste de contrato (estendendo `src/data/catalogoPresets.test.ts`), reusando o padrão de `perfilSchema` (schema amarrado ao tipo por `expectTypeOf`).
-  - **Coordenação:** validar o shape unificado do preset depois da TASK-REF-31 e respeitar a ADR-012: dados de revisão independente/paralela devem ser opcionais/futuros no MVP, não bloqueadores de preset.
 
 ### TASK-REF-33 CARREGAR_PERFIL por presetId + invariantes relacionais no schema
 
@@ -133,6 +101,21 @@ Obedeça essa ordem:
 - **Dependências:**
 - **REQ/ADR/DT:** REV-001-A09
 - **Observações:** 🟢 Sugestão pequenos atritos de DX, executar se houver recorrência: (1) `criarLocalStorageFalso` aparece duplicado em testes → extrair para `src/test/localStorageFalso.ts`; (2) a fixture de desenvolvimento é importada assíncronamente em `src/main.tsx` enquanto `PerfilProvider` já inicializa lendo o storage antes avaliar bootstrap DEV antes do render ou mover a carga da fixture para a criação do estado inicial em DEV. Sem prioridade alta; registrada por convenção do projeto.
+
+### TASK-TEST-003 Testes de render da UI de estimativa de manutenção (REF-32.6)
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** Normal
+- **Esforço-H/IA:** P/M
+- **Data-hora origem:** 04/06/26 00:00
+- **Dependências:** TASK-REF-32.6 (concluída)
+- **REQ/ADR/DT:** ADR-014; gerada pela revisão da TASK-REF-32.6
+- **Observações:** A REF-32.6 entregou interações de UI sem teste de render (infra jsdom já existe; o smoke cobre só o render base). Cobrir:
+  - `CardServico` (modo `autorizada`, `nao_informado`): com estimativa efetiva → preço read-only exibindo o valor estimado com `~`; sem ela → editável; toggle `TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO`; com global ligado → nota "ligada em Preferências" (sem toggle).
+  - `PopoverDetalhesPeca`: tabela "Composição por troca" sempre visível; com M.O. soma peça + M.O.; sem M.O. mostra só a peça; total bate com `item.custoAnual`.
+  - `CardTotalAnual` + `DialogEdicaoCusto`: chip mostra o modo ativo e abre o popup `estimativaMaoDeObra` (Segmentado Só valor real / Incluir ~estimativa).
 
 ## Decisões de UI/UX Pendentes
 

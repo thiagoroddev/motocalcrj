@@ -66,7 +66,7 @@ export interface PresetMoto {
   fatorMaoDeObra?: number;
 }
 
-export type PresetMotoCatalogo = PresetMoto & {
+export interface PresetMotoCatalogo extends PresetMoto {
   marca: string;
   modelo: string;
   nomeCurto: string;
@@ -74,7 +74,7 @@ export type PresetMotoCatalogo = PresetMoto & {
   codigoFipe: string;
   tabelaFipe: Record<string, number>;
   aceitaEtanol: boolean;
-};
+}
 
 // ──────────────────────────────────────────────
 // Dados estáticos do estado

@@ -1,7 +1,8 @@
+import { presetMotoCatalogoSchema } from '../schemas/presetSchema';
 import type { PresetMotoCatalogo } from '../types/calculos';
 
 type ModuloPreset = {
-  default: PresetMotoCatalogo;
+  default: unknown;
 };
 
 const modulosPresets = import.meta.glob('../presets/*.json', {
@@ -13,10 +14,20 @@ function obterIdDoCaminhoPreset(caminho: string): string {
   return nomeArquivo?.replace(/\.json$/, '') ?? caminho;
 }
 
+function validarPreset(caminho: string, preset: unknown): PresetMotoCatalogo {
+  const resultado = presetMotoCatalogoSchema.safeParse(preset);
+
+  if (!resultado.success) {
+    throw new Error(`Preset invalido em ${caminho}: ${resultado.error.message}`);
+  }
+
+  return resultado.data;
+}
+
 export const PRESETS: Record<string, PresetMotoCatalogo> = Object.fromEntries(
   Object.entries(modulosPresets).map(([caminho, modulo]) => [
     obterIdDoCaminhoPreset(caminho),
-    modulo.default,
+    validarPreset(caminho, modulo.default),
   ]),
 );
 

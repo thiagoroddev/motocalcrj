@@ -1,8 +1,33 @@
 import { describe, expect, it } from 'vitest';
+import { dadosLocaisSchema } from '../schemas/dadosLocaisSchema';
+import { presetMotoCatalogoSchema } from '../schemas/presetSchema';
 import { CATALOGO } from './catalogoModelos';
+import dadosRJJson from './dados_rj.json';
 import { PRESETS } from './repositorioPresets';
 
 describe('catalogoModelos - presets', () => {
+  it('valida todos os presets JSON pelo contrato Zod', () => {
+    for (const [id, preset] of Object.entries(PRESETS)) {
+      const resultado = presetMotoCatalogoSchema.safeParse(preset);
+
+      expect(resultado.success, `Preset ${id} deve respeitar presetMotoCatalogoSchema`).toBe(true);
+    }
+  });
+
+  it('valida os dados regionais usados pelo calculo', () => {
+    const dadosRJ = dadosLocaisSchema.parse(dadosRJJson);
+
+    expect(dadosRJ).toEqual({
+      ipva: {
+        aliquotaMotos: dadosRJJson.ipva.aliquotaMotos,
+        isencaoIdadeMinimaMeses: dadosRJJson.ipva.isencaoIdadeMinimaMeses,
+      },
+      licenciamento: {
+        tabela: dadosRJJson.licenciamento.tabela,
+      },
+    });
+  });
+
   it('deriva o catalogo de todos os presets JSON', () => {
     const idsCatalogo = Object.keys(CATALOGO).sort();
     const idsPresets = Object.keys(PRESETS).sort();

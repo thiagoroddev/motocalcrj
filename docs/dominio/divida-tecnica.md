@@ -398,6 +398,41 @@ Evitar este desenho:
 
 ---
 
+## DT-19: Unificação do intervalo peça↔serviço depende do default global estar defasado
+
+### Situação atual
+
+Desde a TASK-REF-32.6, o item de manutenção funde peça + M.O. em uma linha, e ambas as partes amortizam pelo **mesmo intervalo** (o do serviço, sincronizado no preset com a revisão — convenção da ADR-014). Na prática isso só acontece porque:
+
+- O cálculo usa o perfil **mesclado** (`normalizarPerfilMvp` → `resolverServicosManutencaoPerfil`), em que o serviço carrega o intervalo do preset (ex.: `troca-kit-transmissao` = 18.000).
+- `resolverServicoComIntervaloEditado` adota o intervalo do serviço **para a peça também** apenas quando ele difere do default global `SERVICOS_INDEPENDENTES_PADRAO` (ex.: 12.000).
+
+Ou seja: a unificação depende de o default global continuar **genérico/defasado** em relação ao preset. Se o default for "corrigido" para casar com o preset, `resolverServicoComIntervaloEditado` passa a retornar `undefined` e a peça volta a usar `intervaloKmEntrega`/`vidaUtilKm`, que podem divergir do serviço (ex.: pneu dianteiro Pop: peça `vidaUtilKm` 25.000 vs serviço 24.000).
+
+### Por que é dívida técnica
+
+- A relação é **implícita** e contraintuitiva (manter o default "errado" é o que mantém o cálculo "certo").
+- Não há teste travando que peça e serviço de um mesmo componente amortizem no mesmo intervalo.
+- Em perfil `passageiro`, a peça usa `intervaloKm` (passeio) enquanto o serviço tem um único `intervalKm` (sincronizado em entrega) — divergência latente fora do caso entrega.
+
+### Por que NÃO endereçar agora
+
+- O comportamento atual está **correto** para o caso-alvo (entrega) e verificado em uso real.
+- A raiz (vida útil única no serviço, com a peça apenas informando preço) é exatamente a direção da DT-18; resolver as duas juntas evita retrabalho.
+- Mexer em `resolverIntervaloPeca`/`resolverServicoComIntervaloEditado` é alto risco no `calculos.ts` (gated, núcleo testado).
+
+### Gatilho que justificaria endereçar
+
+- Tratar a DT-18 (perfil de uso / vida útil base + fatores).
+- Adicionar modelo cujo `intervaloKmEntrega`/`vidaUtilKm` da peça divirja do serviço sincronizado e o default global precise mudar.
+- Bug de intervalo divergente observado em `passageiro`.
+
+### Recomendação
+
+Tornar a fonte do intervalo do componente **explícita**: `resolverIntervaloPeca` deveria adotar o intervalo do serviço vinculado (via `MAPA_PECA_PARA_SERVICO`) sempre que houver serviço ativo, independentemente do default global — com teste travando peça.intervalo === serviço.intervalo. Fazer junto da DT-18.
+
+---
+
 ## Como Esta Lista Evolui
 
 ### Adicionar item
@@ -442,3 +477,4 @@ A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) perm
 | 2026-05-20 (v6) | DT-16 adicionada - excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
 | 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada - várias actions específicas já criadas, DT considerada endereçada na prática. |
 | 2026-06-02 (v8) | DT-18 adicionada - perfil de uso simplificado demais para carga, finalidade e desgaste; inclui lacuna de modo casual e comparação no Detalhamento. |
+| 2026-06-04 (v9) | DT-19 adicionada (revisão da TASK-REF-32.6) - unificação do intervalo peça↔serviço depende do default global estar defasado vs preset; recomendado resolver junto da DT-18. |

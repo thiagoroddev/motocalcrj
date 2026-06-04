@@ -12,8 +12,9 @@ Bloco que representa **as preferências do Motoboy quanto à manutenção da mot
 
 - Se compra peças originais ou paralelas
 - Se faz revisões em concessionária autorizada Honda ou em oficina independente
+- Se completa a mão de obra que a concessionária não informa com **estimativa** (`~`), global e/ou por serviço (ADR-013/014)
 
-Estas preferências afetam **todos os cálculos de manutenção e revisão**. Após REF-19 (ADR-003), o bloco virou enxuto - preço de mão de obra e intervalo agora vivem por serviço em `perfil.servicosIndependentes[]` (ADR-004).
+Estas preferências afetam **todos os cálculos de manutenção e revisão**. Após REF-19 (ADR-003), o bloco virou enxuto - preço de mão de obra e intervalo vivem por serviço em `perfil.servicosIndependentes[]` (ADR-004); a 32.x acrescentou os campos de estimativa.
 
 ---
 
@@ -25,24 +26,32 @@ Estas preferências afetam **todos os cálculos de manutenção e revisão**. Ap
 perfilManutencao: {
   perfilPecasGlobal: PerfilPecas; // 'original' | 'paralela'
   modoRevisao: ModoRevisao;       // 'autorizadas' | 'independentes'
+  incluirEstimativaMaoDeObra?: boolean;                    // estimativa global (ADR-013)
+  estimativaMaoDeObraPorServico?: Record<string, boolean>; // estimativa por serviço (ADR-014)
 }
 ```
 
-| Atributo            | Tipo          | Descrição                                                                       | Padrão           |
-| ------------------- | ------------- | ------------------------------------------------------------------------------- | ---------------- |
-| `perfilPecasGlobal` | `PerfilPecas` | Preferência global de peças. Pode ser sobrescrita por peça via `pecasOverrides` | `'original'`     |
-| `modoRevisao`       | `ModoRevisao` | Concessionária autorizada Honda ou oficina independente                         | `'independentes'`|
+| Atributo                         | Tipo                       | Descrição                                                                       | Padrão       |
+| -------------------------------- | -------------------------- | ------------------------------------------------------------------------------- | ------------ |
+| `perfilPecasGlobal`              | `PerfilPecas`              | Preferência global de peças. Pode ser sobrescrita por peça via `pecasOverrides` | `'original'` |
+| `modoRevisao`                    | `ModoRevisao`              | Concessionária autorizada Honda ou oficina independente                         | `'autorizadas'` |
+| `incluirEstimativaMaoDeObra?`    | `boolean`                  | Liga a estimativa de M.O. (`~`) para **todos** os avulsos sem valor oficial     | ausente (= `false`) |
+| `estimativaMaoDeObraPorServico?` | `Record<string, boolean>`  | Liga a estimativa **por serviço** (`servicoId → true`). Efetivo = global OU este | ausente (= `{}`) |
 
-> `precoMaoDeObraIndependente` e `frequenciaRevisaoKm` **foram removidos** pela TASK-REF-19. No modo `independentes`, cada serviço de manutenção em `perfil.servicosIndependentes[]` tem seu próprio `intervalKm` e `precoMaoDeObra` (ADR-004 / TASK-REF-11).
+> `precoMaoDeObraIndependente` e `frequenciaRevisaoKm` **foram removidos** pela TASK-REF-19. Cada serviço de manutenção em `perfil.servicosIndependentes[]` tem seu próprio `intervalKm` e `precoIndependente` (ADR-004 / TASK-REF-11; campo renomeado de `precoMaoDeObra` na BG-011).
+
+> ⚠️ **MVP (ADR-012):** o default real é `modoRevisao: 'autorizadas'` (`perfilPadrao`), e `normalizarPerfilMvp` (`src/hooks/useCustos.ts`) **força** `'autorizadas'` + `perfilPecasGlobal: 'original'` no cálculo do MVP. O modo `independentes` segue no tipo como caminho dormente/futuro.
 
 ---
 
 ## Comportamentos (Actions do Reducer)
 
-| Action             | Comportamento                                                |
-| ------------------ | ------------------------------------------------------------ |
-| `SET_MODO_REVISAO` | Alterna entre `'autorizadas'` e `'independentes'` (Ajustes)  |
-| `SET_PERFIL_USO`   | Define perfil de uso (afeta `bloco-moto`, mas controla qual intervalo de peça usar: entrega vs casual) |
+| Action                                  | Comportamento                                                |
+| --------------------------------------- | ------------------------------------------------------------ |
+| `SET_MODO_REVISAO`                      | Alterna entre `'autorizadas'` e `'independentes'` (Ajustes)  |
+| `SET_PERFIL_USO`                        | Define perfil de uso (afeta `bloco-moto`, mas controla qual intervalo de peça usar: entrega vs casual) |
+| `SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA`    | Liga/desliga a estimativa **global** (`incluirEstimativaMaoDeObra`). Disparada pelo Segmentado de Preferências e pelo chip do card de total (ADR-013) |
+| `TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO` | Alterna a estimativa **por serviço** (`estimativaMaoDeObraPorServico[id]`). Disparada pelo toggle do `CardServico` no avulso sem valor (ADR-014) |
 
 > `perfilPecasGlobal` é definido durante o Onboarding via `SET_ONBOARDING_CAMPO`. Não há action dedicada para mudá-lo depois (DT-14 candidata).
 
@@ -64,23 +73,27 @@ Esboço - ler `calcularDetalhesRevisaoAnual` em `src/utils/calculos.ts` para det
 
 ```typescript
 if (modoRevisao === 'autorizadas') {
-  // Custo do ciclo Honda escalado por km rodado no ano
-  const ciclo = opcoes.custoCicloCompleto ?? 3334.62;  // soma das 7 revisões padrão
-  return (ciclo / 36000) * kmAnual;  // 36000 = KM_CICLO_REVISAO_HONDA
+  // 1) Base: ciclo Honda escalado por km rodado no ano
+  const base = (custoCicloCompleto / 36000) * kmAnual;  // 36000 = KM_CICLO_REVISAO_HONDA
+  // 2) + serviços AVULSOS fora do pacote (servicosManutencao):
+  //    - statusPrecoAutorizada 'informado'/'informado_usuario' → soma precoTotalAutorizada
+  //    - 'nao_informado' + estimativa ligada (global OU por-serviço) → soma M.O. estimada (~)
+  //    - 'nao_informado' sem estimativa → vira PENDÊNCIA (custoIncompleto = true)
+  return base + totalAvulsosInformadosEEstimados;
 }
 
-// Modo 'independentes': soma dos serviços ativos não-excepcionais
+// Modo 'independentes' (dormente no MVP): soma dos serviços ativos não-excepcionais
 return servicosIndependentes
-  .filter((s) => s.ativo && !s.ehExcepcional)
-  .reduce((sum, s) => sum + (s.precoMaoDeObra / s.intervalKm) * kmAnual, 0);
+  .filter((s) => s.ativo && !s.ehExcepcional && s.intervalKm > 0)
+  .reduce((sum, s) => sum + (s.precoIndependente / s.intervalKm) * kmAnual, 0);
 ```
 
-🔍 **Análise:** Os dois modos calculam por lógicas diferentes:
+🔍 **Análise:**
 
-- **Autorizadas:** custo proporcional aos km rodados, ancorado no preço do ciclo Honda (do Preset JSON). Cobre **mão de obra + peças trocadas nas revisões periódicas** - por isso `calcularCpkPorPeca` exclui peças com `incluidoNaRevisaoAutorizada: true` neste modo (INV-CALC-3 / ADR-006, sem dupla contagem).
-- **Independentes:** soma de cada serviço de mão de obra cadastrado em `servicosIndependentes[]` (apenas `ativo && !ehExcepcional`). Cobre **só mão de obra** - as peças entram pelo cálculo por peça normalmente.
+- **Autorizadas (MVP):** base do pacote Honda **+** avulsos de concessionária fora do pacote. `calcularCpkPorPeca` exclui peças com `incluidoNaRevisaoAutorizada: true` (INV-CALC-3 / ADR-006) e também pula a peça avulsa quando o serviço tem preço **oficial** que inclui a peça (`concessionariaIncluiPeca`, ADR-014). Serviços `nao_informado` sem estimativa viram pendência (`custoIncompleto`); com estimativa, somam M.O. `~`.
+- **Independentes (dormente):** soma de cada serviço de M.O. em `servicosIndependentes[]` (`ativo && !ehExcepcional`). Cobre só M.O.; as peças entram pelo CPK por peça.
 
-A comparação entre os dois modos é uma feature de produto: o Motoboy alterna em Ajustes (`SET_MODO_REVISAO`) e vê qual sai mais em conta.
+> A fusão peça + M.O. em um item por componente é **só visão** (`montarItensManutencao`) — o cálculo mantém peça (mapa `manutencao`) e M.O. (mapa `revisao.servicos`) separados. Ver `docs/arquitetura/calculos-visao.md` e o adendo da ADR-014.
 
 ---
 
@@ -125,6 +138,8 @@ export type ModoRevisao = 'autorizadas' | 'independentes';
 perfilManutencao: {
   perfilPecasGlobal: PerfilPecas;
   modoRevisao: ModoRevisao;
+  incluirEstimativaMaoDeObra?: boolean;
+  estimativaMaoDeObraPorServico?: Record<string, boolean>;
 }
 ```
 
@@ -134,8 +149,9 @@ perfilManutencao: {
 
 Documentação validada contra:
 
-- `src/types/perfil.ts` - bloco `perfilManutencao` e tipos `PerfilPecas`, `ModoRevisao`
-- `src/utils/calculos.ts` - `resolverPrecoPeca`, `calcularDetalhesRevisaoAnual`, `calcularCpkPorPeca`
-- `src/context/PerfilContext.tsx` - `SET_MODO_REVISAO`, `SET_PERFIL_USO`, `SET_SERVICO_INDEPENDENTE`
+- `src/types/perfil.ts` - bloco `perfilManutencao` (com os campos de estimativa) e tipos `PerfilPecas`, `ModoRevisao`
+- `src/utils/calculos.ts` - `calcularDetalhesRevisaoAnual` (base + avulsos + estimativa + pendências), `calcularCpkPorPeca`
+- `src/hooks/useCustos.ts` - `normalizarPerfilMvp` (força autorizadas/original no MVP)
+- `src/context/PerfilContext.tsx` - `SET_MODO_REVISAO`, `SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA`, `TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO`
 
-**Divergências encontradas:** nenhuma. Documentação atualizada em 24/05/26 (TASK-DOC-009) após REF-19 (remoção de `precoMaoDeObraIndependente` e `frequenciaRevisaoKm`) e REF-11 (migração para `servicosIndependentes[]`).
+**Divergências encontradas:** nenhuma após esta atualização. Sincronizado em 04/06/26 (TASK-DOC-014) com o MVP de manutenção (ADR-012/013/014): campos de estimativa, default `autorizadas`, avulsos de concessionária e composição como visão. Atualização anterior em 24/05/26 (DOC-009) após REF-19/REF-11.

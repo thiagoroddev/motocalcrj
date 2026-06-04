@@ -118,3 +118,7 @@
 | TASK-REF-32.2 | UI de Mão de Obra somente Concessionária + Excepcional | [2026-06-03--08h51--TASK-REF-32.2.md](./2026-06-03--08h51--TASK-REF-32.2.md) |
 | TASK-REF-32.3 | UI de Insumos original-only e grid compacto | [2026-06-03--09h22--TASK-REF-32.3.md](./2026-06-03--09h22--TASK-REF-32.3.md) |
 | TASK-REF-32.4 | Política de custo incompleto no Detalhamento | [2026-06-03--10h04--TASK-REF-32.4.md](./2026-06-03--10h04--TASK-REF-32.4.md) |
+| TASK-REF-32.5 | Estimativa de mão de obra opt-in + dados dos presets sob o MVP | [2026-06-03--12h53--TASK-REF-32.5.md](./2026-06-03--12h53--TASK-REF-32.5.md) |
+| TASK-REF-32.6 | Refinamento da UI de manutenção (estimativa por-item, status visível, edição centralizada) | [2026-06-03--20h45--TASK-REF-32.6.md](./2026-06-03--20h45--TASK-REF-32.6.md) |
+| TASK-DOC-014 | Sincronizar docs/dominio + docs/arquitetura com o código pós REF-31/32.x | [2026-06-04--15h25--TASK-DOC-014.md](./2026-06-04--15h25--TASK-DOC-014.md) |
+| TASK-RNF-013 | Validação Zod de presets e dados regionais (contrato) | [2026-06-04--15h49--TASK-RNF-013.md](./2026-06-04--15h49--TASK-RNF-013.md) |

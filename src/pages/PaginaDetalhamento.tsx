@@ -418,6 +418,11 @@ export function PaginaDetalhamento() {
               onClick: () => setEdicao({ tipo: 'preferencias' }),
               ariaLabel: 'Editar modo de revisão',
             },
+            {
+              label: incluiEstimativaMaoDeObra ? 'M.O. estimada ~' : 'M.O. valor real',
+              onClick: () => setEdicao({ tipo: 'estimativaMaoDeObra' }),
+              ariaLabel: 'Editar modo de estimativa de mão de obra',
+            },
           ]}
         />
         <SeletorPeriodo periodo={periodo} onChange={setPeriodo} />

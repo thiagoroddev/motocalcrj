@@ -10,6 +10,7 @@ import { CampoInternet } from '../ajustes/campos/CampoInternet';
 import { CampoFinanciamento } from '../ajustes/campos/CampoFinanciamento';
 import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
 import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
+import { Segmentado } from '../Segmentado';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
 import { obterPreset } from '../../data/repositorioPresets';
@@ -32,6 +33,7 @@ export type EdicaoAlvo =
   | { tipo: 'financiamento' }
   | { tipo: 'usoDiario' }
   | { tipo: 'preferencias' }
+  | { tipo: 'estimativaMaoDeObra' }
   | { tipo: 'pecaComMO'; pecaId: string }
   | { tipo: 'servicoAutorizada'; servicoId: string }
   | { tipo: 'servicoExcepcional'; servicoId: string };
@@ -59,6 +61,8 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
       return 'Uso diário';
     case 'preferencias':
       return 'Preferências';
+    case 'estimativaMaoDeObra':
+      return 'Estimativa de mão de obra';
     case 'pecaComMO': {
       const preset = obterPreset(perfil.moto.modelo);
       const peca = preset?.pecas.find((p) => p.id === alvo.pecaId);
@@ -126,6 +130,8 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
         dispatch={dispatch}
       />
     );
+  if (alvo.tipo === 'estimativaMaoDeObra')
+    return <ConteudoEstimativaMaoDeObra perfil={perfil} dispatch={dispatch} />;
   if (alvo.tipo === 'servicoExcepcional')
     return (
       <ConteudoServicoExcepcional servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />
@@ -153,6 +159,37 @@ function resolverServicoEfetivo(
 // helper compartilhado (mesma fonte da aba Mão de Obra).
 function estimativaDoServico(perfil: PerfilUsuario, servicoId: string) {
   return montarEstimativaMaoDeObra(perfil, obterPreset(perfil.moto.modelo), servicoId);
+}
+
+// Controle global da estimativa de M.O. (ADR-013/014) — mesmo Segmentado da aba
+// Preferências, acessível direto pelo chip do card de total.
+function ConteudoEstimativaMaoDeObra({
+  perfil,
+  dispatch,
+}: {
+  perfil: PerfilUsuario;
+  dispatch: Dispatch<PerfilAction>;
+}) {
+  const ligada = perfil.perfilManutencao.incluirEstimativaMaoDeObra === true;
+  return (
+    <div className="space-y-2">
+      <Segmentado
+        opcoes={[
+          { label: 'Só valor real', valor: 'nao' },
+          { label: 'Incluir ~estimativa', valor: 'sim' },
+        ]}
+        valor={ligada ? 'sim' : 'nao'}
+        onChange={(v) =>
+          dispatch({ type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA', valor: v === 'sim' })
+        }
+      />
+      <p className="text-[11px] leading-relaxed text-muted-foreground/70">
+        Completa a mão de obra que a concessionária não informa com uma estimativa (~), marcada como
+        aproximada. Desligado, o custo mostra só valores reais — e cada serviço sem valor ainda pode
+        ser estimado individualmente na aba Mão de Obra ou no popup do item.
+      </p>
+    </div>
+  );
 }
 
 function ConteudoServicoExcepcional({

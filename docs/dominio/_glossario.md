@@ -4,7 +4,7 @@
 >
 > Mantido pelo `modelador-dominio`. Atualizado a cada novo conceito.
 >
-> **Versão atual:** 2026-05-11 engenharia reversa baseada em `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts` e `docs/Requisitos_MotoCalc_RJ_v6.md`.
+> **Versão atual:** 2026-06-04 (v9) — sincronizado com o MVP de manutenção (TASK-REF-31 + pacote 32.x). Validado contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts`, `src/utils/itensManutencao.ts`, `src/utils/maoDeObraEstimada.ts` e os presets em `src/presets/*.json`.
 > **Documento de requisitos ativo:** `docs/Requisitos_MotoCalc_RJ_v6.md`. Versoes anteriores (v5) nao estao mais presentes no projeto.
 
 ---
@@ -59,27 +59,80 @@ Valor personalizado pelo Motoboy que **sobrescreve** o valor do Preset JSON em r
 
 Tipo: `'autorizadas' | 'independentes'`. Controla qual cálculo de revisão periódica é usado:
 
-- **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por km anual.
-- **`independentes`:** usa `servicosIndependentes[]` - array de `ServicoIndependente`, onde cada serviço tem `intervalKm` e `precoMaoDeObra` próprios. CPK = `∑ (precoMaoDeObra / intervalKm) × kmAnual` (apenas serviços com `ativo: true`).
+- **`autorizadas`:** usa o ciclo completo de revisões da concessionária Honda (do Preset JSON), distribuído proporcionalmente por km anual, **somando os serviços avulsos fora do pacote** que têm preço de concessionária (ver _Serviços de Manutenção do Preset_ e _Status do Preço Autorizado_).
+- **`independentes`:** soma `(precoIndependente / intervalKm) × kmAnual` para cada `ServicoIndependente` com `ativo: true && !ehExcepcional`. Cobre **só mão de obra**; as peças entram pelo CPK por peça.
 
-⚠️ **Sem dupla contagem (ADR-006 / INV-CALC-3):** no modo `autorizadas`, o cálculo por peça (`calcularCpkPorPeca`) **exclui** as peças com `incluidoNaRevisaoAutorizada: true` - óleo, vela e filtro de ar já estão no pacote de revisão Honda. No modo `independentes`, todas as peças entram pelo cálculo por peça (a revisão conta apenas mão de obra).
+⚠️ **MVP fixa `autorizadas` (ADR-012):** no MVP (lançamento 10/06), `normalizarPerfilMvp` em `src/hooks/useCustos.ts` força `modoRevisao: 'autorizadas'` e `perfilPecasGlobal: 'original'`. O default do perfil (`perfilPadrao`) também é `'autorizadas'`. O modo `independentes` continua no tipo e no cálculo como **caminho dormente/futuro**, não exposto na UI do MVP.
+
+⚠️ **Sem dupla contagem (ADR-006 / INV-CALC-3):** no modo `autorizadas`, o cálculo por peça (`calcularCpkPorPeca`) **exclui** as peças com `incluidoNaRevisaoAutorizada: true` - óleo, vela e filtro de ar já estão no pacote de revisão Honda. Também pula a peça avulsa quando o serviço vinculado tem preço **oficial** que já inclui a peça (Honda — ver _Concessionária Inclui Peça_). No modo `independentes`, todas as peças entram pelo cálculo por peça (a revisão conta apenas mão de obra).
 
 ### Serviço Independente (`ServicoIndependente`)
 
-Item de manutenção periódica com preço de mão de obra e intervalo de km próprios. Parte de `PerfilUsuario.servicosIndependentes[]`. Substituiu o tipo plano `ServicosMaoDeObra` na versão 6 do schema.
+Item de manutenção (mão de obra de troca de um componente) com intervalo de km próprio. Parte de `PerfilUsuario.servicosIndependentes[]` e também de `PresetMoto.servicosManutencao[]` (ver _Serviços de Manutenção do Preset_). Substituiu o tipo plano `ServicosMaoDeObra` na versão 6 do schema.
 
 ```typescript
 interface ServicoIndependente {
-  id: string;           // ex: 'troca-oleo', 'revisao-geral'
+  id: string;                 // ex: 'troca-oleo', 'troca-kit-transmissao'
   nome: string;
-  intervalKm: number;   // > 0 para km-driven; 0 só para temporal conhecido (INV-MANUT-1)
-  precoMaoDeObra: number; // em excepcionais, representa o preço total do serviço (peças + MO)
-  ativo: boolean;       // false = excluído do cálculo periódico
-  ehExcepcional: boolean; // true = configurado em Excepcional e sugerido em Imprevistos
+  intervalKm: number;         // > 0 km-driven; 0 só para temporal conhecido (INV-MANUT-1)
+  precoIndependente: number;  // M.O. de oficina independente. Em excepcionais (retífica),
+                              // é o valor ÚNICO peças + M.O. (ADR-007). (era precoMaoDeObra, BG-011)
+  precoTotalAutorizada: number;       // preço da concessionária para o serviço avulso
+  statusPrecoAutorizada?: StatusPrecoAutorizada; // informado | nao_informado | informado_usuario
+  concessionariaIncluiPeca?: boolean; // o preço oficial inclui a peça? (Honda true / Yamaha false)
+  incluidoNaRevisaoAutorizada: boolean; // já vem no pacote revisaoAutorizada (não soma de novo)
+  ativo: boolean;             // false = excluído do cálculo periódico
+  ehExcepcional: boolean;     // true = aba Excepcional + sugerido em Imprevistos (desligado)
 }
 ```
 
-Defaults de 9 serviços pré-cadastrados em `SERVICOS_INDEPENDENTES_PADRAO` (valores campo RJ). Serviços com `ehExcepcional: true` representam custos corretivos de alto km, ficam na aba Excepcional para edição de preço/intervalo e aparecem no Detalhamento em Imprevistos como sugestões desligadas por padrão.
+Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (12 serviços normais + 2 retíficas excepcionais; valores genéricos de campo RJ). Cada preset pode sobrepor essa lista com `servicosManutencao` específico do modelo. Serviços com `ehExcepcional: true` (retíficas; pneu na Yamaha) representam custos corretivos/não-executados, ficam na aba Excepcional e aparecem no Detalhamento em Imprevistos como sugestões desligadas por padrão.
+
+### Serviços de Manutenção do Preset (`PresetMoto.servicosManutencao`)
+
+Lista de `ServicoIndependente[]` **por modelo**, no Preset JSON (ex.: `pop110i.json`, `factor125i.json`). É a fonte da verdade dos serviços avulsos de concessionária do MVP (ADR-011/012): quais existem, intervalo realista (ver _Vida Útil_), preço oficial e seu `statusPrecoAutorizada`. A mesclagem `resolverServicosManutencaoPerfil` (`src/utils/servicosManutencaoPreset.ts`) sobrepõe esses dados sobre `perfil.servicosIndependentes`, preservando do perfil **só** edições conscientes do usuário (`informado_usuario`) — valor legado não vence o preset.
+
+### Status do Preço Autorizado (`StatusPrecoAutorizada`)
+
+Tipo: `'informado' | 'nao_informado' | 'informado_usuario'` (ADR-012 / TASK-REF-32.4). Diz a procedência do preço de concessionária de um serviço avulso:
+
+- **`informado`:** preço **oficial** da concessionária (site/orçamento). Para Honda, inclui a peça.
+- **`nao_informado`:** sem valor oficial. Gera **pendência** (custo incompleto) ou, com estimativa ligada, vira M.O. estimada (`~`).
+- **`informado_usuario`:** o usuário editou conscientemente o valor (é sempre **só M.O.**, soma a peça). Resolvido por `resolverStatusPrecoAutorizada` em `src/utils/statusPrecoAutorizada.ts`.
+
+### Concessionária Inclui Peça (`concessionariaIncluiPeca`)
+
+Flag por serviço (ADR-014) que registra **como cada marca informa o preço**, sem hardcode de marca:
+
+- **Honda → `true`** (ou ausente, compat): o preço oficial é peça + M.O. juntas → a peça avulsa **some** de Insumos quando o status é `informado` (senão duplicaria).
+- **Yamaha → `false`:** a concessionária informa **só a M.O.** → a peça avulsa **permanece** e **soma** com a M.O.
+
+Estimativa e edição do usuário são sempre só M.O. (somam a peça), independentemente da marca. O pulo da peça vive em `ehPecaCobertaPorServicoAutorizada` (`calculos.ts`): só pula no `informado` oficial + `concessionariaIncluiPeca !== false`.
+
+### Estimativa de Mão de Obra (`~`)
+
+Mão de obra **estimada** (não oficial), opt-in (ADR-013), sempre marcada com `~` e nunca somada em silêncio. `estimarMaoDeObra` (`src/utils/maoDeObraEstimada.ts`) calcula `horas[serviço] × taxa[marca] × fatorMaoDeObra[modelo]`. Liga-se de dois jeitos (efetivo = um OU outro):
+
+- **Global:** `perfilManutencao.incluirEstimativaMaoDeObra` (chip do card de total / Preferências).
+- **Por serviço:** `perfilManutencao.estimativaMaoDeObraPorServico[servicoId]` (toggle no `CardServico` do avulso sem valor).
+
+Sem estimativa e sem valor oficial, o serviço vira _pendência_ e o custo da categoria fica _incompleto_.
+
+### Fator de Mão de Obra (`fatorMaoDeObra`)
+
+Multiplicador por modelo aplicado à M.O. estimada (proxy de cilindrada), em `PresetMoto.fatorMaoDeObra` (default `1.0`). Pop 110i e Factor 125i são o fator 1.0 das suas marcas. Ver `docs/dominio/manutencao-estimativas.md`.
+
+### Item-componente / Composição do item de manutenção
+
+O item exibido na categoria Manutenção do Detalhamento (ex.: "Kit relação") **não é uma entidade** — é um **resumo por componente** que funde **duas fontes**: a peça (Insumos) e a M.O. (serviço). A fusão é **só visão** (`montarItensManutencao` em `src/utils/itensManutencao.ts`): o cálculo mantém peça e M.O. em mapas separados (verdade dos totais). O item decide o status (`oficial`/`editado`/`estimado`/`faltando`/`semMaoDeObra`) e o custo (Honda oficial = total; Yamaha/estimado/editado = M.O. + peça; faltando = só peça). Ver adendo da ADR-014.
+
+### MAPA_PECA_PARA_SERVICO
+
+Mapa explícito (`src/utils/calculos.ts`) que liga o `id` de uma peça/pneu ao `id` do serviço que a troca (ex.: `kit_relacao` ↔ `troca-kit-transmissao`, `pneu_traseiro` ↔ `troca-pneu-traseiro`). É a fonte única do vínculo peça↔serviço, usada para resolver intervalo, pular peça no autorizado e fundir o item-componente. Endereçou a DT-15 (REF-29).
+
+### Custo Incompleto / Pendência de Mão de Obra
+
+Quando um serviço avulso ativo está `nao_informado` e sem estimativa, o cálculo registra uma `PendenciaMaoDeObraConcessionaria` e marca `revisao.detalhes.custoIncompleto: true`. A UI mostra "Manutenção (parcial)" + aviso citando quantos serviços faltam. A peça avulsa continua no custo; só falta a M.O. (ADR-012/013).
 
 ### Perfil de Peças (`PerfilPecas`)
 
@@ -181,7 +234,7 @@ Tratado separadamente das peças no Preset JSON, em `PresetMoto.pneus[]`. Tem: `
 
 Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. Para Peças: `intervaloKm` ou `intervaloKmEntrega` (do Preset JSON). Para Pneus: `vidaUtilKm`.
 
-**Fonte canônica do intervalo de km:** no modo `independentes`, o `intervalKm` de cada serviço vive em `ServicoIndependente.intervalKm`. A aba **Preço Peças** exibe esse valor somente leitura; apenas a aba **Mão de Obra** permite editar o intervalo.
+**Fonte canônica do intervalo (convenção ADR-014):** a vida útil / intervalo de troca **mora no serviço** (aba Mão de Obra); **Insumos informa apenas o preço da peça, sem vida útil**. O intervalo realista do serviço é **sincronizado com a revisão fixa da marca mais próxima** (Honda ×6.000, Yamaha ×5.000; empate → arredonda para baixo), porque o avulso é executado junto de uma revisão. Excepcionais (pneu Yamaha, retíficas) usam a vida útil direta. A aba Insumos exibe o intervalo efetivo somente leitura. Prioridade de resolução: override de peça → serviço editado → preset (INV-VIDA-UTIL-1). ⚠️ A unificação peça↔serviço hoje depende de o default global estar defasado vs. o preset — fragilidade registrada na **DT-19**.
 
 **Ciclo de troca e km da última troca (RF-6.7):** quando o Motoboy informa o km da última troca de um item no card "Últimas manutenções" (`moto.kmUltimaTrocas`), o cálculo ancora o ciclo nesse km. `CustoPeca.trocasNoAno` passa a contar as trocas dos próximos 12 meses a partir do ponto real do ciclo, e `custoAnual = trocasNoAno × preço`. Sem o km informado, usa o valor amortizado (`trocasNoAno = kmAnual / intervalo`).
 
@@ -297,3 +350,4 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-22 (v6) | Modo de Revisão, Peça | Nota de não-duplicação no modo autorizado; campo `incluidoNaRevisaoAutorizada` na Peça | TASK-BG-003 (ADR-006) |
 | 2026-05-22 (v7) | Vida Útil | Ciclo de troca ancorado no km da última troca; `CustoPeca.trocasNoAno` | TASK-RF-6.7 (ADR-006) |
 | 2026-05-24 (v8) | Modo de Exibição, Diário de Trabalho, Histórico de Manutenção | **Termos eliminados** - conceitos removidos pelas TASK-REF-18/REF-19 (ADR-003, modo único, sem Registros). `Perfil de Peças` atualizado (`perfilPecasOverride` por peça não existe mais). `Categoria Display` ganhou `imprevistos`. Override ganhou nota sobre modo único. | TASK-DOC-009 |
+| 2026-06-04 (v9) | Serviço Independente, Modo de Revisão, Vida Útil + **8 termos novos** | `ServicoIndependente` corrigido (`precoIndependente`, `precoTotalAutorizada`, `statusPrecoAutorizada`, `concessionariaIncluiPeca`, `incluidoNaRevisaoAutorizada`). Adicionados: Serviços de Manutenção do Preset, Status do Preço Autorizado, Concessionária Inclui Peça, Estimativa de M.O. (~), Fator de M.O., Item-componente, MAPA_PECA_PARA_SERVICO, Custo Incompleto. Nota MVP (autorizadas) e convenção de intervalo (ADR-014) + DT-19. | TASK-DOC-014 |

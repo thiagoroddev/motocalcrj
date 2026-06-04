@@ -64,22 +64,25 @@ pecasOverrides: [
 
 ```typescript
 interface ServicoIndependente {
-  id: string;             // ex: 'troca-oleo', 'revisao-geral', 'retifica-cabecote'
+  id: string;                 // ex: 'troca-oleo', 'troca-kit-transmissao'
   nome: string;
-  intervalKm: number;     // > 0 para km-driven; 0 só para temporal conhecido (INV-MANUT-1)
-  precoMaoDeObra: number; // em excepcionais, é o preço TOTAL (peças + MO)
-  ativo: boolean;         // false = excluído do cálculo periódico
-  ehExcepcional: boolean; // true = aparece em Imprevistos, desligado por padrão (BG-005)
+  intervalKm: number;         // > 0 km-driven; 0 só para temporal conhecido (INV-MANUT-1)
+  precoIndependente: number;  // M.O. de oficina independente (era precoMaoDeObra, BG-011).
+                              // Em excepcionais, é o preço ÚNICO peças + M.O. (ADR-007)
+  precoTotalAutorizada: number;       // preço de concessionária do serviço avulso (ADR-007)
+  statusPrecoAutorizada?: StatusPrecoAutorizada; // informado | nao_informado | informado_usuario
+  concessionariaIncluiPeca?: boolean; // oficial inclui peça? Honda true / Yamaha false (ADR-014)
+  incluidoNaRevisaoAutorizada: boolean; // já no pacote revisaoAutorizada → não soma de novo
+  ativo: boolean;             // false = excluído do cálculo periódico
+  ehExcepcional: boolean;     // true = aba Excepcional + Imprevistos, desligado (BG-005)
 }
 ```
 
-**Cobre:** intervalo + preço de mão de obra de cada serviço de manutenção periódica. Substituiu o tipo plano `ServicosMaoDeObra` (que tinha 5 chaves fixas).
+**Cobre:** intervalo + preços (independente e de concessionária) de cada serviço de manutenção. Substituiu o tipo plano `ServicosMaoDeObra`. Os campos de concessionária (`precoTotalAutorizada`, `statusPrecoAutorizada`, `concessionariaIncluiPeca`) entraram nas REF-6.22/32.x para o MVP autorizado.
 
-🔍 **Estrutura desta lista (defaults em `SERVICOS_INDEPENDENTES_PADRAO` - ver `docs/arquitetura/estado_inicial.md` §II.2):**
-- 7 serviços normais ativos (`troca-oleo`, `troca-kit-transmissao`, `troca-pneu-dianteiro`, `troca-pneu-traseiro`, `revisao-geral`, `troca-vela`, `troca-filtro-ar`)
-- 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`) - `ativo: false`, `ehExcepcional: true`
+🔍 **Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (`src/context/perfilDefaults.ts`):** 12 serviços normais (`troca-oleo`, `troca-kit-transmissao`, `troca-pneu-dianteiro`, `troca-pneu-traseiro`, `troca-sapata-dianteira`, `troca-sapata-traseira`, `revisao-geral`, `troca-vela`, `troca-filtro-ar`, `troca-bateria` [temporal, `intervalKm: 0`], `troca-kit-embreagem`, `troca-kit-cilindro`) + 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`, `ativo: false`). **Cada preset pode sobrepor** essa lista com `PresetMoto.servicosManutencao` (mesclagem em `resolverServicosManutencaoPerfil`).
 
-🔍 **Fonte canônica do intervalo da peça (ADR-004):** `resolverIntervaloPeca` casa serviço com peça por `MAPA_PECA_PARA_SERVICO` (`oleo_motor` ↔ `troca-oleo`). Isso permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura.
+🔍 **Vínculo peça↔serviço (MAPA_PECA_PARA_SERVICO):** `resolverIntervaloPeca` casa peça com serviço por `MAPA_PECA_PARA_SERVICO` (`kit_relacao` ↔ `troca-kit-transmissao`). Permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura. **A vida útil mora no serviço** (convenção ADR-014).
 
 ### 3. `revisaoAutorizadaOverrides[]` - Overrides de Revisão Honda
 
@@ -96,27 +99,14 @@ interface RevisaoAutorizadaOverride {
 
 🔍 **Estrutura por índice é frágil** se o Preset JSON adicionar/remover linhas. Risco aceito (manual Honda é estável, 7 revisões fixas). DT-13 endereçada em 20/05/26 (REF-12 - calculador agora aplica o override).
 
-### 3. `revisaoAutorizadaOverrides[]` Overrides de Revisão
-
-```typescript
-interface RevisaoAutorizadaOverride {
-  index: number; // índice no array preset.revisaoAutorizada
-  precoTotal: number; // valor customizado
-}
-```
-
-**Cobre:** preço total de revisões na concessionária autorizada (1ª revisão, 2ª revisão, etc).
-
 **Exemplo:**
 
 ```typescript
 revisaoAutorizadaOverrides: [
-  { index: 0, precoTotal: 280 }, // 1ª revisão: Motoboy edita para R$ 280
-  // index 1, 2, 3... continuam usando preset
+  { index: 0, precoPecas: 200, precoMaoDeObra: 80, precoTotal: 280 }, // 1ª revisão editada
+  // index 1, 2, 3... continuam usando o preset
 ];
 ```
-
-🔍 **Análise:** estrutura por índice é **frágil** se o Preset JSON adicionar/remover linhas de revisão, os índices ficam desalinhados. Possível dívida técnica.
 
 ---
 
@@ -155,8 +145,8 @@ return 0;  // fallback (não deveria acontecer)
 const override = pecasOverrides.find((o) => o.id === pecaId);
 if (override?.intervaloKmEditado != null) return override.intervaloKmEditado;
 
-// 2. ServicoIndependente ativo vinculado via MAPA_PECA_PARA_SERVICO é a fonte canônica (ADR-004)
-const servico = resolverServicoIndependentePorPeca(pecaId, servicosIndependentes);
+// 2. ServicoIndependente vinculado SÓ QUANDO EDITADO (≠ default global) — Decisão C da REF-29
+const servico = resolverServicoComIntervaloEditado(pecaId, servicosIndependentes);
 if (servico) return servico.intervalKm;
 
 // 3. Cai no Preset JSON (intervaloKmEntrega para 'entrega', intervaloKm caso contrário)
@@ -169,10 +159,12 @@ if (pneu) return pneu.vidaUtilKm;
 return 1;  // evita divisão por zero
 ```
 
-🔍 **Três fontes em ordem de prioridade:**
+🔍 **Três fontes em ordem de prioridade (INV-VIDA-UTIL-1):**
 1. **Override individual** (`pecasOverrides[].intervaloKmEditado`)
-2. **`ServicoIndependente.intervalKm`** ativo via `MAPA_PECA_PARA_SERVICO` (ADR-004 - edição em um lugar só)
-3. **Preset JSON**
+2. **`ServicoIndependente.intervalKm`** via `MAPA_PECA_PARA_SERVICO`, **só quando difere do default** em `SERVICOS_INDEPENDENTES_PADRAO` (`resolverServicoComIntervaloEditado`) — preserva o `intervaloKmEntrega` real do preset quando o serviço está no default (REF-29).
+3. **Preset JSON** (`intervaloKmEntrega`/`intervaloKm` da peça; `vidaUtilKm` do pneu).
+
+⚠️ **DT-19:** como o cálculo usa o perfil **mesclado** (intervalos do preset via `normalizarPerfilMvp`), o serviço quase sempre difere do default e acaba sendo a fonte do intervalo da peça também — o que mantém peça e M.O. amortizando juntas. Essa unificação é implícita/frágil (depende do default global estar defasado). Ver `divida-tecnica.md` DT-19.
 
 ---
 
@@ -290,7 +282,11 @@ export interface ServicoIndependente {
   id: string;
   nome: string;
   intervalKm: number;
-  precoMaoDeObra: number;
+  precoIndependente: number;
+  precoTotalAutorizada: number;
+  statusPrecoAutorizada?: StatusPrecoAutorizada;
+  concessionariaIncluiPeca?: boolean;
+  incluidoNaRevisaoAutorizada: boolean;
   ativo: boolean;
   ehExcepcional: boolean;
 }
@@ -318,4 +314,5 @@ Documentação validada contra:
 
 - INV-OVR-1 (overrides órfãos) não protegida - DT-11
 - INV-OVR-4 (anoFimOriginal força paralela) mencionada em RN-11 mas não implementada em `calculos.ts`
-- Documentação atualizada em 24/05/26 (TASK-DOC-009): `PecaOverride` reescrito (precoEditadoOriginal/Paralela em vez de precoEditado único; remoção de `perfilPecasOverride`); `servicosMaoDeObra` substituído por `servicosIndependentes` (REF-11); seção "Override vs Registro" removida (Registros eliminados).
+- **Sincronizado em 04/06/26 (TASK-DOC-014):** `ServicoIndependente` corrigido (`precoIndependente` em vez de `precoMaoDeObra`, + `precoTotalAutorizada`/`statusPrecoAutorizada`/`concessionariaIncluiPeca`/`incluidoNaRevisaoAutorizada`); `resolverIntervaloPeca` passo 2 ajustado para "só quando editado" (`resolverServicoComIntervaloEditado`, REF-29) + nota DT-19; defaults atualizados (12 normais + 2 excepcionais; `servicosManutencao` por preset); removida seção duplicada de `revisaoAutorizadaOverrides`.
+- Atualização anterior em 24/05/26 (DOC-009): `PecaOverride` reescrito; `servicosMaoDeObra` → `servicosIndependentes` (REF-11); seção "Override vs Registro" removida.

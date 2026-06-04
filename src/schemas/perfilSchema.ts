@@ -86,7 +86,7 @@ const pecaOverride = z.object({
   intervaloKmEditado: inteiroPositivo.nullable(),
 });
 
-const servicoIndependente = z
+export const servicoIndependente = z
   .object({
     id: z.string(),
     nome: z.string(),
