@@ -1,23 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { getNomeModelo, CATALOGO } from '../../../data/catalogoModelos';
-import { buscarPrecoFipe } from '../../../services/fipeService';
+import { dadosRJ } from '../../../data/dadosRJ';
 import { Input } from '../../../components/ui/input';
-import type { FipeCache } from '../../../types/perfil';
 
 const ANO_MIN = 2000;
 const ANO_MAX = new Date().getFullYear() + 1;
-const CACHE_DIAS = 30;
-
-function cacheValida(cache: FipeCache | null, marca: string, modelo: string, ano: number): boolean {
-  if (!cache || cache.anoModelo !== ano || cache.marca !== marca || cache.modelo !== modelo) {
-    return false;
-  }
-  const diffDias = (Date.now() - new Date(cache.dataConsulta).getTime()) / 86_400_000;
-  return diffDias < CACHE_DIAS;
-}
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -31,107 +21,33 @@ export function Passo3() {
   const anoNum = parseInt(ano, 10);
   const valido = !isNaN(anoNum) && anoNum >= ANO_MIN && anoNum <= ANO_MAX;
 
-  type FipeEstado = 'inativo' | 'buscando' | 'ok' | 'fallback' | 'erro';
-  const [fipeEstado, setFipeEstado] = useState<FipeEstado>('inativo');
   const { marca, modelo } = perfil.moto;
-  const fipeCacheRef = useRef(perfil.fipeCache);
+  const modeloDados = CATALOGO[modelo];
 
-  useEffect(() => {
-    fipeCacheRef.current = perfil.fipeCache;
-  }, [perfil.fipeCache]);
+  // FIPE vem da tabela hardcoded do preset (atualizada mensalmente pelo script
+  // `npm run fipe:update`). Sem consulta em runtime — ver ADR-015.
+  const valorFipe = valido && modeloDados ? modeloDados.tabelaFipe[String(anoNum)] : undefined;
 
-  const [fipeInfo, setFipeInfo] = useState<{
-    valor: number;
-    mesReferencia: string;
-    estimativa: boolean;
-  } | null>(
-    cacheValida(perfil.fipeCache, marca, modelo, anoNum)
-      ? { valor: perfil.fipeCache!.valor, mesReferencia: '', estimativa: false }
-      : null,
-  );
-
-  useEffect(() => {
-    if (!valido) {
-      setFipeInfo(null);
-      setFipeEstado('inativo');
-      return;
-    }
-
-    const fipeCache = fipeCacheRef.current;
-    if (cacheValida(fipeCache, marca, modelo, anoNum)) {
-      setFipeInfo({ valor: fipeCache!.valor, mesReferencia: '', estimativa: false });
-      setFipeEstado('ok');
-      return;
-    }
-
-    const modeloDados = CATALOGO[modelo];
-    if (!modeloDados) {
-      return;
-    }
-
-    let cancelado = false;
-    setFipeEstado('buscando');
-    setFipeInfo(null);
-
-    const timerId = setTimeout(() => {
-      buscarPrecoFipe(
-        marca,
-        modeloDados.nomeFipe,
-        anoNum,
-        modeloDados.codigoFipe || undefined,
-      ).then((resultado) => {
-        if (cancelado) {
-          return;
-        }
-        if (resultado) {
-          setFipeInfo({
-            valor: resultado.valor,
-            mesReferencia: resultado.mesReferencia,
-            estimativa: false,
-          });
-          setFipeEstado('ok');
-          dispatch({
-            type: 'SET_FIPE_CACHE',
-            cache: {
-              valor: resultado.valor,
-              codigoFipe: resultado.codigoFipe,
-              dataConsulta: new Date().toISOString().slice(0, 10),
-              anoModelo: resultado.anoModelo,
-              marca,
-              modelo,
-            },
-          });
-        } else {
-          // API falhou - tentar fallback da tabelaFipe
-          const valorFallback = modeloDados.tabelaFipe[String(anoNum)];
-          if (valorFallback) {
-            setFipeInfo({ valor: valorFallback, mesReferencia: '', estimativa: true });
-            setFipeEstado('fallback');
-            dispatch({
-              type: 'SET_FIPE_CACHE',
-              cache: {
-                valor: valorFallback,
-                codigoFipe: modeloDados.codigoFipe,
-                dataConsulta: new Date().toISOString().slice(0, 10),
-                anoModelo: anoNum,
-                marca,
-                modelo,
-              },
-            });
-          } else {
-            setFipeEstado('erro');
-          }
-        }
-      });
-    }, 800);
-
-    return () => {
-      cancelado = true;
-      clearTimeout(timerId);
-    };
-  }, [anoNum, valido, marca, modelo, dispatch]);
+  // Alíquota de IPVA da fonte canônica (`dados_rj.json` via dadosRJ) — ADR/REV-001-A06.
+  const aliquotaIpva = dadosRJ.ipva.aliquotaMotos;
+  const percentualIpva = (aliquotaIpva * 100).toLocaleString('pt-BR', {
+    maximumFractionDigits: 2,
+  });
 
   function salvarEAvancar() {
+    if (valorFipe !== undefined && modeloDados) {
+      dispatch({
+        type: 'SET_FIPE_CACHE',
+        cache: {
+          valor: valorFipe,
+          codigoFipe: modeloDados.codigoFipe,
+          dataConsulta: new Date().toISOString().slice(0, 10),
+          anoModelo: anoNum,
+          marca,
+          modelo,
+        },
+      });
+    }
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'moto',
@@ -139,8 +55,6 @@ export function Passo3() {
     });
     irParaProximo();
   }
-
-  const mostraResultado = fipeEstado === 'ok' || fipeEstado === 'fallback';
 
   return (
     <PassoLayout
@@ -151,7 +65,7 @@ export function Passo3() {
           : undefined
       }
       aoProximo={salvarEAvancar}
-      podeContinuar={valido && fipeEstado !== 'buscando'}
+      podeContinuar={valido}
     >
       <Input
         type="number"
@@ -166,32 +80,19 @@ export function Passo3() {
 
       {valido && ano.length >= 4 && (
         <div className="mt-4">
-          {fipeEstado === 'buscando' && (
-            <p className="text-muted-foreground/60 text-sm">Consultando FIPE…</p>
-          )}
-          {mostraResultado && fipeInfo && (
+          {valorFipe !== undefined ? (
             <div className="space-y-1">
               <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-                <div>
-                  <span className="text-muted-foreground text-sm">Valor FIPE</span>
-                  {fipeInfo.estimativa && (
-                    <p className="text-muted-foreground/50 text-xs">estimativa (FIPE offline)</p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <span className="text-foreground font-semibold">
-                    {formatarMoeda(fipeInfo.valor)}
-                  </span>
-                  {fipeInfo.mesReferencia && (
-                    <p className="text-muted-foreground/50 text-xs">{fipeInfo.mesReferencia}</p>
-                  )}
-                </div>
+                <span className="text-muted-foreground text-sm">Valor FIPE</span>
+                <span className="text-foreground font-semibold">{formatarMoeda(valorFipe)}</span>
               </div>
               {new Date().getFullYear() - anoNum < 15 ? (
                 <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-                  <span className="text-muted-foreground text-sm">IPVA estimado (2% a.a.)</span>
+                  <span className="text-muted-foreground text-sm">
+                    IPVA estimado ({percentualIpva}% a.a.)
+                  </span>
                   <span className="text-foreground font-semibold">
-                    {formatarMoeda(fipeInfo.valor * 0.02)}
+                    {formatarMoeda(valorFipe * aliquotaIpva)}
                   </span>
                 </div>
               ) : (
@@ -200,10 +101,9 @@ export function Passo3() {
                 </p>
               )}
             </div>
-          )}
-          {fipeEstado === 'erro' && (
+          ) : (
             <p className="text-muted-foreground/60 text-sm">
-              Não foi possível buscar o valor FIPE. O IPVA será calculado quando disponível.
+              Valor FIPE indisponível para {anoNum}. O IPVA será calculado quando disponível.
             </p>
           )}
         </div>

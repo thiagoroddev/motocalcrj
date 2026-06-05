@@ -1,6 +1,7 @@
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
 import { CATALOGO } from '../data/catalogoModelos';
+import { dadosRJ } from '../data/dadosRJ';
 import { obterPreset } from '../data/repositorioPresets';
 import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
@@ -38,7 +39,7 @@ export function PaginaInsumos() {
     },
     etanol: {
       preco: perfilPadrao.financeiro.combustiveis.etanol.preco,
-      autonomia: Math.round(autonomiaBase * 0.78),
+      autonomia: Math.round(autonomiaBase * dadosRJ.autonomiaEtanolFatorReducao),
     },
   };
 

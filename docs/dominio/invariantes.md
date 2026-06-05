@@ -26,6 +26,7 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 
 **Onde é protegida:**
 - `PerfilReducer` actions que removem Preset cuidam para reposicionar `presetAtivoId`
+- `CARREGAR_PERFIL` recebe apenas `presetId` e o reducer resolve o Preset internamente; id inexistente não altera o estado
 - `criarEstadoInicial` recupera storage parcial selecionando `presets[0]` quando a chave ativa está ausente ou aponta para id inexistente
 - `useEffect` de persistência tem guard: `if (!estado.presetAtivoId) return`
 

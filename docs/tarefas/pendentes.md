@@ -22,61 +22,7 @@ Obedeça essa ordem:
 > TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
 
-### TASK-REF-33 CARREGAR_PERFIL por presetId + invariantes relacionais no schema
 
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A04; invariante de preset ativo (`docs/dominio/invariantes.md`)
-- **Observações:** `CARREGAR_PERFIL` em `src/context/PerfilContext.tsx` aceita `perfil`+`presetId` e valida só o shape via `perfilSchema.safeParse`, não se o preset existe nem a invariante de preset ativo. Como `dispatch` é exposto, consumidores futuros podem quebrar a invariante. Além disso, relações como `revisaoAutorizadaOverride.precoTotal === precoPecas + precoMaoDeObra` não são validadas pelo schema.
-  - **Direção:** considerar trocar `CARREGAR_PERFIL` por action orientada a `presetId` (reducer resolve o preset internamente) e adicionar `superRefine` para invariantes relacionais relevantes prioridade antes de habilitar export/import público (TASK-RF-7.1).
-  - **Antes de executar:** revalidar o estado atual do reducer (o REV-001 alerta que referências de linha podem ter mudado).
-
-### TASK-REF-34 Isolar storage do tema e tornar escritas resilientes
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A05; `docs/contexto-projeto-ai.md`, `docs/requisitos/nao-funcionais.md`
-- **Observações:** A doc promete isolamento de `localStorage` em `services/`, mas `src/context/ThemeContext.tsx` lê/escreve `localStorage` direto (anti-padrão do núcleo: acoplar UI a infraestrutura). Escritas críticas em `src/services/perfilStorage.ts` e na persistência de `src/context/PerfilContext.tsx` podem falhar por quota/modo privado sem caminho de recuperação explícito.
-  - **Direção:** criar `themeStorage.ts` (ou storage genérico) e proteger escritas críticas com try/catch + comportamento documentado; OU, se decidir manter o tema inline, ajustar a regra na doc para "storage de perfil" resolver a contradição doc↔código de um jeito ou de outro.
-  - **Antes de executar:** revalidar `ThemeContext.tsx` (não lido na síntese da REV).
-
-### TASK-RNF-014 Validar resposta da FIPE (BrasilAPI) com Zod/type guards
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A07
-- **Observações:** `src/services/fipeService.ts` tipa o retorno da BrasilAPI por generic/cast de `json()` (`fetchJson<T>`). API externa é fronteira insegura shape divergente passaria silenciosamente e quebraria o parsing a jusante. Adicionar validação Zod (ou type guards pequenos) às respostas das 4 rotas (marcas, veículos, anos, preço) e à rota rápida por código, mantendo cache de sessão / timeout (`AbortController`) / fallback `tabelaFipe` existentes e os 6 testes de `fipeService.test.ts` verdes. Aceitável hoje; frágil antes de lançamento público.
-
-### TASK-CHORE-015 Alinhar constantes de negócio e documentação às fontes canônicas
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A06; fonte canônica `src/data/dados_rj.json`
-- **Observações:** Fontes duplicadas de constantes de negócio e pequenos desalinhamentos doc↔código (sozinhos não quebram, mas criam ruído para decisões futuras). Itens (pode quebrar em sub-commits atômicos):
-  - `src/pages/onboarding/passos/Passo3.tsx` hardcoda IPVA `* 0.02` e o label "2% a.a." → ler `dadosRJ.ipva.aliquotaMotos`.
-  - `src/context/PerfilContext.tsx` hardcoda fator etanol `0.78` no `COMMIT_ONBOARDING` → ler `dados_rj.json: autonomiaEtanolFatorReducao`.
-  - Revalidar referência a `vite-plugin-pwa` em `docs/contexto-projeto-ai.md` sem dependência correspondente em `package.json` (README já corrigido pela TASK-DOC-013).
-  - Revalidar `Math.ceil(eventosRevisaoNoAno)` em `src/components/detalhamento/SecaoManutencao.tsx` vs. o padrão de eventos aproximados (`≈`) já aplicado a peças/serviços.
 
 ### TASK-REF-35 Extração oportunista de arquivos grandes (com gatilho)
 
@@ -101,21 +47,6 @@ Obedeça essa ordem:
 - **Dependências:**
 - **REQ/ADR/DT:** REV-001-A09
 - **Observações:** 🟢 Sugestão pequenos atritos de DX, executar se houver recorrência: (1) `criarLocalStorageFalso` aparece duplicado em testes → extrair para `src/test/localStorageFalso.ts`; (2) a fixture de desenvolvimento é importada assíncronamente em `src/main.tsx` enquanto `PerfilProvider` já inicializa lendo o storage antes avaliar bootstrap DEV antes do render ou mover a carga da fixture para a criação do estado inicial em DEV. Sem prioridade alta; registrada por convenção do projeto.
-
-### TASK-TEST-003 Testes de render da UI de estimativa de manutenção (REF-32.6)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** Normal
-- **Esforço-H/IA:** P/M
-- **Data-hora origem:** 04/06/26 00:00
-- **Dependências:** TASK-REF-32.6 (concluída)
-- **REQ/ADR/DT:** ADR-014; gerada pela revisão da TASK-REF-32.6
-- **Observações:** A REF-32.6 entregou interações de UI sem teste de render (infra jsdom já existe; o smoke cobre só o render base). Cobrir:
-  - `CardServico` (modo `autorizada`, `nao_informado`): com estimativa efetiva → preço read-only exibindo o valor estimado com `~`; sem ela → editável; toggle `TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO`; com global ligado → nota "ligada em Preferências" (sem toggle).
-  - `PopoverDetalhesPeca`: tabela "Composição por troca" sempre visível; com M.O. soma peça + M.O.; sem M.O. mostra só a peça; total bate com `item.custoAnual`.
-  - `CardTotalAnual` + `DialogEdicaoCusto`: chip mostra o modo ativo e abre o popup `estimativaMaoDeObra` (Segmentado Só valor real / Incluir ~estimativa).
 
 ## Decisões de UI/UX Pendentes
 

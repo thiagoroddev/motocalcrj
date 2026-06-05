@@ -13,6 +13,7 @@ import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
 import { Segmentado } from '../Segmentado';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO } from '../../data/catalogoModelos';
+import { dadosRJ } from '../../data/dadosRJ';
 import { obterPreset } from '../../data/repositorioPresets';
 import { MAPA_PECA_PARA_SERVICO, resolverServicoComIntervaloEditado } from '../../utils/calculos';
 import { resolverServicosManutencaoPerfil } from '../../utils/servicosManutencaoPreset';
@@ -277,7 +278,7 @@ function ConteudoCombustivel({
     },
     etanol: {
       preco: perfilPadrao.financeiro.combustiveis.etanol.preco,
-      autonomia: Math.round(autonomiaBase * 0.78),
+      autonomia: Math.round(autonomiaBase * dadosRJ.autonomiaEtanolFatorReducao),
     },
   };
 

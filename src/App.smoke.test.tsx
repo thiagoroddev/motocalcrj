@@ -4,12 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import { perfilPadrao } from './context/PerfilContext';
-import { buscarPrecoFipe } from './services/fipeService';
 import type { PerfilUsuario, PresetEntry } from './types/perfil';
-
-vi.mock('./services/fipeService', () => ({
-  buscarPrecoFipe: vi.fn(),
-}));
 
 const CHAVE_PRESETS = 'estimamoto:v1:presets';
 const CHAVE_ATIVO = 'estimamoto:v1:presetAtivo';
@@ -161,12 +156,6 @@ describe('App - smoke UI', () => {
   beforeEach(() => {
     vi.stubGlobal('localStorage', criarLocalStorageFalso());
     window.history.pushState({}, '', '/');
-    vi.mocked(buscarPrecoFipe).mockResolvedValue({
-      valor: 13200,
-      codigoFipe: '',
-      mesReferencia: 'junho de 2026',
-      anoModelo: 2024,
-    });
   });
 
   afterEach(() => {
@@ -230,7 +219,6 @@ describe('App - smoke UI', () => {
     expect(presets).toHaveLength(1);
     expect(presets[0].perfil.onboardingConcluido).toBe(true);
     expect(localStorage.getItem(CHAVE_ATIVO)).toBe(presets[0].presetId);
-    expect(buscarPrecoFipe).toHaveBeenCalled();
   });
 
   it('renderiza estimativa a partir de preset salvo', async () => {
@@ -280,5 +268,18 @@ describe('App - smoke UI', () => {
     });
     expect(obterCpkDetalhamento()).toBeTruthy();
     expect(obterCpkDetalhamento()).not.toBe(cpkAntes);
+  });
+
+  it('o chip de M.O. abre o popup de estimativa (Segmentado Só valor real / Incluir ~estimativa)', async () => {
+    salvarPresetNoStorage();
+    renderizarAppEm('/estimativa/detalhamento');
+    await screen.findByText('Total estimado no ano');
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Editar modo de estimativa de mão de obra' }),
+    );
+
+    expect(await screen.findByText('Só valor real')).toBeInTheDocument();
+    expect(screen.getByText('Incluir ~estimativa')).toBeInTheDocument();
   });
 });

@@ -1,24 +1,24 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { LocalStorageThemeStorage } from '../services/themeStorage';
+import type { Tema } from '../services/themeStorage';
 
-export type Tema = 'dark' | 'light';
+export type { Tema } from '../services/themeStorage';
 
 interface ThemeContextValue {
   tema: Tema;
   toggleTema: () => void;
 }
 
-const CHAVE_TEMA = 'motocalc:tema';
+const themeStorage = new LocalStorageThemeStorage();
 
 const ThemeContext = createContext<ThemeContextValue>({ tema: 'dark', toggleTema: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [tema, setTema] = useState<Tema>(
-    () => (localStorage.getItem(CHAVE_TEMA) as Tema | null) ?? 'dark',
-  );
+  const [tema, setTema] = useState<Tema>(() => themeStorage.carregarTema());
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', tema === 'light');
-    localStorage.setItem(CHAVE_TEMA, tema);
+    themeStorage.salvarTema(tema);
   }, [tema]);
 
   return (

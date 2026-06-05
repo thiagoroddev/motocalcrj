@@ -107,7 +107,7 @@ Este bloco não merece arquivo próprio (é pequeno e não evolui muito). Docume
 export interface FipeCache {
   valor: number; // valor venal em R$
   dataConsulta: string; // ISO 8601 'YYYY-MM-DD'
-  codigoFipe: string; // código retornado pela BrasilAPI
+  codigoFipe: string; // código FIPE do preset (tabelaFipe)
   anoModelo: number; // ano consultado
   marca: string; // ex: 'Honda'
   modelo: string; // ex: 'pop110i'
@@ -120,10 +120,9 @@ Foram adicionados na correção A06 do checklist. Sem eles, ao trocar de modelo 
 
 ### Comportamento
 
-- **Onboarding Passo 3:** consulta a BrasilAPI (`/api/fipe/motos/v1/{codigo}`) e popula `fipeCache`.
+- **Onboarding Passo 3:** lê o valor de `tabelaFipe[ano]` do preset (hardcoded, atualizado mensalmente por script — ADR-015) e popula `fipeCache` ao avançar. Sem consulta em runtime.
 - **Cálculo de IPVA:** lê `fipeCache.valor` para alíquota.
-- **Offline:** usa cache existente + aviso de data. Se sem cache + offline: input manual (RF-ON-07).
-- **Invalidação:** se `marca` ou `modelo` no perfil divergir do cache, considera cache obsoleto e re-consulta.
+- **Ano fora da tabela:** Passo 3 exibe "valor indisponível"; `fipeCache` não é gravado para esse ano.
 
 ### Invariante
 

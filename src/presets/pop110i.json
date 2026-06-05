@@ -7,20 +7,28 @@
   "consumoKmLComBau": 33.0,
   "aceitaEtanol": false,
   "fatorMaoDeObra": 1.0,
-  "codigoFipe": "",
+  "codigoFipe": "811132-4",
   "tabelaFipe": {
-    "2022": 11800,
-    "2023": 12400,
-    "2024": 13200,
-    "2025": 14500
+    "2016": 9650,
+    "2017": 9892,
+    "2018": 10400,
+    "2019": 10660,
+    "2020": 10927,
+    "2021": 11201,
+    "2022": 11482,
+    "2023": 11802,
+    "2024": 12126
   },
 
   "_fonte": {
     "manual": "MP Pop110i (2022~2024) D2203-MAN-1290",
     "precos": "Mercado Livre RJ + Shopee - média de 2 a 3 vendedores com frete para RJ",
-    "dataColeta": "2026-04",
-    "anoModelo": { "inicio": 2022, "fim": 2024 },
-    "codigoFipeNota": "A ser descoberto via BrasilAPI após implementação. GET /api/fipe/motos/v1/{codigoFipe}",
+    "dataColeta": "2026-06",
+    "anoModelo": {
+      "inicio": 2016,
+      "fim": 2024
+    },
+    "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 811132-4. Modelo: POP 110i.",
     "consumoNota": "consumoKmL = sem baú (36 km/L). consumoKmLComBau = com baú/bag (33 km/L). Fonte: manual + telemetria real."
   },
 

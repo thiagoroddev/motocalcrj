@@ -9,15 +9,15 @@
   "fatorMaoDeObra": 1.0,
   "codigoFipe": "827104-6",
   "tabelaFipe": {
-    "2017": 11312,
-    "2018": 11595,
-    "2019": 12479,
-    "2020": 12791,
-    "2021": 14070,
-    "2022": 14422,
-    "2023": 15116,
-    "2024": 15954,
-    "2025": 17277
+    "2017": 10334,
+    "2018": 11114,
+    "2019": 11392,
+    "2020": 12221,
+    "2021": 12628,
+    "2022": 13586,
+    "2023": 14228,
+    "2024": 15107,
+    "2025": 16679
   },
   "_fonte": {
     "manual": "Yamaha Serviços + manual Factor 125i UBS 2024 (consultados em 02/06/2026)",
@@ -27,7 +27,7 @@
       "inicio": 2017,
       "fim": 2025
     },
-    "codigoFipeNota": "Coletado via site oficial FIPE. Código: 827104-6. Modelo: YBR 125i FACTOR ED/FLEX.",
+    "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827104-6. Modelo: YBR 125i FACTOR ED/FLEX.",
     "consumoNota": "Estimativa operacional para motor Blueflex 125cc em trânsito urbano com e sem baú; validar com fonte específica quando disponível.",
     "fontesLocais": [
       "outros/dados yamaha/factor-125-i-ubs-2024/fipe-factor-125i.md",

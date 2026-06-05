@@ -349,11 +349,60 @@ describe('perfilReducer', () => {
     };
     const resultado = perfilReducer(estadoInicial, {
       type: 'CARREGAR_PERFIL',
-      perfil: perfilAlternativo,
       presetId: 'p2',
     });
     expect(resultado.perfil.apelido).toBe('Pessoal');
     expect(resultado.presetAtivoId).toBe('p2');
+  });
+
+  it('CARREGAR_PERFIL ignora presetId inexistente e preserva o estado', () => {
+    const estadoInicial: EstadoApp = {
+      perfil: perfilPadrao,
+      presets: [
+        {
+          presetId: 'p1',
+          nome: 'Trabalho',
+          criadoEm: '2026-01-01',
+          atualizadoEm: '2026-01-01',
+          perfil: { ...perfilPadrao, apelido: 'Trabalho' },
+        },
+      ],
+      presetAtivoId: 'p1',
+    };
+
+    const resultado = perfilReducer(estadoInicial, {
+      type: 'CARREGAR_PERFIL',
+      presetId: 'inexistente',
+    });
+
+    expect(resultado).toBe(estadoInicial);
+  });
+
+  it('CARREGAR_PERFIL ignora preset com perfil inválido', () => {
+    const perfilInvalido = {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, kmAtual: -1 },
+    } as PerfilUsuario;
+    const estadoInicial: EstadoApp = {
+      perfil: perfilPadrao,
+      presets: [
+        {
+          presetId: 'p-invalido',
+          nome: 'Inválido',
+          criadoEm: '2026-01-01',
+          atualizadoEm: '2026-01-01',
+          perfil: perfilInvalido,
+        },
+      ],
+      presetAtivoId: null,
+    };
+
+    const resultado = perfilReducer(estadoInicial, {
+      type: 'CARREGAR_PERFIL',
+      presetId: 'p-invalido',
+    });
+
+    expect(resultado).toBe(estadoInicial);
   });
 
   // ── Sincronizacao com presets ─────────────────

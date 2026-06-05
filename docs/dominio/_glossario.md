@@ -283,11 +283,11 @@ Action única do reducer responsável pela primeira persistência. Antes desse c
 
 ### FIPE Cache (`FipeCache`)
 
-Cache da consulta à BrasilAPI FIPE feita no Passo 3 do Onboarding. Estrutura: `{ valor, dataConsulta, codigoFipe, anoModelo, marca, modelo }`. Os campos `marca` e `modelo` permitem invalidar cache ao trocar de modelo (correção A06).
+Snapshot do valor venal escolhido no Passo 3 do Onboarding, persistido no perfil e consumido pelo cálculo de IPVA (`calcularCustosPorCategoria` lê `perfil.fipeCache.valor`). Estrutura: `{ valor, dataConsulta, codigoFipe, anoModelo, marca, modelo }`. O valor vem da `tabelaFipe[ano]` do preset (não mais de consulta em runtime — ver ADR-015); `dataConsulta` registra quando o snapshot foi gravado.
 
-### BrasilAPI / FIPE
+### FIPE (hardcoded por preset)
 
-Serviço externo gratuito (`https://brasilapi.com.br/api/fipe/motos/v1/`) consultado uma vez no Onboarding (Passo 3) para obter o valor venal da moto. Sem chave, sem custo, anônimo.
+O valor venal da moto vem da `tabelaFipe` (ano → valor) **hardcoded** em cada preset (`src/presets/*.json`), exposta pelo catálogo (`src/data/catalogoModelos.ts`). É atualizada mensalmente pelo script `npm run fipe:update` (TASK-CHORE-017), que consulta a API REST da Parallelum FIPE e commita os valores. **Não há consulta de FIPE em runtime** — a BrasilAPI foi aposentada (ADR-015, TASK-REF-36); o onboarding Passo 3 lê o valor de forma síncrona da tabela.
 
 ### Dados RJ (`DadosRJ`)
 

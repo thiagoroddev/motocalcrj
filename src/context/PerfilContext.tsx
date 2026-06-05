@@ -10,6 +10,7 @@ import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { perfilSchema, presetEntrySchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
+import { dadosRJ } from '../data/dadosRJ';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
   perfilPadrao,
@@ -120,7 +121,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ? modeloDados.consumoKmLComBau
           : modeloDados.consumoKmL
         : state.perfil.financeiro.combustiveis.comum.autonomia;
-      const autonomiaEtanol = Math.round(autonomiaGas * 0.78);
+      const autonomiaEtanol = Math.round(autonomiaGas * dadosRJ.autonomiaEtanolFatorReducao);
 
       const combustiveisComBase = modeloDados
         ? {
@@ -628,9 +629,12 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
     // ── Presets ──────────────────────────────────
     case 'CARREGAR_PERFIL': {
-      const validacao = perfilSchema.safeParse(action.perfil);
+      const preset = state.presets.find((p) => p.presetId === action.presetId);
+      if (!preset) return state;
+
+      const validacao = perfilSchema.safeParse(preset.perfil);
       if (!validacao.success) return state;
-      return { ...state, perfil: action.perfil, presetAtivoId: action.presetId };
+      return { ...state, perfil: preset.perfil, presetAtivoId: preset.presetId };
     }
 
     case 'RESETAR_PERFIL':
@@ -735,8 +739,16 @@ export function PerfilProvider({ children, storage }: PerfilProviderProps) {
     if (!estado.presetAtivoId) {
       return;
     }
-    storageRef.current.salvarPresets(estado.presets);
-    storageRef.current.setPresetAtivo(estado.presetAtivoId);
+    try {
+      storageRef.current.salvarPresets(estado.presets);
+    } catch {
+      // Storage injetado também é tratado como best-effort.
+    }
+    try {
+      storageRef.current.setPresetAtivo(estado.presetAtivoId);
+    } catch {
+      // Tenta persistir o preset ativo mesmo se a lista de presets falhar.
+    }
   }, [estado]);
 
   return <PerfilContext.Provider value={{ estado, dispatch }}>{children}</PerfilContext.Provider>;

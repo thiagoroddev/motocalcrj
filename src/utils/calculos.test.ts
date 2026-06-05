@@ -723,6 +723,21 @@ describe('calcularCustoRevisaoAnual', () => {
     expect(resultado.detalhes.servicos.has('retifica-completa')).toBe(false);
   });
 
+  it('amortiza pelo km do ciclo do preset, não pela constante 36.000 (ADR-016)', () => {
+    const porPreset = calcularDetalhesRevisaoAnual('autorizadas', 18000, {
+      custoCicloCompleto: 3000,
+      quantidadeRevisoesCicloHonda: 7,
+      kmCicloRevisao: 30000,
+    });
+    expect(porPreset.detalhes.base).toBeCloseTo((3000 / 30000) * 18000, 2);
+
+    const fallback = calcularDetalhesRevisaoAnual('autorizadas', 18000, {
+      custoCicloCompleto: 3000,
+      quantidadeRevisoesCicloHonda: 7,
+    });
+    expect(fallback.detalhes.base).toBeCloseTo((3000 / 36000) * 18000, 2);
+  });
+
   it('modo autorizadas: serviço avulso usa km da última troca para projetar eventos reais', () => {
     const kmAtual = 18000;
     const kmAnual = 18200;
@@ -1479,6 +1494,7 @@ describe('calcularResultado - CPK sem alimentação', () => {
   const dadosRJMock: DadosRJ = {
     ipva: { aliquotaMotos: 0, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
   };
 
   function criarPerfilComFiltroAlimentacao(alimentacaoAtiva: boolean): PerfilUsuario {
@@ -1530,6 +1546,7 @@ describe('calcularCustosPorCategoria - revisaoAutorizadaOverrides', () => {
   const dadosRJMock: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
   };
   const perfilAutorizadas = {
     ...perfilPadrao,
@@ -1758,6 +1775,7 @@ describe('calcularCustosPorCategoria - modo autorizado não duplica peças da re
   const dadosRJBG003: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
   };
 
   function perfilComModo(modo: 'autorizadas' | 'independentes') {
@@ -1935,6 +1953,7 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
     const dadosRJ: DadosRJ = {
       ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
       licenciamento: { tabela: {} },
+      autonomiaEtanolFatorReducao: 0.78,
     };
     const perfil = {
       ...perfilPadrao,
@@ -2232,6 +2251,7 @@ describe('TASK-RF-6.13 - retíficas usam kmUltimaTrocas em Imprevistos', () => {
   const dadosRJ: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
     licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
   };
 
   it('retífica sem km informado mantém custo amortizado', () => {

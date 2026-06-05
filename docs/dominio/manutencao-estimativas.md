@@ -98,6 +98,35 @@ A **vida útil/intervalo mora no serviço** (aba Mão de Obra); Insumos só tem 
 
 ---
 
+## 3. Custo da Revisão Geral: amortizado por design (⚠️ NÃO é bug)
+
+A **Revisão Geral** (pacote da concessionária) tem custo **amortizado**, e isso é **decisão de modelagem deliberada — não um defeito**. Uma IA futura **não** deve "consertar" isso trocando para contagem ancorada sem decisão explícita do humano. (Reanalisado e confirmado em 04/06/26.)
+
+**Por quê:** o app é um estimador de **custo de operação por km** (orçamento do motoboy). Amortizar manutenção programada é o padrão de TCO: dá um CPK **estável**, que não salta conforme a fase do odômetro. Sobre um ciclo completo, amortizado e ancorado somam **o mesmo total** — a diferença é só **temporal** (suave × em saltos). O amortizado **já considera** o custo diferente de cada revisão: soma todas em `custoCicloCompleto` e distribui a fração do km anual.
+
+```
+custoAnualRevisao  = (custoCicloCompleto / kmCiclo) × kmAnual
+custoCicloCompleto = Σ precoTotal de cada revisão do ciclo (com overrides do usuário)
+kmCiclo            = maior marco de km do ciclo (Honda 36.000)
+```
+
+**Regra por tipo de item (o que pode ou não ser amortizado):**
+
+| Item | Modelo de custo | Por quê |
+|---|---|---|
+| **Revisão Geral** | **Sempre amortizado** (provisão) | Agenda fixa e previsível (Honda ×6.000, Yamaha ×5.000) — é provisão de TCO |
+| **Itens de desgaste** (pneu, kit transmissão, sapata…) | Amortizado **sem** km da última troca; **ancorado** com (`kmUltimaTroca > 0`) | Dependem do uso; com a âncora dá pra prever eventos reais |
+
+> A composição (quais revisões do ciclo e o custo de cada) aparece no popover **`PopoverDetalhesRevisao`** (botão "olho" da linha Revisão Geral), alimentado pelo util **`montarCicloRevisao`** (`src/utils/cicloRevisao.ts`) — só visão, não recalcula custo.
+
+### 3.1 Implementado na TASK-BG-022 (ADR-016)
+
+- **Ciclo por preset:** `kmCiclo = max(preset.revisaoAutorizada.intervaloKm)` substitui a constante Honda em `calculos.ts` (Honda 36.000 inalterado; **Yamaha corrigida** — antes amortizava no ciclo da Honda).
+- **Detalhe ancorado:** o popover mostra "próximas revisões" **a partir da última revisão informada** (`kmUltimaRevisao`; sem ela, do km atual) até `kmAtual + kmAnual` (`projetarProximasRevisoes`, em `utils/cicloRevisao.ts`), **informativo** — o headline segue amortizado. Recorrência: 1ª (amaciamento) única; regulares a cada intervalo fixo, ciclando os custos. **Não assume revisões não confirmadas** (ex.: última 12.000 → próxima 18.000); mantido fresco pela **TASK-RF-6.27**.
+- **Aviso de revisão pendente (TASK-RF-6.27):** card na Estimativa quando `kmAtual ≥ próxima revisão prevista` (`proximaRevisaoApos` = 1º marco do cronograma após `kmUltimaRevisao`, por-marca), com links para **Ajustes** (km) e **Mão de Obra** (valores). Mostra uma de cada vez (a próxima pendente). **Não afeta o cálculo** (amortizado).
+
+---
+
 ## Como adicionar um modelo
 
 1. Definir `fatorMaoDeObra` pela faixa de cilindrada (§1.4).
@@ -110,3 +139,4 @@ A **vida útil/intervalo mora no serviço** (aba Mão de Obra); Insumos só tem 
 | Data | Mudança |
 |---|---|
 | 03/06/26 | Criado (TASK-REF-32.6 / ADR-013-014). Consolida estimativa de M.O. (horagem × taxa × fator, R$ 110/h, reais Honda/Yamaha) e a convenção de intervalos sincronizados. Substitui `docs/arquitetura/estimativa-mao-de-obra.md`. |
+| 04/06/26 | §3 adicionada: Revisão Geral é amortizada **por design** (não é bug), com a regra de custo por tipo de item. Guardrail anti-"correção" indevida. Popover `PopoverDetalhesRevisao` + util `montarCicloRevisao`. **Implementado na TASK-BG-022** (ciclo por preset + detalhe ancorado em `kmUltimaRevisao`). |

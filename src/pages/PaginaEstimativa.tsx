@@ -13,6 +13,9 @@ import { CardPeriodo } from '../components/estimativa/CardPeriodo';
 import { SecaoRodagem } from '../components/estimativa/SecaoRodagem';
 import { DistribuicaoCustos } from '../components/estimativa/DistribuicaoCustos';
 import type { SegmentoDonut } from '../components/estimativa/DonutChart';
+import { AvisoRevisaoPendente } from '../components/estimativa/AvisoRevisaoPendente';
+import { obterPreset } from '../data/repositorioPresets';
+import { proximaRevisaoApos } from '../utils/cicloRevisao';
 
 const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   documentos: { label: 'Documentos', cor: '#60A5FA' },
@@ -47,6 +50,17 @@ export function PaginaEstimativa() {
   }
 
   const { granularidades, granularidadesMoto, kmAnual, diasAno, custos } = resultado;
+
+  // Aviso de revisão pendente (TASK-RF-6.27): a próxima revisão após a última
+  // informada já foi atingida pelo km atual. Não afeta o cálculo (amortizado).
+  const presetAtual = obterPreset(perfil.moto.modelo);
+  const kmUltimaRevisao = perfil.moto.kmUltimaRevisao;
+  const proximaRevisaoKm =
+    presetAtual && kmUltimaRevisao != null
+      ? proximaRevisaoApos(presetAtual.revisaoAutorizada, kmUltimaRevisao)
+      : null;
+  const revisaoPendente = proximaRevisaoKm != null && perfil.moto.kmAtual >= proximaRevisaoKm;
+
   const dias = perfil.trabalho.diasPorSemana;
   const horas = perfil.trabalho.horasPorDia;
   const porHora = diasAno > 0 && horas > 0 ? granularidades.anual / (diasAno * horas) : 0;
@@ -91,6 +105,14 @@ export function PaginaEstimativa() {
 
   return (
     <div className="px-4 py-4 space-y-4">
+      {revisaoPendente && proximaRevisaoKm != null && (
+        <AvisoRevisaoPendente
+          proximaRevisaoKm={proximaRevisaoKm}
+          onIrParaAjustes={() => navigate('/ajustes')}
+          onIrParaMaoDeObra={() => navigate('/mao-de-obra')}
+        />
+      )}
+
       <SecaoRodagem
         kmDiaInput={kmDiaInput}
         onKmDiaChange={setKmDiaInput}

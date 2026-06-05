@@ -88,6 +88,7 @@ export interface DadosRJ {
   licenciamento: {
     tabela: Record<string, number>;
   };
+  autonomiaEtanolFatorReducao: number;
 }
 
 // ──────────────────────────────────────────────

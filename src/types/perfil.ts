@@ -299,6 +299,6 @@ export type PerfilAction =
   | { type: 'RESETAR_AJUSTES_PADRAO' }
 
   // Presets
-  | { type: 'CARREGAR_PERFIL'; perfil: PerfilUsuario; presetId: string }
+  | { type: 'CARREGAR_PERFIL'; presetId: string }
   | { type: 'RESETAR_PERFIL' }
   | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario };

@@ -92,4 +92,44 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
 
     expect(() => storage.preservarCorrompido()).not.toThrow();
   });
+
+  it('retorna null quando preset ativo não pode ser lido', () => {
+    const storage = new LocalStoragePerfilStorage();
+    vi.mocked(localStorage.getItem).mockImplementation(() => {
+      throw new Error('storage indisponivel');
+    });
+
+    expect(storage.getPresetAtivo()).toBeNull();
+  });
+
+  it('não lança quando salvarPresets falha', () => {
+    const storage = new LocalStoragePerfilStorage();
+    vi.mocked(localStorage.setItem).mockImplementation(() => {
+      throw new Error('quota excedida');
+    });
+
+    expect(() => storage.salvarPresets([{ presetId: 'p1' }] as PresetEntry[])).not.toThrow();
+  });
+
+  it('não lança quando setPresetAtivo falha', () => {
+    const storage = new LocalStoragePerfilStorage();
+    vi.mocked(localStorage.setItem).mockImplementation(() => {
+      throw new Error('quota excedida');
+    });
+    vi.mocked(localStorage.removeItem).mockImplementation(() => {
+      throw new Error('storage indisponivel');
+    });
+
+    expect(() => storage.setPresetAtivo('p1')).not.toThrow();
+    expect(() => storage.setPresetAtivo(null)).not.toThrow();
+  });
+
+  it('não lança quando limpar falha', () => {
+    const storage = new LocalStoragePerfilStorage();
+    vi.mocked(localStorage.removeItem).mockImplementation(() => {
+      throw new Error('storage indisponivel');
+    });
+
+    expect(() => storage.limpar()).not.toThrow();
+  });
 });

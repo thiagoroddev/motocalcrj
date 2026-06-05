@@ -27,24 +27,40 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
   }
 
   salvarPresets(presets: PresetEntry[]): void {
-    localStorage.setItem(this.CHAVE_PRESETS, JSON.stringify(presets));
+    try {
+      localStorage.setItem(this.CHAVE_PRESETS, JSON.stringify(presets));
+    } catch {
+      // Persistência local é best-effort. Falha de quota/modo privado não deve quebrar o app.
+    }
   }
 
   getPresetAtivo(): string | null {
-    return localStorage.getItem(this.CHAVE_ATIVO);
+    try {
+      return localStorage.getItem(this.CHAVE_ATIVO);
+    } catch {
+      return null;
+    }
   }
 
   setPresetAtivo(presetId: string | null): void {
-    if (presetId) {
-      localStorage.setItem(this.CHAVE_ATIVO, presetId);
-    } else {
-      localStorage.removeItem(this.CHAVE_ATIVO);
+    try {
+      if (presetId) {
+        localStorage.setItem(this.CHAVE_ATIVO, presetId);
+      } else {
+        localStorage.removeItem(this.CHAVE_ATIVO);
+      }
+    } catch {
+      // Persistência local é best-effort. Falha de quota/modo privado não deve quebrar o app.
     }
   }
 
   limpar(): void {
-    localStorage.removeItem(this.CHAVE_PRESETS);
-    localStorage.removeItem(this.CHAVE_ATIVO);
+    try {
+      localStorage.removeItem(this.CHAVE_PRESETS);
+      localStorage.removeItem(this.CHAVE_ATIVO);
+    } catch {
+      // Limpeza é best-effort: se o storage falhar, a UI ainda deve seguir utilizável.
+    }
   }
 
   preservarCorrompido(): void {

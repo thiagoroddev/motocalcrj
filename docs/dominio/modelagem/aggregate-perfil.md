@@ -65,7 +65,7 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 **Onde e protegida:**
 
 - `criarEstadoInicial()` escolhe um preset valido
-- `CARREGAR_PERFIL` recebe `presetId` valido do hook `usePerfil`
+- `CARREGAR_PERFIL` recebe apenas `presetId`; o reducer resolve o preset existente e ignora id ausente
 
 ### INV-AGG-2: Persistencia condicional
 

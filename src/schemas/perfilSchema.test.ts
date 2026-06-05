@@ -21,6 +21,38 @@ describe('perfilSchema - validação de runtime', () => {
     expect(resultado).toEqual(perfilPadrao);
   });
 
+  it('aceita override de revisão autorizada quando precoTotal fecha com peças + mão de obra', () => {
+    const valido = {
+      ...perfilPadrao,
+      revisaoAutorizadaOverrides: [
+        {
+          index: 0,
+          precoPecas: 0.1,
+          precoMaoDeObra: 0.2,
+          precoTotal: 0.3,
+        },
+      ],
+    };
+
+    expect(() => perfilSchema.parse(valido)).not.toThrow();
+  });
+
+  it('rejeita override de revisão autorizada com precoTotal divergente', () => {
+    const invalido = {
+      ...perfilPadrao,
+      revisaoAutorizadaOverrides: [
+        {
+          index: 0,
+          precoPecas: 10,
+          precoMaoDeObra: 20,
+          precoTotal: 31,
+        },
+      ],
+    };
+
+    expect(() => perfilSchema.parse(invalido)).toThrow();
+  });
+
   it('rejeita schemaVersion diferente da versão atual', () => {
     const antigo = { ...perfilPadrao, schemaVersion: 23 };
     const futuro = { ...perfilPadrao, schemaVersion: 999 };

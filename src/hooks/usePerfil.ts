@@ -22,11 +22,7 @@ export function usePerfil(): UsePerfil {
   const { estado, dispatch } = usePerfilContext();
 
   const ativarPreset = (presetId: string) => {
-    const preset = estado.presets.find((p) => p.presetId === presetId);
-    if (!preset) {
-      return;
-    }
-    dispatch({ type: 'CARREGAR_PERFIL', perfil: preset.perfil, presetId });
+    dispatch({ type: 'CARREGAR_PERFIL', presetId });
   };
 
   return {

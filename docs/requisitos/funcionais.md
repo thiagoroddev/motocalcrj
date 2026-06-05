@@ -16,7 +16,7 @@
 | RF-ON-04 | Lógica condicional em P6: exibir sub-telas corretas conforme situação selecionada. | Testes automatizados validam cada ramo. | ✅ CONCLUÍDO |
 | RF-ON-05 | Ao concluir P9, exibir tela de confirmação com resumo editável antes de salvar. | Botão "Editar" por seção redireciona ao passo correspondente mantendo estado. | ✅ CONCLUÍDO |
 | RF-ON-06 | Salvar perfil completo no localStorage apenas ao clicar "Concluir Configuração". Cancelar onboarding não salva nada. | `dispatch({ type: 'COMMIT_ONBOARDING' })` como ação única de persistência. | ✅ CONCLUÍDO |
-| RF-ON-07 | Chamar BrasilAPI FIPE no passo P3 (seleção do ano) para obter valor venal. | Resultado cacheado em `perfil.fipeCache`. Se offline: usar cache anterior + aviso de data. Se sem cache e offline: exibir input manual. | ✅ CONCLUÍDO |
+| RF-ON-07 | Obter valor venal (FIPE) no passo P3 a partir da `tabelaFipe[ano]` do preset (hardcoded, atualizada mensalmente por script — ADR-015; sem consulta em runtime). | Valor gravado em `perfil.fipeCache` ao avançar. Ano fora da tabela: Passo 3 exibe "valor indisponível". | ✅ CONCLUÍDO |
 
 ---
 
@@ -135,7 +135,7 @@ Lista de modelos com hero image da marca. Selecionado: borda azul + check.
 
 ### Passo 3 - Ano de Fabricação (33%)
 
-Dropdown de anos. Card informativo sobre isenção de IPVA > 15 anos. Consulta BrasilAPI FIPE.
+Input de ano. Card informativo sobre isenção de IPVA > 15 anos. Valor FIPE lido da `tabelaFipe` do preset (ADR-015), sem consulta em runtime.
 
 ### Passo 4 - Perfil de Uso (44%)
 

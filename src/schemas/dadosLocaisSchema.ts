@@ -12,4 +12,5 @@ export const dadosLocaisSchema = z.object({
   licenciamento: z.object({
     tabela: z.record(z.string(), numeroFinito),
   }),
+  autonomiaEtanolFatorReducao: numeroPositivo,
 });

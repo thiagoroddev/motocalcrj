@@ -15,12 +15,18 @@ import { CategoriaAccordion } from './CategoriaAccordion';
 import { Toggle } from './Toggle';
 import { BotaoLapisEdicao } from './BotaoLapisEdicao';
 import { PopoverDetalhesPeca } from './PopoverDetalhesPeca';
+import { PopoverDetalhesRevisao } from './PopoverDetalhesRevisao';
+import type { CicloRevisao, ProximaRevisao } from '../../utils/cicloRevisao';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 
 type Props = {
   totalManutencaoComRevisao: number;
   totalRevisao: number;
   eventosRevisaoNoAno: number;
+  // Ciclo de revisões da concessionária (marcos + custo de cada), para o popover.
+  cicloRevisao: CicloRevisao | null;
+  // Revisões previstas na janela de 12 meses (ancorado, informativo no popover).
+  proximasRevisoes: ProximaRevisao[];
   modoRevisao: ModoRevisao;
   kmAtual: number;
   kmAnual: number;
@@ -77,6 +83,8 @@ export function SecaoManutencao({
   totalManutencaoComRevisao,
   totalRevisao,
   eventosRevisaoNoAno,
+  cicloRevisao,
+  proximasRevisoes,
   modoRevisao,
   kmAtual,
   kmAnual,
@@ -102,6 +110,7 @@ export function SecaoManutencao({
   pct,
 }: Props) {
   const [itemDetalhado, setItemDetalhado] = useState<ItemManutencaoComposto | null>(null);
+  const [revisaoAberta, setRevisaoAberta] = useState(false);
   const [ajudaAberta, setAjudaAberta] = useState<CustoPeca['modo'] | null>(null);
   const ehAutorizada = modoRevisao === 'autorizadas';
 
@@ -272,6 +281,14 @@ export function SecaoManutencao({
             >
               {pp(totalRevisao)}
             </span>
+            <button
+              type="button"
+              onClick={() => setRevisaoAberta(true)}
+              aria-label="Ver detalhes da Revisão Geral"
+              className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/40 transition-colors hover:bg-muted/40 hover:text-foreground"
+            >
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
             {ehAutorizada && (
               <BotaoLapisEdicao
                 onClick={onEditarRevisaoGeral}
@@ -290,6 +307,15 @@ export function SecaoManutencao({
         kmAtual={kmAtual}
         kmAnual={kmAnual}
         onOpenChange={(aberto) => !aberto && setItemDetalhado(null)}
+      />
+
+      <PopoverDetalhesRevisao
+        aberto={revisaoAberta}
+        ciclo={cicloRevisao}
+        kmAnual={kmAnual}
+        totalRevisao={totalRevisao}
+        proximasRevisoes={proximasRevisoes}
+        onOpenChange={setRevisaoAberta}
       />
 
       <Dialog

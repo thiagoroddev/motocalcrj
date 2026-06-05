@@ -118,6 +118,10 @@ const revisaoAutorizadaOverride = z.object({
   precoTotal: dinheiroNaoNegativo,
 });
 
+function arredondarCentavos(valor: number): number {
+  return Math.round(valor * 100) / 100;
+}
+
 const fipeCache = z.object({
   valor: dinheiroNaoNegativo,
   dataConsulta: z.string(),
@@ -144,69 +148,86 @@ const kmUltimaTrocas = z.object({
 });
 
 // Perfil principal
-export const perfilSchema = z.object({
-  schemaVersion: z.literal(VERSAO_SCHEMA_ATUAL),
-  userId: z.string().nullable(),
-  onboardingConcluido: z.boolean(),
-  apelido: z.string().nullable(),
-  aplicativos: z.array(z.string()),
+export const perfilSchema = z
+  .object({
+    schemaVersion: z.literal(VERSAO_SCHEMA_ATUAL),
+    userId: z.string().nullable(),
+    onboardingConcluido: z.boolean(),
+    apelido: z.string().nullable(),
+    aplicativos: z.array(z.string()),
 
-  moto: z.object({
-    marca: z.string(),
-    modelo: z.string(),
-    ano: inteiroPositivo,
-    perfilUso,
-    kmAtual: inteiroNaoNegativo,
-    kmUltimaRevisao: inteiroNaoNegativo.nullable(),
-    kmUltimaTrocas,
-    kmMotorRefeito: inteiroNaoNegativo.nullable(),
-  }),
-
-  perfilManutencao: z.object({
-    perfilPecasGlobal: perfilPecas,
-    modoRevisao,
-    incluirEstimativaMaoDeObra: z.boolean().optional(),
-    estimativaMaoDeObraPorServico: z.record(z.string(), z.boolean()).optional(),
-  }),
-
-  trabalho: z.object({
-    kmPorDia: inteiroPositivo,
-    diasPorSemana: inteiroPositivo.min(1).max(7),
-    horasPorDia: numeroPositivo.max(24),
-  }),
-
-  financeiro: z.object({
-    tipoGasolinaPreferida: tipoCombustivel,
-    combustiveis: z.object({
-      comum: configuracaoCombustivel,
-      aditivada: configuracaoCombustivel,
-      etanol: configuracaoCombustivel,
+    moto: z.object({
+      marca: z.string(),
+      modelo: z.string(),
+      ano: inteiroPositivo,
+      perfilUso,
+      kmAtual: inteiroNaoNegativo,
+      kmUltimaRevisao: inteiroNaoNegativo.nullable(),
+      kmUltimaTrocas,
+      kmMotorRefeito: inteiroNaoNegativo.nullable(),
     }),
-    internet: dinheiroNaoNegativo,
-    seguro: seguroConfig,
-    situacaoMoto,
-    parcelaMensal: dinheiroNaoNegativo.nullable(),
-    parcelasRestantes: inteiroNaoNegativo.nullable(),
-    dataReferenciaParcelas: z.string().nullable(),
-    aluguelMensal: dinheiroNaoNegativo.nullable(),
-    aluguelPeriodicidade: periodicidadeAluguel.nullable(),
-    alimentacaoDia: dinheiroNaoNegativo,
-    gastosCustom: z.array(gastoCustom),
-    responsabilidadeAluguel,
-  }),
 
-  configuracaoDisplay: z.object({
-    categoriasAtivas: categoriaDisplay,
-    imprevistosSugeridosAtivos: z.record(z.string(), z.boolean()),
-    filtrosManutencao: filtrosManutencaoDisplay,
-  }),
+    perfilManutencao: z.object({
+      perfilPecasGlobal: perfilPecas,
+      modoRevisao,
+      incluirEstimativaMaoDeObra: z.boolean().optional(),
+      estimativaMaoDeObraPorServico: z.record(z.string(), z.boolean()).optional(),
+    }),
 
-  pecasOverrides: z.array(pecaOverride),
-  servicosIndependentes: z.array(servicoIndependente),
-  revisaoAutorizadaOverrides: z.array(revisaoAutorizadaOverride),
+    trabalho: z.object({
+      kmPorDia: inteiroPositivo,
+      diasPorSemana: inteiroPositivo.min(1).max(7),
+      horasPorDia: numeroPositivo.max(24),
+    }),
 
-  fipeCache: fipeCache.nullable(),
-});
+    financeiro: z.object({
+      tipoGasolinaPreferida: tipoCombustivel,
+      combustiveis: z.object({
+        comum: configuracaoCombustivel,
+        aditivada: configuracaoCombustivel,
+        etanol: configuracaoCombustivel,
+      }),
+      internet: dinheiroNaoNegativo,
+      seguro: seguroConfig,
+      situacaoMoto,
+      parcelaMensal: dinheiroNaoNegativo.nullable(),
+      parcelasRestantes: inteiroNaoNegativo.nullable(),
+      dataReferenciaParcelas: z.string().nullable(),
+      aluguelMensal: dinheiroNaoNegativo.nullable(),
+      aluguelPeriodicidade: periodicidadeAluguel.nullable(),
+      alimentacaoDia: dinheiroNaoNegativo,
+      gastosCustom: z.array(gastoCustom),
+      responsabilidadeAluguel,
+    }),
+
+    configuracaoDisplay: z.object({
+      categoriasAtivas: categoriaDisplay,
+      imprevistosSugeridosAtivos: z.record(z.string(), z.boolean()),
+      filtrosManutencao: filtrosManutencaoDisplay,
+    }),
+
+    pecasOverrides: z.array(pecaOverride),
+    servicosIndependentes: z.array(servicoIndependente),
+    revisaoAutorizadaOverrides: z.array(revisaoAutorizadaOverride),
+
+    fipeCache: fipeCache.nullable(),
+  })
+  .superRefine((perfil, ctx) => {
+    perfil.revisaoAutorizadaOverrides.forEach((override, index) => {
+      const totalEsperado = arredondarCentavos(override.precoPecas + override.precoMaoDeObra);
+      const totalInformado = arredondarCentavos(override.precoTotal);
+
+      if (totalInformado === totalEsperado) {
+        return;
+      }
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['revisaoAutorizadaOverrides', index, 'precoTotal'],
+        message: 'precoTotal deve ser igual a precoPecas + precoMaoDeObra',
+      });
+    });
+  });
 
 // Envelope do localStorage
 export const presetEntrySchema = z.object({

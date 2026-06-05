@@ -122,3 +122,12 @@
 | TASK-REF-32.6 | Refinamento da UI de manutenção (estimativa por-item, status visível, edição centralizada) | [2026-06-03--20h45--TASK-REF-32.6.md](./2026-06-03--20h45--TASK-REF-32.6.md) |
 | TASK-DOC-014 | Sincronizar docs/dominio + docs/arquitetura com o código pós REF-31/32.x | [2026-06-04--15h25--TASK-DOC-014.md](./2026-06-04--15h25--TASK-DOC-014.md) |
 | TASK-RNF-013 | Validação Zod de presets e dados regionais (contrato) | [2026-06-04--15h49--TASK-RNF-013.md](./2026-06-04--15h49--TASK-RNF-013.md) |
+| TASK-REF-33 | CARREGAR_PERFIL por presetId + invariantes relacionais no schema | [2026-06-04--16h13--TASK-REF-33.md](./2026-06-04--16h13--TASK-REF-33.md) |
+| TASK-REF-34 | Isolar storage do tema e tornar escritas resilientes | [2026-06-04--17h07--TASK-REF-34.md](./2026-06-04--17h07--TASK-REF-34.md) |
+| TASK-CHORE-017 | Script mensal para atualizar FIPE hardcoded dos presets | [2026-06-04--17h54--TASK-CHORE-017.md](./2026-06-04--17h54--TASK-CHORE-017.md) |
+| TASK-RNF-014 | Validar resposta da FIPE (BrasilAPI) — **CANCELADA** (BrasilAPI aposentada; ver TASK-REF-36) | [2026-06-04--18h35--TASK-RNF-014-CANCELADA.md](./2026-06-04--18h35--TASK-RNF-014-CANCELADA.md) |
+| TASK-REF-36 | Aposentar BrasilAPI em runtime — FIPE da `tabelaFipe` hardcoded (ADR-015) | [2026-06-04--19h12--TASK-REF-36.md](./2026-06-04--19h12--TASK-REF-36.md) |
+| TASK-CHORE-015 | Alinhar constantes de negócio às fontes canônicas (IPVA + fator etanol via `dadosRJ`); gerou TASK-BG-022 | [2026-06-04--20h08--TASK-CHORE-015.md](./2026-06-04--20h08--TASK-CHORE-015.md) |
+| TASK-BG-022 | Revisão Geral: ciclo por preset (corrige Yamaha) + popover com detalhe ancorado; modelo amortizado mantido (ADR-016) | [2026-06-04--21h06--TASK-BG-022.md](./2026-06-04--21h06--TASK-BG-022.md) |
+| TASK-TEST-003 | Render tests da UI de manutenção (popover Revisão Geral, SecaoManutencao, PopoverDetalhesPeca, CardServico, CardTotalAnual + chip→popup) — 16 testes | [2026-06-05--14h54--TASK-TEST-003.md](./2026-06-05--14h54--TASK-TEST-003.md) |
+| TASK-RF-6.27 | Aviso de revisão pendente na Estimativa (`proximaRevisaoApos` + card, por-marca; links Ajustes/Mão de Obra) | [2026-06-05--15h45--TASK-RF-6.27.md](./2026-06-05--15h45--TASK-RF-6.27.md) |

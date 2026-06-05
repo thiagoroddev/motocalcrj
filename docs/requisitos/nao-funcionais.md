@@ -68,7 +68,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | ID | Descrição | Critério | Status |
 |---|---|---|---|
 | RNF-PWA-01 | `manifest.json` válido com ícones 192px/512px maskable. | Lighthouse PWA Score ≥ 90. | [ ] PENDENTE |
-| RNF-PWA-02 | Service Worker registrado via `vite-plugin-pwa` com `CacheFirst` para assets estáticos e `NetworkFirst` para BrasilAPI. | App funcional offline após primeiro carregamento. | [ ] PENDENTE |
+| RNF-PWA-02 | Service Worker registrado via `vite-plugin-pwa` com `CacheFirst` para assets estáticos. Sem chamadas de API em runtime (FIPE é hardcoded no preset — ADR-015). | App funcional offline após primeiro carregamento. | [ ] PENDENTE |
 | RNF-PWA-03 | App servido obrigatoriamente via HTTPS. | Netlify/Vercel fornecem HTTPS automaticamente. | [ ] PENDENTE |
 | RNF-PWA-04 | Banner "Instalar MotoCalc" na primeira visita. | Evento `beforeinstallprompt` capturado. | [ ] PENDENTE |
 | RNF-PWA-05 | App funcional em standalone (sem barra do browser) no Android. | Testado em Android 10+ com Chrome. | [ ] PENDENTE |
@@ -92,7 +92,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 
 | ID | Descrição | Implementação | Status |
 |---|---|---|---|
-| RNF-LR-01 | **`perfilStorage.ts` como único ponto de acesso ao localStorage.** Zero acessos diretos fora dele. | `grep -r "localStorage" src/` → só `services/perfilStorage.ts`. | ✅ CONCLUÍDO |
+| RNF-LR-01 | **Services dedicados como únicos pontos de acesso ao localStorage.** Zero acessos diretos fora de `src/services/*Storage.ts`. | `grep -r "localStorage" src/` → apenas services de storage e testes. | ✅ CONCLUÍDO |
 | RNF-LR-02 | **Schema do perfil inclui campo `userId: string \| null`.** Em V1 sempre `null`. | Não afeta lógica de cálculo. | ✅ CONCLUÍDO |
 | RNF-LR-03 | **Separar lógica de armazenamento da lógica de estado.** Interface `IPerfilStorage` injetada no `PerfilContext`. | Implementado com `LocalStoragePerfilStorage`. | ✅ CONCLUÍDO |
 | RNF-LR-04 | **Rotas protegidas preparadas.** `<RotaProtegida>` redireciona para onboarding se não há perfil. | Substitui apenas o interior em V2. | ✅ CONCLUÍDO |
@@ -116,7 +116,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | ID | Descrição | Status |
 |---|---|---|
 | RNF-STACK-01 | TypeScript com `strict: true`. `any` proibido. | ✅ CONCLUÍDO |
-| RNF-STACK-02 | Acesso a `localStorage` apenas via `services/perfilStorage.ts`. | ✅ CONCLUÍDO |
+| RNF-STACK-02 | Acesso a `localStorage` apenas via services dedicados em `src/services/`. | ✅ CONCLUÍDO |
 | RNF-STACK-03 | ESLint + `@typescript-eslint` com regras estritas. | ✅ CONCLUÍDO |
 | RNF-STACK-04 | Testes unitários com Vitest. | ✅ CONCLUÍDO (92 testes: 76 em calculos.ts + 16 em PerfilContext.test.ts) |
 

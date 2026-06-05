@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
 import { usePerfil } from './usePerfil';
-import dadosRJJson from '../data/dados_rj.json';
+import { dadosRJ } from '../data/dadosRJ';
 import { obterPreset } from '../data/repositorioPresets';
-import { dadosLocaisSchema } from '../schemas/dadosLocaisSchema';
 import { calcularResultado } from '../utils/calculos';
 import { resolverServicosManutencaoPerfil } from '../utils/servicosManutencaoPreset';
 import type { PresetMoto, ResultadoCalculo } from '../types/calculos';
 import type { PerfilUsuario } from '../types/perfil';
-
-const dadosRJ = dadosLocaisSchema.parse(dadosRJJson);
 
 export function normalizarPerfilMvp(perfil: PerfilUsuario, preset?: PresetMoto): PerfilUsuario {
   const servicosManutencao = resolverServicosManutencaoPerfil(perfil, preset);

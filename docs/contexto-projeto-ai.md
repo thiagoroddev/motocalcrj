@@ -56,11 +56,11 @@
 - **Antes de alterar qualquer cálculo:** leia `docs/dominio/invariantes.md`.
 - **Antes de criar/editar componentes:** verifique se já existe algo similar em `src/components/` e siga `docs/design/tema-tailwind.md`.
 - **Nunca modifique `src/utils/calculos.ts` sem aprovação explícita.**
-- **Nunca acesse `localStorage` diretamente** use `src/services/perfilStorage.ts`.
+- **Nunca acesse `localStorage` diretamente** use services dedicados em `src/services/` (`perfilStorage.ts`, `themeStorage.ts`).
 - **Ao concluir uma task que altera estado/cálculos/persistência:** rode `npm run test` e confirme que todos os testes estão verdes.
 - **Registre cada ação no arquivo da tarefa** (`docs/tarefas/em-andamento.md` ou o arquivo em `concluidas/`) usando o formato padronizado (prefixo, data, revisão, testes).
 - **Se gerar novas tarefas a partir de uma revisão ou ADR, use os prefixos corretos** (RF, RN, RNF, BG, REF, DOC) e adicione em `docs/tarefas/pendentes.md`.
-- Toda leitura/escrita em `localStorage` usa as chaves e o fluxo definidos em `docs/arquitetura/estado_inicial.md`. Nunca acesse diretamente.
+- Toda leitura/escrita em `localStorage` usa services dedicados em `src/services/`. Para perfil, siga as chaves e o fluxo de `docs/arquitetura/estado_inicial.md`. Nunca acesse diretamente.
 - **Spacing/sizing seguem a escala numérica padrão do Tailwind** (`p-4`, `gap-2`, `space-y-4`…). **Nunca redefina `--spacing-*` no `@theme`** nem use chaves nomeadas (`p-md`, `gap-sm`): colidem com `max-w-*` no Tailwind v4 (ADR-008). O `npm run lint` barra via `scripts/check-spacing-tokens.mjs`.
 
 
@@ -84,10 +84,12 @@ src/
 ├── utils/
 │   ├── calculos.ts          # ✅ NUNCA TOCAR sem aprovação (ver `npm run test` para contagem)
 │   ├── calculos.test.ts
-│   └── formatters.ts        # moeda(), cpkFormatado(), kmFormatado()
+│   ├── formatters.ts        # moeda(), cpkFormatado(), kmFormatado()
+│   └── cicloRevisao.ts      # montarCicloRevisao: revisões do ciclo p/ o popover (visão, não recalcula)
 ├── services/
 │   ├── perfilStorage.ts     # IPerfilStorage + LocalStoragePerfilStorage
-│   └── fipeService.ts       # BrasilAPI com cache
+│   └── themeStorage.ts      # IThemeStorage + LocalStorageThemeStorage
+│                            # (FIPE não tem service: vem da tabelaFipe do preset — ADR-015)
 ├── context/
 │   ├── PerfilContext.tsx    # Provider + useReducer + perfilPadrao
 │   ├── PerfilContext.test.ts
@@ -123,7 +125,8 @@ src/
 │   │   ├── CategoriaAccordion.tsx # Linha de categoria com toggle + chevron expand
 │   │   ├── CardTotalAnual.tsx     # Resumo no topo: total anual, mensal, cpk/km
 │   │   ├── SeletorPeriodo.tsx     # Barra Ano/Mês/Sem/Dia/Hora. Exporta tipo Periodo
-│   │   ├── SecaoManutencao.tsx    # Revisão geral + peças com toggles individuais
+│   │   ├── SecaoManutencao.tsx    # Revisão geral + peças com toggles individuais (+ botão olho → popover)
+│   │   ├── PopoverDetalhesRevisao.tsx # Popover da Revisão Geral: revisões do ciclo + provisão (amortizado)
 │   │   └── SecaoImprevistos.tsx   # Gastos custom: accordion com toggle, delete e aviso
 │   └── layout/
 │       ├── LayoutApp.tsx
@@ -154,13 +157,14 @@ src/
 
 - **Idioma:** Português em tudo variáveis, componentes, tipos, comentários, testes.
 - **Estado global:** Context + `useReducer`. Um contexto por domínio. Não atomizar.
-- **Persistência:** `localStorage` acessado exclusivamente via `services/perfilStorage.ts`.
+- **Persistência:** `localStorage` acessado exclusivamente via services dedicados em `src/services/`.
 - **Presets JSON:** Imutáveis em runtime. Toda personalização vai para overrides no perfil.
+- **FIPE hardcoded:** `tabelaFipe` nos presets é a **fonte única** do valor FIPE (offline, atualizada mensalmente; sem consulta em runtime — ADR-015). Atualize com `npm run fipe:check` e depois `npm run fipe:update`; o script usa a API Parallelum FIPE v2.
 - **Cálculos:** `utils/calculos.ts` é imutável (ver `npm run test` para contagem atual). Novas funções de cálculo seguem o mesmo estilo, mas não alteram as existentes sem aprovação.
 - **Roteamento:** React Router v7 (modo biblioteca - API v6 preservada).
 - **UI base:** shadcn/ui instalado. Wrappers em `components/ui/`. Componentes em uso: Card, Button, Input, Label, Badge, Accordion, Dialog, Switch, Tabs, Sheet, Separator, Toggle.
 - **Testes:** Vitest com `describe`/`it`, padrão AAA, nomes em português.
-- **Build:** Vite + `vite-plugin-pwa` (Service Worker).
+- **Build:** Vite. PWA/Service Worker (`vite-plugin-pwa`) está **planejado** (RNF-PWA-*), ainda não instalado.
 
 ---
 
@@ -187,6 +191,8 @@ Manter essa distinção ao explicar valores ao usuário ou modificar cálculos: 
 | **Ancorado** | `kmUltimaTroca > 0` (preenchido no card "Últimas manutenções") **e** peça mapeada | Projeta eventos reais em `(kmAtual, kmAtual + kmAnual]` | Inteiro (0, 1, 2, 14…) | `n × preçoCheio` |
 
 **custoAnual** = `trocasNoAno × preço` em ambos os modos - a diferença é o que `trocasNoAno` representa.
+
+> ⚠️ **A Revisão Geral (pacote da concessionária) é caso à parte e amortizada POR DESIGN — não é bug.** Não tem modo ancorado: o custo do ciclo é provisionado proporcionalmente ao km. O porquê (e a regra de custo por tipo de item) está em [`docs/dominio/manutencao-estimativas.md`](dominio/manutencao-estimativas.md) §3 — reanalisado em 04/06/26. **Não "corrigir" para contagem sem decisão do humano.** O detalhamento do ciclo aparece no popover `PopoverDetalhesRevisao`.
 
 ### Exemplo prático (Pop 110i, `kmAnual ≈ 18.200`, `kmAtual = 90.000`)
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
 import { obterPreset } from '../data/repositorioPresets';
+import { montarCicloRevisao, projetarProximasRevisoes } from '../utils/cicloRevisao';
 import {
   calcularTotalFiltrado,
   calcularGranularidades,
@@ -175,6 +176,16 @@ export function PaginaDetalhamento() {
   // Nome de exibição por peça (do preset), para a Manutenção nomear itens
   // só-serviço (Honda) pelo componente, não pelo nome do serviço (F).
   const presetAtual = obterPreset(perfil.moto.modelo);
+  const cicloRevisao = presetAtual
+    ? montarCicloRevisao(presetAtual.revisaoAutorizada, perfil.revisaoAutorizadaOverrides)
+    : null;
+  const proximasRevisoes = presetAtual
+    ? projetarProximasRevisoes(presetAtual.revisaoAutorizada, perfil.revisaoAutorizadaOverrides, {
+        kmAtual: perfil.moto.kmAtual,
+        kmAnual,
+        kmUltimaRevisao: perfil.moto.kmUltimaRevisao,
+      })
+    : [];
   const nomePorPeca: Record<string, string> = {};
   if (presetAtual) {
     for (const p of presetAtual.pecas) nomePorPeca[p.id] = p.nome;
@@ -457,6 +468,8 @@ export function PaginaDetalhamento() {
           totalManutencaoComRevisao={totalManutencaoComRevisao}
           totalRevisao={custos.revisao.detalhes.base}
           eventosRevisaoNoAno={custos.revisao.detalhes.eventosNoAno}
+          cicloRevisao={cicloRevisao}
+          proximasRevisoes={proximasRevisoes}
           modoRevisao={custos.revisao.detalhes.modo}
           kmAtual={perfil.moto.kmAtual}
           kmAnual={kmAnual}
