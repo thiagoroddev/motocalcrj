@@ -226,7 +226,9 @@ Esta documentação foi validada contra:
 
 - `src/types/perfil.ts` estrutura `PresetEntry` e `PerfilUsuario`
 - `src/types/perfil.ts` type `PerfilAction` (lista de comportamentos)
-- `docs/Requisitos_MotoCalc_RJ_v6.md` RN-01, RF-ON-06, RNF-LR-01/02/06
+- `docs/requisitos/regras-negocio.md` RN-01
+- `docs/requisitos/funcionais.md` RF-ON-06
+- `docs/requisitos/nao-funcionais.md` RNF-LR-01/02/06
 - `contexto-base.instructions.md` chaves do localStorage, regras críticas
 
 **Divergências encontradas:** nenhuma. Documentação fiel ao código.

@@ -63,7 +63,7 @@ perfilManutencao: {
 
 🔍 **Override por peça é granular por preço, não por perfil:** após a estrutura atual (REF-11), `PecaOverride` tem `precoEditadoOriginal` e `precoEditadaParalela` separados - o Motoboy pode informar valores diferentes para cada coluna. **Não existe mais `perfilPecasOverride` por peça** (esse conceito antigo morreu na refatoração).
 
-⚠️ **Caso especial (RN-11):** Se o Preset JSON da peça tem `anoFimOriginal` e o ano da moto é maior, deveria **forçar paralela** independente do `perfilPecasGlobal`. Regra documentada nos Requisitos v6 mas ainda **não implementada** em `calculos.ts`. Registrada como pendência no README da modelagem.
+⚠️ **Caso especial (RN-11):** Se o Preset JSON da peça tem `anoFimOriginal` e o ano da moto é maior, deveria **forçar paralela** independente do `perfilPecasGlobal`. A regra permanece em `docs/requisitos/regras-negocio.md`, mas ainda **não está implementada** em `calculos.ts`. Registrada como pendência no README da modelagem.
 
 ---
 

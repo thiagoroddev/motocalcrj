@@ -5,7 +5,7 @@
 > Mantido pelo `modelador-dominio`. Atualizado a cada novo conceito.
 >
 > **Versão atual:** 2026-06-04 (v9) — sincronizado com o MVP de manutenção (TASK-REF-31 + pacote 32.x). Validado contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts`, `src/utils/itensManutencao.ts`, `src/utils/maoDeObraEstimada.ts` e os presets em `src/presets/*.json`.
-> **Documento de requisitos ativo:** `docs/Requisitos_MotoCalc_RJ_v6.md`. Versoes anteriores (v5) nao estao mais presentes no projeto.
+> **Documentos de requisitos ativos:** `docs/requisitos/funcionais.md`, `docs/requisitos/nao-funcionais.md` e `docs/requisitos/regras-negocio.md`.
 
 ---
 
@@ -22,7 +22,7 @@
 
 ### Motoboy / Entregador
 
-Usuário-alvo do produto. Pessoa que usa motocicleta para trabalho remunerado, predominantemente entregas no Município do Rio de Janeiro. Os dois termos são intercambiáveis no projeto, com leve preferência por "Motoboy" em UI e conversas, e "Entregador" em documentação formal (Requisitos v6 usa "entregador" predominantemente).
+Usuário-alvo do produto. Pessoa que usa motocicleta para trabalho remunerado, predominantemente entregas no Município do Rio de Janeiro. Os dois termos são intercambiáveis no projeto, com leve preferência por "Motoboy" em UI e conversas, e "Entregador" em documentação formal.
 
 ### Perfil de Usuário
 

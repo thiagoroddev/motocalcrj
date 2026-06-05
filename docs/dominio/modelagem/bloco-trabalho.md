@@ -161,7 +161,7 @@ Documentação validada contra:
 
 - `src/types/perfil.ts` - bloco `trabalho`
 - `src/utils/calculos.ts` - `calcularKmAnual`, `calcularDiasAno`, `resolverKmDia`
-- `Requisitos v6` - RF-EST-04 (configuração de rodagem inline)
+- `docs/requisitos/funcionais.md` - RF-EST-04 (configuração de rodagem inline)
 
 **Divergências encontradas:**
 

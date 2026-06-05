@@ -10,9 +10,9 @@ Esta pasta contem **a modelagem conceitual** do MotoCalc o "mundo do motoboy" ex
 
 **Nao e documentacao de codigo.** Para isso, veja `contexto-base.instructions.md`.
 
-**Nao e documentacao de requisitos.** Para isso, veja `docs/Requisitos_MotoCalc_RJ_v6.md`.
+**Nao e documentacao de requisitos.** Para isso, veja `docs/requisitos/funcionais.md`, `docs/requisitos/nao-funcionais.md` e `docs/requisitos/regras-negocio.md`.
 
-**Documento ativo:** `docs/Requisitos_MotoCalc_RJ_v6.md`. Versoes anteriores (v5) nao estao mais presentes no projeto.
+**Documentos ativos:** os tres documentos operacionais em `docs/requisitos/`. Decisoes posteriores vivem nas ADRs.
 
 E a camada **entre os dois**: como os conceitos do mundo real do motoboy se expressam tecnicamente no projeto, com referencia cruzada as divergencias entre codigo e requisitos quando existem.
 

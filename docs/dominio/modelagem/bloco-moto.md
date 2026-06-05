@@ -172,7 +172,8 @@ moto: {
 Documentação validada contra:
 
 - `src/types/perfil.ts` bloco `moto` dentro de `PerfilUsuario`
-- `Requisitos v6` RN-24 (atualização monotônica), RF-ON-01 a 05
+- `docs/requisitos/funcionais.md` RF-ON-01 a RF-ON-05
+- `docs/dominio/invariantes.md` INV-MOTO-1 (atualização monotônica)
 - `contexto-base.instructions.md` convenções
 
 **Divergências:** nenhuma estrutural. INV-MOTO-4 marcada como "verificar no código" possível dívida técnica de validação.

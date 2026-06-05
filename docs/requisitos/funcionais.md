@@ -1,8 +1,8 @@
 # Requisitos Funcionais - MotoCalc RJ
 
-> Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026).
+> Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores.
 > IDs dos requisitos: RF-ON-xx, RF-EST-xx, RF-DET-xx, RF-MO-xx, RF-VU-xx, RF-PERF-xx, RF-DOC-xx, RF-CONF-xx, RF-EXP-xx.
-> **Nota:** RF-REG-* e RF-FORM-* (tela Registros e formulários) foram **adiados via ADR-003** e removidos deste documento operacional. Para fidelidade histórica da spec v6.0, ver `Requisitos_MotoCalc_RJ_v6.md` (banner ADIADO).
+> **Nota:** RF-REG-* e RF-FORM-* (tela Registros e formulários) foram **adiados via ADR-003** e removidos deste documento operacional. A ADR é a fonte da decisão e do escopo adiado.
 
 ---
 

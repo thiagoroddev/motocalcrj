@@ -308,7 +308,7 @@ Documentação validada contra:
 - `src/types/perfil.ts` - `PecaOverride`, `ServicoIndependente`, `RevisaoAutorizadaOverride`
 - `src/utils/calculos.ts` - `resolverPrecoPeca`, `resolverIntervaloPeca`, `MAPA_PECA_PARA_SERVICO`
 - `src/context/PerfilContext.tsx` - `SERVICOS_INDEPENDENTES_PADRAO`, `campoOverrideMap`, actions
-- `Requisitos v6` - RN-01 a RN-05, RN-10, RN-11
+- `docs/requisitos/regras-negocio.md` - RN-01 a RN-05, RN-10 e RN-11
 
 **Divergências encontradas:**
 

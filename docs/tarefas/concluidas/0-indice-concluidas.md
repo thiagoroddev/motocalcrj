@@ -131,3 +131,4 @@
 | TASK-BG-022 | Revisão Geral: ciclo por preset (corrige Yamaha) + popover com detalhe ancorado; modelo amortizado mantido (ADR-016) | [2026-06-04--21h06--TASK-BG-022.md](./2026-06-04--21h06--TASK-BG-022.md) |
 | TASK-TEST-003 | Render tests da UI de manutenção (popover Revisão Geral, SecaoManutencao, PopoverDetalhesPeca, CardServico, CardTotalAnual + chip→popup) — 16 testes | [2026-06-05--14h54--TASK-TEST-003.md](./2026-06-05--14h54--TASK-TEST-003.md) |
 | TASK-RF-6.27 | Aviso de revisão pendente na Estimativa (`proximaRevisaoApos` + card, por-marca; links Ajustes/Mão de Obra) | [2026-06-05--15h45--TASK-RF-6.27.md](./2026-06-05--15h45--TASK-RF-6.27.md) |
+| TASK-DOC-015 | Descontinuar o monólito de requisitos v6 e consolidar o contexto operacional | [2026-06-05--17h01--TASK-DOC-015.md](./2026-06-05--17h01--TASK-DOC-015.md) |

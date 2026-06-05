@@ -304,7 +304,8 @@ Documentação validada contra:
 
 - `src/types/perfil.ts` bloco `financeiro` completo + sub-tipos
 - `src/utils/calculos.ts` todas as funções de cálculo financeiro mencionadas
-- `Requisitos v6` Seção V.5, V.6 (formulários P6 a P9)
+- `docs/requisitos/funcionais.md` - onboarding P6 a P9, RF-DET-04 e RF-DET-07 a RF-DET-10
+- `docs/requisitos/regras-negocio.md` - RN-21 a RN-23
 - `contexto-base.instructions.md` RN-21, RN-22, RN-23
 
 **Divergências encontradas:**

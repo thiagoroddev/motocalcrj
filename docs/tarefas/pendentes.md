@@ -17,6 +17,53 @@ Obedeça essa ordem:
 > verificação. Ordem abaixo é por prioridade combinada (Valor + risco).
 > Origem rastreável: `docs/arquitetura/revisoes-gerais/REV-001.md` (achados REV-001-A01..A09).
 
+#### Geradas pela Revisão Geral REV-002 05/06/26
+
+> Lote gerado pela REV-002 (auditoria de tech lead após a onda FIPE/Revisão). Veredito APROVADO COM RESSALVAS; nenhum 🔴. Origem rastreável: `docs/arquitetura/revisoes-gerais/REV-002.md`.
+
+### TASK-REF-37 Higiene em calculos.ts: renomear internos "Honda" + wrapper morto (GATED)
+
+- **Status:** Pendente
+- **Modo:** Standard (toca arquivo gated → exige plano aprovado)
+- **Valor:** Desejável
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/M
+- **Data-hora origem:** 05/06/26 16:20
+- **Dependências:** —
+- **REQ/ADR/DT:** REV-002-A02, REV-002-A03; ADR-016
+- **Observações:** ⚠️ **`src/utils/calculos.ts` é GATED — não alterar sem aprovação de plano (núcleo testado, INV-CALC).** Dois itens de higiene no MESMO toque, **sem mudar nenhum número de cálculo** (é só rename/limpeza):
+  - **(A02) Renomear internos "Honda" que já são multi-marca** (pós ADR-016/BG-022 o ciclo vem do preset, vale p/ Yamaha também): `KM_CICLO_REVISAO_HONDA` → `KM_CICLO_REVISAO_PADRAO` (hoje é fallback genérico); `quantidadeRevisoesCicloHonda` → `quantidadeRevisoesCiclo` (param + opção de `calcularDetalhesRevisaoAnual`/`calcularEventosRevisaoNoAno`); `basePacoteHonda` → `basePacoteConcessionaria`. ~15 ocorrências em `calculos.ts` + atualizar referências à opção `quantidadeRevisoesCicloHonda` em `calculos.test.ts`.
+  - **(A03) `calcularCustoRevisaoAnual` (l.637) não tem consumidor em produção** (só `calculos.test.ts`; produção usa `calcularDetalhesRevisaoAnual`) e não recebeu a opção `kmCicloRevisao` (ADR-016) → diverge. **Decidir:** remover o wrapper e migrar os ~8 testes para `calcularDetalhesRevisaoAnual`, OU mantê-lo documentado como helper de teste e alinhar ao contrato atual.
+  - **Critério:** zero nome "Honda" em construto multi-marca; sem API morta divergente; `test`/`lint`/`tsc` verdes; **valores de cálculo idênticos** (rename não muda resultado).
+
+### TASK-CHORE-018 Acessibilidade do header do CategoriaAccordion (teclado/leitor de tela)
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Desejável
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data-hora origem:** 05/06/26 16:20
+- **Dependências:** —
+- **REQ/ADR/DT:** REV-002-A05
+- **Observações:** O header clicável de `src/components/detalhamento/CategoriaAccordion.tsx` (~linhas 37-39) é um `<div onClick={onToggleExpandido}>` **sem** `role`/`tabIndex`/`onKeyDown` — expandir/recolher só com mouse/touch; teclado e leitor de tela não alcançam. (Os botões internos olho/lápis já têm `aria-label`.)
+  - **O que fazer:** tornar o header acessível — `role="button"` + `tabIndex={0}` + `onKeyDown` (Enter/Espaço → `onToggleExpandido`) + `aria-expanded={expandido}`. **Não** usar `<button>` no header (há botões internos olho/lápis → evitar botão-dentro-de-botão; manter `<div>` com role/aria). Preservar o clique atual.
+  - **Critério:** expandir/recolher por teclado funciona; leitor de tela anuncia o estado. Sem regressão visual; `lint`/`tsc`/`test` verdes.
+
+### TASK-TEST-004 Teste de integração do aviso de revisão pendente (PaginaEstimativa)
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Desejável
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** P/P
+- **Data-hora origem:** 05/06/26 16:20
+- **Dependências:** TASK-RF-6.27 (concluída)
+- **REQ/ADR/DT:** REV-002-A08; ADR-016; TASK-RF-6.27
+- **Observações:** A RF-6.27 cobriu o helper `proximaRevisaoApos` (unit) e o `AvisoRevisaoPendente` (render) isolados; **falta o teste de integração** do gatilho em `src/pages/PaginaEstimativa.tsx`.
+  - **O que fazer:** render test (jsdom) de `PaginaEstimativa` — ou via `App.smoke.test.tsx` em `/estimativa` — cobrindo os 3 ramos: **(1) mostra** o card "Revisão pendente" quando `kmUltimaRevisao` informado e `kmAtual ≥ próxima revisão prevista` (ex.: Pop, última 12.000, kmAtual 18.010 → card com 18.000); **(2) não mostra** quando `kmUltimaRevisao` é `null`; **(3) não mostra** quando `kmAtual < próxima`. Montar o perfil via preset no `localStorage` falso (padrão do `App.smoke.test.tsx`).
+  - **Critério:** 3 ramos testados; verde.
+
 ### Pacote TASK-REF-32 - MVP manutenção por concessionária
 
 > TASK-REF-32 foi replanejada pela TASK-REF-32.1/ADR-012. A direção anterior "manutenção/peças/histórico totalmente data-driven por preset, incluindo independente" fica como visão futura. Para o MVP de 10/06/2026, executar apenas o escopo abaixo: concessionária/autorizada, dados públicos, peças originais e aviso de custo incompleto quando faltar mão de obra.

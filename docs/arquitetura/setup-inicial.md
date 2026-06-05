@@ -2,7 +2,7 @@
 
 > **⚠️ Documento histórico.** Este guia descreve o setup inicial do projeto (Tailwind v3, `tailwind.config.cjs`, postcss). A stack foi migrada - veja o estado atual em `docs/contexto-projeto-ai.md`. Este arquivo é mantido como registro, não como referência operacional.
 
-Este guia segue o stack definido em Requisitos_MotoCalc_RJ_v6.
+Para o stack atual, consultar `docs/requisitos/nao-funcionais.md`, `docs/contexto-projeto-ai.md` e as ADRs aceitas.
 
 ## Pre-requisitos
 

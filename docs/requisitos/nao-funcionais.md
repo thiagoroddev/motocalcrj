@@ -1,6 +1,6 @@
 # Requisitos Não Funcionais - MotoCalc RJ
 
-> Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026). Agrupa as seções VII, VIII, IX, X e XI do documento original.
+> Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores. Agrupa desempenho, usabilidade, arquitetura, analytics, PWA, distribuição e stack.
 > IDs: RNF-01 a RNF-12, RNF-COMP-01 a 06, RNF-ANA-01 a 03, RNF-PWA-01 a 05, RNF-TWA-01 a 06, RNF-LR-01 a 06, RNF-STACK-01 a 04.
 
 ---

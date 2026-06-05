@@ -1,241 +1,464 @@
-# Projeto MotoCalc RJ Índice para IA
-#### `docs/contexto-projeto-ai.md`
+# EstimaMoto - Contexto do Projeto para IA
 
-## Documentos oficiais 
+> **Propósito:** oferecer a visão geral necessária para uma IA entender o produto, localizar as fontes de verdade e trabalhar sem reintroduzir decisões superadas.
+> **Público principal:** agentes de IA. Desenvolvedores também podem usar este documento como mapa.
+> **Última atualização:** 05/06/2026, após ADR-015, ADR-016 e TASK-RF-6.27.
+> **Nome atual do produto:** EstimaMoto. Documentos históricos e alguns identificadores internos ainda usam MotoCalc RJ; não renomear em massa sem tarefa própria.
 
-## Regra 0 Antes de Qualquer Coisa
+---
 
-1. Ler este documento por completo
-2. Ler '/docs/tarefas/em-andamento.md', depois pergunte se pode iniciar o planejamento da tarefa. Se sim, leia o arquivo `.github/agents/geral-robusto/01-nucleo.md.md` - esse é o núcleo do pacote de agente que define os princípios e processo de trabalho. Nunca agir sem seguir esses padrões e sem contexto específico do projeto atual. 
-3. Obtenha contexto específico desse projeto necessário antes de agir, leia o que for preciso em docs/ ou arquivos do projeto, você já sabe onde fica cada coisa pois aqui está tudo documentado onde encotrar cada coisa. 
-4. Leia os documentos principais da raiz do projeto.
-5. Só então agir
+## 0. Protocolo Antes de Agir
 
-## Documentos do Projeto
+1. Ler este documento por completo.
+2. Ler `docs/tarefas/em-andamento.md` e o arquivo da tarefa ativa, quando houver.
+3. Ler `.github/agents/geral-robusto/01-nucleo.md.md` antes de planejar ou executar uma tarefa do projeto.
+4. Consultar somente as fontes específicas exigidas pelo tipo de mudança, usando o mapa deste documento.
+5. Conferir o estado real do código e do Git antes de editar. Não presumir que uma lista ou contagem documental continua atual.
+6. Não alterar trabalho local existente que não pertença à tarefa.
+7. Se a mudança tocar cálculo, persistência, modelo de domínio ou uma decisão aceita, verificar invariantes e ADRs antes de propor a implementação.
+
+---
+
+## 1. Visão do Produto
+
+### 1.1 Problema
+
+Entregadores de moto costumam perceber o gasto com combustível, mas subestimam custos menos visíveis: manutenção, desgaste de peças, revisões, documentação, seguro, financiamento, alimentação e imprevistos. Isso faz o ganho líquido parecer maior do que realmente é.
+
+### 1.2 Solução
+
+O EstimaMoto é uma SPA mobile-first, local-first e orientada inicialmente ao Município e ao Estado do Rio de Janeiro. O app transforma dados da moto e da rotina de trabalho em estimativas de custo:
+
+- por quilômetro;
+- por hora;
+- por dia trabalhado;
+- por semana;
+- por mês;
+- por ano.
+
+O objetivo é dar clareza para planejamento e formação de preço. O app é um **estimador de custo operacional**, não um sistema contábil, rastreador de corridas ou promessa do gasto exato futuro.
+
+### 1.3 Público e contexto
+
+- Público principal: motoboys e entregadores que usam a moto como instrumento de trabalho.
+- Contexto regional atual: Rio de Janeiro, com IPVA, licenciamento e preços de referência locais.
+- Uso prioritário: celular Android, incluindo conexões instáveis.
+- Persistência atual: somente no navegador do dispositivo, sem conta e sem backend.
+
+### 1.4 Escopo atual do MVP
+
+O fluxo principal inclui:
+
+- onboarding guiado para moto, uso, rodagem e custos pessoais;
+- cálculo e detalhamento dos custos operacionais;
+- edição de rodagem, custos, insumos, manutenção e dados do perfil;
+- presets imutáveis com personalizações gravadas no perfil;
+- manutenção do MVP orientada a concessionária/autorizada;
+- sinalização explícita de valores oficiais, editados, estimados ou ausentes;
+- persistência local validada em runtime;
+- duas motos cadastradas:
+  - Honda Pop 110i;
+  - Yamaha Factor 125i.
+
+O cadastro de modelos é data-driven por `src/presets/*.json`. Não escrever no texto ou na UI que existem cinco modelos: essa era uma intenção antiga e não corresponde ao produto atual.
+
+### 1.5 Fora do escopo atual
+
+- tela de Registros e formulários de rodagem, abastecimento e manutenção;
+- cálculo derivado de histórico diário de registros;
+- modo de cálculo "Predefinidos x Personalizado";
+- backend, login, sincronização entre dispositivos e banco remoto;
+- consulta de FIPE ou preços por API em runtime;
+- notificações push;
+- publicação na iOS App Store;
+- modo independente e peças paralelas expostos na UI do MVP.
+
+Registros (`RF-REG-*`, `RF-FORM-*`) e as regras `RN-24`, `RN-25` e `RN-26` foram adiados pela ADR-003. O código pode preservar capacidades futuras dormentes, mas elas não devem reaparecer na UI sem nova decisão.
+
+### 1.6 Prioridades de produto
+
+Esta tabela substitui a antiga priorização MoSCoW do monólito de requisitos. O status executável continua em `docs/tarefas/`.
+
+| Prioridade | Direção |
+|---|---|
+| Essencial no V1 | Estimativa confiável e explicável; onboarding; presets e overrides; persistência local; cálculo por granularidade; transparência de manutenção; duas motos estáveis. |
+| Próximas frentes | Export/import, analytics, PWA/offline completo, acessibilidade/performance, QA e distribuição TWA/Play Store. |
+| Evolução possível | Comparação entre motos, retorno do modo independente, peças paralelas e alertas mais avançados. |
+| Fora do V1 | Login, sync remoto, backend, preços em tempo real, push e iOS App Store. |
+| Backlog adiado | Registros, formulários de registro, diário de trabalho integrado e histórico baseado em eventos, conforme ADR-003. |
+
+---
+
+## 2. Fontes de Verdade
+
+Não existe um único arquivo que responda corretamente a todas as perguntas. Use a fonte adequada:
+
+| Pergunta | Fonte primária |
+|---|---|
+| Qual decisão arquitetural ou de produto foi aceita? | `docs/arquitetura/ADR/` |
+| Qual comportamento é exigido? | `docs/requisitos/funcionais.md`, `nao-funcionais.md`, `regras-negocio.md` |
+| O que nunca pode ser violado? | `docs/dominio/invariantes.md` |
+| Como o domínio é conceituado? | `docs/dominio/_glossario.md` e `docs/dominio/modelagem/` |
+| Como cálculos e manutenção devem ser entendidos? | `docs/arquitetura/calculos-visao.md` e `docs/dominio/manutencao-estimativas.md` |
+| Como o app se comporta hoje? | Código e testes em `src/` |
+| O que está pendente, em andamento ou concluído? | `docs/tarefas/` |
+| Qual foi o resultado de uma revisão geral? | `docs/arquitetura/revisoes-gerais/` |
+| Qual é a referência visual? | `docs/design/`, validada contra a UI atual |
+
+### 2.1 Ordem para resolver conflitos
+
+1. A instrução atual e explícita do humano prevalece para a tarefa em curso.
+2. Uma ADR aceita mais recente prevalece sobre intenção antiga.
+3. Requisitos operacionais definem o comportamento desejado.
+4. Invariantes e modelagem restringem as soluções válidas.
+5. Código e testes mostram o comportamento implementado, que pode divergir do desejado.
+6. Tarefas e revisões explicam o histórico, o status e as divergências conhecidas.
+7. Designs e documentos históricos não prevalecem sobre ADRs, requisitos vivos ou código atual.
+
+Quando houver divergência, não "escolher o texto mais conveniente". Registrar a discrepância e corrigi-la na fonte responsável.
+
+### 2.2 Documento legado de requisitos v6
+
+O snapshot `docs/requisitos/Requisitos_MotoCalc_RJ_v6.md` foi removido em 05/06/2026 pela TASK-DOC-015. Sua visão de produto e priorização útil foram absorvidas por este documento; requisitos ativos vivem nos três documentos de requisitos; estrutura, cálculos e fases vivem em fontes específicas. O conteúdo original continua disponível no histórico do Git.
+
+Não recriar o monólito nem usar versões antigas dele para implementar FIPE, manutenção, rotas, modelos, estrutura de dados ou planejamento.
+
+---
+
+## 3. Mapa Funcional Atual
+
+### 3.1 Fluxo de entrada
+
+1. O app abre dentro de `ThemeProvider` e `PerfilProvider`.
+2. O estado é carregado pelo service de perfil e validado com Zod.
+3. Sem preset ativo válido ou com onboarding incompleto, `RotaProtegida` envia para `/onboarding/1`.
+4. Com perfil válido, a raiz redireciona para `/estimativa`.
+
+O onboarding tem nove passos principais, ramificações da situação da moto, um passo auxiliar de últimas trocas e uma confirmação final. Nada é persistido antes de `COMMIT_ONBOARDING`.
+
+### 3.2 Rotas e telas
+
+| Rota | Responsabilidade |
+|---|---|
+| `/onboarding/*` | Configuração inicial da moto, uso e custos pessoais. |
+| `/estimativa` | Resumo do custo, rodagem, granularidades, distribuição e aviso de revisão pendente. |
+| `/estimativa/detalhamento` | Custos por categoria, filtros, manutenção, imprevistos e explicações. |
+| `/mao-de-obra` | Revisões de concessionária, serviços avulsos e excepcionais. |
+| `/insumos` | Combustíveis, peças originais e pneus relevantes ao MVP. |
+| `/ajustes` | Rodagem, veículo, situação financeira, preferências e últimas manutenções. |
+| `/perfil` | Gestão da predefinição/perfil local. |
+
+A navegação inferior tem quatro itens: Estimativa, Mão de Obra, Insumos e Ajustes. Não existe rota de Registros.
+
+### 3.3 Modelo de uso
+
+- O usuário trabalha com um preset local ativo por vez.
+- Alterações do usuário são overrides ou dados do perfil; os JSONs não são modificados.
+- O custo é recalculado a partir do estado atual, sem histórico de eventos.
+- Gastos personalizados são valores anuais acumulados em lista fechada: Multa, Sinistros e Outros.
+- O MVP normaliza o cálculo para concessionária/autorizada e peças originais. Caminhos independentes permanecem internos para evolução futura.
+
+---
+
+## 4. Arquitetura Atual
+
+### 4.1 Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Interface | React 19 |
+| Build | Vite 6 |
+| Linguagem | TypeScript strict |
+| Roteamento | React Router 7 em modo biblioteca |
+| Estado | Context + `useReducer` |
+| Estilos | Tailwind CSS v4 + shadcn/ui |
+| Validação runtime | Zod |
+| Testes | Vitest + Testing Library |
+| Persistência | `localStorage` atrás de services |
+
+O PWA/Service Worker ainda não está instalado. "Local-first" descreve estado e dados sem backend; "offline após primeiro carregamento" só será verdadeiro depois da frente PWA.
+
+### 4.2 Camadas principais
+
+```text
+src/
+├── pages/          composição das telas e estado local de rota
+├── components/     componentes compartilhados, de feature e wrappers shadcn
+├── context/        estado global, reducer e defaults
+├── hooks/          acesso ao estado e orquestração dos custos
+├── services/       fronteiras de persistência
+├── data/           catálogo derivado dos presets e dados regionais
+├── presets/        dados estáticos e versionados por modelo
+├── schemas/        contratos Zod de perfil, presets e dados locais
+├── types/          contratos TypeScript
+├── utils/          cálculos puros e view-models de domínio
+└── routes/         proteção de acesso
+```
+
+Este mapa é intencionalmente estável e não enumera cada componente. Para saber o conteúdo atual de uma pasta, consultar o sistema de arquivos.
+
+### 4.3 Estado e persistência
+
+- Aggregate local: `EstadoApp = { perfil, presets, presetAtivoId }`.
+- Envelope persistido: `PresetEntry`, que contém metadados e um `PerfilUsuario`.
+- Schema público atual: `schemaVersion: 1`.
+- Chaves: `estimamoto:v1:presets` e `estimamoto:v1:presetAtivo`.
+- Fonte primária: `src/context/PerfilContext.tsx`, `src/context/perfilDefaults.ts`, `src/types/perfil.ts`, `src/schemas/perfilSchema.ts` e `src/services/perfilStorage.ts`.
+- Dados inválidos são rejeitados na fronteira de carga; o app usa fallback recuperável.
+- Tema usa service próprio em `src/services/themeStorage.ts`.
+
+`fipeCache` continua no perfil por compatibilidade com o cálculo, mas agora é um snapshot do valor escolhido no preset, não cache de resposta HTTP.
+
+### 4.4 Presets e catálogo
+
+- Os presets vivem em `src/presets/*.json`.
+- `src/data/repositorioPresets.ts` carrega os JSONs com `import.meta.glob`, valida cada preset e oferece acesso centralizado.
+- `src/data/catalogoModelos.ts` deriva o catálogo dos presets; não é uma segunda fonte manual.
+- Metadados, consumo, FIPE, peças, revisões e serviços específicos do modelo pertencem ao preset.
+- Adicionar uma moto deve ser uma operação de dados validada, não uma sequência de hardcodes espalhados.
+
+### 4.5 Pipeline de cálculo
+
+```text
+Perfil ativo + preset + dados RJ
+              |
+              v
+normalizarPerfilMvp
+              |
+              v
+calcularResultado
+  ├── rodagem anual e dias trabalhados
+  ├── custos por categoria
+  ├── CPK de peças e combustível
+  ├── revisão e serviços
+  └── granularidades
+              |
+              v
+useCustos -> páginas e componentes
+```
+
+O detalhe das funções pertence a `docs/arquitetura/calculos-visao.md` e ao código. Não duplicar assinaturas extensas aqui.
+
+---
+
+## 5. Decisões Recentes que Toda IA Deve Conhecer
+
+### ADR-003 - sem Registros e sem modo duplo
+
+- Registros e formulários relacionados foram adiados.
+- O app calcula a partir do perfil, preset e overrides.
+- Não reintroduzir histórico, diário de trabalho ou toggle Predefinidos/Personalizado por inferência.
+
+### ADR-010 - validação na persistência
+
+- Dados externos ao runtime confiável são validados com Zod.
+- Não contornar schemas com casts para "fazer funcionar".
+- Alteração de tipo persistido exige alteração coerente de schema e testes.
+
+### ADR-011 - preset como fonte única do modelo
+
+- Catálogo e dados estáticos derivam do preset.
+- Não hardcodar listas de modelos ou regras por marca em componentes quando o dado pode viver no preset.
+
+### ADR-012 a ADR-014 - manutenção honesta no MVP
+
+- Fluxo visível do MVP: concessionária/autorizada e peças originais.
+- Não inventar mão de obra ausente nem tratá-la silenciosamente como custo completo.
+- Estimativa de mão de obra é opt-in, sempre marcada com `~` e perde para um valor real.
+- A UI funde peça e serviço por componente para exibição, mas o cálculo mantém fontes separadas.
+- `concessionariaIncluiPeca` define se o preço oficial já inclui a peça; não usar hardcode "Honda x Yamaha".
+
+### ADR-015 - FIPE local, sem API em runtime
+
+- `preset.tabelaFipe[ano]` é a fonte única no app.
+- O onboarding lê a FIPE de forma síncrona.
+- Ano ausente resulta em "valor indisponível".
+- Atualização mensal: `npm run fipe:check` e `npm run fipe:update`, com revisão do diff.
+- A API Parallelum é usada pelo script de manutenção, não pelo app em execução.
+- BrasilAPI está aposentada.
+
+### ADR-016 - Revisão Geral amortizada
+
+- O custo principal da Revisão Geral é amortizado por design.
+- O comprimento do ciclo vem do maior marco de `preset.revisaoAutorizada`.
+- O popover mostra a composição do ciclo e próximas revisões ancoradas, mas não substitui o headline amortizado.
+- O aviso de revisão pendente usa `kmUltimaRevisao` e é informativo; não altera o cálculo.
+
+### ADR-008 - spacing Tailwind
+
+- Usar a escala numérica padrão: `p-4`, `gap-2`, `space-y-4`.
+- Não criar tokens `--spacing-*` nem classes como `p-md`.
+- `npm run lint` executa o guard `scripts/check-spacing-tokens.mjs`.
+
+---
+
+## 6. Regras de Domínio e Cálculo
+
+### 6.1 Conceito de ano
+
+O total exibido combina dois horizontes:
+
+| Categoria | Horizonte |
+|---|---|
+| Combustível, peças, revisão, alimentação e custos operacionais | Projeção de 12 meses baseada no estado atual e em `kmAnual = kmDia × diasSemana × 52`. |
+| IPVA e licenciamento | Ano-calendário corrente. |
+
+Não descrever o total como "o que será gasto exatamente em 2026" ou "o gasto exato dos próximos 12 meses". É uma estimativa de planejamento.
+
+### 6.2 Presets e overrides
+
+- Preset JSON é imutável em runtime.
+- Personalização fica no perfil.
+- Reset remove o override e revela novamente o valor do preset.
+- O preset ativo e seu perfil no array persistido devem permanecer sincronizados.
+
+### 6.3 Manutenção: amortizado x ancorado
+
+- Revisão Geral: sempre amortizada no headline.
+- Peças sem km da última troca: custo amortizado.
+- Peças com `kmUltimaTroca > 0`: eventos ancorados na janela projetada.
+- A ausência de âncora não é zero custo; é fallback amortizado.
+- Retíficas e outros excepcionais são desligados por padrão.
+- A estimativa de mão de obra nunca pode parecer valor oficial.
+
+Antes de alterar esse domínio, ler `docs/dominio/manutencao-estimativas.md`, `docs/dominio/invariantes.md`, ADR-012 a ADR-016 e os testes associados.
+
+### 6.4 Categorias
+
+O cálculo agrega:
+
+- combustível;
+- alimentação;
+- manutenção por peças;
+- revisão e serviços;
+- documentação;
+- internet;
+- seguro;
+- financiamento ou aluguel;
+- imprevistos.
+
+Revisão é subitem de Manutenção na apresentação, não fatia independente no donut. Filtros de manutenção são default-on, exceto imprevistos sugeridos, que são default-off.
+
+---
+
+## 7. Guardrails de Engenharia
+
+- **Idioma:** código de domínio, componentes, testes e documentação em português, preservando nomes de bibliotecas e APIs.
+- **Cálculos:** não modificar `src/utils/calculos.ts` sem aprovação explícita e plano compatível com INV-CALC-2.
+- **Persistência:** nunca acessar `localStorage` diretamente fora dos services dedicados.
+- **Presets:** nunca mutar JSON em runtime.
+- **Dados de manutenção:** não inventar preço oficial ou esconder custo incompleto.
+- **FIPE:** não adicionar fetch no onboarding nem service de consulta runtime.
+- **Estado:** manter Context + `useReducer`; não introduzir outra biblioteca de estado sem decisão arquitetural.
+- **UI:** procurar componente existente antes de criar outro; reutilizar wrappers de `src/components/ui/`.
+- **Cálculo no JSX:** lógica de negócio pertence a hooks/utils, não ao `return`.
+- **Tipos:** TypeScript strict, sem `any`; manter tipo e schema Zod alinhados.
+- **Testes:** nomes em português, `describe`/`it`, padrão AAA quando aplicável.
+- **Documentação:** preferir ponteiro para fonte canônica a copiar estruturas, assinaturas e contagens voláteis.
+
+---
+
+## 8. Mapa de Leitura por Tipo de Tarefa
+
+| Se a tarefa toca... | Ler antes |
+|---|---|
+| Cálculo ou total exibido | `invariantes.md`, `calculos-visao.md`, `manutencao-estimativas.md`, ADR relacionada e testes de `calculos.ts`. |
+| Manutenção, peças ou revisão | ADR-006, ADR-007, ADR-011 a ADR-016, modelagem e preset do modelo. |
+| Estado ou reducer | `estado_inicial.md`, `PerfilContext.tsx`, `perfilDefaults.ts`, tipos e schemas. |
+| Persistência/importação | services, schemas, INV-PERFIL e ADR-010. |
+| Modelo de moto | `repositorioPresets.ts`, schemas de preset, presets existentes e RNF-10. |
+| Onboarding | requisitos RF-ON, fluxo em `pages/onboarding/`, catálogo e ADR-015. |
+| Componentes ou layout | componente semelhante, `tema-tailwind.md`, ADR-008 e requisitos de acessibilidade. |
+| Rotas | `src/App.tsx`, `RotaProtegida.tsx` e requisitos não funcionais. |
+| Requisito ou regra de negócio | os três docs em `docs/requisitos/`, ADRs e tarefas relacionadas. |
+| Revisão geral | pacote `geral-robusto`, REV anterior e modelo de rastreabilidade do projeto. |
+
+---
+
+## 9. Estado do Produto em 05/06/2026
+
+### Implementado e visível
+
+- onboarding e persistência local;
+- Estimativa e Detalhamento;
+- Mão de Obra, Insumos, Ajustes e Perfil;
+- Pop 110i e Factor 125i;
+- catálogo e presets validados;
+- FIPE por tabela local;
+- manutenção de concessionária com custo incompleto e estimativa opt-in;
+- cálculo de peças amortizado/ancorado;
+- revisão geral amortizada com detalhe ancorado;
+- aviso de revisão pendente;
+- schemas runtime, ErrorBoundary, CI e suíte automatizada.
+
+### Frentes ainda abertas
+
+- export/import;
+- analytics;
+- PWA, cache offline e instalação;
+- TWA/Play Store;
+- auditoria final de acessibilidade, performance e QA;
+- tarefas de higiene e testes registradas em `docs/tarefas/pendentes.md`;
+- dívidas com gatilho em `docs/dominio/divida-tecnica.md`.
+
+O status detalhado deve ser consultado nas tarefas e no código. Não repetir contagens de testes, linhas ou componentes neste documento.
+
+---
+
+## 10. Comandos de Verificação
+
+```bash
+npx tsc --noEmit
+npm run lint
+npm run test
+npm run build
+```
+
+Para FIPE:
+
+```bash
+npm run fipe:check
+npm run fipe:update
+```
+
+`fipe:update` altera presets e exige revisão humana do diff. Não executar como parte de outra tarefa sem necessidade explícita.
+
+---
+
+## 11. Índice de Documentos Ativos
 
 | Assunto | Arquivo |
 |---|---|
 | Requisitos funcionais | `docs/requisitos/funcionais.md` |
-| Regras de negócio | `docs/requisitos/regras-negocio.md` |
 | Requisitos não funcionais | `docs/requisitos/nao-funcionais.md` |
-| Glossário do domínio | `docs/dominio/_glossario.md` |
+| Regras de negócio | `docs/requisitos/regras-negocio.md` |
+| Glossário | `docs/dominio/_glossario.md` |
 | Invariantes | `docs/dominio/invariantes.md` |
+| Modelagem | `docs/dominio/modelagem/` |
 | Dívida técnica | `docs/dominio/divida-tecnica.md` |
-| Modelagem detalhada do domínio | `docs/dominio/modelagem/` |
-| Design de telas e navegação | `docs/design/` |
-| Fluxo de onboarding | `docs/design/indices-links-tela-figma.md` |
-| Arquitetura visão geral e pastas | `docs/contexto-projeto-ai.md` |
+| Manutenção e estimativas | `docs/dominio/manutencao-estimativas.md` |
+| Visão dos cálculos | `docs/arquitetura/calculos-visao.md` |
 | Estado inicial e persistência | `docs/arquitetura/estado_inicial.md` |
-| Componentes de UI existentes | `src/components/` |
-| Rotas da aplicação | `src/App.tsx` |
-| Convenções de código | `docs/arquitetura/convencoes.md` |
+| Convenções | `docs/arquitetura/convencoes.md` |
 | Padrão de testes | `docs/padrao-testes.md` |
-| Tema e tokens Tailwind | `docs/design/tema-tailwind.md` |
-| Setup inicial | `docs/arquitetura/setup-inicial.md` |
+| Tema Tailwind | `docs/design/tema-tailwind.md` |
 | ADRs | `docs/arquitetura/ADR/` |
-| Tarefas pendentes | `docs/tarefas/pendentes.md` |
-| Labels das Tarefas| `docs/tarefas/labels-tarefas.md` |
-| Tarefa em andamento | `docs/tarefas/em-andamento.md` |
-| Tarefas concluídas | `docs/tarefas/concluidas/` |
-| Índice de tarefas concluídas | `docs/tarefas/concluidas/0-indice-concluidas.md` |
-| Protocolo de testes | `docs/padrao-testes.md` |
-
-
-
-## Como aplicar o comportamento neste projeto
-
-- **Idioma:** tudo em português (variáveis, componentes, docs).
-- **Nomenclatura:** camelCase para variáveis, PascalCase para componentes, hooks com prefixo `use`.
-- **Estado:** Context + useReducer, persistido via `services/perfilStorage.ts`.
-- **Cálculos:** `utils/calculos.ts` é imutável; novas funções de cálculo seguem o mesmo estilo.
-- **UI:** shadcn/ui copiado para `components/ui/`, tokens usam a convenção CSS do Shadcn.
-- **Testes:** Vitest com `describe/it`, nomes em português, padrão AAA.
-
-## Instruções Específicas para a IA
-
-- **Antes de alterar qualquer cálculo:** leia `docs/dominio/invariantes.md`.
-- **Antes de criar/editar componentes:** verifique se já existe algo similar em `src/components/` e siga `docs/design/tema-tailwind.md`.
-- **Nunca modifique `src/utils/calculos.ts` sem aprovação explícita.**
-- **Nunca acesse `localStorage` diretamente** use services dedicados em `src/services/` (`perfilStorage.ts`, `themeStorage.ts`).
-- **Ao concluir uma task que altera estado/cálculos/persistência:** rode `npm run test` e confirme que todos os testes estão verdes.
-- **Registre cada ação no arquivo da tarefa** (`docs/tarefas/em-andamento.md` ou o arquivo em `concluidas/`) usando o formato padronizado (prefixo, data, revisão, testes).
-- **Se gerar novas tarefas a partir de uma revisão ou ADR, use os prefixos corretos** (RF, RN, RNF, BG, REF, DOC) e adicione em `docs/tarefas/pendentes.md`.
-- Toda leitura/escrita em `localStorage` usa services dedicados em `src/services/`. Para perfil, siga as chaves e o fluxo de `docs/arquitetura/estado_inicial.md`. Nunca acesse diretamente.
-- **Spacing/sizing seguem a escala numérica padrão do Tailwind** (`p-4`, `gap-2`, `space-y-4`…). **Nunca redefina `--spacing-*` no `@theme`** nem use chaves nomeadas (`p-md`, `gap-sm`): colidem com `max-w-*` no Tailwind v4 (ADR-008). O `npm run lint` barra via `scripts/check-spacing-tokens.mjs`.
-
-
-# Arquitetura Visão Geral do MotoCalc RJ
-
-> **Propósito:** Documentar a estrutura real de pastas, decisões arquiteturais imutáveis e links para os documentos de arquitetura específicos.
-> **Público:** IA e desenvolvedores. Para visitantes, ver `README.md`.
+| Revisões gerais | `docs/arquitetura/revisoes-gerais/` |
+| Tarefas | `docs/tarefas/` |
+| Rotas atuais | `src/App.tsx` |
+| Tipos do perfil | `src/types/perfil.ts` |
+| Tipos de cálculo | `src/types/calculos.ts` |
+| Presets | `src/presets/` |
+| Núcleo de cálculo | `src/utils/calculos.ts` |
 
 ---
 
-## Estrutura Real de Pastas (src/)
+## 12. Como Manter Este Documento Saudável
 
-```
-src/
-├── App.tsx                  # Rotas e providers
-├── main.tsx                 # Entry point, carrega fixtures em DEV
-├── index.css                # Tailwind v4 + tokens shadcn
-├── types/
-│   ├── perfil.ts            # PerfilUsuario, PresetEntry, PerfilAction
-│   └── calculos.ts          # GranularidadesCusto, CustosPorCategoria, FiltrosCategorias
-├── utils/
-│   ├── calculos.ts          # ✅ NUNCA TOCAR sem aprovação (ver `npm run test` para contagem)
-│   ├── calculos.test.ts
-│   ├── formatters.ts        # moeda(), cpkFormatado(), kmFormatado()
-│   └── cicloRevisao.ts      # montarCicloRevisao: revisões do ciclo p/ o popover (visão, não recalcula)
-├── services/
-│   ├── perfilStorage.ts     # IPerfilStorage + LocalStoragePerfilStorage
-│   └── themeStorage.ts      # IThemeStorage + LocalStorageThemeStorage
-│                            # (FIPE não tem service: vem da tabelaFipe do preset — ADR-015)
-├── context/
-│   ├── PerfilContext.tsx    # Provider + useReducer + perfilPadrao
-│   ├── PerfilContext.test.ts
-│   └── ThemeContext.tsx
-├── hooks/
-│   ├── usePerfil.ts
-│   └── useCustos.ts
-├── routes/
-│   └── RotaProtegida.tsx
-├── data/
-│   ├── dados_rj.json
-│   └── catalogoModelos.ts
-├── presets/
-│   └── pop110i.json         # ✅ IMUTÁVEL EM RUNTIME
-├── fixtures/
-│   └── usuario_teste.json   # Carregado só em DEV
-├── assets/
-│   └── icons/               # 22 SVGs Material Symbols (referência raw - não importados diretamente)
-├── components/
-│   ├── ui/                  # Wrappers shadcn/ui (accordion, badge, button, card, input, label, etc.)
-│   ├── icons/
-│   │   └── index.tsx        # 23 exportações: 22 ícones SVG (Material Symbols) + IconMoeda
-│   ├── CabecalhoVoltar.tsx  # Header compartilhado: botão voltar (shadcn Button ghost) + título
-│   ├── estimativa/
-│   │   ├── DonutChart.tsx
-│   │   ├── CardPeriodo.tsx  # Card de período (label + km + valor). Props: label, km, valor
-│   │   ├── SecaoRodagem.tsx # Seção km/dia e dias/semana. shadcn Input, Button, Label
-│   │   ├── DistribuicaoCustos.tsx # Donut + legenda. Props: segmentos[]
-│   │   └── CardCpk.tsx      # Card custo/km. Props: porKm, porKmSemAlimentacao?
-│   ├── detalhamento/
-│   │   ├── Toggle.tsx       # Toggle checkbox-styled (custom - não shadcn Switch; thumb diferente)
-│   │   ├── LinhaDetalhe.tsx # Linha label + valor formatado
-│   │   ├── CategoriaAccordion.tsx # Linha de categoria com toggle + chevron expand
-│   │   ├── CardTotalAnual.tsx     # Resumo no topo: total anual, mensal, cpk/km
-│   │   ├── SeletorPeriodo.tsx     # Barra Ano/Mês/Sem/Dia/Hora. Exporta tipo Periodo
-│   │   ├── SecaoManutencao.tsx    # Revisão geral + peças com toggles individuais (+ botão olho → popover)
-│   │   ├── PopoverDetalhesRevisao.tsx # Popover da Revisão Geral: revisões do ciclo + provisão (amortizado)
-│   │   └── SecaoImprevistos.tsx   # Gastos custom: accordion com toggle, delete e aviso
-│   └── layout/
-│       ├── LayoutApp.tsx
-│       └── NavBar.tsx
-└── pages/
-    ├── PaginaEstimativa.tsx    # 127 linhas ✅
-    ├── PaginaDetalhamento.tsx  # 199 linhas ✅
-    ├── PaginaMaoDeObra.tsx
-    ├── PaginaInsumos.tsx
-    ├── PaginaAjustes.tsx
-    ├── PaginaPerfil.tsx
-    ├── PaginaOnboarding.tsx
-    └── onboarding/
-        ├── FluxoOnboarding.tsx
-        ├── PassoLayout.tsx
-        ├── onboardingUtils.ts
-        └── passos/
-            ├── Passo1.tsx … Passo9.tsx
-            ├── Passo6Aluguel.tsx
-            ├── Passo6Financiamento.tsx
-            ├── Passo6Responsabilidade.tsx
-            └── PassoConfirmacao.tsx
-```
-
----
-
-## Decisões Arquiteturais Imutáveis
-
-- **Idioma:** Português em tudo variáveis, componentes, tipos, comentários, testes.
-- **Estado global:** Context + `useReducer`. Um contexto por domínio. Não atomizar.
-- **Persistência:** `localStorage` acessado exclusivamente via services dedicados em `src/services/`.
-- **Presets JSON:** Imutáveis em runtime. Toda personalização vai para overrides no perfil.
-- **FIPE hardcoded:** `tabelaFipe` nos presets é a **fonte única** do valor FIPE (offline, atualizada mensalmente; sem consulta em runtime — ADR-015). Atualize com `npm run fipe:check` e depois `npm run fipe:update`; o script usa a API Parallelum FIPE v2.
-- **Cálculos:** `utils/calculos.ts` é imutável (ver `npm run test` para contagem atual). Novas funções de cálculo seguem o mesmo estilo, mas não alteram as existentes sem aprovação.
-- **Roteamento:** React Router v7 (modo biblioteca - API v6 preservada).
-- **UI base:** shadcn/ui instalado. Wrappers em `components/ui/`. Componentes em uso: Card, Button, Input, Label, Badge, Accordion, Dialog, Switch, Tabs, Sheet, Separator, Toggle.
-- **Testes:** Vitest com `describe`/`it`, padrão AAA, nomes em português.
-- **Build:** Vite. PWA/Service Worker (`vite-plugin-pwa`) está **planejado** (RNF-PWA-*), ainda não instalado.
-
----
-
-## Modelo de Custo Anual (Manutenção): Amortizado × Ancorado
-
-> **Por que esta seção existe:** o app combina dois modelos de projeção de custo por peça no mesmo total anual. Entender a diferença é pré-requisito para qualquer task que toque `calcularCpkPorPeca`, `calcularCicloPeca` ou a Seção Manutenção do Detalhamento. Modelo conceitualizado aqui após uso real do app em **27/05/26** - referência canônica para futuras decisões.
-
-### Conceito de "ano" no MotoCalc RJ
-
-O total anual exibido **não** é "ano calendário fixo 2026" nem "rolling 12 meses do calendário". É um **híbrido**:
-
-| Categoria | Conceito de "ano" usado |
-|---|---|
-| Manutenção (peças), Revisão, Combustível | Projeção amortizada de 12 meses a partir do **estado atual** da moto (`kmAnual = kmDia × diasSemana × 52`). Não vinculado a calendário. |
-| IPVA / Licenciamento | Ano calendário corrente (`new Date().getFullYear()`). |
-
-Manter essa distinção ao explicar valores ao usuário ou modificar cálculos: não existe "ano 2026 inteiro"; existe "projeção de 12 meses adiante" para custos operacionais e "ano calendário" para custos legais.
-
-### Dois modos de cálculo por peça (`calcularCicloPeca` em [`src/utils/calculos.ts`](../src/utils/calculos.ts))
-
-| Modo | Quando dispara | Fórmula | `trocasNoAno` típico | `custoAnual` |
-|---|---|---|---|---|
-| **Amortizado** | `kmUltimaTroca = 0` (usuário não informou) **ou** peça ausente de `MAPA_PECA_PARA_KM_ULTIMA_TROCA` | `trocasNoAno = kmAnual / intervalo` | Fracionário (0,18; 1,52; 3,03…) | `trocasNoAno × preço` (fração do preço cheio) |
-| **Ancorado** | `kmUltimaTroca > 0` (preenchido no card "Últimas manutenções") **e** peça mapeada | Projeta eventos reais em `(kmAtual, kmAtual + kmAnual]` | Inteiro (0, 1, 2, 14…) | `n × preçoCheio` |
-
-**custoAnual** = `trocasNoAno × preço` em ambos os modos - a diferença é o que `trocasNoAno` representa.
-
-> ⚠️ **A Revisão Geral (pacote da concessionária) é caso à parte e amortizada POR DESIGN — não é bug.** Não tem modo ancorado: o custo do ciclo é provisionado proporcionalmente ao km. O porquê (e a regra de custo por tipo de item) está em [`docs/dominio/manutencao-estimativas.md`](dominio/manutencao-estimativas.md) §3 — reanalisado em 04/06/26. **Não "corrigir" para contagem sem decisão do humano.** O detalhamento do ciclo aparece no popover `PopoverDetalhesRevisao`.
-
-### Exemplo prático (Pop 110i, `kmAnual ≈ 18.200`, `kmAtual = 90.000`)
-
-| Peça | Modo | Intervalo | `kmUltimaTroca` | `trocasNoAno` real | `custoAnual` |
-|---|---|---|---|---|---|
-| Óleo motor | Ancorado | 1.250 km | 80.000 | 14 | R$ 560,00 |
-| Pneu traseiro | Ancorado | 16.000 km | 60.000 | 2 | R$ 490,00 |
-| Pneu dianteiro | Ancorado | 25.000 km | 78.000 | 1 | R$ 209,00 |
-| Kit relação | Ancorado | 18.000 km | 78.000 | 1 | R$ 230,00 |
-| Vela ignição | Amortizado | 12.000 km | - | 1,52 | R$ 124,37 |
-| Bateria | Amortizado (temporal) | 24 meses | - | 0,50 | R$ 164,90 |
-| Kit cilindro | Amortizado | 100.000 km | - | **0,18** | **R$ 65,67** |
-
-### Por que isto importa - pontos sensíveis
-
-- **Convergem no longo prazo, divergem ano a ano.** Em horizonte de 10 anos os dois modelos somam o mesmo total. Em um ano específico podem divergir em ordem de grandeza.
-- **Amortizado subestima/superestima conforme posição no ciclo.** Kit cilindro a 5.000 km do gatilho (100k km) provisiona R$ 65 (`0,18 × R$ 360`) quando deveria provisionar **R$ 360 cheio** - uma troca real está prevista. Moto recém-trocada provisiona o mesmo valor mesmo sem nenhuma troca prevista nos próximos 5 anos.
-- **TASK-RF-6.13 estende a ancoragem:** `MAPA_PECA_PARA_KM_ULTIMA_TROCA` em `calculos.ts` cobre as peças rastreáveis do card de últimas trocas; retíficas usam mapa paralelo por serviço. Itens com km informado entram no modo ancorado, e itens sem km informado continuam no fallback amortizado.
-- **TASK-RF-6.24 remove `kit_revisao` da ancoragem:** o kit revisão representa juntas/anéis/vedações recorrentes das revisões regulares. No modo independente entra automaticamente no fallback amortizado de 6.000 km; no modo autorizado fica absorvido pelo pacote Honda. Não aparece em Ajustes como última troca editável.
-
-### Display atual - débito de UX conhecido
-
-Em [`src/components/detalhamento/SecaoManutencao.tsx`](../src/components/detalhamento/SecaoManutencao.tsx) (linha 117) o número exibido na coluna esquerda é `Math.ceil(peca.trocasNoAno)`. Isso converte `0,18` em **`1×`** e mistura visualmente "fração amortizada" com "1 troca real prevista". A **TASK-BG-005** resolveu o problema irmão para Imprevistos exibindo `preço cheio + ≈ valor amortizado`. Seção Manutenção ainda não recebeu tratamento equivalente - abrir BG dedicada quando priorizado.
-
-### Regras práticas para o agente
-
-- **Ao tocar `calcularCpkPorPeca` ou `calcularCicloPeca`:** o ramo amortizado é o **fallback obrigatório**, nunca remover. Campo `kmUltimaTroca = 0` significa "modo amortizado, comportamento canônico".
-- **Ao adicionar peça nova ao preset:** decidir explicitamente se ela entra em `MAPA_PECA_PARA_KM_ULTIMA_TROCA` e se precisa aparecer no card de últimas trocas. Se o usuário pode informar uma troca real, prefira rastrear; se não houver evento editável claro, mantenha amortizado. Consumíveis recorrentes de revisão, como `kit_revisao`, ficam fora do card.
-- **Ao exibir `trocasNoAno` na UI:** prefira mostrar o valor real (com vírgula decimal) ou diferenciar visualmente amortizado de ancorado. `Math.ceil` esconde informação relevante e induz interpretação errada.
-- **Ao escrever/reescrever testes que envolvem custos anuais:** o teste precisa explicitar se assume modo amortizado (sem `kmUltimaTrocas`) ou ancorado (`kmUltimaTrocas` definido). Os dois caminhos produzem `custoAnual` diferentes para a mesma peça.
-- **Ao explicar números ao usuário:** "este custo anual é uma projeção amortizada/cíclica" - nunca "este é o custo do ano de 2026" (não é calendário) nem "é o que você vai gastar no próximo ano exato" (é estimativa com fronteira de modelo conhecida).
-
----
-
-## Documentos de Arquitetura Relacionados
-
-| Documento | Conteúdo |
-|---|---|
-| `estado_inicial.md` | Fluxo de leitura no arranque, chaves do localStorage, `perfilPadrao` |
-| `src/components/` | Componentes existentes de interface e layout |
-| `src/App.tsx` | Lista real de rotas e proteção de acesso |
-| `convencoes.md` | Convenções de nomenclatura, idioma, exemplos de código correto/incorreto |
-| `docs/padrao-testes.md` | Padrão de testes (Vitest, AAA, cobertura mínima, nomes em PT) |
-| `docs/design/tema-tailwind.md` | Tokens de cor Shadcn, tipografia, classes customizadas |
-| `setup-inicial.md` | Passo a passo para setup do projeto |
-| `ADR/` | Decisões arquiteturais registradas (ADR-001, ADR-002, ...) |
+- Atualizar a visão quando público, problema, proposta de valor ou escopo mudarem.
+- Atualizar a lista de modelos quando presets forem adicionados ou removidos.
+- Atualizar decisões recentes quando uma ADR substituir outra.
+- Manter apenas mapas estáveis; detalhes voláteis devem apontar para o código.
+- Não registrar listas exaustivas de componentes, números de testes ou linhas de arquivo.
+- Não transformar este documento em requisito, ADR, modelagem detalhada ou diário de tarefas.
+- Se uma informação já tem fonte canônica, resumir a implicação e criar o link conceitual, sem copiar o documento inteiro.

@@ -1,8 +1,8 @@
 # Regras de Negócio MotoCalc RJ
 
-> Extraído de `Requisitos_MotoCalc_RJ_v6.md` (09/05/2026).
+> Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores.
 > IDs ativos: RN-01 a RN-23 e RN-27. Regras que definem o que é válido no domínio, independente de implementação.
-> **Nota:** RN-24, RN-25 e RN-26 dependiam da tela Registros e foram **adiadas via ADR-003**. Removidas deste documento operacional; permanecem em `Requisitos_MotoCalc_RJ_v6.md` (banner ADIADO) para fidelidade histórica da spec v6.0.
+> **Nota:** RN-24, RN-25 e RN-26 dependiam da tela Registros e foram **adiadas via ADR-003**. Removidas deste documento operacional; a ADR é a fonte da decisão e do escopo adiado.
 
 ---
 
