@@ -132,3 +132,4 @@
 | TASK-TEST-003 | Render tests da UI de manutenção (popover Revisão Geral, SecaoManutencao, PopoverDetalhesPeca, CardServico, CardTotalAnual + chip→popup) — 16 testes | [2026-06-05--14h54--TASK-TEST-003.md](./2026-06-05--14h54--TASK-TEST-003.md) |
 | TASK-RF-6.27 | Aviso de revisão pendente na Estimativa (`proximaRevisaoApos` + card, por-marca; links Ajustes/Mão de Obra) | [2026-06-05--15h45--TASK-RF-6.27.md](./2026-06-05--15h45--TASK-RF-6.27.md) |
 | TASK-DOC-015 | Descontinuar o monólito de requisitos v6 e consolidar o contexto operacional | [2026-06-05--17h01--TASK-DOC-015.md](./2026-06-05--17h01--TASK-DOC-015.md) |
+| TASK-REF-37 | Higiene em calculos.ts: nomes neutros e remoção de wrapper morto | [2026-06-05--17h25--TASK-REF-37.md](./2026-06-05--17h25--TASK-REF-37.md) |

@@ -21,21 +21,6 @@ Obedeça essa ordem:
 
 > Lote gerado pela REV-002 (auditoria de tech lead após a onda FIPE/Revisão). Veredito APROVADO COM RESSALVAS; nenhum 🔴. Origem rastreável: `docs/arquitetura/revisoes-gerais/REV-002.md`.
 
-### TASK-REF-37 Higiene em calculos.ts: renomear internos "Honda" + wrapper morto (GATED)
-
-- **Status:** Pendente
-- **Modo:** Standard (toca arquivo gated → exige plano aprovado)
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data-hora origem:** 05/06/26 16:20
-- **Dependências:** —
-- **REQ/ADR/DT:** REV-002-A02, REV-002-A03; ADR-016
-- **Observações:** ⚠️ **`src/utils/calculos.ts` é GATED — não alterar sem aprovação de plano (núcleo testado, INV-CALC).** Dois itens de higiene no MESMO toque, **sem mudar nenhum número de cálculo** (é só rename/limpeza):
-  - **(A02) Renomear internos "Honda" que já são multi-marca** (pós ADR-016/BG-022 o ciclo vem do preset, vale p/ Yamaha também): `KM_CICLO_REVISAO_HONDA` → `KM_CICLO_REVISAO_PADRAO` (hoje é fallback genérico); `quantidadeRevisoesCicloHonda` → `quantidadeRevisoesCiclo` (param + opção de `calcularDetalhesRevisaoAnual`/`calcularEventosRevisaoNoAno`); `basePacoteHonda` → `basePacoteConcessionaria`. ~15 ocorrências em `calculos.ts` + atualizar referências à opção `quantidadeRevisoesCicloHonda` em `calculos.test.ts`.
-  - **(A03) `calcularCustoRevisaoAnual` (l.637) não tem consumidor em produção** (só `calculos.test.ts`; produção usa `calcularDetalhesRevisaoAnual`) e não recebeu a opção `kmCicloRevisao` (ADR-016) → diverge. **Decidir:** remover o wrapper e migrar os ~8 testes para `calcularDetalhesRevisaoAnual`, OU mantê-lo documentado como helper de teste e alinhar ao contrato atual.
-  - **Critério:** zero nome "Honda" em construto multi-marca; sem API morta divergente; `test`/`lint`/`tsc` verdes; **valores de cálculo idênticos** (rename não muda resultado).
-
 ### TASK-CHORE-018 Acessibilidade do header do CategoriaAccordion (teclado/leitor de tela)
 
 - **Status:** Pendente

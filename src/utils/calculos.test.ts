@@ -13,7 +13,6 @@ import {
   calcularCpkPecasTotal,
   calcularIPVA,
   calcularLicenciamento,
-  calcularCustoRevisaoAnual,
   calcularDetalhesRevisaoAnual,
   calcularCustoInternetAnual,
   calcularCustoSeguroAnual,
@@ -540,7 +539,7 @@ describe('calcularLicenciamento', () => {
 
 // ─── V. Revisão ──────────────────────────────────────────────────
 
-describe('calcularCustoRevisaoAnual', () => {
+describe('calcularDetalhesRevisaoAnual', () => {
   const servicosMock: ServicoIndependente[] = [
     {
       id: 'troca-oleo',
@@ -587,29 +586,33 @@ describe('calcularCustoRevisaoAnual', () => {
   it('modo autorizadas: km-based - (ciclo / 36000) × kmAnual', () => {
     const ciclo = 3334.62;
     expect(
-      calcularCustoRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo }),
+      calcularDetalhesRevisaoAnual('autorizadas', 36000, { custoCicloCompleto: ciclo }).total,
     ).toBeCloseTo(ciclo, 2);
     expect(
-      calcularCustoRevisaoAnual('autorizadas', 18000, { custoCicloCompleto: ciclo }),
+      calcularDetalhesRevisaoAnual('autorizadas', 18000, { custoCicloCompleto: ciclo }).total,
     ).toBeCloseTo(ciclo / 2, 2);
   });
 
   it('modo autorizadas: escala proporcionalmente com kmAnual (rider leve vs pesado)', () => {
-    const leve = calcularCustoRevisaoAnual('autorizadas', 15000, { custoCicloCompleto: 3334.62 });
-    const pesado = calcularCustoRevisaoAnual('autorizadas', 40000, { custoCicloCompleto: 3334.62 });
+    const leve = calcularDetalhesRevisaoAnual('autorizadas', 15000, {
+      custoCicloCompleto: 3334.62,
+    }).total;
+    const pesado = calcularDetalhesRevisaoAnual('autorizadas', 40000, {
+      custoCicloCompleto: 3334.62,
+    }).total;
     expect(pesado / leve).toBeCloseTo(40000 / 15000, 2);
   });
 
-  it('modo autorizadas: ignora serviços excepcionais no ciclo Honda', () => {
+  it('modo autorizadas: ignora serviços excepcionais no ciclo da concessionária', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
-    const esperado = (cicloHonda / 36000) * kmAnual;
+    const custoCiclo = 3334.62;
+    const esperado = (custoCiclo / 36000) * kmAnual;
 
     expect(
-      calcularCustoRevisaoAnual('autorizadas', kmAnual, {
-        custoCicloCompleto: cicloHonda,
+      calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+        custoCicloCompleto: custoCiclo,
         servicosIndependentes: servicosMock,
-      }),
+      }).total,
     ).toBeCloseTo(esperado, 2);
   });
 
@@ -617,7 +620,9 @@ describe('calcularCustoRevisaoAnual', () => {
     const kmAnual = 12000;
     const esperado = (25 / 3000) * kmAnual + (80 / 6000) * kmAnual;
     expect(
-      calcularCustoRevisaoAnual('independentes', kmAnual, { servicosIndependentes: servicosMock }),
+      calcularDetalhesRevisaoAnual('independentes', kmAnual, {
+        servicosIndependentes: servicosMock,
+      }).total,
     ).toBeCloseTo(esperado, 2);
   });
 
@@ -626,27 +631,27 @@ describe('calcularCustoRevisaoAnual', () => {
     const semRevisaoGeral = servicosMock.map((s) =>
       s.id === 'revisao-geral' ? { ...s, ativo: false } : s,
     );
-    const semAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
+    const semAtivo = calcularDetalhesRevisaoAnual('independentes', kmAnual, {
       servicosIndependentes: semRevisaoGeral,
-    });
-    const comAtivo = calcularCustoRevisaoAnual('independentes', kmAnual, {
+    }).total;
+    const comAtivo = calcularDetalhesRevisaoAnual('independentes', kmAnual, {
       servicosIndependentes: servicosMock,
-    });
+    }).total;
     expect(comAtivo).toBeGreaterThan(semAtivo);
     expect(comAtivo - semAtivo).toBeCloseTo((80 / 6000) * kmAnual, 2);
   });
 
   it('modo independentes: sem serviços retorna 0', () => {
-    expect(calcularCustoRevisaoAnual('independentes', 10000, { servicosIndependentes: [] })).toBe(
-      0,
-    );
+    expect(
+      calcularDetalhesRevisaoAnual('independentes', 10000, { servicosIndependentes: [] }).total,
+    ).toBe(0);
   });
 
   // ── TASK-RF-6.22 / ADR-007: M.O. por modo + precoTotalAutorizada ─────
 
-  it('modo autorizadas: soma precoTotalAutorizada de serviços fora do pacote Honda acima do ciclo', () => {
+  it('modo autorizadas: soma precoTotalAutorizada de serviços fora do pacote acima do ciclo', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicosComKit: ServicoIndependente[] = [
       {
         id: 'troca-kit-transmissao',
@@ -659,18 +664,18 @@ describe('calcularCustoRevisaoAnual', () => {
         ehExcepcional: false,
       },
     ];
-    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+    const total = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicosComKit,
-    });
-    // Pacote Honda escalado + kit transmissão (1 troca/ano × 313.56)
-    const esperado = (cicloHonda / 36000) * kmAnual + 313.56;
+    }).total;
+    // Pacote da concessionária escalado + kit transmissão (1 troca/ano × 313.56)
+    const esperado = (custoCiclo / 36000) * kmAnual + 313.56;
     expect(total).toBeCloseTo(esperado, 2);
   });
 
   it('modo autorizadas: detalha serviços avulsos fora do pacote sem alterar o total', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-kit-transmissao',
@@ -705,10 +710,10 @@ describe('calcularCustoRevisaoAnual', () => {
     ];
 
     const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicos,
     });
-    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+    const baseEsperada = (custoCiclo / 36000) * kmAnual;
     const kit = resultado.detalhes.servicos.get('troca-kit-transmissao');
 
     expect(resultado.detalhes.base).toBeCloseTo(baseEsperada, 2);
@@ -726,14 +731,14 @@ describe('calcularCustoRevisaoAnual', () => {
   it('amortiza pelo km do ciclo do preset, não pela constante 36.000 (ADR-016)', () => {
     const porPreset = calcularDetalhesRevisaoAnual('autorizadas', 18000, {
       custoCicloCompleto: 3000,
-      quantidadeRevisoesCicloHonda: 7,
+      quantidadeRevisoesCiclo: 7,
       kmCicloRevisao: 30000,
     });
     expect(porPreset.detalhes.base).toBeCloseTo((3000 / 30000) * 18000, 2);
 
     const fallback = calcularDetalhesRevisaoAnual('autorizadas', 18000, {
       custoCicloCompleto: 3000,
-      quantidadeRevisoesCicloHonda: 7,
+      quantidadeRevisoesCiclo: 7,
     });
     expect(fallback.detalhes.base).toBeCloseTo((3000 / 36000) * 18000, 2);
   });
@@ -741,7 +746,7 @@ describe('calcularCustoRevisaoAnual', () => {
   it('modo autorizadas: serviço avulso usa km da última troca para projetar eventos reais', () => {
     const kmAtual = 18000;
     const kmAnual = 18200;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-kit-transmissao',
@@ -756,13 +761,13 @@ describe('calcularCustoRevisaoAnual', () => {
     ];
 
     const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicos,
       kmAtual,
       kmUltimaTrocas: { ...kmUltimaTrocasVazio, kitRelacao: 12000 },
     });
     const kit = resultado.detalhes.servicos.get('troca-kit-transmissao');
-    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+    const baseEsperada = (custoCiclo / 36000) * kmAnual;
 
     expect(kit?.modo).toBe('ancorado');
     expect(kit?.eventosNoAno).toBe(2);
@@ -774,7 +779,7 @@ describe('calcularCustoRevisaoAnual', () => {
 
   it('modo autorizadas: serviço avulso nao_informado gera pendência sem somar R$ 0 silencioso', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-kit-transmissao',
@@ -790,10 +795,10 @@ describe('calcularCustoRevisaoAnual', () => {
     ];
 
     const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicos,
     });
-    const baseEsperada = (cicloHonda / 36000) * kmAnual;
+    const baseEsperada = (custoCiclo / 36000) * kmAnual;
 
     expect(resultado.total).toBeCloseTo(baseEsperada, 2);
     expect(resultado.detalhes.servicos.size).toBe(0);
@@ -810,7 +815,7 @@ describe('calcularCustoRevisaoAnual', () => {
 
   it('modo autorizadas: serviço avulso informado_usuario entra no cálculo sem pendência', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-kit-transmissao',
@@ -826,7 +831,7 @@ describe('calcularCustoRevisaoAnual', () => {
     ];
 
     const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicos,
     });
     const servico = resultado.detalhes.servicos.get('troca-kit-transmissao');
@@ -955,7 +960,7 @@ describe('calcularCustoRevisaoAnual', () => {
 
   it('modo autorizadas: NÃO soma serviço com incluidoNaRevisaoAutorizada=true (já no pacote)', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicosComOleo: ServicoIndependente[] = [
       {
         id: 'troca-oleo',
@@ -969,17 +974,17 @@ describe('calcularCustoRevisaoAnual', () => {
         ehExcepcional: false,
       },
     ];
-    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+    const total = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicosComOleo,
-    });
-    const esperado = (cicloHonda / 36000) * kmAnual;
+    }).total;
+    const esperado = (custoCiclo / 36000) * kmAnual;
     expect(total).toBeCloseTo(esperado, 2);
   });
 
-  it('modo autorizadas: serviço com precoTotalAutorizada=0 não soma (Honda não executa)', () => {
+  it('modo autorizadas: serviço com precoTotalAutorizada=0 não soma', () => {
     const kmAnual = 12000;
-    const cicloHonda = 3334.62;
+    const custoCiclo = 3334.62;
     const servicosComRetifica: ServicoIndependente[] = [
       {
         id: 'retifica-completa',
@@ -992,11 +997,11 @@ describe('calcularCustoRevisaoAnual', () => {
         ehExcepcional: false, // mesmo como não-excepcional, valor 0 zera a soma
       },
     ];
-    const total = calcularCustoRevisaoAnual('autorizadas', kmAnual, {
-      custoCicloCompleto: cicloHonda,
+    const total = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
+      custoCicloCompleto: custoCiclo,
       servicosIndependentes: servicosComRetifica,
-    });
-    const esperado = (cicloHonda / 36000) * kmAnual;
+    }).total;
+    const esperado = (custoCiclo / 36000) * kmAnual;
     expect(total).toBeCloseTo(esperado, 2);
   });
 });

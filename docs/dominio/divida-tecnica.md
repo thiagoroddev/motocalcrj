@@ -299,7 +299,7 @@ Manter `MAPA_PECA_PARA_SERVICO` como fonte única do vínculo enquanto houver um
 
 ### Situação atual
 
-Após TASK-BG-005, `calcularCustoRevisaoAnual` não soma serviços com `ehExcepcional: true`. `retifica-cabecote` e `retifica-completa` são derivadas de `servicosIndependentes` para `CustosPorCategoria.gastosCustom.detalhes.sugeridos` e aparecem no Detalhamento em Imprevistos, desligadas por padrão.
+Após TASK-BG-005, `calcularDetalhesRevisaoAnual` não soma serviços com `ehExcepcional: true`. `retifica-cabecote` e `retifica-completa` são derivadas de `servicosIndependentes` para `CustosPorCategoria.gastosCustom.detalhes.sugeridos` e aparecem no Detalhamento em Imprevistos, desligadas por padrão.
 
 ### Por que deixou de ser dívida técnica
 

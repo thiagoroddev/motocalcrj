@@ -117,13 +117,12 @@ calcularCustoDocumentosAnual(ipva, licenciamento): number
 
 ```typescript
 calcularDetalhesRevisaoAnual(modoRevisao, kmAnual, opcoes): CustosPorCategoria['revisao']
-calcularCustoRevisaoAnual(modoRevisao, kmAnual, opcoes): number
-// opcoes: { custoCicloCompleto?, quantidadeRevisoesCicloHonda?, servicosIndependentes?,
-//           kmAtual?, kmUltimaTrocas?, marca?, fatorMaoDeObra?,
+// opcoes: { custoCicloCompleto?, quantidadeRevisoesCiclo?, kmCicloRevisao?,
+//           servicosIndependentes?, kmAtual?, kmUltimaTrocas?, marca?, fatorMaoDeObra?,
 //           incluirEstimativaMaoDeObra?, estimativaMaoDeObraPorServico? }
 ```
 
-- **`autorizadas`:** `base = (custoCicloCompleto / 36000) × kmAnual` (defaults `3334.62` / `7 revisões`) **+ serviços avulsos fora do pacote** (`servicosManutencao` ativos, `intervalKm > 0`, `!incluidoNaRevisaoAutorizada`):
+- **`autorizadas`:** `base = (custoCicloCompleto / kmCicloRevisao) × kmAnual`, com `kmCicloRevisao = max(preset.revisaoAutorizada.intervaloKm)` e fallback de 36.000 km (defaults `3334.62` / `7 revisões`) **+ serviços avulsos fora do pacote** (`servicosManutencao` ativos, `intervalKm > 0`, `!incluidoNaRevisaoAutorizada`):
   - `informado` / `informado_usuario` → soma `precoTotalAutorizada` amortizado;
   - `nao_informado` + estimativa ligada (global **ou** `estimativaMaoDeObraPorServico[id]`) → soma M.O. estimada (`~`, `maoDeObraEstimada: true`);
   - `nao_informado` sem estimativa → `PendenciaMaoDeObraConcessionaria` + `detalhes.custoIncompleto = true`.

@@ -321,9 +321,10 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
   const kmAnualSeguro = valorNaoNegativo(kmAnual);
 
   // No modo autorizado, pula peças por dois critérios (ADR-006 + ADR-007):
-  //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote Honda;
+  //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote
+  //      da concessionária;
   //  (b) peça associada a um ServicoIndependente com `precoTotalAutorizada > 0`
-  //      e ativo - o serviço cobre peça + M.O. juntos (modelo Honda) e somar a
+  //      e ativo - o serviço cobre peça + M.O. juntos e somar a
   //      peça aqui duplica o custo.
   const ehPecaCobertaPorServicoAutorizada = (pecaId: string): boolean => {
     if (modoRevisao !== 'autorizadas') return false;
@@ -461,21 +462,21 @@ export function calcularCustoDocumentosAnual(ipva: number, licenciamento: number
 
 // ─── V. Revisão Periódica ─────────────────────────────────────────
 
-const KM_CICLO_REVISAO_HONDA = 36000;
+const KM_CICLO_REVISAO_PADRAO = 36000;
 const INTERVALO_REVISAO_INDEPENDENTE_KM = 6000;
 
 function calcularEventosRevisaoNoAno(
   modoRevisao: ModoRevisao,
   kmAnual: number,
-  quantidadeRevisoesCicloHonda: number,
-  kmCiclo: number = KM_CICLO_REVISAO_HONDA,
+  quantidadeRevisoesCiclo: number,
+  kmCiclo: number = KM_CICLO_REVISAO_PADRAO,
 ): number {
   const kmAnualSeguro = valorNaoNegativo(kmAnual);
   if (kmAnualSeguro <= 0) return 0;
-  const kmCicloSeguro = kmCiclo > 0 ? kmCiclo : KM_CICLO_REVISAO_HONDA;
+  const kmCicloSeguro = kmCiclo > 0 ? kmCiclo : KM_CICLO_REVISAO_PADRAO;
   const eventos =
     modoRevisao === 'autorizadas'
-      ? (valorNaoNegativo(quantidadeRevisoesCicloHonda) / kmCicloSeguro) * kmAnualSeguro
+      ? (valorNaoNegativo(quantidadeRevisoesCiclo) / kmCicloSeguro) * kmAnualSeguro
       : kmAnualSeguro / INTERVALO_REVISAO_INDEPENDENTE_KM;
   return eventos;
 }
@@ -485,9 +486,9 @@ export function calcularDetalhesRevisaoAnual(
   kmAnual: number,
   opcoes: {
     custoCicloCompleto?: number;
-    quantidadeRevisoesCicloHonda?: number;
+    quantidadeRevisoesCiclo?: number;
     // Km do ciclo completo de revisões (maior marco do preset). ADR-016.
-    // Default: KM_CICLO_REVISAO_HONDA (fallback).
+    // Default: KM_CICLO_REVISAO_PADRAO (fallback).
     kmCicloRevisao?: number;
     servicosIndependentes?: ServicoIndependente[];
     kmAtual?: number;
@@ -506,13 +507,13 @@ export function calcularDetalhesRevisaoAnual(
 
   if (modoRevisao === 'autorizadas') {
     const ciclo = valorNaoNegativo(opcoes.custoCicloCompleto ?? 3334.62);
-    const quantidadeRevisoesCicloHonda = opcoes.quantidadeRevisoesCicloHonda ?? 7;
-    // Ciclo por preset (ADR-016): Honda 36.000, Yamaha 5.000×n. Fallback à constante.
+    const quantidadeRevisoesCiclo = opcoes.quantidadeRevisoesCiclo ?? 7;
+    // Ciclo por preset (ADR-016). Fallback neutro de 36.000 km.
     const kmCiclo =
       opcoes.kmCicloRevisao && opcoes.kmCicloRevisao > 0
         ? opcoes.kmCicloRevisao
-        : KM_CICLO_REVISAO_HONDA;
-    const basePacoteHonda = (ciclo / kmCiclo) * kmAnualSeguro;
+        : KM_CICLO_REVISAO_PADRAO;
+    const basePacoteConcessionaria = (ciclo / kmCiclo) * kmAnualSeguro;
     // ADR-007/012: soma serviços fora do pacote fixo apenas quando o preço
     // completo da concessionária foi informado. Se falta M.O., a peça original
     // continua no cálculo por peça e a pendência é exposta ao Detalhamento.
@@ -592,7 +593,7 @@ export function calcularDetalhesRevisaoAnual(
       (sum, s) => sum + s.custoAnual,
       0,
     );
-    const base = basePacoteHonda;
+    const base = basePacoteConcessionaria;
     return {
       total: base + totalServicosForaDoPacote,
       detalhes: {
@@ -601,7 +602,7 @@ export function calcularDetalhesRevisaoAnual(
         eventosNoAno: calcularEventosRevisaoNoAno(
           modoRevisao,
           kmAnualSeguro,
-          quantidadeRevisoesCicloHonda,
+          quantidadeRevisoesCiclo,
           kmCiclo,
         ),
         servicos: detalhesServicos,
@@ -632,17 +633,6 @@ export function calcularDetalhesRevisaoAnual(
       pendenciasMaoDeObra: [],
     },
   };
-}
-
-export function calcularCustoRevisaoAnual(
-  modoRevisao: ModoRevisao,
-  kmAnual: number,
-  opcoes: {
-    custoCicloCompleto?: number;
-    servicosIndependentes?: ServicoIndependente[];
-  } = {},
-): number {
-  return calcularDetalhesRevisaoAnual(modoRevisao, kmAnual, opcoes).total;
 }
 
 // ─── VI. Custos Operacionais ──────────────────────────────────────
@@ -839,20 +829,20 @@ export function calcularCustosPorCategoria(
   const ipva = calcularIPVA(valorFipe, dadosRJ.ipva.aliquotaMotos, perfil.moto.ano, anoAtual);
   const licenciamento = calcularLicenciamento(anoAtual, dadosRJ.licenciamento.tabela);
 
-  // Revisão - aplica overrides individuais ao ciclo Honda antes de calcular
+  // Revisão - aplica overrides individuais ao ciclo da concessionária antes de calcular
   const custoCicloCompleto = preset.revisaoAutorizada.reduce((s, r, idx) => {
     const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
     return s + valorNaoNegativo(override?.precoTotal ?? r.precoTotal);
   }, 0);
-  // ADR-016: o ciclo amortizado é o maior marco do preset (Honda 36.000, Yamaha
-  // 5.000×n), não a constante Honda — corrige a amortização da Yamaha.
+  // ADR-016: o ciclo amortizado é o maior marco do preset (ex.: 36.000 numa marca,
+  // 5.000×n noutra), não o fallback fixo — corrige a amortização de presets com ciclo menor.
   const kmCicloRevisao = preset.revisaoAutorizada.reduce(
     (maior, r) => Math.max(maior, r.intervaloKm),
     0,
   );
   const revisao = calcularDetalhesRevisaoAnual(perfil.perfilManutencao.modoRevisao, kmAnual, {
     custoCicloCompleto,
-    quantidadeRevisoesCicloHonda: preset.revisaoAutorizada.length,
+    quantidadeRevisoesCiclo: preset.revisaoAutorizada.length,
     kmCicloRevisao,
     servicosIndependentes: perfil.servicosIndependentes,
     kmAtual: perfil.moto.kmAtual,

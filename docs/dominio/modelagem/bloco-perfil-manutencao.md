@@ -73,8 +73,10 @@ Esboço - ler `calcularDetalhesRevisaoAnual` em `src/utils/calculos.ts` para det
 
 ```typescript
 if (modoRevisao === 'autorizadas') {
-  // 1) Base: ciclo Honda escalado por km rodado no ano
-  const base = (custoCicloCompleto / 36000) * kmAnual;  // 36000 = KM_CICLO_REVISAO_HONDA
+  // 1) Base: ciclo do preset escalado por km rodado no ano
+  const kmCiclo =
+    Math.max(...preset.revisaoAutorizada.map((revisao) => revisao.intervaloKm)) || 36000;
+  const base = (custoCicloCompleto / kmCiclo) * kmAnual;
   // 2) + serviços AVULSOS fora do pacote (servicosManutencao):
   //    - statusPrecoAutorizada 'informado'/'informado_usuario' → soma precoTotalAutorizada
   //    - 'nao_informado' + estimativa ligada (global OU por-serviço) → soma M.O. estimada (~)
@@ -90,7 +92,7 @@ return servicosIndependentes
 
 🔍 **Análise:**
 
-- **Autorizadas (MVP):** base do pacote Honda **+** avulsos de concessionária fora do pacote. `calcularCpkPorPeca` exclui peças com `incluidoNaRevisaoAutorizada: true` (INV-CALC-3 / ADR-006) e também pula a peça avulsa quando o serviço tem preço **oficial** que inclui a peça (`concessionariaIncluiPeca`, ADR-014). Serviços `nao_informado` sem estimativa viram pendência (`custoIncompleto`); com estimativa, somam M.O. `~`.
+- **Autorizadas (MVP):** base do pacote da concessionária **+** avulsos fora do pacote. `calcularCpkPorPeca` exclui peças com `incluidoNaRevisaoAutorizada: true` (INV-CALC-3 / ADR-006) e também pula a peça avulsa quando o serviço tem preço **oficial** que inclui a peça (`concessionariaIncluiPeca`, ADR-014). Serviços `nao_informado` sem estimativa viram pendência (`custoIncompleto`); com estimativa, somam M.O. `~`.
 - **Independentes (dormente):** soma de cada serviço de M.O. em `servicosIndependentes[]` (`ativo && !ehExcepcional`). Cobre só M.O.; as peças entram pelo CPK por peça.
 
 > A fusão peça + M.O. em um item por componente é **só visão** (`montarItensManutencao`) — o cálculo mantém peça (mapa `manutencao`) e M.O. (mapa `revisao.servicos`) separados. Ver `docs/arquitetura/calculos-visao.md` e o adendo da ADR-014.
