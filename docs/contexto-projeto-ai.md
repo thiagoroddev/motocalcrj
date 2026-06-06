@@ -205,6 +205,9 @@ Este mapa é intencionalmente estável e não enumera cada componente. Para sabe
 - Chaves: `estimamoto:v1:presets` e `estimamoto:v1:presetAtivo`.
 - Fonte primária: `src/context/PerfilContext.tsx`, `src/context/perfilDefaults.ts`, `src/types/perfil.ts`, `src/schemas/perfilSchema.ts` e `src/services/perfilStorage.ts`.
 - Dados inválidos são rejeitados na fronteira de carga; o app usa fallback recuperável.
+- Após migração e validação, todos os perfis são normalizados contra o preset resolvido por
+  `perfil.moto.modelo`. Se referências órfãs forem removidas, a lista limpa é regravada em
+  best-effort; falha nessa escrita não marca o dado como corrompido.
 - Tema usa service próprio em `src/services/themeStorage.ts`.
 
 `fipeCache` continua no perfil por compatibilidade com o cálculo, mas agora é um snapshot do valor escolhido no preset, não cache de resposta HTTP.
@@ -254,6 +257,8 @@ O detalhe das funções pertence a `docs/arquitetura/calculos-visao.md` e ao có
 - Dados externos ao runtime confiável são validados com Zod.
 - Não contornar schemas com casts para "fazer funcionar".
 - Alteração de tipo persistido exige alteração coerente de schema e testes.
+- Dado estruturalmente válido com referência relacional obsoleta recebe read repair condicional;
+  dado estruturalmente inválido continua no fallback preservado.
 
 ### ADR-011 - preset como fonte única do modelo
 
@@ -318,6 +323,8 @@ Não descrever o total como "o que será gasto exatamente em 2026" ou "o gasto e
 - Personalização fica no perfil.
 - Reset remove o override e revela novamente o valor do preset.
 - O preset ativo e seu perfil no array persistido devem permanecer sincronizados.
+- IDs e índices persistidos são filtrados pelo universo canônico do modelo na carga; não
+  materializar a lista efetiva de serviços como se fosse override do usuário.
 
 ### 6.3 Manutenção: amortizado x ancorado
 

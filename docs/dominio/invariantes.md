@@ -78,6 +78,25 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 
 ---
 
+#### INV-PERFIL-5: Referências persistidas pertencem ao preset canônico
+
+**Regra:** overrides, índices de revisão e mapas de preferência do perfil só podem referenciar
+peças, pneus, serviços e revisões existentes no preset resolvido por `perfil.moto.modelo`.
+
+**Por quê:** referências órfãs são dados mortos e um ID reutilizado poderia reativar uma escolha
+antiga sem intenção do usuário.
+
+**Onde é protegida:**
+- `normalizarPerfilContraPreset` filtra as sete coleções relacionais após a validação estrutural;
+- `criarEstadoInicial` aplica a normalização a todos os `PresetEntry`;
+- quando há remoção, a lista limpa é persistida em best-effort sem alterar timestamps.
+
+**Como validar:** testes da transformação pura cobrem peças, pneus, serviços excepcionais,
+serviços sem custo, revisões e mapas; testes da carga cobrem múltiplos perfis, no-op e falha de
+persistência.
+
+---
+
 ### Invariantes do Aggregate Preset
 
 #### INV-PRESET-1: kmAnual é Derivada

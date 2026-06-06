@@ -4,6 +4,8 @@ import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { presetEntrySchema } from '../schemas/perfilSchema';
 import { migrarPerfil } from '../services/migracoes';
+import { normalizarPerfilContraPreset } from '../services/normalizarPerfilContraPreset';
+import { obterPreset } from '../data/repositorioPresets';
 import { estadoPadrao, perfilReducer, type EstadoApp } from './perfilReducer';
 
 // Re-exports preservam a API pública usada pelos consumidores existentes.
@@ -53,12 +55,33 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
       return estadoPadrao;
     }
 
-    // Carrega → migra → valida (ADR-010). Só o contrato público v1 tem migração;
-    // qualquer versão desconhecida ou dado inválido cai no fallback abaixo.
-    const presets = presetsRaw.map((p) =>
-      presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) }),
-    );
+    let houveLimpeza = false;
+    const presets = presetsRaw.map((p) => {
+      const validado = presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) });
+      const presetCanonico = obterPreset(validado.perfil.moto.modelo);
+
+      if (!presetCanonico) {
+        return validado;
+      }
+
+      const perfilNormalizado = normalizarPerfilContraPreset(validado.perfil, presetCanonico);
+      if (perfilNormalizado === validado.perfil) {
+        return validado;
+      }
+
+      houveLimpeza = true;
+      return { ...validado, perfil: perfilNormalizado };
+    });
     const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
+
+    if (houveLimpeza) {
+      try {
+        storage.salvarPresets(presets);
+      } catch {
+        // Read repair é best-effort e não transforma dado válido em corrupção.
+      }
+    }
+
     return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
   } catch {
     // Dado persistido inválido/corrompido: preserva o blob para diagnóstico e

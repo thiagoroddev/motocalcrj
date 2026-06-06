@@ -38,6 +38,7 @@ Este aggregate garante invariantes que **dependem de mais de um objeto**:
 - o preset ativo deve existir na lista de presets
 - a persistencia so ocorre quando ha preset ativo
 - carregar um preset deve atualizar o perfil inteiro em memoria
+- referências relacionais persistidas devem existir no preset canônico da moto
 
 Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexistente ou carregar um perfil parcial.
 
@@ -78,6 +79,15 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 **Regra:** se nao ha presets, o app inicia com `perfilPadrao` e exige onboarding. Se ha presets validos mas a chave de ativo esta ausente, o app recupera selecionando `presets[0]`.
 
 **Onde e protegida:** `criarEstadoInicial()` retorna `estadoPadrao` quando `presets.length === 0`; quando ha presets validos, migra/valida e usa `presets.find(presetAtivoId) ?? presets[0]`.
+
+### INV-AGG-4: Referências relacionais canônicas
+
+**Regra:** antes da seleção do ativo, todos os `PresetEntry` válidos são normalizados contra o
+preset resolvido por `perfil.moto.modelo`.
+
+**Onde é protegida:** `normalizarPerfilContraPreset()` remove somente referências inexistentes. Se
+houver limpeza, `criarEstadoInicial()` regrava a lista em best-effort; falha nessa escrita não
+transforma dado válido em corrupção.
 
 ---
 

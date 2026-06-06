@@ -191,7 +191,9 @@ return 1;  // evita divisão por zero
 
 **Por quê:** Override órfão (sem peça correspondente) é dado morto. `find()` em `pecasOverrides` retornaria match mas `find()` no preset retornaria `undefined`.
 
-**Onde é protegida:** ⚠️ **Não há validação automática.** Se o Preset JSON evolui e um id é removido, overrides ficam órfãos. **Dívida técnica.**
+**Onde é protegida:** `normalizarPerfilContraPreset()` filtra `pecasOverrides` pela união dos IDs
+de peças e pneus do preset canônico durante a carga. A lista limpa é persistida em best-effort
+quando houve remoção.
 
 ### INV-OVR-2: Modo único - override sempre aplica quando presente
 
@@ -260,9 +262,11 @@ return 1;  // evita divisão por zero
 
 Frágil se o Preset JSON adicionar/remover linhas. Risco aceito porque o manual Honda é estável. Ver `divida-tecnica.md` DT-13 (endereçada - calculador aplica o override pela REF-12).
 
-### Validação de orfãos
+### Validação de órfãos
 
-Não há mecanismo para limpar overrides cujos `id` não existem mais no Preset JSON. Pode acumular lixo. DT-11 em `divida-tecnica.md`.
+Overrides e demais referências relacionais são limpos após migração e validação estrutural. A
+normalização não preenche serviços ausentes, não deduplica entradas e não materializa a visão
+efetiva de cálculo como estado persistido.
 
 ---
 
@@ -312,7 +316,7 @@ Documentação validada contra:
 
 **Divergências encontradas:**
 
-- INV-OVR-1 (overrides órfãos) não protegida - DT-11
+- INV-OVR-1 protegida na fronteira de carga pela TASK-REF-40.
 - INV-OVR-4 (anoFimOriginal força paralela) mencionada em RN-11 mas não implementada em `calculos.ts`
 - **Sincronizado em 04/06/26 (TASK-DOC-014):** `ServicoIndependente` corrigido (`precoIndependente` em vez de `precoMaoDeObra`, + `precoTotalAutorizada`/`statusPrecoAutorizada`/`concessionariaIncluiPeca`/`incluidoNaRevisaoAutorizada`); `resolverIntervaloPeca` passo 2 ajustado para "só quando editado" (`resolverServicoComIntervaloEditado`, REF-29) + nota DT-19; defaults atualizados (12 normais + 2 excepcionais; `servicosManutencao` por preset); removida seção duplicada de `revisaoAutorizadaOverrides`.
 - Atualização anterior em 24/05/26 (DOC-009): `PecaOverride` reescrito; `servicosMaoDeObra` → `servicosIndependentes` (REF-11); seção "Override vs Registro" removida.

@@ -9,24 +9,6 @@ Obedeça essa ordem:
 
 #### Dívida técnica vigente (auditoria 06/06/26)
 
-## TASK-REF-40 - Normalizar perfil contra preset ativo na carga, removendo órfãos (DT-11)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/G
-- **Data-hora origem:** 06/06/26 07:38
-- **Dependências:** -
-- **REQ/ADR/DT:** DT-11, ADR-004
-- **Observações:** O schema (perfilSchema.ts:205-226) valida formato mas aceita IDs/índices livres
-  sem conferir existência no preset ativo: pecasOverrides[].id, servicosIndependentes[].id,
-  revisaoAutorizadaOverrides[].index, imprevistosSugeridosAtivos, filtrosManutencao.manutencaoPorPeca,
-  filtrosManutencao.revisaoPorServico, perfilManutencao.estimativaMaoDeObraPorServico. Entradas
-  desconhecidas são ignoradas no cálculo mas continuam persistidas → dado morto e risco de ID
-  reutilizado reativar config antiga. Normalizar na fronteira de carga (PerfilContext.tsx:57-59),
-  removendo referências inexistentes. Limpeza precisa de testes próprios; não pode depender só do
-  schema estrutural.
-
 ## TASK-REF-41 - Separar finalidade de carga/severidade em PerfilUso (DT-18)
 - **Status:** Pendente
 - **Modo:** Strict
@@ -79,6 +61,12 @@ blicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 | ID          | Título                                            | Valor      | Urgência | Esforço | Dependências | Status |
 | ----------- | ------------------------------------------------- | ---------- | -------- | ------- | ------------ | ------ |
 | TASK-RF-7.1 | Export/Import de presets (.json)                  | Importante | Normal   | G       | TASK-RF-6.3  | [ ]    |
+
+### Refatorações da fase
+
+| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TASK-REF-43 | Tornar `IMPORTAR_PERFIL` determinístico e normalizar antes do dispatch | Standard | Importante | Normal | M/M | TASK-RF-7.1 | ADR-010 | `[ ]` | 06/06/26 14:42 |
 
 
 ---

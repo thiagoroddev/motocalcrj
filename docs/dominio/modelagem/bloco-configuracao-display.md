@@ -167,6 +167,18 @@ zero.
 
 ---
 
+### INV-DISPLAY-5: chaves relacionais pertencem ao preset canônico
+
+**Regra:** `imprevistosSugeridosAtivos` aceita somente serviços excepcionais;
+`manutencaoPorPeca` aceita somente peças e pneus; `revisaoPorServico` e
+`estimativaMaoDeObraPorServico` aceitam somente serviços do preset, inclusive capacidades ocultas
+ou sem custo.
+
+**Onde é protegida:** `normalizarPerfilContraPreset()` na carga. Valores `true` e `false` válidos
+são preservados; apenas chaves desconhecidas são removidas.
+
+---
+
 ## Relacionamentos
 
 ```

@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v12, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v13, auditada contra código, testes e ADRs em 06/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -23,52 +23,8 @@ O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas taref
 
 | ID | Dívida vigente | Prioridade relativa |
 | --- | --- | --- |
-| DT-11 | Overrides e filtros podem ficar órfãos após mudança de preset | Média |
 | DT-18 | `PerfilUso` mistura finalidade, carga e severidade de desgaste | Média |
 | DT-19 | Intervalo peça-serviço depende de comparação com default global | Alta |
-
----
-
-## DT-11: Overrides e filtros podem ficar órfãos
-
-### Situação atual
-
-O schema valida o formato dos dados, mas aceita IDs livres e índices sem conferir se ainda
-existem no preset ativo:
-
-- `pecasOverrides[].id`;
-- `servicosIndependentes[].id`;
-- `revisaoAutorizadaOverrides[].index`;
-- `imprevistosSugeridosAtivos`;
-- `filtrosManutencao.manutencaoPorPeca`;
-- `filtrosManutencao.revisaoPorServico`;
-- `perfilManutencao.estimativaMaoDeObraPorServico`.
-
-Entradas desconhecidas geralmente são ignoradas pelos consumidores ou descartadas apenas
-na visão normalizada de cálculo, mas continuam persistidas no perfil.
-
-### Por que é dívida técnica
-
-Mudanças de IDs, remoção de itens ou alteração do ciclo de revisão podem deixar dados mortos
-no storage. Além do crescimento desnecessário, um ID reutilizado no futuro pode reativar uma
-configuração antiga sem intenção do usuário.
-
-### Por que não corrigir agora
-
-Os presets são versionados junto com o app, o volume dos registros é pequeno e ainda não há
-uma política geral de migração por versão de preset.
-
-### Gatilho
-
-- renomear ou remover IDs de peças e serviços;
-- alterar a quantidade ou ordem de revisões;
-- adicionar versionamento próprio aos presets;
-- implementar exportação e importação de perfis.
-
-### Recomendação
-
-Normalizar o perfil contra o preset ativo na fronteira de carga, removendo referências
-inexistentes. A limpeza deve ser testada e não pode depender apenas do schema estrutural.
 
 ---
 
@@ -181,7 +137,7 @@ intervalo do serviço vinculado.
 | DT-8 | Removida: resolvida pela TASK-REF-38 | O contrato v2 usa `aluguelValor`; perfis v1 migram antes da validação e a fórmula mensal/semanal foi preservada. |
 | DT-9 | Removida: resolvida | As coleções e actions de histórico/diário citadas pelo item não existem mais. |
 | DT-10 | Removida: resolvida pela TASK-REF-39 / ADR-017 | Manutenção gateia revisão, serviços e peças; filtros finos persistem e recebem estado visual desbotado/bloqueado com o pai off. Todas as categorias desligadas é estado válido. |
-| DT-11 | Mantida e ampliada | IDs e índices órfãos continuam aceitos estruturalmente e persistidos. |
+| DT-11 | Removida: resolvida pela TASK-REF-40 / ADR-010 | A carga normaliza todos os perfis contra o preset canônico e persiste a limpeza em best-effort somente quando necessário. |
 | DT-12 | Removida: resolvida | Os dois fluxos de abastecimento citados foram removidos. |
 | DT-13 | Removida: resolvida | Overrides de revisão autorizada são aplicados no cálculo e nas projeções. |
 | DT-14 | Removida: resolvida no escopo original | `SET_ONBOARDING_CAMPO` só é usado dentro do onboarding e o reducer valida o perfil resultante. |
@@ -221,3 +177,4 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 06/06/2026 | v10 | Auditoria integral contra o código atual; lista ativa reduzida a DT-8, DT-10, DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v11 | TASK-REF-38 encerra DT-8; lista ativa reduzida a DT-10, DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v12 | TASK-REF-39 e ADR-017 encerram DT-10; lista ativa reduzida a DT-11, DT-18 e DT-19. |
+| 06/06/2026 | v13 | TASK-REF-40 e ADR-010 encerram DT-11; lista ativa reduzida a DT-18 e DT-19. |

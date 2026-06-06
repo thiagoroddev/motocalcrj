@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { criarEstadoInicial, perfilPadrao } from './PerfilContext';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import type { PeriodicidadeAluguel, PresetEntry, PerfilUsuario } from '../types/perfil';
+import { PRESETS } from '../data/repositorioPresets';
 
 // Storage falso configurável - o ciclo de tarefa pede injeção de storage para
 // testar a montagem sem tocar no localStorage real.
@@ -23,6 +24,49 @@ function presetValido(presetId: string, nome = 'Teste'): PresetEntry {
     criadoEm: '2026-05-30T00:00:00.000Z',
     atualizadoEm: '2026-05-30T00:00:00.000Z',
     perfil: perfilPadrao,
+  };
+}
+
+function perfilPopComOrfaos(sufixo: string): PerfilUsuario {
+  const servicoValido = PRESETS.pop110i.servicosManutencao?.[0];
+  if (!servicoValido) {
+    throw new Error('Preset de teste sem serviço de manutenção');
+  }
+
+  return {
+    ...perfilPadrao,
+    moto: { ...perfilPadrao.moto, marca: 'Honda', modelo: 'pop110i' },
+    perfilManutencao: {
+      ...perfilPadrao.perfilManutencao,
+      estimativaMaoDeObraPorServico: {
+        [servicoValido.id]: false,
+        [`servico-orfao-${sufixo}`]: true,
+      },
+    },
+    configuracaoDisplay: {
+      ...perfilPadrao.configuracaoDisplay,
+      filtrosManutencao: {
+        ...perfilPadrao.configuracaoDisplay.filtrosManutencao,
+        revisaoPorServico: {
+          [servicoValido.id]: false,
+          [`servico-orfao-${sufixo}`]: false,
+        },
+      },
+    },
+    pecasOverrides: [
+      {
+        id: PRESETS.pop110i.pecas[0].id,
+        precoEditadoOriginal: 10,
+        precoEditadaParalela: null,
+        intervaloKmEditado: null,
+      },
+      {
+        id: `peca-orfa-${sufixo}`,
+        precoEditadoOriginal: 20,
+        precoEditadaParalela: null,
+        intervaloKmEditado: null,
+      },
+    ],
   };
 }
 
@@ -94,6 +138,84 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
     expect(estado.presetAtivoId).toBe('p1');
     expect(estado.presets).toHaveLength(1);
     expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('normaliza todos os presets, seleciona o ativo limpo e persiste uma única vez', () => {
+    const primeiro = {
+      ...presetValido('p1', 'Primeiro'),
+      perfil: perfilPopComOrfaos('primeiro'),
+    };
+    const segundo = {
+      ...presetValido('p2', 'Segundo'),
+      perfil: perfilPopComOrfaos('segundo'),
+    };
+    const storage = criarStorageFalso([primeiro, segundo], 'p2');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presets[0].perfil.pecasOverrides.map((override) => override.id)).toEqual([
+      PRESETS.pop110i.pecas[0].id,
+    ]);
+    expect(estado.presets[1].perfil.pecasOverrides.map((override) => override.id)).toEqual([
+      PRESETS.pop110i.pecas[0].id,
+    ]);
+    expect(estado.perfil).toBe(estado.presets[1].perfil);
+    expect(estado.presets[0].atualizadoEm).toBe(primeiro.atualizadoEm);
+    expect(estado.presets[1].atualizadoEm).toBe(segundo.atualizadoEm);
+    expect(storage.salvarPresets).toHaveBeenCalledTimes(1);
+    expect(storage.salvarPresets).toHaveBeenCalledWith(estado.presets);
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('não regrava o storage quando o perfil já está consistente com o preset', () => {
+    const perfilLimpo: PerfilUsuario = {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, marca: 'Honda', modelo: 'pop110i' },
+    };
+    const storage = criarStorageFalso([{ ...presetValido('p1'), perfil: perfilLimpo }], 'p1');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(storage.salvarPresets).not.toHaveBeenCalled();
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('preserva referências quando o modelo ainda não possui preset canônico', () => {
+    const perfilSemPreset = {
+      ...perfilPopComOrfaos('modelo-futuro'),
+      moto: {
+        ...perfilPadrao.moto,
+        marca: 'Marca futura',
+        modelo: 'modelo-futuro',
+      },
+    };
+    const storage = criarStorageFalso([{ ...presetValido('p1'), perfil: perfilSemPreset }], 'p1');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.perfil.pecasOverrides).toHaveLength(2);
+    expect(storage.salvarPresets).not.toHaveBeenCalled();
+    expect(storage.preservarCorrompido).not.toHaveBeenCalled();
+  });
+
+  it('mantém o estado normalizado quando a persistência do reparo falha', () => {
+    const storage = criarStorageFalso(
+      [{ ...presetValido('p1'), perfil: perfilPopComOrfaos('falha') }],
+      'p1',
+    );
+    vi.mocked(storage.salvarPresets).mockImplementation(() => {
+      throw new Error('storage indisponível');
+    });
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presetAtivoId).toBe('p1');
+    expect(estado.perfil.pecasOverrides.map((override) => override.id)).toEqual([
+      PRESETS.pop110i.pecas[0].id,
+    ]);
+    expect(storage.salvarPresets).toHaveBeenCalledTimes(1);
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
