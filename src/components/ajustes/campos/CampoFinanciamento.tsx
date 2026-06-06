@@ -110,7 +110,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             id={idAluguel}
             type="number"
             inputMode="decimal"
-            value={financeiro.aluguelMensal ?? ''}
+            value={financeiro.aluguelValor ?? ''}
             min={0}
             placeholder="0"
             onChange={(e) => {
@@ -119,7 +119,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
               if (raw === '') {
                 dispatch({
                   type: 'SET_ALUGUEL',
-                  aluguelMensal: null,
+                  aluguelValor: null,
                   aluguelPeriodicidade: financeiro.aluguelPeriodicidade,
                 });
                 return;
@@ -127,7 +127,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
               if (!isNaN(v) && v >= 0) {
                 dispatch({
                   type: 'SET_ALUGUEL',
-                  aluguelMensal: v,
+                  aluguelValor: v,
                   aluguelPeriodicidade: financeiro.aluguelPeriodicidade,
                 });
               }
@@ -145,7 +145,7 @@ export function CampoFinanciamento({ financeiro, dispatch }: Props) {
             onChange={(v) =>
               dispatch({
                 type: 'SET_ALUGUEL',
-                aluguelMensal: financeiro.aluguelMensal,
+                aluguelValor: financeiro.aluguelValor,
                 aluguelPeriodicidade: v as PeriodicidadeAluguel,
               })
             }

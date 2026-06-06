@@ -267,7 +267,7 @@ export const perfilPadrao: PerfilUsuario = {
     parcelaMensal: null,
     parcelasRestantes: null,
     dataReferenciaParcelas: null,
-    aluguelMensal: null,
+    aluguelValor: null,
     aluguelPeriodicidade: null,
     alimentacaoDia: 20,
     gastosCustom: PRESETS_GASTOS_PADRAO,

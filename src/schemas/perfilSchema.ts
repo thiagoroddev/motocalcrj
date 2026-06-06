@@ -11,7 +11,7 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 //
 // É deliberadamente tolerante onde o tipo permite (`.nullable()`), para não
 // gerar falso-positivo que rejeite dado bom. Validar é a fronteira de carga:
-// carregar → validar; dado antigo/corrompido volta para o onboarding.
+// carregar → migrar → validar; dado desconhecido/corrompido volta para o onboarding.
 // ──────────────────────────────────────────────
 
 // Enums / literais
@@ -193,7 +193,7 @@ export const perfilSchema = z
       parcelaMensal: dinheiroNaoNegativo.nullable(),
       parcelasRestantes: inteiroNaoNegativo.nullable(),
       dataReferenciaParcelas: z.string().nullable(),
-      aluguelMensal: dinheiroNaoNegativo.nullable(),
+      aluguelValor: dinheiroNaoNegativo.nullable(),
       aluguelPeriodicidade: periodicidadeAluguel.nullable(),
       alimentacaoDia: dinheiroNaoNegativo,
       gastosCustom: z.array(gastoCustom),

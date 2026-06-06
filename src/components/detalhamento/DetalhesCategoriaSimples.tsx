@@ -124,7 +124,7 @@ export function DetalhesCategoriaSimples({
   }
 
   if (perfil.financeiro.situacaoMoto === 'alugada') {
-    const aluguel = perfil.financeiro.aluguelMensal ?? 0;
+    const aluguel = perfil.financeiro.aluguelValor ?? 0;
     const periodicidade = perfil.financeiro.aluguelPeriodicidade ?? 'mensal';
     const multiplicador = periodicidade === 'semanal' ? 52 : 12;
     return (

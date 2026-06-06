@@ -3,6 +3,7 @@ import type { PerfilAction } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { presetEntrySchema } from '../schemas/perfilSchema';
+import { migrarPerfil } from '../services/migracoes';
 import { estadoPadrao, perfilReducer, type EstadoApp } from './perfilReducer';
 
 // Re-exports preservam a API pública usada pelos consumidores existentes.
@@ -52,9 +53,11 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
       return estadoPadrao;
     }
 
-    // Pré-lançamento: não há contrato de migração histórica. Carrega apenas o
-    // schema atual; qualquer blob antigo/inválido cai no fallback abaixo.
-    const presets = presetsRaw.map((p) => presetEntrySchema.parse(p));
+    // Carrega → migra → valida (ADR-010). Só o contrato público v1 tem migração;
+    // qualquer versão desconhecida ou dado inválido cai no fallback abaixo.
+    const presets = presetsRaw.map((p) =>
+      presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) }),
+    );
     const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
     return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
   } catch {

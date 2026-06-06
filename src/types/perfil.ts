@@ -2,7 +2,7 @@
 // Enums / literais
 // ──────────────────────────────────────────────
 
-export const VERSAO_SCHEMA_ATUAL = 1 as const;
+export const VERSAO_SCHEMA_ATUAL = 2 as const;
 
 export type PerfilUso = 'entrega' | 'passageiro';
 export type ModoRevisao = 'autorizadas' | 'independentes';
@@ -183,7 +183,7 @@ export interface PerfilUsuario {
     // decrementar as parcelas pelo tempo sem escrever no perfil periodicamente
     // (modelagem Snapshot - TASK-RF-6.18 / ADR-009).
     dataReferenciaParcelas: string | null;
-    aluguelMensal: number | null;
+    aluguelValor: number | null;
     aluguelPeriodicidade: PeriodicidadeAluguel | null;
     alimentacaoDia: number;
     gastosCustom: GastoCustom[];
@@ -292,7 +292,7 @@ export type PerfilAction =
   | { type: 'SET_PARCELA'; parcelaMensal: number | null; parcelasRestantes: number | null }
   | {
       type: 'SET_ALUGUEL';
-      aluguelMensal: number | null;
+      aluguelValor: number | null;
       aluguelPeriodicidade: PeriodicidadeAluguel | null;
     }
   | { type: 'SET_RESPONSABILIDADE_ALUGUEL'; config: Partial<ResponsabilidadeAluguel> }

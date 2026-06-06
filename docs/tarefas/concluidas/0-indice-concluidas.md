@@ -137,3 +137,4 @@
 | TASK-TEST-004 | Teste de integração do aviso de revisão pendente em PaginaEstimativa | [2026-06-05--23h07--TASK-TEST-004.md](./2026-06-05--23h07--TASK-TEST-004.md) |
 | TASK-REF-35 | Extração oportunista de PerfilContext e PaginaDetalhamento | [2026-06-06--01h46--TASK-REF-35.md](./2026-06-06--01h46--TASK-REF-35.md) |
 | TASK-CHORE-016 | DX: helper de localStorage falso e bootstrap de fixture DEV | [2026-06-06--04h59--TASK-CHORE-016.md](./2026-06-06--04h59--TASK-CHORE-016.md) |
+| TASK-REF-38 | Contrato v2 com `aluguelValor`, migração v1→v2 e encerramento da DT-8 | [2026-06-06--08h20--TASK-REF-38.md](./2026-06-06--08h20--TASK-REF-38.md) |

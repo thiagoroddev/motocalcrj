@@ -136,7 +136,7 @@ calcularDetalhesRevisaoAnual(modoRevisao, kmAnual, opcoes): CustosPorCategoria['
 calcularCustoInternetAnual(temInternet: boolean, precoInternet: number): number
 calcularCustoSeguroAnual(valorAnual: number): number                // valorAnual > 0 ? valorAnual : 0
 calcularCustoAlimentacaoAnual(precoAlimentacao, diasAno): number
-calcularCustoFinanciamentoAnual(situacaoMoto, parcelaMensal, aluguelMensal, aluguelPeriodicidade): number
+calcularCustoFinanciamentoAnual(situacaoMoto, parcelaMensal, aluguelValor, aluguelPeriodicidade): number
 fatorResponsabilidade(resp: ResponsabilidadeCusto): number          // eu=1, dividido=0.5, locador=0
 calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): number  // soma de ativos com valor > 0
 ```

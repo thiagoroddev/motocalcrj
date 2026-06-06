@@ -696,7 +696,7 @@ export interface ParamsCustoFinanciamentoAnual {
   situacaoMoto: string;
   parcelaMensal: number | null;
   parcelasRestantesAtuais: number;
-  aluguelMensal: number | null;
+  aluguelValor: number | null;
   aluguelPeriodicidade: string | null;
 }
 
@@ -704,7 +704,7 @@ export function calcularCustoFinanciamentoAnual({
   situacaoMoto,
   parcelaMensal,
   parcelasRestantesAtuais,
-  aluguelMensal,
+  aluguelValor,
   aluguelPeriodicidade,
 }: ParamsCustoFinanciamentoAnual): number {
   if (situacaoMoto === 'financiada' && parcelaMensal != null) {
@@ -714,8 +714,8 @@ export function calcularCustoFinanciamentoAnual({
       valorNaoNegativo(parcelaMensal) * Math.min(12, valorNaoNegativo(parcelasRestantesAtuais))
     );
   }
-  if (situacaoMoto === 'alugada' && aluguelMensal != null) {
-    const aluguel = valorNaoNegativo(aluguelMensal);
+  if (situacaoMoto === 'alugada' && aluguelValor != null) {
+    const aluguel = valorNaoNegativo(aluguelValor);
     return aluguelPeriodicidade === 'semanal' ? aluguel * 52 : aluguel * 12;
   }
   return 0;
@@ -894,7 +894,7 @@ export function calcularCustosPorCategoria(
     situacaoMoto,
     parcelaMensal: perfil.financeiro.parcelaMensal,
     parcelasRestantesAtuais,
-    aluguelMensal: perfil.financeiro.aluguelMensal,
+    aluguelValor: perfil.financeiro.aluguelValor,
     aluguelPeriodicidade: perfil.financeiro.aluguelPeriodicidade,
   });
   const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);

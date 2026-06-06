@@ -2335,7 +2335,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'financiada',
         parcelaMensal: 500,
         parcelasRestantesAtuais: 24,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(6000);
@@ -2348,7 +2348,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'financiada',
         parcelaMensal: 350,
         parcelasRestantesAtuais: 5,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(1750);
@@ -2360,7 +2360,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'financiada',
         parcelaMensal: 500,
         parcelasRestantesAtuais: 0,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(0);
@@ -2372,7 +2372,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'financiada',
         parcelaMensal: 500,
         parcelasRestantesAtuais: 36,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(6000);
@@ -2384,7 +2384,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'financiada',
         parcelaMensal: -500,
         parcelasRestantesAtuais: 12,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(0);
@@ -2394,7 +2394,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'alugada',
         parcelaMensal: null,
         parcelasRestantesAtuais: 0,
-        aluguelMensal: -400,
+        aluguelValor: -400,
         aluguelPeriodicidade: 'mensal',
       }),
     ).toBe(0);
@@ -2406,7 +2406,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'alugada',
         parcelaMensal: null,
         parcelasRestantesAtuais: 0,
-        aluguelMensal: 800,
+        aluguelValor: 800,
         aluguelPeriodicidade: 'mensal',
       }),
     ).toBe(9600);
@@ -2418,7 +2418,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'alugada',
         parcelaMensal: null,
         parcelasRestantesAtuais: 0,
-        aluguelMensal: 200,
+        aluguelValor: 200,
         aluguelPeriodicidade: 'semanal',
       }),
     ).toBe(10400);
@@ -2430,7 +2430,7 @@ describe('calcularCustoFinanciamentoAnual (RF-6.18 - afunila no último ano)', (
         situacaoMoto: 'quitada',
         parcelaMensal: null,
         parcelasRestantesAtuais: 0,
-        aluguelMensal: null,
+        aluguelValor: null,
         aluguelPeriodicidade: null,
       }),
     ).toBe(0);

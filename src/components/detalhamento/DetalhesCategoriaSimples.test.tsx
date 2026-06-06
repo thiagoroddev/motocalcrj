@@ -86,7 +86,7 @@ describe('DetalhesCategoriaSimples', () => {
   it('renderiza aluguel quando a situação da moto é alugada', () => {
     const perfil = criarPerfil({
       situacaoMoto: 'alugada',
-      aluguelMensal: 300,
+      aluguelValor: 300,
       aluguelPeriodicidade: 'semanal',
     });
     renderizarDetalhes('financiamento', perfil, 15600);

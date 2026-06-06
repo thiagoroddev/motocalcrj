@@ -54,7 +54,14 @@ describe('perfilSchema - validação de runtime', () => {
   });
 
   it('rejeita schemaVersion diferente da versão atual', () => {
-    const antigo = { ...perfilPadrao, schemaVersion: 23 };
+    const financeiroV1: Record<string, unknown> = { ...perfilPadrao.financeiro };
+    delete financeiroV1.aluguelValor;
+    financeiroV1.aluguelMensal = null;
+    const antigo = {
+      ...perfilPadrao,
+      schemaVersion: 1,
+      financeiro: financeiroV1,
+    };
     const futuro = { ...perfilPadrao, schemaVersion: 999 };
 
     expect(() => perfilSchema.parse(antigo)).toThrow();

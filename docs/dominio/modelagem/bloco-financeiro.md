@@ -35,7 +35,7 @@ financeiro: {
   parcelaMensal: number | null;                                      // só financiada
   parcelasRestantes: number | null;                                  // só financiada (snapshot informado)
   dataReferenciaParcelas: string | null;                             // só financiada (mês ISO do snapshot - ADR-009)
-  aluguelMensal: number | null;                                      // só alugada
+  aluguelValor: number | null;                                       // só alugada; periodicidade qualifica o valor
   aluguelPeriodicidade: PeriodicidadeAluguel | null;                 // só alugada
   responsabilidadeAluguel: ResponsabilidadeAluguel;                  // só alugada (mas sempre presente)
 
@@ -133,7 +133,7 @@ Lista **fechada** de 3 presets editáveis na seção Imprevistos do Detalhamento
 | `SET_GASTO_CUSTOM_VALOR`         | Atualiza `valorAnual` do preset; ativa o toggle se passar de 0 para >0              |
 | `SET_SITUACAO_MOTO`              | Define `situacaoMoto` (quitada/financiada/alugada)                                  |
 | `SET_PARCELA`                    | Define `parcelaMensal` + `parcelasRestantes`; re-ancora `dataReferenciaParcelas` só quando `parcelasRestantes` muda (RF-6.18 / ADR-009) |
-| `SET_ALUGUEL`                    | Define `aluguelMensal` + `aluguelPeriodicidade`                                     |
+| `SET_ALUGUEL`                    | Define `aluguelValor` + `aluguelPeriodicidade`                                      |
 | `SET_RESPONSABILIDADE_ALUGUEL`   | Atualiza `responsabilidadeAluguel` (Partial - campos documentos/manutencao/seguro). Adicionado pela BG-006 |
 
 > Não há `ADD_GASTO_CUSTOM`/`DELETE_GASTO_CUSTOM` - lista de imprevistos é **fechada** em 3 presets (Multa, Sinistros, Outros), TASK-RF-6.9 / ADR-006.
@@ -212,7 +212,7 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, restantesAtuais, alu
 **Regra:**
 
 - Se `situacaoMoto === 'financiada'`, então `parcelaMensal !== null`, `parcelasRestantes !== null` e `dataReferenciaParcelas !== null` (ADR-009).
-- Se `situacaoMoto === 'alugada'`, então `aluguelMensal !== null` e `aluguelPeriodicidade !== null`.
+- Se `situacaoMoto === 'alugada'`, então `aluguelValor !== null` e `aluguelPeriodicidade !== null`.
 - Se `situacaoMoto === 'quitada'`, todos esses campos podem ser `null`.
 
 **Por quê:** sistema crashar tentando ler `parcelaMensal.toFixed(2)` quando `null` em moto financiada é bug grave.
@@ -229,7 +229,7 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, restantesAtuais, alu
 
 ### INV-FIN-3: Valores monetários não negativos
 
-**Regra:** Todos os valores em R$ (`internet`, `seguro.valorAnual`, `alimentacaoDia`, `parcelaMensal`, `aluguelMensal`, `gastosCustom[].valorAnual`, `combustiveis.*.preco`) devem ser `>= 0`.
+**Regra:** Todos os valores em R$ (`internet`, `seguro.valorAnual`, `alimentacaoDia`, `parcelaMensal`, `aluguelValor`, `gastosCustom[].valorAnual`, `combustiveis.*.preco`) devem ser `>= 0`.
 
 **Onde é protegida:** validação nos formulários de UI.
 
@@ -247,13 +247,11 @@ function calcularCustoFinanciamentoAnual(situacao, parcela, restantesAtuais, alu
 
 **Onde é protegida:** `calcularCustoSeguroAnual(valorAnual)` é defensiva (`valorAnual > 0 ? valorAnual : 0`); o COMMIT_ONBOARDING deriva `categoriasAtivas.seguro` de `valorAnual > 0`; o Passo 7 do Onboarding mantém o toggle Sim/Não apenas como estado local de UX (quando "Não", grava `valorAnual: 0`).
 
-### INV-FIN-6: aluguelPeriodicidade só faz sentido com aluguelMensal
+### INV-FIN-6: aluguelPeriodicidade só faz sentido com aluguelValor
 
-**Regra:** Se `aluguelMensal === null`, então `aluguelPeriodicidade === null`. Não faz sentido ter periodicidade sem valor.
+**Regra:** Se `aluguelValor === null`, então `aluguelPeriodicidade === null`. Não faz sentido ter periodicidade sem valor.
 
 **Onde é protegida:** Onboarding P6c.
-
-⚠️ **Nota sobre o nome:** o campo se chama `aluguelMensal` mas pode armazenar valor semanal (se `aluguelPeriodicidade === 'semanal'`). Naming confuso. **Possível dívida técnica de nomenclatura** registrar.
 
 ---
 
@@ -284,10 +282,6 @@ PerfilUsuario.financeiro
 
 ## Pontos de Atenção
 
-### Naming de `aluguelMensal`
-
-Apesar do nome, pode armazenar valor semanal. Registrar como dívida técnica de nomenclatura `aluguelValor` + `aluguelPeriodicidade` seriam mais claros.
-
 ### Fatores de responsabilidade são aplicados após cálculo, não no input
 
 O Motoboy informa o **valor cheio** dos custos (IPVA total, manutenção total). O fator divide depois no cálculo final. Isso significa que **alterar o fator não muda os inputs no perfil** só muda o cálculo derivado. Documentar isso é importante para evitar bugs.
@@ -308,7 +302,6 @@ Documentação validada contra:
 - `docs/requisitos/regras-negocio.md` - RN-21 a RN-23
 - `contexto-base.instructions.md` RN-21, RN-22, RN-23
 
-**Divergências encontradas:**
-
-- Naming `aluguelMensal` ambíguo (registrado como DT-8 em `divida-tecnica.md`).
-- Documentação atualizada em 24/05/26 (TASK-DOC-009) - `SeguroConfig.tem` removido, actions BG-006 (`SET_RESPONSABILIDADE_ALUGUEL`) e ajustes adicionadas, `calcularCustoSeguroAnual` com assinatura única (REF-21).
+**Divergências encontradas:** nenhuma no contrato financeiro atual. A ambiguidade de
+`aluguelMensal` foi resolvida pela TASK-REF-38 com `aluguelValor` +
+`aluguelPeriodicidade`.

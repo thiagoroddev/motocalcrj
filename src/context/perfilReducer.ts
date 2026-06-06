@@ -491,8 +491,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
             action.situacao !== 'financiada'
               ? null
               : state.perfil.financeiro.dataReferenciaParcelas,
-          aluguelMensal:
-            action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelMensal,
+          aluguelValor: action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelValor,
           aluguelPeriodicidade:
             action.situacao !== 'alugada' ? null : state.perfil.financeiro.aluguelPeriodicidade,
         },
@@ -531,7 +530,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         ...state.perfil,
         financeiro: {
           ...state.perfil.financeiro,
-          aluguelMensal: action.aluguelMensal,
+          aluguelValor: action.aluguelValor,
           aluguelPeriodicidade: action.aluguelPeriodicidade,
         },
       });
@@ -593,7 +592,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           parcelaMensal: null,
           parcelasRestantes: null,
           dataReferenciaParcelas: null,
-          aluguelMensal: null,
+          aluguelValor: null,
           aluguelPeriodicidade: null,
           gastosCustom: PRESETS_GASTOS_PADRAO,
         },

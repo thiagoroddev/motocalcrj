@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho - Pop 110i",
@@ -71,7 +71,7 @@
           "parcelaMensal": null,
           "parcelasRestantes": null,
           "dataReferenciaParcelas": null,
-          "aluguelMensal": null,
+          "aluguelValor": null,
           "aluguelPeriodicidade": null,
           "alimentacaoDia": 20,
           "gastosCustom": [
@@ -149,7 +149,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal - Pop 110i",
@@ -208,7 +208,7 @@
           "parcelaMensal": null,
           "parcelasRestantes": null,
           "dataReferenciaParcelas": null,
-          "aluguelMensal": null,
+          "aluguelValor": null,
           "aluguelPeriodicidade": null,
           "alimentacaoDia": 0,
           "gastosCustom": [

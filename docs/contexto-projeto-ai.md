@@ -201,7 +201,7 @@ Este mapa é intencionalmente estável e não enumera cada componente. Para sabe
 
 - Aggregate local: `EstadoApp = { perfil, presets, presetAtivoId }`.
 - Envelope persistido: `PresetEntry`, que contém metadados e um `PerfilUsuario`.
-- Schema público atual: `schemaVersion: 1`.
+- Schema público atual: `schemaVersion: 2`; perfis v1 são migrados para v2 na carga.
 - Chaves: `estimamoto:v1:presets` e `estimamoto:v1:presetAtivo`.
 - Fonte primária: `src/context/PerfilContext.tsx`, `src/context/perfilDefaults.ts`, `src/types/perfil.ts`, `src/schemas/perfilSchema.ts` e `src/services/perfilStorage.ts`.
 - Dados inválidos são rejeitados na fronteira de carga; o app usa fallback recuperável.

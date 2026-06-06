@@ -11,9 +11,7 @@ export function Passo6Aluguel() {
   const { irParaProximo } = useOnboarding();
 
   const fin = perfil.financeiro;
-  const [aluguel, setAluguel] = useState(
-    fin.aluguelMensal != null ? String(fin.aluguelMensal) : '',
-  );
+  const [aluguel, setAluguel] = useState(fin.aluguelValor != null ? String(fin.aluguelValor) : '');
   const [periodicidade, setPeriodicidade] = useState<PeriodicidadeAluguel>(
     fin.aluguelPeriodicidade ?? 'mensal',
   );
@@ -25,7 +23,7 @@ export function Passo6Aluguel() {
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'financeiro',
-      valor: { ...fin, aluguelMensal: aluguelNum, aluguelPeriodicidade: periodicidade },
+      valor: { ...fin, aluguelValor: aluguelNum, aluguelPeriodicidade: periodicidade },
     });
     irParaProximo();
   }

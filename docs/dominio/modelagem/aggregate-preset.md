@@ -67,7 +67,7 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `1`.
+O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `2`. Na carga, perfis v1 são migrados para v2 antes da validação integral.
 
 ---
 

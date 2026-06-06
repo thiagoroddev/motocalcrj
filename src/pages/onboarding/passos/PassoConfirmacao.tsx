@@ -79,10 +79,10 @@ export function PassoConfirmacao() {
               valor={`R$ ${financeiro.parcelaMensal.toFixed(2)}`}
             />
           )}
-          {financeiro.situacaoMoto === 'alugada' && financeiro.aluguelMensal != null && (
+          {financeiro.situacaoMoto === 'alugada' && financeiro.aluguelValor != null && (
             <LinhaResumo
               label="Aluguel"
-              valor={`R$ ${financeiro.aluguelMensal.toFixed(2)}/${financeiro.aluguelPeriodicidade ?? 'mês'}`}
+              valor={`R$ ${financeiro.aluguelValor.toFixed(2)}/${financeiro.aluguelPeriodicidade ?? 'mês'}`}
             />
           )}
         </SessaoResumo>

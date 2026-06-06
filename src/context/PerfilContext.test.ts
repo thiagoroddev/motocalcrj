@@ -457,7 +457,7 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.financeiro.parcelaMensal).toBeNull();
     expect(resultado.perfil.financeiro.parcelasRestantes).toBeNull();
     expect(resultado.perfil.financeiro.dataReferenciaParcelas).toBeNull();
-    expect(resultado.perfil.financeiro.aluguelMensal).toBeNull();
+    expect(resultado.perfil.financeiro.aluguelValor).toBeNull();
     expect(resultado.perfil.financeiro.aluguelPeriodicidade).toBeNull();
 
     // Uso e modo de revisão voltam ao padrão (não são custos)
@@ -571,6 +571,42 @@ describe('perfilReducer', () => {
 
     expect(resultado.perfil.financeiro.parcelasRestantes).toBeNull();
     expect(resultado.perfil.financeiro.dataReferenciaParcelas).toBeNull();
+  });
+
+  // ── SET_ALUGUEL: valor-base e periodicidade (TASK-REF-38) ─
+
+  it('SET_ALUGUEL grava aluguelValor e periodicidade', () => {
+    const resultado = perfilReducer(estadoVazio, {
+      type: 'SET_ALUGUEL',
+      aluguelValor: 250,
+      aluguelPeriodicidade: 'semanal',
+    });
+
+    expect(resultado.perfil.financeiro.aluguelValor).toBe(250);
+    expect(resultado.perfil.financeiro.aluguelPeriodicidade).toBe('semanal');
+  });
+
+  it('SET_SITUACAO_MOTO limpa o aluguel ao sair de alugada', () => {
+    const estadoAlugado: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...perfilPadrao,
+        financeiro: {
+          ...perfilPadrao.financeiro,
+          situacaoMoto: 'alugada',
+          aluguelValor: 800,
+          aluguelPeriodicidade: 'mensal',
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estadoAlugado, {
+      type: 'SET_SITUACAO_MOTO',
+      situacao: 'quitada',
+    });
+
+    expect(resultado.perfil.financeiro.aluguelValor).toBeNull();
+    expect(resultado.perfil.financeiro.aluguelPeriodicidade).toBeNull();
   });
 
   // ── TOGGLE_IMPREVISTO_SUGERIDO (TASK-RF-6.11 cleanup) ─

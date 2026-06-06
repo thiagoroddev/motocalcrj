@@ -107,8 +107,8 @@
 | RF-CONF-01 | Salvar automaticamente no localStorage a cada dispatch. Fechar/reabrir preserva estado. | ✅ CONCLUÍDO |
 | RF-CONF-02 | Ao reabrir com perfil salvo, carregar estado sem ação do usuário. Onboarding nunca reexibido. | ✅ CONCLUÍDO |
 | RF-EXP-01 | Exportar todos os dados como `motocalc_backup.json`. Download automático. | [ ] PENDENTE |
-| RF-EXP-02 | Importar arquivo `.json` com validação e confirmação. Compatível com schemas v3+. | [ ] PENDENTE |
-| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 20 (ver `docs/arquitetura/estado_inicial.md` para tabela de migrações). | [ ] PENDENTE |
+| RF-EXP-02 | Importar arquivo `.json` com validação e confirmação. Compatível com o schema atual e migrações públicas suportadas. | [ ] PENDENTE |
+| RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 2 (ver `docs/arquitetura/estado_inicial.md`). | [ ] PENDENTE |
 
 ---
 

@@ -97,7 +97,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | RNF-LR-03 | **Separar lógica de armazenamento da lógica de estado.** Interface `IPerfilStorage` injetada no `PerfilContext`. | Implementado com `LocalStoragePerfilStorage`. | ✅ CONCLUÍDO |
 | RNF-LR-04 | **Rotas protegidas preparadas.** `<RotaProtegida>` redireciona para onboarding se não há perfil. | Substitui apenas o interior em V2. | ✅ CONCLUÍDO |
 | RNF-LR-05 | **Export/import de perfil mantido com login.** Em V2, export serve como backup portátil independente. | RF-EXP-01 a 03 permanecem em V2. | [ ] PENDENTE |
-| RNF-LR-06 | **`schemaVersion` no perfil garante migrações.** Arquivo `/utils/migrarPerfil.ts`. | Ainda não criado (Fase 2 pendente). | [ ] PENDENTE |
+| RNF-LR-06 | **`schemaVersion` no perfil garante migrações.** Serviço dedicado e validado após cada migração. | `src/services/migracoes.ts`; primeira migração pública v1→v2. | ✅ CONCLUÍDO |
 
 ---
 

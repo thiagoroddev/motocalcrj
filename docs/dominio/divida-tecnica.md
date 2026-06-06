@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v10, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v11, auditada contra código, testes e ADRs em 06/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -23,44 +23,10 @@ O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas taref
 
 | ID | Dívida vigente | Prioridade relativa |
 | --- | --- | --- |
-| DT-8 | Nome `aluguelMensal` contradiz a periodicidade semanal permitida | Baixa |
 | DT-10 | Filtros de categorias permitem estados semanticamente inconsistentes | Média |
 | DT-11 | Overrides e filtros podem ficar órfãos após mudança de preset | Média |
 | DT-18 | `PerfilUso` mistura finalidade, carga e severidade de desgaste | Média |
 | DT-19 | Intervalo peça-serviço depende de comparação com default global | Alta |
-
----
-
-## DT-8: Nome `aluguelMensal` é ambíguo
-
-### Situação atual
-
-`perfil.financeiro.aluguelMensal` armazena o valor-base do aluguel. Esse valor pode ser
-mensal ou semanal, conforme `aluguelPeriodicidade`.
-
-O cálculo está correto: `calcularCustoFinanciamentoAnual` multiplica por 12 ou 52 de
-acordo com a periodicidade. A ambiguidade está no contrato, não na fórmula.
-
-### Por que é dívida técnica
-
-O nome induz consumidores novos a tratar o valor como mensal e fazer `valor * 12`,
-ignorando `aluguelPeriodicidade`. O campo atravessa tipo, schema, reducer, cálculo,
-onboarding, Ajustes, fixtures e documentação.
-
-### Por que não corrigir agora
-
-É uma renomeação transversal de dado persistido sem benefício visível imediato ao usuário.
-
-### Gatilho
-
-- alteração planejada do schema persistido;
-- mudança relevante no bloco financeiro;
-- ocorrência de uso incorreto do campo.
-
-### Recomendação
-
-Renomear para `aluguelValor` e manter `aluguelPeriodicidade` como qualificador obrigatório,
-com compatibilidade explícita para perfis já persistidos.
 
 ---
 
@@ -252,9 +218,9 @@ intervalo do serviço vinculado.
 | DT-3 | Removida: não é dívida comprovada | Zod e reducer já validam domínio numérico; o produto é estimador e não há defeito de precisão registrado que justifique Value Objects transversais. |
 | DT-4 | Removida: não é dívida atual | Não há necessidade de event bus, backend ou sincronização. Analytics continua backlog próprio e `analytics.ts` ainda não existe. |
 | DT-5 | Removida: limitação de produto | O catálogo atual deriva de dois presets validados. Cadastro livre está fora do escopo, não é falha da arquitetura vigente. |
-| DT-6 | Removida: resolvida | Storage usa chaves `estimamoto:v1:*` e `schemaVersion: 1`, com validação e fallback recuperável. |
+| DT-6 | Removida: resolvida | Storage usa chaves `estimamoto:v1:*`, schema versionado, migração explícita e fallback recuperável. |
 | DT-7 | Removida: resolvida | `modoExibicao`, diário e fluxo personalizado foram eliminados pela ADR-003 e tarefas relacionadas. |
-| DT-8 | Mantida | O nome ambíguo permanece em tipos, schema, reducer, cálculo e UI. |
+| DT-8 | Removida: resolvida pela TASK-REF-38 | O contrato v2 usa `aluguelValor`; perfis v1 migram antes da validação e a fórmula mensal/semanal foi preservada. |
 | DT-9 | Removida: resolvida | As coleções e actions de histórico/diário citadas pelo item não existem mais. |
 | DT-10 | Mantida e corrigida | O guard continua ausente; a descrição foi ajustada para refletir o filtro independente de revisão. |
 | DT-11 | Mantida e ampliada | IDs e índices órfãos continuam aceitos estruturalmente e persistidos. |
@@ -295,3 +261,4 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 09/05/2026 | v1-v2 | Criação e primeira revisão por engenharia reversa. |
 | 11/05 a 04/06/2026 | v3-v9 | Inclusão e fechamento incremental de DT-1 a DT-19. |
 | 06/06/2026 | v10 | Auditoria integral contra o código atual; lista ativa reduzida a DT-8, DT-10, DT-11, DT-18 e DT-19. |
+| 06/06/2026 | v11 | TASK-REF-38 encerra DT-8; lista ativa reduzida a DT-10, DT-11, DT-18 e DT-19. |
