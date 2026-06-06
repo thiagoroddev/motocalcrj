@@ -28,18 +28,6 @@ Obedeça essa ordem:
 
 
 
-### TASK-REF-35 Extração oportunista de arquivos grandes (com gatilho)
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/G
-- **Data-hora origem:** 01/06/26 19:13
-- **Dependências:**
-- **REQ/ADR/DT:** REV-001-A08
-- **Observações:** 🟢 Sugestão execução OPORTUNISTA, não "largar tudo": extrair partes de `src/context/PerfilContext.tsx` (~720 linhas) e `src/pages/PaginaDetalhamento.tsx` (~560 linhas) QUANDO a próxima feature tocar nelas. Manter `src/utils/calculos.ts` (~1085 linhas) como núcleo estável por enquanto é puro, seccionado e densamente testado (145 testes); mexer sem gatilho gera mais risco que ganho. **Gatilho:** próxima feature que abrir esses arquivos. Registrada como bloco por convenção do projeto, mas tratar como Desejável/gatilho.
-
 ### TASK-CHORE-016 DX: helper de localStorage falso + bootstrap de fixture DEV (com gatilho)
 
 - **Status:** Pendente

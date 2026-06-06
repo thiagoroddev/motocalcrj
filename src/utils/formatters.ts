@@ -2,6 +2,7 @@ export function moeda(v: number): string {
   return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+/** Formata leituras de odômetro e intervalos, exibidos em quilômetros inteiros. */
 export function kmFormatado(v: number): string {
   return Math.round(v).toLocaleString('pt-BR') + ' km';
 }

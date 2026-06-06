@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import { useCustos } from '../hooks/useCustos';
@@ -10,14 +10,25 @@ import {
   calcularGranularidades,
   categoriasParaFiltros,
   converterAnualParaPeriodo,
-  calcularParcelasRestantesAtuais,
 } from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
 import type { CategoriaDisplay } from '../types/perfil';
 import { moeda, cpkFormatado } from '../utils/formatters';
+import {
+  formatarKm,
+  formatarKmNoPeriodo,
+  formatarLitros,
+  formatarPrecoLitro,
+  montarFormulaCombustivel,
+} from '../utils/formatadoresDetalhamento';
 import { CardTotalAnual } from '../components/detalhamento/CardTotalAnual';
 import { CategoriaAccordion } from '../components/detalhamento/CategoriaAccordion';
-import { BotaoLapisEdicao } from '../components/detalhamento/BotaoLapisEdicao';
+import {
+  CATEGORIAS_SIMPLES,
+  DetalhesCategoriaSimples,
+  obterLabelCategoriaSimples,
+} from '../components/detalhamento/DetalhesCategoriaSimples';
+import { LinhaDetalheTexto, NotaRodape } from '../components/detalhamento/ElementosDetalhamento';
 import { LinhaDetalhe } from '../components/detalhamento/LinhaDetalhe';
 import { SecaoImprevistos } from '../components/detalhamento/SecaoImprevistos';
 import { SecaoManutencao } from '../components/detalhamento/SecaoManutencao';
@@ -25,33 +36,10 @@ import { SeletorPeriodo, type Periodo } from '../components/SeletorPeriodo';
 import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { DialogEdicaoCusto, type EdicaoAlvo } from '../components/detalhamento/DialogEdicaoCusto';
 
-type ChaveCategoriaSimples = 'internet' | 'seguro' | 'alimentacao' | 'financiamento';
 type ChaveFiltroCategoria = keyof Omit<
   FiltrosCategorias,
   'manutencaoPorPeca' | 'revisaoPorServico' | 'imprevistosSugeridos'
 >;
-
-const CATEGORIAS_SIMPLES: {
-  chave: ChaveCategoriaSimples;
-  label: string;
-  cor: string;
-  edicao: EdicaoAlvo;
-}[] = [
-  { chave: 'internet', label: 'Internet', cor: 'bg-sky-500', edicao: { tipo: 'internet' } },
-  { chave: 'seguro', label: 'Seguro', cor: 'bg-primary', edicao: { tipo: 'seguro' } },
-  {
-    chave: 'alimentacao',
-    label: 'Alimentação',
-    cor: 'bg-yellow-400',
-    edicao: { tipo: 'alimentacao' },
-  },
-  {
-    chave: 'financiamento',
-    label: 'Financiamento',
-    cor: 'bg-orange-500',
-    edicao: { tipo: 'financiamento' },
-  },
-];
 
 const FILTRO_PARA_CATEGORIA: Partial<Record<ChaveFiltroCategoria, keyof CategoriaDisplay>> = {
   documentos: 'documentacao',
@@ -62,94 +50,6 @@ const FILTRO_PARA_CATEGORIA: Partial<Record<ChaveFiltroCategoria, keyof Categori
   alimentacao: 'alimentacao',
   financiamento: 'financiamento',
 };
-
-const ROTULO_PERIODO_CURTO: Record<Periodo, string> = {
-  ano: 'ano',
-  mes: 'mês',
-  sem: 'semana',
-  dia: 'dia',
-  hora: 'hora',
-};
-
-function formatarNumeroPtBr(
-  valor: number,
-  minimumFractionDigits: number,
-  maximumFractionDigits: number,
-) {
-  return valor.toLocaleString('pt-BR', { minimumFractionDigits, maximumFractionDigits });
-}
-
-function formatarKm(valor: number): string {
-  const casasDecimais = Number.isInteger(valor) || valor >= 100 ? 0 : 1;
-  return `${formatarNumeroPtBr(valor, casasDecimais, casasDecimais)} km`;
-}
-
-function formatarKmNoPeriodo(valor: number, periodo: Periodo): string {
-  return `${formatarKm(valor)}/${ROTULO_PERIODO_CURTO[periodo]}`;
-}
-
-function formatarQuantidade(valor: number, unidade: string): string {
-  const casasDecimais = Number.isInteger(valor) ? 0 : 1;
-  return `${formatarNumeroPtBr(valor, casasDecimais, casasDecimais)} ${unidade}`;
-}
-
-function formatarLitros(valor: number): string {
-  return `${formatarNumeroPtBr(valor, 2, 2)} L`;
-}
-
-function formatarPrecoLitro(valor: number): string {
-  return `${moeda(valor)}/L`;
-}
-
-function montarFormulaCombustivel(
-  kmPeriodo: number,
-  consumoEfetivo: number,
-  precoLitro: number,
-  totalPeriodo: string,
-): string {
-  if (consumoEfetivo <= 0) {
-    return 'Informe consumo efetivo para calcular.';
-  }
-
-  return `${formatarKm(kmPeriodo)} / ${formatarNumeroPtBr(
-    consumoEfetivo,
-    1,
-    1,
-  )} km/L x ${formatarPrecoLitro(precoLitro)} = ${totalPeriodo}`;
-}
-
-// Nota explicativa no rodapé do conteúdo expandido. Quando editável, o lápis
-// fica aqui (não no header do card), para os toggles de todas as categorias
-// permanecerem alinhados. O texto quebra linha respeitando o espaço do lápis.
-function NotaRodape({
-  children,
-  onEditar,
-  ariaLabel,
-}: {
-  children: ReactNode;
-  onEditar?: () => void;
-  ariaLabel?: string;
-}) {
-  return (
-    <div className="flex items-start gap-2 border-t border-muted/70 pt-2">
-      <p className="flex-1 min-w-0 text-[11px] leading-relaxed text-muted-foreground/45">
-        {children}
-      </p>
-      {onEditar && <BotaoLapisEdicao onClick={onEditar} ariaLabel={ariaLabel ?? 'Editar'} />}
-    </div>
-  );
-}
-
-function LinhaDetalheTexto({ label, valor }: { label: string; valor: string }) {
-  return (
-    <div className="flex items-start justify-between gap-3">
-      <span className="shrink-0 text-muted-foreground/60 text-xs">{label}</span>
-      <span className="min-w-0 text-right text-muted-foreground text-xs font-medium tabular-nums break-words">
-        {valor}
-      </span>
-    </div>
-  );
-}
 
 export function PaginaDetalhamento() {
   const navigate = useNavigate();
@@ -262,141 +162,6 @@ export function PaginaDetalhamento() {
 
   function irParaRevisaoConcessionaria(destaqueIndex?: number) {
     navigate('/mao-de-obra', { state: { abaInicial: 'concessionaria', destaqueIndex } });
-  }
-
-  function labelCategoriaSimples(label: string, chave: ChaveCategoriaSimples): string {
-    if (chave === 'financiamento' && perfil.financeiro.situacaoMoto === 'alugada') {
-      return 'Aluguel';
-    }
-    return label;
-  }
-
-  function renderizarDetalhesCategoriaSimples(
-    chave: ChaveCategoriaSimples,
-    onEditar: () => void,
-    ariaLabel: string,
-  ) {
-    if (chave === 'internet') {
-      return (
-        <>
-          <LinhaDetalheTexto
-            label="Mensalidade"
-            valor={`${moeda(perfil.financeiro.internet)}/mês`}
-          />
-          <LinhaDetalheTexto
-            label="Cálculo anual"
-            valor={`${moeda(perfil.financeiro.internet)} x 12 = ${moeda(custos.internet.total)}`}
-          />
-          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
-            Valor fixo mensal rateado pelo período selecionado.
-          </NotaRodape>
-        </>
-      );
-    }
-
-    if (chave === 'seguro') {
-      const seguradora = perfil.financeiro.seguro.empresa?.trim() || 'Não informada';
-      return (
-        <>
-          <LinhaDetalheTexto
-            label="Valor anual"
-            valor={moeda(perfil.financeiro.seguro.valorAnual)}
-          />
-          <LinhaDetalheTexto
-            label="Periodicidade"
-            valor={perfil.financeiro.seguro.periodicidade === 'mensal' ? 'Mensal' : 'Anual'}
-          />
-          <LinhaDetalheTexto label="Seguradora" valor={seguradora} />
-          {custos.seguro.total !== perfil.financeiro.seguro.valorAnual && (
-            <LinhaDetalheTexto label="Custo considerado" valor={moeda(custos.seguro.total)} />
-          )}
-          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
-            Valor anual rateado pelo período selecionado.
-          </NotaRodape>
-        </>
-      );
-    }
-
-    if (chave === 'alimentacao') {
-      return (
-        <>
-          <LinhaDetalheTexto
-            label="Valor por dia"
-            valor={`${moeda(perfil.financeiro.alimentacaoDia)}/dia`}
-          />
-          <LinhaDetalheTexto
-            label="Dias no período"
-            valor={`${formatarQuantidade(diasTrabalhadosNoPeriodo, 'dias')}/${ROTULO_PERIODO_CURTO[periodo]}`}
-          />
-          <LinhaDetalheTexto
-            label="Dias/semana"
-            valor={`${perfil.trabalho.diasPorSemana} dias/semana`}
-          />
-          <LinhaDetalheTexto
-            label="Cálculo"
-            valor={`${moeda(perfil.financeiro.alimentacaoDia)} x ${formatarQuantidade(
-              diasTrabalhadosNoPeriodo,
-              'dias',
-            )} = ${pp(custos.alimentacao.total)}`}
-          />
-          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
-            {`Os dias vêm da configuração de trabalho na Estimativa: ${perfil.trabalho.diasPorSemana} dias/semana x 52 semanas.`}
-          </NotaRodape>
-        </>
-      );
-    }
-
-    if (perfil.financeiro.situacaoMoto === 'alugada') {
-      const aluguel = perfil.financeiro.aluguelMensal ?? 0;
-      const periodicidade = perfil.financeiro.aluguelPeriodicidade ?? 'mensal';
-      const multiplicador = periodicidade === 'semanal' ? 52 : 12;
-      return (
-        <>
-          <LinhaDetalheTexto
-            label="Aluguel"
-            valor={`${moeda(aluguel)}/${periodicidade === 'semanal' ? 'semana' : 'mês'}`}
-          />
-          <LinhaDetalheTexto
-            label="Cálculo anual"
-            valor={`${moeda(aluguel)} x ${multiplicador} = ${moeda(custos.financiamento.total)}`}
-          />
-          <NotaRodape onEditar={onEditar} ariaLabel={ariaLabel}>
-            Valor recorrente rateado pelo período selecionado.
-          </NotaRodape>
-        </>
-      );
-    }
-
-    const restantesHoje = calcularParcelasRestantesAtuais(
-      perfil.financeiro.parcelasRestantes,
-      perfil.financeiro.dataReferenciaParcelas,
-    );
-    const parcelasNoAno = Math.min(12, restantesHoje);
-    return (
-      <>
-        <LinhaDetalheTexto
-          label="Parcela"
-          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)}/mês`}
-        />
-        <LinhaDetalheTexto
-          label="Parcelas restantes"
-          valor={
-            perfil.financeiro.parcelasRestantes != null ? String(restantesHoje) : 'Não informado'
-          }
-        />
-        <LinhaDetalheTexto
-          label="Cálculo anual"
-          valor={`${moeda(perfil.financeiro.parcelaMensal ?? 0)} x ${parcelasNoAno} = ${moeda(
-            custos.financiamento.total,
-          )}`}
-        />
-        <p className="border-t border-muted/70 pt-2 text-[11px] leading-relaxed text-muted-foreground/45">
-          {restantesHoje > 0
-            ? 'Projeta apenas as parcelas que ainda faltam nos próximos 12 meses.'
-            : 'Financiamento quitado - não entra mais no custo.'}
-        </p>
-      </>
-    );
   }
 
   return (
@@ -552,7 +317,7 @@ export function PaginaDetalhamento() {
         {CATEGORIAS_SIMPLES.filter((c) => custos[c.chave].ativo).map((c) => (
           <CategoriaAccordion
             key={c.chave}
-            label={labelCategoriaSimples(c.label, c.chave)}
+            label={obterLabelCategoriaSimples(c.label, c.chave, perfil.financeiro.situacaoMoto)}
             categoriaId={c.chave}
             corClasse={c.cor}
             valorExibido={pp(custos[c.chave].total)}
@@ -562,11 +327,20 @@ export function PaginaDetalhamento() {
             onToggleAtivo={() => toggleFiltro(c.chave)}
             onToggleExpandido={() => toggleAcordeao(c.chave)}
           >
-            {renderizarDetalhesCategoriaSimples(
-              c.chave,
-              () => setEdicao(c.edicao),
-              `Editar ${labelCategoriaSimples(c.label, c.chave)}`,
-            )}
+            <DetalhesCategoriaSimples
+              chave={c.chave}
+              perfil={perfil}
+              custoAnual={custos[c.chave].total}
+              periodo={periodo}
+              diasTrabalhadosNoPeriodo={diasTrabalhadosNoPeriodo}
+              formatarValorPeriodo={pp}
+              onEditar={() => setEdicao(c.edicao)}
+              ariaLabel={`Editar ${obterLabelCategoriaSimples(
+                c.label,
+                c.chave,
+                perfil.financeiro.situacaoMoto,
+              )}`}
+            />
           </CategoriaAccordion>
         ))}
 
