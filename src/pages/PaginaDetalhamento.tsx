@@ -5,6 +5,7 @@ import { useCustos } from '../hooks/useCustos';
 import { obterPreset } from '../data/repositorioPresets';
 import { montarCicloRevisao, projetarProximasRevisoes } from '../utils/cicloRevisao';
 import {
+  calcularBreakdownValores,
   calcularTotalFiltrado,
   calcularGranularidades,
   categoriasParaFiltros,
@@ -194,8 +195,9 @@ export function PaginaDetalhamento() {
     }
   }
   const totalFiltrado = calcularTotalFiltrado(custos, filtros);
+  const valoresFiltrados = calcularBreakdownValores(custos, filtros);
   const gran = calcularGranularidades(totalFiltrado, diasAno, kmAnual);
-  const totalManutencaoComRevisao = custos.manutencao.total + custos.revisao.total;
+  const totalManutencaoComRevisao = valoresFiltrados.manutencao + valoresFiltrados.revisao;
   const totalImprevistos = filtros.gastosCustom
     ? custos.gastosCustom.total +
       [...custos.gastosCustom.detalhes.sugeridos.entries()].reduce(

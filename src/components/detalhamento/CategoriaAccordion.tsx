@@ -34,24 +34,42 @@ export function CategoriaAccordion({
 }: Props) {
   return (
     <Card className="shadow-none border-0 overflow-hidden">
-      <div
-        className={`flex items-center gap-3 p-4 ${!semExpansao ? 'cursor-pointer' : ''}`}
-        onClick={!semExpansao ? onToggleExpandido : undefined}
-      >
-        <TileCategoria categoriaId={categoriaId} corClasse={corClasse} />
-        <span className="flex-1 text-foreground text-sm font-medium">
+      <div className="relative flex items-center gap-3 p-4">
+        {!semExpansao && (
+          <h2 className="absolute inset-0 z-0" aria-label={label}>
+            <button
+              type="button"
+              onClick={onToggleExpandido}
+              aria-label={label}
+              aria-expanded={expandido}
+              className="absolute inset-0 cursor-pointer rounded-lg border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+            />
+          </h2>
+        )}
+        <TileCategoria
+          categoriaId={categoriaId}
+          corClasse={corClasse}
+          className="pointer-events-none relative z-10"
+        />
+        <span className="pointer-events-none relative z-10 flex-1 text-foreground text-sm font-medium">
           {label}
           <span className="ml-1.5 text-[10px] font-normal text-muted-foreground/40">
             {porcentagem}
           </span>
         </span>
         <span
-          className={`text-sm font-semibold tabular-nums ${ativo ? 'text-foreground' : 'text-muted-foreground/30'}`}
+          className={`pointer-events-none relative z-10 text-sm font-semibold tabular-nums ${ativo ? 'text-foreground' : 'text-muted-foreground/30'}`}
         >
           {valorExibido}
         </span>
-        <Toggle ativo={ativo} onClick={onToggleAtivo} />
-        {onEditar && <BotaoLapisEdicao onClick={onEditar} ariaLabel={`Editar ${label}`} />}
+        <div className="relative z-10">
+          <Toggle ativo={ativo} onClick={onToggleAtivo} />
+        </div>
+        {onEditar && (
+          <div className="relative z-10">
+            <BotaoLapisEdicao onClick={onEditar} ariaLabel={`Editar ${label}`} />
+          </div>
+        )}
         {!semExpansao && (
           <svg
             viewBox="0 0 24 24"
@@ -59,7 +77,7 @@ export function CategoriaAccordion({
             stroke="currentColor"
             strokeWidth={2}
             aria-hidden="true"
-            className={`w-4 h-4 text-muted-foreground/40 shrink-0 transition-transform ${expandido ? 'rotate-180' : ''}`}
+            className={`pointer-events-none relative z-10 w-4 h-4 text-muted-foreground/40 shrink-0 transition-transform ${expandido ? 'rotate-180' : ''}`}
           >
             <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

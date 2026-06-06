@@ -7,7 +7,7 @@ type Props = {
 export function Toggle({ ativo, label, onClick }: Props) {
   return (
     <label
-      className={`w-9 h-5 rounded-full transition-colors flex-shrink-0 relative cursor-pointer ${ativo ? 'bg-primary' : 'bg-muted'}`}
+      className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full transition-colors ${ativo ? 'bg-primary' : 'bg-muted'}`}
       onClick={(e) => e.stopPropagation()}
     >
       <input

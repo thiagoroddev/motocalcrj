@@ -9,7 +9,9 @@ import type { PerfilUsuario, PresetEntry } from './types/perfil';
 const CHAVE_PRESETS = 'estimamoto:v1:presets';
 const CHAVE_ATIVO = 'estimamoto:v1:presetAtivo';
 
-function criarPerfilValido(): PerfilUsuario {
+type MotoRevisaoOverrides = Partial<Pick<PerfilUsuario['moto'], 'kmAtual' | 'kmUltimaRevisao'>>;
+
+function criarPerfilValido(motoRevisaoOverrides: MotoRevisaoOverrides = {}): PerfilUsuario {
   return {
     ...perfilPadrao,
     onboardingConcluido: true,
@@ -22,6 +24,7 @@ function criarPerfilValido(): PerfilUsuario {
       kmAtual: 12500,
       kmUltimaRevisao: 12000,
       kmUltimaTrocas: { ...perfilPadrao.moto.kmUltimaTrocas },
+      ...motoRevisaoOverrides,
     },
     trabalho: {
       ...perfilPadrao.trabalho,
@@ -152,6 +155,10 @@ function obterCpkDetalhamento(): string | null {
   return within(obterCardTotalDetalhamento()).getByText(/\/km$/).textContent;
 }
 
+function obterValorCategoria(card: HTMLElement): string | null {
+  return within(card).getAllByText(/^R\$/)[0]?.textContent ?? null;
+}
+
 describe('App - smoke UI', () => {
   beforeEach(() => {
     vi.stubGlobal('localStorage', criarLocalStorageFalso());
@@ -231,6 +238,47 @@ describe('App - smoke UI', () => {
     expect(screen.queryByText(/Modelo não encontrado/i)).not.toBeInTheDocument();
   });
 
+  it('mostra revisão pendente ao atingir exatamente a próxima revisão prevista', async () => {
+    const perfil = criarPerfilValido({
+      kmUltimaRevisao: 12000,
+      kmAtual: 18000,
+    });
+    salvarPresetNoStorage(criarPreset(perfil));
+
+    renderizarAppEm('/estimativa');
+
+    await screen.findByText('Custo de operação por km');
+    expect(screen.getByText('Revisão pendente')).toBeInTheDocument();
+    const descricaoAviso = screen.getByText(/A sua próxima revisão periódica, prevista para/);
+    expect(within(descricaoAviso).getByText('18.000 km')).toBeInTheDocument();
+  });
+
+  it('não mostra revisão pendente sem km da última revisão informado', async () => {
+    const perfil = criarPerfilValido({
+      kmUltimaRevisao: null,
+      kmAtual: 18000,
+    });
+    salvarPresetNoStorage(criarPreset(perfil));
+
+    renderizarAppEm('/estimativa');
+
+    await screen.findByText('Custo de operação por km');
+    expect(screen.queryByText('Revisão pendente')).not.toBeInTheDocument();
+  });
+
+  it('não mostra revisão pendente antes da próxima revisão prevista', async () => {
+    const perfil = criarPerfilValido({
+      kmUltimaRevisao: 12000,
+      kmAtual: 17999,
+    });
+    salvarPresetNoStorage(criarPreset(perfil));
+
+    renderizarAppEm('/estimativa');
+
+    await screen.findByText('Custo de operação por km');
+    expect(screen.queryByText('Revisão pendente')).not.toBeInTheDocument();
+  });
+
   it('renderiza Insumos do MVP sem paralelas e sem peças cobertas pela revisão', async () => {
     salvarPresetNoStorage();
 
@@ -268,6 +316,34 @@ describe('App - smoke UI', () => {
     });
     expect(obterCpkDetalhamento()).toBeTruthy();
     expect(obterCpkDetalhamento()).not.toBe(cpkAntes);
+  });
+
+  it('atualiza o valor do header de Manutenção ao desativar uma peça', async () => {
+    salvarPresetNoStorage();
+    renderizarAppEm('/estimativa/detalhamento');
+    await screen.findByText('Total estimado no ano');
+
+    const acionadorManutencao = screen.getByRole('button', { name: /^Manutenção/ });
+    const cardManutencao = acionadorManutencao.closest('[class*="bg-card"]');
+    if (!(cardManutencao instanceof HTMLElement)) {
+      throw new Error('Card de Manutenção não encontrado');
+    }
+    const totalGeralAntes = obterValorTotalDetalhamento();
+    const totalManutencaoAntes = obterValorCategoria(cardManutencao);
+
+    fireEvent.click(acionadorManutencao);
+
+    const linhaKitRelacao = (await screen.findByText('Kit relação (corrente + coroa + pinhão)'))
+      .parentElement;
+    if (!(linhaKitRelacao instanceof HTMLElement)) {
+      throw new Error('Linha do Kit relação não encontrada');
+    }
+    fireEvent.click(within(linhaKitRelacao).getByRole('checkbox'));
+
+    await waitFor(() => {
+      expect(obterValorTotalDetalhamento()).not.toBe(totalGeralAntes);
+      expect(obterValorCategoria(cardManutencao)).not.toBe(totalManutencaoAntes);
+    });
   });
 
   it('o chip de M.O. abre o popup de estimativa (Segmentado Só valor real / Incluir ~estimativa)', async () => {
