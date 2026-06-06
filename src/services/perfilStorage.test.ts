@@ -1,25 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LocalStoragePerfilStorage } from './perfilStorage';
+import { criarLocalStorageFalso } from '../test/localStorageFalso';
+import { CHAVES_PERFIL_STORAGE, LocalStoragePerfilStorage } from './perfilStorage';
 import type { PresetEntry } from '../types/perfil';
-
-function criarLocalStorageFalso(): Storage {
-  const dados = new Map<string, string>();
-
-  return {
-    get length() {
-      return dados.size;
-    },
-    clear: vi.fn(() => dados.clear()),
-    getItem: vi.fn((chave: string) => dados.get(chave) ?? null),
-    key: vi.fn((indice: number) => [...dados.keys()][indice] ?? null),
-    removeItem: vi.fn((chave: string) => {
-      dados.delete(chave);
-    }),
-    setItem: vi.fn((chave: string, valor: string) => {
-      dados.set(chave, String(valor));
-    }),
-  };
-}
 
 describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
   let localStorageFalso: Storage;
@@ -50,19 +32,19 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
     storage.salvarPresets(presets);
     storage.setPresetAtivo('p1');
 
-    expect(localStorage.getItem('estimamoto:v1:presets')).toBe(JSON.stringify(presets));
-    expect(localStorage.getItem('estimamoto:v1:presetAtivo')).toBe('p1');
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)).toBe(JSON.stringify(presets));
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe('p1');
     expect(storage.carregarPresets()).toEqual(presets);
     expect(storage.getPresetAtivo()).toBe('p1');
   });
 
   it('preserva blob corrompido no namespace atual', () => {
     const storage = new LocalStoragePerfilStorage();
-    localStorage.setItem('estimamoto:v1:presets', '{quebrado');
+    localStorage.setItem(CHAVES_PERFIL_STORAGE.presets, '{quebrado');
 
     storage.preservarCorrompido();
 
-    const preservado = JSON.parse(localStorage.getItem('estimamoto:v1:presets.corrupted')!);
+    const preservado = JSON.parse(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetsCorrompidos)!);
     expect(preservado.raw).toBe('{quebrado');
     expect(typeof preservado.carimbo).toBe('string');
   });
@@ -73,13 +55,13 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
 
     storage.setPresetAtivo(null);
 
-    expect(localStorage.getItem('estimamoto:v1:presetAtivo')).toBeNull();
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBeNull();
     expect(storage.getPresetAtivo()).toBeNull();
   });
 
   it('retorna lista vazia quando presets salvos têm JSON inválido', () => {
     const storage = new LocalStoragePerfilStorage();
-    localStorage.setItem('estimamoto:v1:presets', '{quebrado');
+    localStorage.setItem(CHAVES_PERFIL_STORAGE.presets, '{quebrado');
 
     expect(storage.carregarPresets()).toEqual([]);
   });

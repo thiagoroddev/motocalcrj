@@ -4,10 +4,9 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import { perfilPadrao } from './context/PerfilContext';
+import { CHAVES_PERFIL_STORAGE } from './services/perfilStorage';
+import { criarLocalStorageFalso } from './test/localStorageFalso';
 import type { PerfilUsuario, PresetEntry } from './types/perfil';
-
-const CHAVE_PRESETS = 'estimamoto:v1:presets';
-const CHAVE_ATIVO = 'estimamoto:v1:presetAtivo';
 
 type MotoRevisaoOverrides = Partial<Pick<PerfilUsuario['moto'], 'kmAtual' | 'kmUltimaRevisao'>>;
 
@@ -90,28 +89,9 @@ function criarPreset(perfil = criarPerfilValido()): PresetEntry {
   };
 }
 
-function criarLocalStorageFalso(): Storage {
-  const dados = new Map<string, string>();
-
-  return {
-    get length() {
-      return dados.size;
-    },
-    clear: vi.fn(() => dados.clear()),
-    getItem: vi.fn((chave: string) => dados.get(chave) ?? null),
-    key: vi.fn((indice: number) => [...dados.keys()][indice] ?? null),
-    removeItem: vi.fn((chave: string) => {
-      dados.delete(chave);
-    }),
-    setItem: vi.fn((chave: string, valor: string) => {
-      dados.set(chave, String(valor));
-    }),
-  };
-}
-
 function salvarPresetNoStorage(preset = criarPreset()): PresetEntry {
-  localStorage.setItem(CHAVE_PRESETS, JSON.stringify([preset]));
-  localStorage.setItem(CHAVE_ATIVO, preset.presetId);
+  localStorage.setItem(CHAVES_PERFIL_STORAGE.presets, JSON.stringify([preset]));
+  localStorage.setItem(CHAVES_PERFIL_STORAGE.presetAtivo, preset.presetId);
   return preset;
 }
 
@@ -220,12 +200,12 @@ describe('App - smoke UI', () => {
     expect(screen.queryByText(/Modelo não encontrado/i)).not.toBeInTheDocument();
     expect(window.location.pathname).toBe('/estimativa');
 
-    const presetsRaw = localStorage.getItem(CHAVE_PRESETS);
+    const presetsRaw = localStorage.getItem(CHAVES_PERFIL_STORAGE.presets);
     expect(presetsRaw).not.toBeNull();
     const presets = JSON.parse(presetsRaw!) as PresetEntry[];
     expect(presets).toHaveLength(1);
     expect(presets[0].perfil.onboardingConcluido).toBe(true);
-    expect(localStorage.getItem(CHAVE_ATIVO)).toBe(presets[0].presetId);
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[0].presetId);
   });
 
   it('renderiza estimativa a partir de preset salvo', async () => {

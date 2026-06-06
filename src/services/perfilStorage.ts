@@ -1,5 +1,11 @@
 import type { PresetEntry } from '../types/perfil';
 
+export const CHAVES_PERFIL_STORAGE = {
+  presets: 'estimamoto:v1:presets',
+  presetAtivo: 'estimamoto:v1:presetAtivo',
+  presetsCorrompidos: 'estimamoto:v1:presets.corrupted',
+} as const;
+
 export interface IPerfilStorage {
   carregarPresets(): PresetEntry[];
   salvarPresets(presets: PresetEntry[]): void;
@@ -13,13 +19,9 @@ export interface IPerfilStorage {
 }
 
 export class LocalStoragePerfilStorage implements IPerfilStorage {
-  private readonly CHAVE_PRESETS = 'estimamoto:v1:presets';
-  private readonly CHAVE_ATIVO = 'estimamoto:v1:presetAtivo';
-  private readonly CHAVE_CORROMPIDO = 'estimamoto:v1:presets.corrupted';
-
   carregarPresets(): PresetEntry[] {
     try {
-      const raw = localStorage.getItem(this.CHAVE_PRESETS);
+      const raw = localStorage.getItem(CHAVES_PERFIL_STORAGE.presets);
       return raw ? (JSON.parse(raw) as PresetEntry[]) : [];
     } catch {
       return [];
@@ -28,7 +30,7 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
 
   salvarPresets(presets: PresetEntry[]): void {
     try {
-      localStorage.setItem(this.CHAVE_PRESETS, JSON.stringify(presets));
+      localStorage.setItem(CHAVES_PERFIL_STORAGE.presets, JSON.stringify(presets));
     } catch {
       // Persistência local é best-effort. Falha de quota/modo privado não deve quebrar o app.
     }
@@ -36,7 +38,7 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
 
   getPresetAtivo(): string | null {
     try {
-      return localStorage.getItem(this.CHAVE_ATIVO);
+      return localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo);
     } catch {
       return null;
     }
@@ -45,9 +47,9 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
   setPresetAtivo(presetId: string | null): void {
     try {
       if (presetId) {
-        localStorage.setItem(this.CHAVE_ATIVO, presetId);
+        localStorage.setItem(CHAVES_PERFIL_STORAGE.presetAtivo, presetId);
       } else {
-        localStorage.removeItem(this.CHAVE_ATIVO);
+        localStorage.removeItem(CHAVES_PERFIL_STORAGE.presetAtivo);
       }
     } catch {
       // Persistência local é best-effort. Falha de quota/modo privado não deve quebrar o app.
@@ -56,8 +58,8 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
 
   limpar(): void {
     try {
-      localStorage.removeItem(this.CHAVE_PRESETS);
-      localStorage.removeItem(this.CHAVE_ATIVO);
+      localStorage.removeItem(CHAVES_PERFIL_STORAGE.presets);
+      localStorage.removeItem(CHAVES_PERFIL_STORAGE.presetAtivo);
     } catch {
       // Limpeza é best-effort: se o storage falhar, a UI ainda deve seguir utilizável.
     }
@@ -65,10 +67,13 @@ export class LocalStoragePerfilStorage implements IPerfilStorage {
 
   preservarCorrompido(): void {
     try {
-      const raw = localStorage.getItem(this.CHAVE_PRESETS);
+      const raw = localStorage.getItem(CHAVES_PERFIL_STORAGE.presets);
       if (raw == null) return;
       const carimbo = new Date().toISOString();
-      localStorage.setItem(this.CHAVE_CORROMPIDO, JSON.stringify({ carimbo, raw }));
+      localStorage.setItem(
+        CHAVES_PERFIL_STORAGE.presetsCorrompidos,
+        JSON.stringify({ carimbo, raw }),
+      );
     } catch {
       // Preservar é best-effort: se o próprio localStorage falhar (quota,
       // modo privado), não pode lançar e re-brickar a inicialização.

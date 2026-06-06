@@ -136,3 +136,4 @@
 | TASK-CHORE-018 | Acessibilidade do header do CategoriaAccordion (teclado/leitor de tela) | [2026-06-05--22h24--TASK-CHORE-018.md](./2026-06-05--22h24--TASK-CHORE-018.md) |
 | TASK-TEST-004 | Teste de integração do aviso de revisão pendente em PaginaEstimativa | [2026-06-05--23h07--TASK-TEST-004.md](./2026-06-05--23h07--TASK-TEST-004.md) |
 | TASK-REF-35 | Extração oportunista de PerfilContext e PaginaDetalhamento | [2026-06-06--01h46--TASK-REF-35.md](./2026-06-06--01h46--TASK-REF-35.md) |
+| TASK-CHORE-016 | DX: helper de localStorage falso e bootstrap de fixture DEV | [2026-06-06--04h59--TASK-CHORE-016.md](./2026-06-06--04h59--TASK-CHORE-016.md) |

@@ -1,435 +1,271 @@
-# Dívida Técnica do Domínio MotoCalc
+# Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v2 corrigida engenharia reversa baseada em código real (2026-05-09).
-> **Propósito:** Registrar divergências, modelos anêmicos consolidados, e oportunidades de evolução do domínio que **não justificam refatoração agora** mas devem ser conhecidas.
-
----
-
-## Sobre Esta Lista
-
-Dívida técnica não é defeito. É **decisão consciente** de adiar uma melhoria porque o custo agora é maior que o benefício. O risco de dívida técnica não documentada é que, com o tempo, ninguém lembra que foi escolha e ela vira regra implícita ruim.
-
-Esta lista mantém memória dessas decisões. **Cada item tem motivo do adiamento e gatilho que justificaria endereçar.**
+> **Status:** v10, auditada contra código, testes e ADRs em 06/06/2026.
+> **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
+> escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
 ---
 
-## DT-1: Modelo Anêmico em utils/calculos.ts
+## Critério da Lista
+
+Um item permanece aqui quando existe:
+
+- comportamento frágil, ambíguo ou inconsistente no código atual;
+- custo futuro concreto causado pela solução atual;
+- motivo explícito para não corrigir imediatamente;
+- gatilho que permita reavaliar a prioridade.
+
+O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas tarefas concluídas.
+
+---
+
+## Resumo Atual
+
+| ID | Dívida vigente | Prioridade relativa |
+| --- | --- | --- |
+| DT-8 | Nome `aluguelMensal` contradiz a periodicidade semanal permitida | Baixa |
+| DT-10 | Filtros de categorias permitem estados semanticamente inconsistentes | Média |
+| DT-11 | Overrides e filtros podem ficar órfãos após mudança de preset | Média |
+| DT-18 | `PerfilUso` mistura finalidade, carga e severidade de desgaste | Média |
+| DT-19 | Intervalo peça-serviço depende de comparação com default global | Alta |
+
+---
+
+## DT-8: Nome `aluguelMensal` é ambíguo
 
 ### Situação atual
 
-Funções de cálculo de domínio (CPK, custo total, breakdown por categoria, granularidades) vivem como funções soltas em `src/utils/calculos.ts`, fora das entidades. O `PerfilUsuario` não tem método `calcularCPK()` em vez disso existe `calcularResultado(perfil, preset, ...)`.
+`perfil.financeiro.aluguelMensal` armazena o valor-base do aluguel. Esse valor pode ser
+mensal ou semanal, conforme `aluguelPeriodicidade`.
+
+O cálculo está correto: `calcularCustoFinanciamentoAnual` multiplica por 12 ou 52 de
+acordo com a periodicidade. A ambiguidade está no contrato, não na fórmula.
 
 ### Por que é dívida técnica
 
-Em DDD clássico, comportamento de domínio pertence à entidade. Modelo anêmico tende a:
+O nome induz consumidores novos a tratar o valor como mensal e fazer `valor * 12`,
+ignorando `aluguelPeriodicidade`. O campo atravessa tipo, schema, reducer, cálculo,
+onboarding, Ajustes, fixtures e documentação.
 
-- Espalhar regras por arquivos diversos
-- Dificultar refatoração quando regras evoluem
-- Tornar o código orientado a função, não a domínio
+### Por que não corrigir agora
 
-### Por que NÃO refatorar agora
+É uma renomeação transversal de dado persistido sem benefício visível imediato ao usuário.
 
-- O arquivo tem **96 testes passando** está estável e validado
-- Está marcado como **Proibição Absoluta** no `contexto-base`
-- Refatoração teria custo alto e risco de regredir comportamento crítico
-- Modelo anêmico é **idiomático em React** funciona bem na prática
+### Gatilho
 
-### Gatilho que justificaria endereçar
+- alteração planejada do schema persistido;
+- mudança relevante no bloco financeiro;
+- ocorrência de uso incorreto do campo.
 
-- Necessidade de adicionar regras radicalmente novas que não cabem na arquitetura atual
-- Migração para outra arquitetura (ex: backend V2 com lógica replicada)
-- Bugs recorrentes em cálculo indicando saturação da estrutura
+### Recomendação
 
-### Como conviver com a dívida
-
-- **Conceitos novos:** prefira modelo rico desde o começo
-- **Mudanças em cálculos existentes:** mantenha o estilo atual por consistência
-- Não tentar refatoração parcial sistema híbrido é pior que cada extremo
+Renomear para `aluguelValor` e manter `aluguelPeriodicidade` como qualificador obrigatório,
+com compatibilidade explícita para perfis já persistidos.
 
 ---
 
-## ~~DT-2: Divergência RevisaoGeral.status entre Código e Requisitos~~ - ENDEREÇADA (23/05/26)
-
-`RevisaoGeral` foi inteiramente removido pela TASK-REF-19 - conceito morto pela ADR-003 (sem Registros). A divergência deixou de existir. Os requisitos RF-REG-* serão revistos na TASK-DOC-010.
-
----
-
-## DT-3: Sem Value Objects Tipados para Conceitos Frequentes
+## DT-10: Filtros de categorias permitem estados semanticamente inconsistentes
 
 ### Situação atual
 
-Conceitos como **Quilometragem**, **Dinheiro/Preço**, **CPK** são representados como `number` em todo o código, sem tipos próprios.
+`TOGGLE_CATEGORIA` apenas inverte o booleano solicitado. O schema garante as oito chaves
+de `categoriasAtivas`, mas não exige nenhuma categoria ativa.
+
+Há também uma hierarquia incompleta em Manutenção:
+
+- o toggle principal altera `categoriasAtivas.manutencao`;
+- a Revisão Geral usa `filtrosManutencao.revisao`, independentemente do toggle principal;
+- portanto, Manutenção pode aparecer desligada enquanto a revisão continua compondo o total.
+
+A descrição antiga de que desligar todas as categorias sempre produz total zero era
+imprecisa, pois a revisão tem filtro separado.
 
 ### Por que é dívida técnica
 
-- Perde validação centralizada (qualquer `number` pode virar km, mesmo negativo)
-- Cálculos financeiros com `number` em JavaScript têm bugs de precisão (float)
-- Perde expressividade `function calcular(a: number, b: number): number` não diz nada
+O estado é aceito e persistido, mas a relação entre o toggle pai, seus subitens e o total
+não tem uma semântica única. Isso pode fazer o card parecer desligado enquanto parte do
+custo continua ativa.
 
-### Por que NÃO refatorar agora
+### Por que não corrigir agora
 
-- Refatoração afetaria praticamente todo o codebase
-- Bugs de precisão **ainda não foram observados**
-- Investimento de tempo prematuro
+É necessário decidir primeiro a regra de produto: o toggle de Manutenção deve controlar
+todo o grupo ou apenas peças, preservando a Revisão Geral como filtro independente.
 
-### Gatilho que justificaria endereçar
+### Gatilho
 
-- Bug de arredondamento em produção
-- Adição de moeda alternativa
-- Conceito novo que precise carregar metadados
+- revisão dos filtros do Detalhamento;
+- QA final do fluxo de categorias;
+- reclamação de divergência entre toggle, total e gráfico.
 
 ### Recomendação
 
-Tópico para estudar quando virar V2. Não tentar agora.
+Definir a hierarquia dos filtros e protegê-la no reducer. Se Manutenção for o toggle pai,
+ele deve gatear peças e revisão no cálculo e na UI. Se revisão for independente, a interface
+não deve representar o grupo inteiro como desligado.
 
 ---
 
-## DT-4: Domain Events Não Materializados
+## DT-11: Overrides e filtros podem ficar órfãos
 
 ### Situação atual
 
-Eventos de domínio (`OnboardingFinalizado`, `PresetTrocado`, `PerfilResetado`, `RodagemAtualizada`, etc) **existem conceitualmente** mas não há infraestrutura de event bus. São mudanças de estado dispersas via Actions do reducer.
+O schema valida o formato dos dados, mas aceita IDs livres e índices sem conferir se ainda
+existem no preset ativo:
+
+- `pecasOverrides[].id`;
+- `servicosIndependentes[].id`;
+- `revisaoAutorizadaOverrides[].index`;
+- `imprevistosSugeridosAtivos`;
+- `filtrosManutencao.manutencaoPorPeca`;
+- `filtrosManutencao.revisaoPorServico`;
+- `perfilManutencao.estimativaMaoDeObraPorServico`.
+
+Entradas desconhecidas geralmente são ignoradas pelos consumidores ou descartadas apenas
+na visão normalizada de cálculo, mas continuam persistidas no perfil.
 
 ### Por que é dívida técnica
 
-Sem eventos materializados:
+Mudanças de IDs, remoção de itens ou alteração do ciclo de revisão podem deixar dados mortos
+no storage. Além do crescimento desnecessário, um ID reutilizado no futuro pode reativar uma
+configuração antiga sem intenção do usuário.
 
-- Comportamentos secundários (analytics, logs, sincronização) ficam acoplados ao código que dispara mudança
-- Difícil rastrear "o que acontece quando o Motoboy finaliza Onboarding?"
+### Por que não corrigir agora
 
-### Por que NÃO implementar agora
+Os presets são versionados junto com o app, o volume dos registros é pequeno e ainda não há
+uma política geral de migração por versão de preset.
 
-- V1 já tem analytics implementado via `utils/analytics.ts` (centralizado, RNF-ANA-02)
-- Sem necessidade de sincronização (offline-first)
-- Adicionar event bus para 3-4 eventos esporádicos é over-engineering
+### Gatilho
 
-### Gatilho que justificaria endereçar
+- renomear ou remover IDs de peças e serviços;
+- alterar a quantidade ou ordem de revisões;
+- adicionar versionamento próprio aos presets;
+- implementar exportação e importação de perfis.
 
-- Backend V2 com sincronização
-- Comportamentos secundários complexos coordenados em mudanças de estado
+### Recomendação
+
+Normalizar o perfil contra o preset ativo na fronteira de carga, removendo referências
+inexistentes. A limpeza deve ser testada e não pode depender apenas do schema estrutural.
 
 ---
 
-## DT-5: Catálogo de Modelos sem Cadastro Livre
+## DT-18: `PerfilUso` mistura finalidade, carga e severidade
 
 ### Situação atual
 
-`src/data/catalogoModelos.ts` (e `import.meta.glob('../presets/*.json')`) limita os Motoboys aos 5 modelos suportados. Sem cadastro livre.
+`PerfilUso` aceita somente `entrega | passageiro` e concentra dimensões diferentes:
 
-### Por que é (potencial) dívida técnica
+- `entrega` seleciona consumo com baú e `intervaloKmEntrega` para peças;
+- `passageiro` usa consumo e intervalos-base;
+- pneus têm uma única `vidaUtilKm`;
+- carga, passageiro frequente, baú e uso severo não são fatores independentes;
+- não há modo casual;
+- suspensão não está modelada como item de desgaste.
 
-Motoboy com moto não-listada não consegue usar o app. Em V1 isso é aceitável (foco em modelos populares no RJ), mas pode virar limitação real.
-
-### Por que NÃO endereçar agora
-
-- V1 explicitamente foca em 5 modelos
-- Cadastro livre exigiria estrutura completamente diferente (Motoboy informa todos os dados técnicos manualmente UX ruim)
-
-### Gatilho que justificaria endereçar
-
-- Reclamação consistente de Motoboys com moto fora do catálogo
-- Decisão de produto sobre cobertura
-
----
-
-## ~~DT-6: Sem Versionamento de Schema do Storage~~ ENDEREÇADA (TASK-REF-30)
-
-> **Resolvida em 31/05/26 por TASK-REF-30.** Como o app ainda não tinha lançamento público, a cadeia histórica de migração foi descartada. O storage passou para `estimamoto:v1:*`, `schemaVersion` foi resetado para `1`, e blobs antigos/inválidos caem no fallback recuperável.
-
----
-
-## ~~DT-7: Substituição Automática vs Opt-in no Modo Personalizado~~ - ENDEREÇADA (23/05/26)
-
-ADR-003 eliminou Modo Personalizado e Registros. TASK-REF-18 removeu `modoExibicao`; TASK-REF-19 removeu `diarioTrabalho` e funções derivadas (`resolverKmDia` ficou trivial, sem `>= 1` registro). A divergência com RN-25/RN-26 deixou de existir - os requisitos serão atualizados na TASK-DOC-010.
-
----
-
-## DT-8: Naming `aluguelMensal` Ambíguo (NOVA)
-
-### Situação atual
-
-Campo `perfil.financeiro.aluguelMensal: number | null` armazena valor que pode ser semanal **ou** mensal, dependendo de `aluguelPeriodicidade`.
+Além disso, a ADR-014 definiu que o intervalo canônico do componente deve morar no serviço,
+enquanto as peças ainda carregam `intervaloKm` e `intervaloKmEntrega`. A coexistência desses
+dois modelos alimenta a fragilidade da DT-19.
 
 ### Por que é dívida técnica
 
-Nome do campo afirma "mensal" mas semanticamente é "valor base". Programador novo pode usar `aluguelMensal × 12` confiando no nome bug.
+O enum mistura finalidade de uso com condição física da moto. Isso limita novos perfis e
+pode subestimar desgaste de pneus, freios, suspensão e consumo sem permitir explicar qual
+fator causou a diferença.
 
-### Por que NÃO endereçar agora
+### Por que não corrigir agora
 
-- Funciona corretamente desde que se use `calcularCustoFinanciamentoAnual` (que respeita `aluguelPeriodicidade`)
-- Renomear é refatoração que afeta storage existente exige migração
+A mudança atravessa schema, onboarding, Ajustes, presets, cálculo e explicações da UI. A
+regra correta ainda exige decisão de produto e dados confiáveis para os fatores.
 
-### Gatilho que justificaria endereçar
+### Gatilho
 
-- Bug detectado por uso ingênuo do campo
-- Migração de schema acontecendo por outro motivo (oportunidade de incluir o rename)
+- adicionar uso casual;
+- comparar custos entre perfis;
+- incluir carga, baú ou passageiro como escolhas independentes;
+- modelar suspensão;
+- cadastrar modelo que exija fatores de desgaste diferentes.
 
 ### Recomendação
 
-Renomear para `aluguelValor` quando schemaVersion subir. Combinar com migração de outras coisas para reduzir custo.
+Separar finalidade de uso das condições de carga e severidade. Manter uma fonte-base de
+vida útil e aplicar fatores explícitos por componente, evitando novos campos editáveis
+paralelos para cada modo.
 
 ---
 
-## ~~DT-9: Sem Action de EDIT em Histórico e Diário~~ - ENDEREÇADA (23/05/26)
-
-Histórico de Manutenção e Diário de Trabalho foram inteiramente removidos pela TASK-REF-19 - não existe mais nem `ADD_*` nem `DELETE_*` para esses conceitos. A divergência com RF-REG-12 deixou de existir.
-
----
-
-## DT-10: INV-DISPLAY-1 Não Protegida (NOVA)
+## DT-19: Intervalo peça-serviço depende do default global
 
 ### Situação atual
 
-Não há código garantindo que **pelo menos uma categoria em `categoriasAtivas` esteja `true`**. Motoboy pode desativar todas e ficar com donut vazio + total = 0.
+`normalizarPerfilMvp` mescla os serviços do preset no perfil usado pelo cálculo.
+`resolverServicoComIntervaloEditado`, porém, decide se um intervalo foi editado comparando
+o valor recebido com `SERVICOS_INDEPENDENTES_PADRAO`.
+
+Com isso, um intervalo vindo do preset e diferente do default global é tratado como se fosse
+override do usuário. A peça passa a usar o intervalo do serviço por consequência dessa
+diferença. Se o default global for atualizado para o mesmo valor, a peça volta ao intervalo
+próprio do preset.
+
+Existe também diferença entre consumidores:
+
+- o cálculo recebe serviços normalizados pelo preset;
+- `PaginaInsumos` e parte de `DialogEdicaoCusto` resolvem o intervalo usando
+  `perfil.servicosIndependentes` sem a mesma normalização.
+
+Exemplo atual: na Pop 110i, o pneu dianteiro tem `vidaUtilKm: 25.000`, o serviço efetivo do
+preset usa `24.000` e o default global usa `25.000`. O cálculo pode adotar `24.000`, enquanto
+Insumos cai no fallback de `25.000`.
 
 ### Por que é dívida técnica
 
-- UX ruim mas não crash
-- Estado tecnicamente válido mas semanticamente sem sentido
+- a origem do intervalo não é representada no dado;
+- valor de preset e edição do usuário são inferidos por comparação;
+- atualizar um default aparentemente inofensivo pode alterar o cálculo;
+- cálculo e UI podem apresentar intervalos diferentes para o mesmo componente.
 
-### Por que NÃO endereçar agora
+### Por que não corrigir agora
 
-- Não há crash
-- Provavelmente usuário não chega a esse estado intencionalmente
+A correção toca `src/utils/calculos.ts`, persistência de overrides e consumidores de
+manutenção. Também precisa ser alinhada com a decisão de modelagem da DT-18.
 
-### Gatilho que justificaria endereçar
+### Gatilho
 
-- Reclamação de UX
-- Refatoração da tela Detalhamento (boa hora para adicionar guard)
-
-### Recomendação
-
-Adicionar invariante no reducer (TOGGLE_CATEGORIA não permite desativar a última) ou aviso na UI.
-
----
-
-## DT-11: Overrides Órfãos (NOVA)
-
-### Situação atual
-
-Não há mecanismo para limpar overrides cujo `id` não existe mais no Preset JSON após mudança de schema do JSON. Pode acumular lixo no storage.
-
-### Por que é dívida técnica
-
-- Storage cresce sem necessidade
-- Overrides órfãos são dados mortos (não afetam cálculo, mas ocupam espaço)
-
-### Por que NÃO endereçar agora
-
-- Preset JSON ainda é estável (só pop110i.json existe)
-- Quando adicionar mais modelos (Fase 12), risco aumenta
-
-### Gatilho que justificaria endereçar
-
-- Migração de schema dos Presets JSON
-- TASK-12 (outros modelos)
+- corrigir a divergência de intervalo exibido e calculado;
+- revisar a modelagem de `PerfilUso`;
+- alterar defaults globais de serviços;
+- adicionar novos modelos com intervalos diferentes.
 
 ### Recomendação
 
-Quando houver usuários públicos ou dados reais a preservar, criar migração explícita junto com o bump de schema.
+Representar explicitamente a procedência do intervalo ou persistir somente overrides reais
+do usuário. Todos os consumidores devem receber a mesma lista efetiva de serviços. Adicionar
+teste de integração que compare o intervalo exibido, o intervalo da peça no cálculo e o
+intervalo do serviço vinculado.
 
 ---
 
-## ~~DT-12: Duplicidade Abastecimento Diário × Histórico~~ - ENDEREÇADA (23/05/26)
-
-Ambos os lugares (`diarioTrabalho` e `historicoManutencao.abastecimentos`) foram removidos pela TASK-REF-19. Sem dois fluxos, sem duplicidade.
-
----
-
----
-
-## DT-14: SET_ONBOARDING_CAMPO fora do Onboarding (PARCIALMENTE ENDEREÇADA)
-
-### Situação atual
-
-A action `SET_ONBOARDING_CAMPO` aceita `campo: string` e `valor: unknown`. **Várias actions específicas já foram criadas progressivamente** conforme cada bloco foi tocado pelas REFs recentes:
-
-| Action específica                | TASK que criou           |
-| -------------------------------- | ------------------------ |
-| `SET_MODO_REVISAO`               | REF-19 / Ajustes         |
-| `SET_SITUACAO_MOTO`              | Ajustes                  |
-| `SET_PARCELA`                    | Ajustes                  |
-| `SET_ALUGUEL`                    | Ajustes                  |
-| `SET_RESPONSABILIDADE_ALUGUEL`   | TASK-BG-006 (24/05/26)   |
-| `SET_PERFIL_USO`                 | Ajustes                  |
-| `SET_ANO_MOTO`                   | Ajustes                  |
-| `SET_KM_ULTIMA_REVISAO`          | Ajustes                  |
-
-### O que ainda usa `SET_ONBOARDING_CAMPO`
-
-Apenas o fluxo de Onboarding propriamente dito (passos 1-9) - uso legítimo. Pode permanecer como está; a action virou específica do contexto que dá nome a ela.
-
-### Recomendação
-
-Considerar DT-14 **endereçada na prática**. Manter apenas o uso intra-onboarding. Se aparecer nova necessidade fora do onboarding, criar action específica direto.
-
----
-
-## DT-15: Vínculo Implícito entre ServicoIndependente e Peça - ENDEREÇADA
-
-### Situação atual
-
-`ServicoIndependente.intervalKm` define a frequência canônica de um serviço de mão de obra. A tela **Insumos** exibe a vida útil da peça como somente leitura, espelhada do serviço vinculado quando ele está ativo.
-
-Desde a TASK-REF-29, o vínculo peça↔serviço deixou de depender de igualdade de string e passou a usar `MAPA_PECA_PARA_SERVICO` em `src/utils/calculos.ts` (`oleo_motor` → `troca-oleo`, `pneu_traseiro` → `troca-pneu-traseiro`, etc.). `resolverIntervaloPeca`, `PaginaInsumos` e `DialogEdicaoCusto` usam a mesma resolução.
-
-### Por que deixou de ser dívida técnica
-
-- O vínculo agora é explícito e testado.
-- Editar intervalo na aba Mão de Obra reflete no CPK da peça e na vida útil exibida.
-- Serviço inativo continua caindo no fallback do preset.
-- Override individual de peça continua tendo prioridade sobre o serviço.
-
-### Risco residual
-
-O mapa ainda precisa ser mantido quando novas peças/serviços forem adicionados. Há testes cobrindo que todo serviço apontado existe e que toda peça apontada existe no preset Pop 110i.
-
-### Gatilho futuro
-
-- Adição de segundo modelo de moto com IDs de peça distintos.
-- Necessidade de um serviço cobrir múltiplas peças fora do mapeamento atual.
-
-### Recomendação
-
-Manter `MAPA_PECA_PARA_SERVICO` como fonte única do vínculo enquanto houver um catálogo pequeno. Considerar `pecaIds[]` explícito no tipo se múltiplos modelos tornarem o mapa insuficiente.
-
----
-
-## DT-16: Excepcionais e normais somados no mesmo revisao.total - ENDEREÇADA
-
-### Situação atual
-
-Após TASK-BG-005, `calcularDetalhesRevisaoAnual` não soma serviços com `ehExcepcional: true`. `retifica-cabecote` e `retifica-completa` são derivadas de `servicosIndependentes` para `CustosPorCategoria.gastosCustom.detalhes.sugeridos` e aparecem no Detalhamento em Imprevistos, desligadas por padrão.
-
-### Por que deixou de ser dívida técnica
-
-Consumidores que usam `revisao.total` recebem apenas revisão periódica. Custos corretivos excepcionais têm categoria/filtro próprios e só entram no total quando `filtros.imprevistosSugeridos[id] === true`.
-
-### Histórico da decisão
-
-- TASK-RF-6.12 explicitou retíficas dentro de Manutenção, mas isso ligava o custo por padrão e gerava ruído antes da quilometragem mínima.
-- TASK-BG-005 moveu retíficas para Imprevistos como lembrete acionável, mantendo preço/intervalo sincronizados com Mão de Obra Excepcional.
-
-### Gatilho futuro
-
-- Se houver uma categoria visual própria para custos corretivos, migrar `gastosCustom.detalhes.sugeridos` para um bloco dedicado em `CustosPorCategoria`.
-
-### Recomendação
-
-Manter retíficas fora de `revisao.total`. O padrão de filtro de imprevistos sugeridos deve continuar desligado por ausência (`undefined` não ativa custo).
-
----
-
-## ~~DT-17: Componentes UI usam classes do `tailwindcss-animate` sem o plugin instalado~~ - ENDEREÇADA (23/05/26)
-
-### Situação resolvida
-
-Em 23/05/26 (correção pós-conclusão da TASK-BG-005), instalada a dep `tw-animate-css` (versão Tailwind v4 do `tailwindcss-animate`) e habilitada via `@import "tw-animate-css";` em `src/index.css`.
-
-Com o plugin ativo, todas as classes referenciadas em `dialog.tsx`, `sheet.tsx` e `select.tsx` (`animate-in`, `animate-out`, `fade-in-0`, `fade-out-0`, `zoom-in-95`, `zoom-out-95`, `slide-in-from-*`, `slide-out-to-*`) passam a gerar CSS corretamente.
-
-### Por que era dívida técnica (histórica)
-
-As classes do plugin eram referenciadas mas não geravam CSS, o que tornava o dialog visualmente quebrado em Tailwind v4 (popup renderizando como faixa vertical estreita sem conteúdo visível).
-
-### Como ficou
-
-- `tw-animate-css@^1.4.0` em `package.json > dependencies`.
-- `@import "tw-animate-css";` no topo de `src/index.css`.
-- `dialog.tsx` voltou ao padrão moderno do shadcn/ui com classes de animação ativas.
-- `sheet.tsx` e `select.tsx` automaticamente passam a funcionar (mesmo sem terem sido tocados).
-
----
-
-## DT-18: Perfil de uso simplificado demais para carga, finalidade e desgaste
-
-### Situação atual
-
-`PerfilUso` aceita apenas `'entrega' | 'passageiro'`. O código atual usa essa escolha de forma parcial:
-
-- `entrega` usa `consumoKmLComBau` e, para peças com `intervaloKmEntrega`, usa o intervalo de entrega.
-- `passageiro` cai no consumo sem baú (`consumoKmL`) e nos intervalos base (`intervaloKm`).
-- Pneus ainda usam apenas `vidaUtilKm`.
-- Driver temporal por uso, como bateria em rotina severa, ainda não tem modelagem.
-- Campos paralelos por modo (`vidaUtilKmEntrega`, `intervaloMesesEntrega`, etc.) não devem virar contrato: duplicam a fonte de verdade e multiplicariam os inputs editáveis do usuário.
-- `intervaloKmEntrega` já existe no preset Pop 110i e é consumido pelo cálculo atual, mas deve ser tratado como compatibilidade do modelo antigo até a decisão da TASK-REF-32.x.
-- Suspensão não está modelada como item de custo/desgaste.
-- A tela de Detalhamento mostra o modo selecionado, mas não compara claramente quanto `entrega`, `passageiro` e um possível uso `casual` mudariam nos custos.
-
-### Por que é dívida técnica
-
-O domínio mistura duas dimensões diferentes em um único enum:
-
-- **Finalidade de uso:** entrega, passageiro, casual/commute.
-- **Condição física de carga/aerodinâmica:** baú, passageiro frequente, peso extra, trânsito severo.
-
-Na prática, modo passageiro tende a aumentar peso e desgaste de pneu, freio e suspensão; entrega tende a piorar consumo por baú e rotina severa; uso casual para trabalho/escola deveria ter desgaste menor. O modelo atual não representa essas diferenças com precisão.
-
-Além disso, há dois métodos concorrentes para expressar a mesma coisa: campo separado por modo (`intervaloKmEntrega`) e fator aplicado sobre uma vida útil base. Para preservar editabilidade simples, a direção preferida é **vida útil base única editável pelo usuário + fatores de uso calculados pelo app**, não um input por modo.
-
-### Por que NÃO endereçar agora
-
-- TASK-REF-31 e TASK-REF-32 já tratam a fundação de múltiplos modelos e manutenção data-driven.
-- Mudar `PerfilUso` agora exige alteração em schema, onboarding, ajustes, cálculo, docs e possivelmente migração de storage.
-- A regra correta precisa de decisão de produto: enum simples (`casual | entrega | passageiro`) ou fatores independentes (`temBau`, `levaPassageiro`, `usoSevero`, etc.).
-
-### Gatilho que justificaria endereçar
-
-- Implementar comparação no Detalhamento mostrando diferença de custo entre modos.
-- Adicionar modo `casual`.
-- Substituir campos paralelos por fatores de desgaste por uso/categoria/peça.
-- Modelar suspensão como item de manutenção.
-- Evidência de usuário de que o custo de passageiro/entrega está subestimado.
-
-### Recomendação
-
-Tratar junto ou logo após TASK-REF-32.x, quando manutenção já estiver orientada por preset. Antes de codar, decidir se `PerfilUso` continua sendo um enum de finalidade ou se o domínio separa finalidade, baú/carga e severidade em campos próprios.
-
-Preferir este desenho:
-
-- Preset guarda vida útil base (`intervaloKm`, `intervaloMeses`, `vidaUtilKm`).
-- Usuário edita a vida útil base uma vez por peça/pneu.
-- App aplica fatores por modo/categoria/peça para estimar `casual`, `entrega` e `passageiro`.
-- Detalhamento mostra o impacto por categoria: combustível, pneus, freios, suspensão/manutenção e total.
-
-Evitar este desenho:
-
-- Um campo editável por modo, como `intervaloKmEntrega`, `intervaloKmPassageiro`, `vidaUtilKmEntrega`, `vidaUtilKmPassageiro`, etc.
-
----
-
-## DT-19: Unificação do intervalo peça↔serviço depende do default global estar defasado
-
-### Situação atual
-
-Desde a TASK-REF-32.6, o item de manutenção funde peça + M.O. em uma linha, e ambas as partes amortizam pelo **mesmo intervalo** (o do serviço, sincronizado no preset com a revisão — convenção da ADR-014). Na prática isso só acontece porque:
-
-- O cálculo usa o perfil **mesclado** (`normalizarPerfilMvp` → `resolverServicosManutencaoPerfil`), em que o serviço carrega o intervalo do preset (ex.: `troca-kit-transmissao` = 18.000).
-- `resolverServicoComIntervaloEditado` adota o intervalo do serviço **para a peça também** apenas quando ele difere do default global `SERVICOS_INDEPENDENTES_PADRAO` (ex.: 12.000).
-
-Ou seja: a unificação depende de o default global continuar **genérico/defasado** em relação ao preset. Se o default for "corrigido" para casar com o preset, `resolverServicoComIntervaloEditado` passa a retornar `undefined` e a peça volta a usar `intervaloKmEntrega`/`vidaUtilKm`, que podem divergir do serviço (ex.: pneu dianteiro Pop: peça `vidaUtilKm` 25.000 vs serviço 24.000).
-
-### Por que é dívida técnica
-
-- A relação é **implícita** e contraintuitiva (manter o default "errado" é o que mantém o cálculo "certo").
-- Não há teste travando que peça e serviço de um mesmo componente amortizem no mesmo intervalo.
-- Em perfil `passageiro`, a peça usa `intervaloKm` (passeio) enquanto o serviço tem um único `intervalKm` (sincronizado em entrega) — divergência latente fora do caso entrega.
-
-### Por que NÃO endereçar agora
-
-- O comportamento atual está **correto** para o caso-alvo (entrega) e verificado em uso real.
-- A raiz (vida útil única no serviço, com a peça apenas informando preço) é exatamente a direção da DT-18; resolver as duas juntas evita retrabalho.
-- Mexer em `resolverIntervaloPeca`/`resolverServicoComIntervaloEditado` é alto risco no `calculos.ts` (gated, núcleo testado).
-
-### Gatilho que justificaria endereçar
-
-- Tratar a DT-18 (perfil de uso / vida útil base + fatores).
-- Adicionar modelo cujo `intervaloKmEntrega`/`vidaUtilKm` da peça divirja do serviço sincronizado e o default global precise mudar.
-- Bug de intervalo divergente observado em `passageiro`.
-
-### Recomendação
-
-Tornar a fonte do intervalo do componente **explícita**: `resolverIntervaloPeca` deveria adotar o intervalo do serviço vinculado (via `MAPA_PECA_PARA_SERVICO`) sempre que houver serviço ativo, independentemente do default global — com teste travando peça.intervalo === serviço.intervalo. Fazer junto da DT-18.
+## Resultado da Auditoria de 06/06/2026
+
+| ID | Resultado | Evidência resumida |
+| --- | --- | --- |
+| DT-1 | Removida: não é dívida comprovada | Cálculos estão centralizados em funções puras, com API e testes densos; mover comportamento para `PerfilUsuario` seria outra arquitetura, não correção. |
+| DT-2 | Removida: resolvida | O tipo de domínio antigo foi eliminado; ocorrências atuais de “Revisão Geral” são apenas conceito de UI/cálculo. |
+| DT-3 | Removida: não é dívida comprovada | Zod e reducer já validam domínio numérico; o produto é estimador e não há defeito de precisão registrado que justifique Value Objects transversais. |
+| DT-4 | Removida: não é dívida atual | Não há necessidade de event bus, backend ou sincronização. Analytics continua backlog próprio e `analytics.ts` ainda não existe. |
+| DT-5 | Removida: limitação de produto | O catálogo atual deriva de dois presets validados. Cadastro livre está fora do escopo, não é falha da arquitetura vigente. |
+| DT-6 | Removida: resolvida | Storage usa chaves `estimamoto:v1:*` e `schemaVersion: 1`, com validação e fallback recuperável. |
+| DT-7 | Removida: resolvida | `modoExibicao`, diário e fluxo personalizado foram eliminados pela ADR-003 e tarefas relacionadas. |
+| DT-8 | Mantida | O nome ambíguo permanece em tipos, schema, reducer, cálculo e UI. |
+| DT-9 | Removida: resolvida | As coleções e actions de histórico/diário citadas pelo item não existem mais. |
+| DT-10 | Mantida e corrigida | O guard continua ausente; a descrição foi ajustada para refletir o filtro independente de revisão. |
+| DT-11 | Mantida e ampliada | IDs e índices órfãos continuam aceitos estruturalmente e persistidos. |
+| DT-12 | Removida: resolvida | Os dois fluxos de abastecimento citados foram removidos. |
+| DT-13 | Removida: resolvida | Overrides de revisão autorizada são aplicados no cálculo e nas projeções. |
+| DT-14 | Removida: resolvida no escopo original | `SET_ONBOARDING_CAMPO` só é usado dentro do onboarding e o reducer valida o perfil resultante. |
+| DT-15 | Removida: resolvida | O vínculo peça-serviço usa `MAPA_PECA_PARA_SERVICO`; a fragilidade restante está descrita na DT-19. |
+| DT-16 | Removida: resolvida | Serviços excepcionais são excluídos de `revisao.total` e tratados como imprevistos sugeridos. |
+| DT-17 | Removida: resolvida | `tw-animate-css` está instalado e importado em `src/index.css`. |
+| DT-18 | Mantida e atualizada | O enum e os caminhos de cálculo continuam simplificados; referências à TASK-REF-32 como trabalho futuro foram removidas. |
+| DT-19 | Mantida e elevada | A dependência do default global permanece e já permite divergência entre intervalo exibido e calculado. |
 
 ---
 
@@ -437,44 +273,25 @@ Tornar a fonte do intervalo do componente **explícita**: `resolverIntervaloPeca
 
 ### Adicionar item
 
-Quando agente identificar dívida técnica que vale registrar, adicionar entrada com:
+Registrar:
 
-1. Situação atual
-2. Por que é dívida técnica
-3. Por que NÃO endereçar agora
-4. Gatilho que justificaria endereçar
-5. Recomendação prática
+1. situação comprovada no código atual;
+2. custo ou risco concreto;
+3. motivo para adiamento;
+4. gatilho de reavaliação;
+5. recomendação prática.
 
 ### Remover item
 
-Quando uma dívida for endereçada (refatorada, decidida, eliminada), **mover para histórico** abaixo, não deletar.
+Quando a dívida for resolvida ou deixar de representar dívida técnica, removê-la da lista
+ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 
 ---
 
-## Histórico (Dívidas Endereçadas)
+## Histórico de Versões
 
-### ~~DT-13: Estrutura por Índice em revisaoAutorizadaOverrides~~ - ENDEREÇADA (20/05/26)
-
-Override por índice estava definido no tipo mas **nunca era lido** pelo calculador (orphan). Em TASK-REF-12, `calcularCustosPorCategoria` passou a aplicar `revisaoAutorizadaOverrides` ao `custoCicloCompleto` antes de calcular `revisaoAnual`. O override **funciona agora**.
-
-A fragilidade de usar índice (em vez de chave estável como `intervaloKm`) permanece como risco aceito:
-- O array `preset.revisaoAutorizada` é estável (manual Honda, 7 revisões fixas)
-- Mudanças no array exigiriam migração de schema - gatilho adequado para rever
-
-**Decisão:** fechar como endereçado. A fragilidade remanescente é risco conhecido e aceitável dado a estabilidade do dado.
-
----
-
-## Histórico de Versões desta Lista
-
-| Data            | Mudança                                                                                                                                                                                               |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-05-09 (v1) | Criação inicial DT-1 a DT-6                                                                                                                                                                           |
-| 2026-05-09 (v2) | **Reescrita corrigida.** DT-2 substancialmente revisada (interpretação errada do A12 corrigida). Adicionados DT-7 a DT-13 baseados em divergências reais encontradas na engenharia reversa do código. |
-| 2026-05-11 (v3) | Referencias atualizadas para v6 e DT-12 confirmada sem sincronizacao no reducer.                                                                                                                      |
-| 2026-05-19 (v4) | DT-6 endereçada (migração v5→v6 por TASK-REF-11). DT-13 nota de deferimento para TASK-REF-12. Adicionado DT-15 (vínculo implícito ServicoIndependente↔Peça). |
-| 2026-05-20 (v5) | DT-13 endereçada - override aplicado no calculador por TASK-REF-12. DT-1 atualizado (96 testes). |
-| 2026-05-20 (v6) | DT-16 adicionada - excepcionais e normais somados no mesmo `revisao.total` (simplificação MVP documentada por TASK-DOC-007). |
-| 2026-05-24 (v7) | **TASK-DOC-009:** DT-2, DT-7, DT-9, DT-12 marcadas como ENDEREÇADAS (conceitos eliminados pela ADR-003 / TASK-REF-18/19/21). DT-14 atualizada - várias actions específicas já criadas, DT considerada endereçada na prática. |
-| 2026-06-02 (v8) | DT-18 adicionada - perfil de uso simplificado demais para carga, finalidade e desgaste; inclui lacuna de modo casual e comparação no Detalhamento. |
-| 2026-06-04 (v9) | DT-19 adicionada (revisão da TASK-REF-32.6) - unificação do intervalo peça↔serviço depende do default global estar defasado vs preset; recomendado resolver junto da DT-18. |
+| Data | Versão | Mudança |
+| --- | --- | --- |
+| 09/05/2026 | v1-v2 | Criação e primeira revisão por engenharia reversa. |
+| 11/05 a 04/06/2026 | v3-v9 | Inclusão e fechamento incremental de DT-1 a DT-19. |
+| 06/06/2026 | v10 | Auditoria integral contra o código atual; lista ativa reduzida a DT-8, DT-10, DT-11, DT-18 e DT-19. |
