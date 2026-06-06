@@ -314,6 +314,37 @@ i++
 i++
 ```
 
+### 3.11 Confiar em narrowing através de closures
+
+O TypeScript estreita o tipo após um guard no escopo onde ele aparece, mas **não propaga esse
+narrowing para dentro de funções/closures definidas depois** — elas podem ser chamadas em outro
+momento, então o tipo volta a incluir `undefined`. Isso passa no runtime mas quebra `tsc`.
+
+```typescript
+// ❌ Quebra o typecheck dentro do closure
+const servico = lista.find((s) => s.ehAlvo)
+if (!servico) throw new Error('faltou')
+
+function montar() {
+  return { id: servico.id } // erro: 'servico' é possibly 'undefined' aqui
+}
+
+// ✅ Fixe o valor garantido com um helper que retorna o tipo já estreitado
+function exigir<T>(valor: T | undefined, mensagem: string): T {
+  if (!valor) throw new Error(mensagem)
+  return valor
+}
+
+const servico = exigir(
+  lista.find((s) => s.ehAlvo),
+  'serviço-alvo não encontrado',
+)
+// `servico` é T (sem undefined) e o tipo sobrevive dentro de qualquer closure
+```
+
+**Sinal de alerta:** sempre que um `.find()`/`.get()` seguido de guard for usado dentro de uma
+função aninhada. Rode `npx tsc --noEmit` logo após escrever — não deixe para o fechamento.
+
 ---
 
 ## 4. Formatação

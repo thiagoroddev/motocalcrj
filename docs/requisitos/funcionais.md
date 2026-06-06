@@ -137,9 +137,16 @@ Lista de modelos com hero image da marca. Selecionado: borda azul + check.
 
 Input de ano. Card informativo sobre isenção de IPVA > 15 anos. Valor FIPE lido da `tabelaFipe` do preset (ADR-015), sem consulta em runtime.
 
-### Passo 4 - Perfil de Uso (44%)
+### Passo 4 - Vida Útil dos Serviços Avulsos (44%) - TASK-RF-6.28
 
-Cards: "Apenas Entregas (Baú/Caixa)" / "Transporte de Passageiros (Uber Moto)". Card laranja com aviso de desgaste extra se "Passageiro".
+Mostrar os mesmos serviços da seção `Serviços avulsos` da aba Concessionária, variando conforme o
+preset da marca: serviços não excepcionais, fora dos pacotes fixos de revisão e com driver em km.
+Cada card exibe somente nome/ícone e o input `Vida útil estimada (km)`. Informar que são referências
+iniciais para uso profissional/intenso e podem ser ajustadas conforme a realidade do usuário. O
+valor representa a vida útil estimada da peça e é sincronizado com a revisão mais próxima para
+formar o intervalo canônico do serviço. A edição usa a mesma fonte disponível posteriormente em
+Mão de Obra. Não mostrar preço, estimativa de mão de obra, toggles, bateria temporal, revisões fixas
+ou serviços excepcionais.
 
 ### Passo 5 - Quilometragem (55%)
 

@@ -9,43 +9,57 @@ Obedeça essa ordem:
 
 #### Dívida técnica vigente (auditoria 06/06/26)
 
-## TASK-REF-41 - Separar finalidade de carga/severidade em PerfilUso (DT-18)
+## TASK-REF-41.1 - Consolidar contrato profissional único dos presets
 - **Status:** Pendente
 - **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/XG
-- **Data-hora origem:** 06/06/26 07:38
-- **Dependências:** -
-- **REQ/ADR/DT:** DT-18, DT-19, ADR-014
-- **Observações:** PerfilUso = 'entrega'|'passageiro' (perfil.ts:7) mistura finalidade de uso com
-  condição física: entrega usa consumo com baú + intervaloKmEntrega; pneus têm vidaUtilKm única;
-  carga/passageiro/baú/uso severo não são fatores independentes; não há modo casual; suspensão não
-  é modelada. ADR-014 definiu intervalo canônico no serviço, mas peças ainda carregam intervaloKm e
-  intervaloKmEntrega (alimenta a DT-19). ESFORÇO XG p/ IA = QUEBRAR antes de executar. Atravessa
-  schema, onboarding, Ajustes, presets, cálculo e explicações da UI. EXIGE decisão de produto e
-  dados confiáveis por fator. Recomendação: fonte-base de vida útil + fatores explícitos por
-  componente, sem campos editáveis paralelos por modo. Provável ADR.
-
-## TASK-REF-42 - Representar procedência do intervalo peça-serviço (DT-19)
-- **Status:** Pendente
-- **Modo:** Standard
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** G/G
-- **Data-hora origem:** 06/06/26 07:38
-- **Dependências:** TASK-REF-41 (alinhar com modelagem DT-18)
-- **REQ/ADR/DT:** DT-19, DT-18, ADR-014
-- **Observações:** resolverServicoComIntervaloEditado (calculos.ts:188-198) decide se houve edição
-  comparando intervalKm com SERVICOS_INDEPENDENTES_PADRAO (default global). Um intervalo vindo do
-  preset e ≠ default global é tratado como override do usuário; se o default global virar igual, a
-  peça volta ao intervalo do preset. Consumidores divergem: cálculo usa serviços normalizados pelo
-  preset; PaginaInsumos.tsx:46-48 e parte de DialogEdicaoCusto.tsx:317 resolvem com
-  perfil.servicosIndependentes cru. Ex.: Pop 110i pneu dianteiro vidaUtilKm 25.000, serviço efetivo
-  do preset 24.000, default global 25.000 → cálculo pode adotar 24.000 e Insumos cair em 25.000.
-  Recomendação: representar procedência do intervalo OU persistir só overrides reais; todos os
-  consumidores recebem a mesma lista efetiva. Adicionar teste de integração comparando intervalo
-  exibido × intervalo da peça no cálculo × intervalo do serviço vinculado.
+- **Data-hora origem:** 06/06/26 18:00
+- **Dependências:** TASK-REF-42
+- **REQ/ADR/DT:** DT-18, ADR-018, ADR-011, ADR-014, INV-CALC-2
+- **Observações:** após a REF-42 tornar `servicosManutencao[].intervalKm` canônico, reduzir o
+  contrato técnico dos presets ao padrão profissional único. Substituir `consumoKmL` +
+  `consumoKmLComBau` por um único consumo profissional por modelo. Remover
+  `intervaloKmEntrega` e campos de vida útil duplicados que não forem mais fontes de runtime,
+  preservando preço, driver temporal e metadados necessários. Atualizar os dois JSONs, tipos,
+  schemas, catálogo e testes de contrato. Os valores escolhidos devem reproduzir o caminho
+  profissional atual: consumo hoje associado ao uso com baú e intervalos efetivos dos serviços.
+  Não alterar estado/UI de `PerfilUso` nesta fatia. Critério: presets validam com uma única
+  referência e baselines dos dois modelos ficam caracterizados.
+
+## TASK-REF-41.2 - Remover PerfilUso do estado e do cálculo
+- **Status:** Pendente
+- **Modo:** Strict
+- **Valor:** Crítico
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** G/G
+- **Data-hora origem:** 06/06/26 18:00
+- **Dependências:** TASK-REF-41.1
+- **REQ/ADR/DT:** DT-18, ADR-018, ADR-010, INV-CALC-2
+- **Observações:** remover `PerfilUso`, `moto.perfilUso`, `SET_PERFIL_USO` e todos os branches de
+  consumo/intervalo ligados a entrega/passageiro. O commit do onboarding passa a copiar o único
+  consumo profissional do preset; o cálculo continua usando a autonomia editável persistida.
+  Elevar `VERSAO_SCHEMA_ATUAL`, atualizar Zod, defaults, reducer, fixtures e testes. Não criar
+  migration: não existem usuários e dados locais de desenvolvimento incompatíveis podem cair no
+  fluxo inicial recuperável. Critério: zero ocorrências vivas de `PerfilUso`/`perfilUso` e cálculos
+  sem parâmetros de finalidade.
+
+## TASK-REF-41.3 - Remover seleção de uso da UI e ajustar onboarding
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 06/06/26 18:00
+- **Dependências:** TASK-REF-41.2
+- **REQ/ADR/DT:** DT-18, ADR-018, RNF-09
+- **Observações:** remover temporariamente o Passo 4 entrega/passageiro, o segmentado "Perfil de
+  trabalho" de Ajustes, labels de uso na confirmação/Detalhamento e textos de ajuda. Atualizar
+  rotas, progresso, navegação e smoke do onboarding para oito passos, sem implementar ainda a
+  TASK-RF-6.28. Não deixar lacuna de navegação nem referência visível aos modos removidos.
+  Critério: onboarding completo funciona em menos de três minutos e Ajustes não contém controle
+  sem efeito.
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 
@@ -55,6 +69,20 @@ blicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
 ## Decisões de UI/UX Pendentes
 
+| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TASK-RF-6.28 | Mostrar e editar vida útil dos serviços avulsos no onboarding | Standard | Importante | Normal | M/G | TASK-REF-41.3 | ADR-014, ADR-018, RNF-09 | `[ ]` | 06/06/26 17:42 |
+
+**Escopo da TASK-RF-6.28:** substituir o antigo Passo 4 de perfil de uso por uma revisão
+transparente dos mesmos cards exibidos em `Serviços avulsos` na aba Concessionária. A lista varia
+por preset/marca e aplica exatamente o filtro: `!ehExcepcional`,
+`!incluidoNaRevisaoAutorizada` e `intervalKm > 0`. Cada card mostra somente nome/ícone e o input
+`Vida útil estimada (km)`; não mostra preço, estimativa de mão de obra, toggle ou reset. O valor
+informado representa a vida útil estimada da peça e deve ser sincronizado com o marco de revisão
+mais próximo antes de virar o intervalo canônico do serviço, conforme ADR-014. Editar no onboarding
+e na aba Mão de Obra altera a mesma fonte definida pela REF-42; não criar estado paralelo. Exibir
+aviso de que são referências para uso profissional/intenso e preservar onboarding concluível em
+menos de 3 minutos. Revisões fixas, bateria temporal e serviços excepcionais ficam fora.
 
 ## Export/Import e Alertas (Fase 11)
 

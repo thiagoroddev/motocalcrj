@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v13, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v14, auditada contra código, testes e ADRs em 06/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -53,8 +53,9 @@ fator causou a diferença.
 
 ### Por que não corrigir agora
 
-A mudança atravessa schema, onboarding, Ajustes, presets, cálculo e explicações da UI. A
-regra correta ainda exige decisão de produto e dados confiáveis para os fatores.
+A decisão de produto foi fechada pela ADR-018: não haverá fatores nem modos de finalidade no MVP.
+A correção ainda atravessa schema, onboarding, Ajustes, presets, cálculo e explicações da UI e
+depende da TASK-REF-42 para consolidar uma fonte canônica editável de intervalo.
 
 ### Gatilho
 
@@ -66,9 +67,10 @@ regra correta ainda exige decisão de produto e dados confiáveis para os fatore
 
 ### Recomendação
 
-Separar finalidade de uso das condições de carga e severidade. Manter uma fonte-base de
-vida útil e aplicar fatores explícitos por componente, evitando novos campos editáveis
-paralelos para cada modo.
+Aplicar a ADR-018: remover `PerfilUso`, manter uma única referência profissional editável por
+modelo e eliminar `consumoKmLComBau`/`intervaloKmEntrega` após a TASK-REF-42 tornar explícita a
+fonte canônica. Uso casual e suspensão permanecem fora do MVP até existirem dados e requisito
+próprios.
 
 ---
 
@@ -178,3 +180,4 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 06/06/2026 | v11 | TASK-REF-38 encerra DT-8; lista ativa reduzida a DT-10, DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v12 | TASK-REF-39 e ADR-017 encerram DT-10; lista ativa reduzida a DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v13 | TASK-REF-40 e ADR-010 encerram DT-11; lista ativa reduzida a DT-18 e DT-19. |
+| 06/06/2026 | v14 | ADR-018 fecha a decisão da DT-18: padrão profissional único e editável, sem entrega/passageiro ou fatores automáticos. |

@@ -307,11 +307,14 @@ A hora usa `HHhMM` (ex: `17h30`). Sem `:` para evitar problema em alguns sistema
 Uma tarefa **só pode** ser marcada como concluída quando:
 
 1. **Testes passam.** Se quebrou algum, conserte ou registre por que está OK quebrado
-2. **Código revisado.** Pelo menos auto-revisão usando [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) (ou `N/A` para Light)
-3. **Critérios de aceite cumpridos.** Aqueles definidos no plano
-4. **Documentação atualizada.** Se afeta `docs/`, atualize antes de concluir
+2. **Typecheck passa.** `npx tsc --noEmit` (ou `npm run typecheck`) verde. Vale para qualquer tarefa que toque `.ts`/`.tsx`, mesmo que só o teste mude — `tsc` enxerga `src` inteiro.
+3. **Código revisado.** Pelo menos auto-revisão usando [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) (ou `N/A` para Light)
+4. **Critérios de aceite cumpridos.** Aqueles definidos no plano
+5. **Documentação atualizada.** Se afeta `docs/`, atualize antes de concluir
 
 Se algum desses falha, a tarefa **continua em andamento**.
+
+**Tarefa Strict não conclui com typecheck por executar.** Se o ambiente local bloqueia (`tsc`/`build` não roda), rode o gate por outro caminho — CI, Windows nativo, outra shell — antes de fechar. Um gate `NÃO EXECUTADO` não é o mesmo que `APROVADO` e não pode sustentar a conclusão (ver [`01-nucleo.md`](https://claude.ai/01-nucleo.md#5-anti-padr%C3%B5es-cr%C3%ADticos)).
 
 ### 5.3 O Que Vai no Arquivo Concluída
 

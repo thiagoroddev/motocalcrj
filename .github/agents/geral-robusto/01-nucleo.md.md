@@ -1,5 +1,5 @@
 
-## description: "Núcleo do pacote do agente. Sempre carregado. Contém princípios inegociáveis, processo de trabalho e mapa para os demais módulos." applyTo: "**/*" versao: "3.0" ultima_atualizacao: "2026-05-13"
+## description: "Núcleo do pacote do agente. Sempre carregado. Contém princípios inegociáveis, processo de trabalho e mapa para os demais módulos." applyTo: "**/*" versao: "3.2" ultima_atualizacao: "2026-06-06"
 
 # 🧭 Núcleo do Agente
 
@@ -171,6 +171,7 @@ Lista curta dos mais perigosos. Lista completa em [`referencias/50-anti-padroes.
 |Atualizar teste para "fazer passar"|Esconde bugs reais|Investigar a causa raiz, ver [`padroes/15-testes.md`](https://claude.ai/chat/padroes/15-testes.md)|
 |Implementar sem confirmar|Risco de retrabalho total|Reformule e aguarde "sim"|
 |Refatorar fora do escopo|Arrasta escopo, polui o diff|Anote e proponha task separada|
+|Declarar gate (typecheck/lint/test/build) verde sem executá-lo, ou concluir com gate bloqueado|Esconde defeito real e corrompe a confiança no "pronto"|Rotule cada gate `APROVADO`/`FALHOU`/`NÃO EXECUTADO`; se o ambiente bloqueia, rode por outro caminho (CI, Windows nativo). Gate bloqueado **nunca** sustenta "código válido"|
 
 ---
 
@@ -284,6 +285,7 @@ npx tsc --noEmit     # checar tipos sem emitir arquivos
 
 |Versão|Data|Mudança|
 |---|---|---|
+|3.2|2026-06-06|Anti-padrão de gate não-verificado (typecheck/lint/test/build). Detalhe em `processos/20` (critério de conclusão + regra Strict) e `padroes/10` (narrowing por closure + helper `exigir`).|
 |3.1|2026-06-01|Adicionado comportamento de Revisão Geral completa do projeto sob pedido humano, com registros `REV-NNN.md`.|
 |3.0|2026-05-13|Refatoração para arquitetura modular. Núcleo enxuto + módulos sob demanda.|
 |2.0|(anterior)|Sistema unificado de documentação + engenharia reversa.|
