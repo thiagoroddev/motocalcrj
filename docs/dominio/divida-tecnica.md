@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v11, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v12, auditada contra código, testes e ADRs em 06/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -23,51 +23,9 @@ O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas taref
 
 | ID | Dívida vigente | Prioridade relativa |
 | --- | --- | --- |
-| DT-10 | Filtros de categorias permitem estados semanticamente inconsistentes | Média |
 | DT-11 | Overrides e filtros podem ficar órfãos após mudança de preset | Média |
 | DT-18 | `PerfilUso` mistura finalidade, carga e severidade de desgaste | Média |
 | DT-19 | Intervalo peça-serviço depende de comparação com default global | Alta |
-
----
-
-## DT-10: Filtros de categorias permitem estados semanticamente inconsistentes
-
-### Situação atual
-
-`TOGGLE_CATEGORIA` apenas inverte o booleano solicitado. O schema garante as oito chaves
-de `categoriasAtivas`, mas não exige nenhuma categoria ativa.
-
-Há também uma hierarquia incompleta em Manutenção:
-
-- o toggle principal altera `categoriasAtivas.manutencao`;
-- a Revisão Geral usa `filtrosManutencao.revisao`, independentemente do toggle principal;
-- portanto, Manutenção pode aparecer desligada enquanto a revisão continua compondo o total.
-
-A descrição antiga de que desligar todas as categorias sempre produz total zero era
-imprecisa, pois a revisão tem filtro separado.
-
-### Por que é dívida técnica
-
-O estado é aceito e persistido, mas a relação entre o toggle pai, seus subitens e o total
-não tem uma semântica única. Isso pode fazer o card parecer desligado enquanto parte do
-custo continua ativa.
-
-### Por que não corrigir agora
-
-É necessário decidir primeiro a regra de produto: o toggle de Manutenção deve controlar
-todo o grupo ou apenas peças, preservando a Revisão Geral como filtro independente.
-
-### Gatilho
-
-- revisão dos filtros do Detalhamento;
-- QA final do fluxo de categorias;
-- reclamação de divergência entre toggle, total e gráfico.
-
-### Recomendação
-
-Definir a hierarquia dos filtros e protegê-la no reducer. Se Manutenção for o toggle pai,
-ele deve gatear peças e revisão no cálculo e na UI. Se revisão for independente, a interface
-não deve representar o grupo inteiro como desligado.
 
 ---
 
@@ -222,7 +180,7 @@ intervalo do serviço vinculado.
 | DT-7 | Removida: resolvida | `modoExibicao`, diário e fluxo personalizado foram eliminados pela ADR-003 e tarefas relacionadas. |
 | DT-8 | Removida: resolvida pela TASK-REF-38 | O contrato v2 usa `aluguelValor`; perfis v1 migram antes da validação e a fórmula mensal/semanal foi preservada. |
 | DT-9 | Removida: resolvida | As coleções e actions de histórico/diário citadas pelo item não existem mais. |
-| DT-10 | Mantida e corrigida | O guard continua ausente; a descrição foi ajustada para refletir o filtro independente de revisão. |
+| DT-10 | Removida: resolvida pela TASK-REF-39 / ADR-017 | Manutenção gateia revisão, serviços e peças; filtros finos persistem e recebem estado visual desbotado/bloqueado com o pai off. Todas as categorias desligadas é estado válido. |
 | DT-11 | Mantida e ampliada | IDs e índices órfãos continuam aceitos estruturalmente e persistidos. |
 | DT-12 | Removida: resolvida | Os dois fluxos de abastecimento citados foram removidos. |
 | DT-13 | Removida: resolvida | Overrides de revisão autorizada são aplicados no cálculo e nas projeções. |
@@ -262,3 +220,4 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 11/05 a 04/06/2026 | v3-v9 | Inclusão e fechamento incremental de DT-1 a DT-19. |
 | 06/06/2026 | v10 | Auditoria integral contra o código atual; lista ativa reduzida a DT-8, DT-10, DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v11 | TASK-REF-38 encerra DT-8; lista ativa reduzida a DT-10, DT-11, DT-18 e DT-19. |
+| 06/06/2026 | v12 | TASK-REF-39 e ADR-017 encerram DT-10; lista ativa reduzida a DT-11, DT-18 e DT-19. |

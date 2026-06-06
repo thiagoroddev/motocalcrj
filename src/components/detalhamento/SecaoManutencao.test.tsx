@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SecaoManutencao } from './SecaoManutencao';
 import type { CustoPeca, CustoServicoRevisao } from '../../types/calculos';
 import type { CicloRevisao, ProximaRevisao } from '../../utils/cicloRevisao';
@@ -110,5 +110,57 @@ describe('SecaoManutencao', () => {
 
     expect(screen.getByText(/Custo parcial de manutenção/)).toBeInTheDocument();
     expect(screen.getByText(/Kit relação/)).toBeInTheDocument();
+  });
+
+  it('mantém subtoggles posicionados, desbotados e bloqueados quando o pai está desligado', () => {
+    const onToggleRevisao = vi.fn();
+    const onTogglePeca = vi.fn();
+    render(
+      <SecaoManutencao
+        {...criarProps({
+          filtroAtivo: false,
+          filtroRevisao: true,
+          filtrosPecas: {},
+          onToggleRevisao,
+          onTogglePeca,
+        })}
+      />,
+    );
+
+    const revisao = screen.getByRole('checkbox', { name: 'Desativar Revisão Geral' });
+    const pneu = screen.getByRole('checkbox', { name: 'Desativar Pneu traseiro' });
+
+    expect(revisao).toBeChecked();
+    expect(pneu).toBeChecked();
+    expect(revisao).toBeDisabled();
+    expect(pneu).toBeDisabled();
+    expect(revisao.closest('label')).toHaveClass('bg-muted/40');
+    expect(pneu.closest('label')).toHaveClass('bg-muted/40');
+
+    fireEvent.click(revisao);
+    fireEvent.click(pneu);
+    expect(onToggleRevisao).not.toHaveBeenCalled();
+    expect(onTogglePeca).not.toHaveBeenCalled();
+  });
+
+  it('restaura cor e interação dos subtoggles quando o pai está ligado', () => {
+    const onToggleRevisao = vi.fn();
+    render(
+      <SecaoManutencao
+        {...criarProps({
+          filtroAtivo: true,
+          filtroRevisao: true,
+          onToggleRevisao,
+        })}
+      />,
+    );
+
+    const revisao = screen.getByRole('checkbox', { name: 'Desativar Revisão Geral' });
+    expect(revisao).toBeChecked();
+    expect(revisao).not.toBeDisabled();
+    expect(revisao.closest('label')).toHaveClass('bg-primary');
+
+    fireEvent.click(revisao);
+    expect(onToggleRevisao).toHaveBeenCalledOnce();
   });
 });

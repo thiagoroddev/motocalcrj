@@ -1178,6 +1178,22 @@ describe('calcularTotalFiltrado', () => {
     expect(calcularTotalFiltrado(custosMock, { ...filtrosTudo, manutencao: false })).toBe(esperado);
   });
 
+  it('aceita todas as categorias desligadas e retorna total zero', () => {
+    expect(
+      calcularTotalFiltrado(custosMock, {
+        ...filtrosTudo,
+        documentos: false,
+        manutencao: false,
+        combustivel: false,
+        internet: false,
+        seguro: false,
+        alimentacao: false,
+        financiamento: false,
+        gastosCustom: false,
+      }),
+    ).toBe(0);
+  });
+
   it('exclui peça individual via manutencaoPorPeca[id] = false', () => {
     // apenas pneu_traseiro(1000) permanece
     const esperado = 600 + 953 + 1000 + 1460 + 600 + 800 + 2496;
@@ -1462,6 +1478,16 @@ describe('calcularBreakdownValores', () => {
     expect(resultado.combustivel).toBe(0);
     expect(resultado.seguro).toBe(0);
     expect(resultado.documentos).toBe(600);
+  });
+
+  it('zera revisão e peças quando o toggle pai de Manutenção está desligado', () => {
+    const resultado = calcularBreakdownValores(custosMock, {
+      ...filtrosTudo,
+      manutencao: false,
+    });
+
+    expect(resultado.revisao).toBe(0);
+    expect(resultado.manutencao).toBe(0);
   });
 
   it('é a base coerente do percentual: valor/total*100 == percentual', () => {

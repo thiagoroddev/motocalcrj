@@ -2,7 +2,7 @@
 
 > **Propósito:** oferecer a visão geral necessária para uma IA entender o produto, localizar as fontes de verdade e trabalhar sem reintroduzir decisões superadas.
 > **Público principal:** agentes de IA. Desenvolvedores também podem usar este documento como mapa.
-> **Última atualização:** 05/06/2026, após ADR-015, ADR-016 e TASK-RF-6.27.
+> **Última atualização:** 06/06/2026, após ADR-017 e TASK-REF-39.
 > **Nome atual do produto:** EstimaMoto. Documentos históricos e alguns identificadores internos ainda usam MotoCalc RJ; não renomear em massa sem tarefa própria.
 
 ---
@@ -283,6 +283,13 @@ O detalhe das funções pertence a `docs/arquitetura/calculos-visao.md` e ao có
 - O comprimento do ciclo vem do maior marco de `preset.revisaoAutorizada`.
 - O popover mostra a composição do ciclo e próximas revisões ancoradas, mas não substitui o headline amortizado.
 - O aviso de revisão pendente usa `kmUltimaRevisao` e é informativo; não altera o cálculo.
+
+### ADR-017 - hierarquia dos filtros de Manutenção
+
+- Manutenção é o toggle pai de Revisão Geral, serviços e peças.
+- Desligar o pai não reescreve os filtros finos; ao religar, as preferências anteriores retornam.
+- Com o pai desligado, subtoggles preservam a posição, ficam em cinza desbotado e não clicáveis.
+- Todas as categorias podem ficar desligadas; total e percentuais zero são um estado válido.
 
 ### ADR-008 - spacing Tailwind
 

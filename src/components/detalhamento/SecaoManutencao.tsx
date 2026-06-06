@@ -168,7 +168,12 @@ export function SecaoManutencao({
 
     return (
       <div key={item.id} className="flex items-center gap-2">
-        <Toggle ativo={ativo} onClick={() => alternarItem(item)} />
+        <Toggle
+          ativo={ativo}
+          label={`${ativo ? 'Desativar' : 'Ativar'} ${item.label}`}
+          inativoPorPai={!filtroAtivo}
+          onClick={() => alternarItem(item)}
+        />
         <span
           className={`text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ${item.modo === 'ancorado' ? 'w-5' : 'w-11'}`}
         >
@@ -268,7 +273,12 @@ export function SecaoManutencao({
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Toggle ativo={filtroRevisao} onClick={onToggleRevisao} />
+            <Toggle
+              ativo={filtroRevisao}
+              label={`${filtroRevisao ? 'Desativar' : 'Ativar'} Revisão Geral`}
+              inativoPorPai={!filtroAtivo}
+              onClick={onToggleRevisao}
+            />
             <span className="w-5 text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums">
               {Math.ceil(eventosRevisaoNoAno)}×
             </span>

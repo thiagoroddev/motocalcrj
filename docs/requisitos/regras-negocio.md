@@ -22,11 +22,11 @@
 
 | ID | Regra |
 |---|---|
-| RN-06 | Toggle off em uma categoria → `fatorCategoria = 0` → custo daquela categoria não entra no total. |
-| RN-07 | Toggle off não apaga dados ao reativar, custo retorna normalmente. |
+| RN-06 | Toggle off em uma categoria → `fatorCategoria = 0` → custo daquela categoria não entra no total. É permitido desligar todas as categorias; total e percentuais ficam em zero. |
+| RN-07 | Toggle off não apaga dados ao reativar, custo retorna normalmente. Em Manutenção, o pai preserva posição/estado dos subtoggles, que ficam desbotados e não clicáveis até a religação (ADR-017). |
 | RN-08 | Toggle de categoria é independente do fator de responsabilidade de moto alugada. São camadas ortogonais. |
 | RN-09 | Porcentagens calculadas apenas sobre categorias com toggle ativo, somando ~100%. `calcularBreakdownPercentual` retorna `0` para categorias desativadas nunca uma fatia do total filtrado. |
-| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. No donut, o percentual de `revisao` é somado ao de `manutencao`. No Detalhamento, revisão aparece como linha dentro do accordion Manutenção e pode ter toggle fino persistido, sem virar categoria própria. |
+| RN-27 | **Revisão geral (`revisao`) é sub-item de Manutenção**, não uma categoria independente. O pai `manutencao` gateia revisão, serviços e peças no total/donut. No Detalhamento, os subtoggles persistem independentemente, mas ficam desbotados e não clicáveis quando o pai está off (ADR-017). |
 
 ---
 

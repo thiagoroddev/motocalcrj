@@ -130,11 +130,16 @@ export function categoriasParaFiltros(
 
 ## Invariantes
 
-### INV-DISPLAY-1: Pelo menos uma categoria ativa
+### INV-DISPLAY-1: Estado de filtro zero é válido
 
-**Regra:** Pelo menos uma categoria em `categoriasAtivas` deve estar `true` para a tela fazer sentido.
+**Regra:** Todas as categorias podem estar desligadas simultaneamente.
 
-**Onde é protegida:** ⚠️ **Não está protegida no código.** Estado de "tudo desligado" é tolerado (donut vazio + total = 0). Possível dívida técnica leve (DT-10 em `divida-tecnica.md`).
+**Por quê:** `categoriasAtivas` representa preferência de visualização, não validade do perfil. O
+usuário pode escolher comparar um estado vazio; total, granularidades e percentuais permanecem em
+zero.
+
+**Onde é protegida:** `calcularTotalFiltrado`, `calcularBreakdownValores` e
+`calcularBreakdownPercentual`.
 
 ### INV-DISPLAY-2: `categoriasAtivas` tem todas as 8 chaves
 
@@ -188,7 +193,10 @@ PerfilUsuario.configuracaoDisplay
 
 ### Toggle de manutenção não apaga filtros finos
 
-Comportamento explícito pós TASK-BG-014. Desligar a categoria Manutenção remove o bloco inteiro do cálculo, mas não apaga `filtrosManutencao`. Ao religar a categoria, peças/serviços/revisão previamente desligados continuam desligados.
+Comportamento explícito pós TASK-BG-014 e ADR-017. Desligar a categoria Manutenção remove o bloco
+inteiro do cálculo, mas não apaga `filtrosManutencao`. Os subtoggles mantêm a posição persistida,
+ficam em cinza desbotado e não clicáveis. Ao religar, recuperam cor e interação sem reescrever
+peças, serviços ou Revisão Geral.
 
 ### Toggle de imprevistos controla gastosCustom
 

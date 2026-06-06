@@ -9,24 +9,6 @@ Obedeça essa ordem:
 
 #### Dívida técnica vigente (auditoria 06/06/26)
 
-## TASK-REF-39 - Definir e proteger hierarquia dos filtros de Manutenção (DT-10)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 06/06/26 07:38
-- **Dependências:** -
-- **REQ/ADR/DT:** DT-10
-- **Observações:** TOGGLE_CATEGORIA (perfilReducer.ts:180-191) só inverte o booleano; o schema
-  garante as 8 chaves de categoriasAtivas mas NÃO exige ≥1 ativa. Além disso a Revisão Geral usa
-  filtrosManutencao.revisao (TOGGLE_REVISAO_MANUTENCAO, linha 221-231) independente do toggle pai
-  `manutencao` → o card pode parecer desligado enquanto a revisão ainda compõe o total.
-  PRÉ-REQUISITO: decisão de produto — o toggle Manutenção controla todo o grupo (peças+revisão)
-  ou só peças, com Revisão Geral como filtro independente? Definida a regra, protegê-la no reducer
-  e refletir na UI/cálculo (calculos.ts, PaginaDetalhamento.tsx). Não inventar a regra: confirmar
-  com o humano antes de implementar.
-
 ## TASK-REF-40 - Normalizar perfil contra preset ativo na carga, removendo órfãos (DT-11)
 - **Status:** Pendente
 - **Modo:** Standard

@@ -138,3 +138,4 @@
 | TASK-REF-35 | Extração oportunista de PerfilContext e PaginaDetalhamento | [2026-06-06--01h46--TASK-REF-35.md](./2026-06-06--01h46--TASK-REF-35.md) |
 | TASK-CHORE-016 | DX: helper de localStorage falso e bootstrap de fixture DEV | [2026-06-06--04h59--TASK-CHORE-016.md](./2026-06-06--04h59--TASK-CHORE-016.md) |
 | TASK-REF-38 | Contrato v2 com `aluguelValor`, migração v1→v2 e encerramento da DT-8 | [2026-06-06--08h20--TASK-REF-38.md](./2026-06-06--08h20--TASK-REF-38.md) |
+| TASK-REF-39 | Hierarquia visual dos filtros de Manutenção, persistência dos subtoggles e encerramento da DT-10 | [2026-06-06--09h48--TASK-REF-39.md](./2026-06-06--09h48--TASK-REF-39.md) |
