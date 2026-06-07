@@ -62,20 +62,7 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
   **Pré-requisito:** esta ordem É a decisão de produto (acima). Implementar via as sub-tarefas; esta
   task coordena a sequência/rotas/progresso e o smoke final. Provável ADR de fluxo do onboarding.
 
-## TASK-RF-6.33 - Onboarding passo essencial: km atual + consumo editável (sem última revisão)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Dependências:** -
-- **REQ/ADR/DT:** ADR-019, RNF-09 (ver RF-6.31 item 3)
-- **Observações:** No passo essencial de **km atual** (obrigatório), **adicionar o consumo editável**:
-  exibe `preset.consumoKmL` do modelo já preenchido e permite o usuário **editar** (grava na
-  autonomia do perfil, mesma fonte do cálculo de combustível). **Remover o "km da última revisão"
-  deste passo** — ele passa para a tela de Últimas Manutenções (RF-6.29). Hoje km atual e km última
-  revisão aparecem juntos (ver `Passo5.tsx`/`SecaoVeiculo`); separar. Input numérico padrão BG-017
-  (estado local + onBlur). Atualizar smoke.
+_(A TASK-RF-6.33 saiu daqui para `em-andamento.md` em 07/06/26.)_
 
 ## TASK-RF-6.29 - Onboarding "Últimas manutenções do veículo" (km atual destacado + card editável)
 - **Status:** Pendente (REDEFINIDA em 07/06/26 — supersede a versão "remover óleo")

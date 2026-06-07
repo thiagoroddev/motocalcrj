@@ -170,9 +170,7 @@ describe('App - smoke UI', () => {
     fireEvent.change(await screen.findByLabelText(/KM atual do hodômetro/i), {
       target: { value: '12500' },
     });
-    fireEvent.change(screen.getByLabelText(/KM na última revisão/i), {
-      target: { value: '12000' },
-    });
+    // Consumo já vem pré-preenchido com o do modelo (Pop = 54 km/L); não editamos.
     clicarProximo();
 
     await screen.findByText('O que foi trocado?');

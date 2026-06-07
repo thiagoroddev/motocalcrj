@@ -6,7 +6,7 @@ import type {
   ServicoIndependente,
 } from '../types/perfil';
 import { perfilSchema } from '../schemas/perfilSchema';
-import { CATALOGO, obterConsumoKmL } from '../data/catalogoModelos';
+import { CATALOGO } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
@@ -100,12 +100,15 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       }
 
       const modeloDados = CATALOGO[state.perfil.moto.modelo];
-      const autonomiaGas = obterConsumoKmL(state.perfil.moto.modelo);
 
-      if (!modeloDados || autonomiaGas === undefined) {
+      if (!modeloDados) {
         return state;
       }
 
+      // Consumo é semeado pelo passo de km/consumo do onboarding (RF-6.33), que
+      // pré-preenche com o consumo do modelo e permite editar. O commit preserva
+      // o valor escolhido (não re-semeia do modelo) e deriva o etanol dele.
+      const autonomiaGas = state.perfil.financeiro.combustiveis.comum.autonomia;
       const autonomiaEtanol = Math.round(autonomiaGas * dadosRJ.autonomiaEtanolFatorReducao);
 
       const combustiveisComBase = {

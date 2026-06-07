@@ -148,4 +148,5 @@
 | TASK-RF-6.28 | Passo 4 do onboarding vira editor de vida útil dos avulsos; encerra a DT-18 | [2026-06-07--01h12--TASK-RF-6.28.md](./2026-06-07--01h12--TASK-RF-6.28.md) |
 | TASK-RF-6.30 | Seletor de ano (Passo 3) + correção: consumo por modelo, anos via FIPE, Pop 2025 removida (ES é outro modelo), fix do dropdown transparente | [2026-06-07--09h00--TASK-RF-6.30.md](./2026-06-07--09h00--TASK-RF-6.30.md) |
 | TASK-RF-6.34 | Default 0 para seguro, alimentação e internet (custos opcionais não presumidos) | [2026-06-07--17h35--TASK-RF-6.34.md](./2026-06-07--17h35--TASK-RF-6.34.md) |
+| TASK-RF-6.33 | Onboarding passo essencial: km atual + consumo editável (sem última revisão); COMMIT preserva o consumo semeado | [2026-06-07--18h40--TASK-RF-6.33.md](./2026-06-07--18h40--TASK-RF-6.33.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |

@@ -7,6 +7,7 @@ import {
 } from './PerfilContext';
 import type { EstadoApp } from './PerfilContext';
 import type { PerfilUsuario, ServicoIndependente } from '../types/perfil';
+import { dadosRJ } from '../data/dadosRJ';
 
 const estadoVazio: EstadoApp = {
   perfil: perfilPadrao,
@@ -114,26 +115,70 @@ describe('perfilReducer', () => {
     expect(resultado.presetAtivoId).toBe(resultado.presets[0].presetId);
   });
 
-  it('COMMIT_ONBOARDING aplica 54 km/L à Pop 2024', () => {
+  it('COMMIT_ONBOARDING preserva o consumo semeado no passo de km (não re-semeia do modelo)', () => {
+    // RF-6.33: o consumo é gravado no passo de km/consumo (default = consumo do
+    // modelo). O commit preserva a autonomia presente, não a recalcula do modelo.
     const estadoComDados: EstadoApp = {
       ...estadoVazio,
-      perfil: criarPerfilValido({ moto: { ano: 2024 } }),
+      perfil: criarPerfilValido({
+        moto: { ano: 2024 },
+        financeiro: {
+          combustiveis: {
+            ...perfilPadrao.financeiro.combustiveis,
+            comum: { ...perfilPadrao.financeiro.combustiveis.comum, autonomia: 54 },
+            aditivada: { ...perfilPadrao.financeiro.combustiveis.aditivada, autonomia: 54 },
+          },
+        },
+      }),
     };
 
     const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
 
     expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(54);
+    expect(resultado.perfil.financeiro.combustiveis.aditivada.autonomia).toBe(54);
   });
 
-  it('COMMIT_ONBOARDING aplica o consumo do modelo independentemente do ano', () => {
-    const em2018: EstadoApp = {
+  it('COMMIT_ONBOARDING preserva um consumo personalizado (editado no onboarding)', () => {
+    const estadoComDados: EstadoApp = {
       ...estadoVazio,
-      perfil: criarPerfilValido({ moto: { ano: 2018 } }),
+      perfil: criarPerfilValido({
+        moto: { ano: 2018 },
+        financeiro: {
+          combustiveis: {
+            ...perfilPadrao.financeiro.combustiveis,
+            comum: { ...perfilPadrao.financeiro.combustiveis.comum, autonomia: 45 },
+            aditivada: { ...perfilPadrao.financeiro.combustiveis.aditivada, autonomia: 45 },
+          },
+        },
+      }),
     };
 
-    const resultado = perfilReducer(em2018, { type: 'COMMIT_ONBOARDING' });
+    const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
 
-    expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(54);
+    expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(45);
+    expect(resultado.perfil.financeiro.combustiveis.aditivada.autonomia).toBe(45);
+  });
+
+  it('COMMIT_ONBOARDING deriva o etanol a partir do consumo informado', () => {
+    // Factor 125i aceita etanol; etanol = round(consumo * fator regional).
+    const estadoComDados: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({
+        moto: { marca: 'Yamaha', modelo: 'factor125i' },
+        financeiro: {
+          combustiveis: {
+            ...perfilPadrao.financeiro.combustiveis,
+            comum: { ...perfilPadrao.financeiro.combustiveis.comum, autonomia: 40 },
+          },
+        },
+      }),
+    };
+
+    const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.perfil.financeiro.combustiveis.etanol.autonomia).toBe(
+      Math.round(40 * dadosRJ.autonomiaEtanolFatorReducao),
+    );
   });
 
   it('COMMIT_ONBOARDING ativa categoriasAtivas com base nas respostas', () => {
