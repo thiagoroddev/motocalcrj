@@ -10,7 +10,7 @@ import { CampoInternet } from '../ajustes/campos/CampoInternet';
 import { CampoFinanciamento } from '../ajustes/campos/CampoFinanciamento';
 import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
 import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
-import { Segmentado } from '../Segmentado';
+import { ControleEstimativaMaoDeObra } from '../mao-de-obra/ControleEstimativaMaoDeObra';
 import { perfilPadrao } from '../../context/PerfilContext';
 import { CATALOGO, obterConsumoKmL } from '../../data/catalogoModelos';
 import { dadosRJ } from '../../data/dadosRJ';
@@ -168,8 +168,8 @@ function estimativaDoServico(perfil: PerfilUsuario, servicoId: string) {
   return montarEstimativaMaoDeObra(perfil, obterPreset(perfil.moto.modelo), servicoId);
 }
 
-// Controle global da estimativa de M.O. (ADR-013/014) — mesmo Segmentado da aba
-// Preferências, acessível direto pelo chip do card de total.
+// Controle global da estimativa de M.O. (ADR-013/014) — mesmo controle da aba
+// Preferências e da tela de onboarding, acessível direto pelo chip do card de total.
 function ConteudoEstimativaMaoDeObra({
   perfil,
   dispatch,
@@ -177,25 +177,11 @@ function ConteudoEstimativaMaoDeObra({
   perfil: PerfilUsuario;
   dispatch: Dispatch<PerfilAction>;
 }) {
-  const ligada = perfil.perfilManutencao.incluirEstimativaMaoDeObra === true;
   return (
-    <div className="space-y-2">
-      <Segmentado
-        opcoes={[
-          { label: 'Só valor real', valor: 'nao' },
-          { label: 'Incluir ~estimativa', valor: 'sim' },
-        ]}
-        valor={ligada ? 'sim' : 'nao'}
-        onChange={(v) =>
-          dispatch({ type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA', valor: v === 'sim' })
-        }
-      />
-      <p className="text-[11px] leading-relaxed text-muted-foreground/70">
-        Completa a mão de obra que a concessionária não informa com uma estimativa (~), marcada como
-        aproximada. Desligado, o custo mostra só valores reais — e cada serviço sem valor ainda pode
-        ser estimado individualmente na aba Mão de Obra ou no popup do item.
-      </p>
-    </div>
+    <ControleEstimativaMaoDeObra
+      ligada={perfil.perfilManutencao.incluirEstimativaMaoDeObra === true}
+      dispatch={dispatch}
+    />
   );
 }
 

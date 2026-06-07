@@ -150,4 +150,7 @@
 | TASK-RF-6.34 | Default 0 para seguro, alimentação e internet (custos opcionais não presumidos) | [2026-06-07--17h35--TASK-RF-6.34.md](./2026-06-07--17h35--TASK-RF-6.34.md) |
 | TASK-RF-6.33 | Onboarding passo essencial: km atual + consumo editável (sem última revisão); COMMIT preserva o consumo semeado | [2026-06-07--18h40--TASK-RF-6.33.md](./2026-06-07--18h40--TASK-RF-6.33.md) |
 | TASK-RF-6.29 | Onboarding "Últimas manutenções do veículo": km atual destacado + card editável reusado; remove vela/filtro do card; remove MARCAR_TROCAS_REVISAO | [2026-06-07--19h20--TASK-RF-6.29.md](./2026-06-07--19h20--TASK-RF-6.29.md) |
+| TASK-BG-023 | Consolidar exibição de consumo só no Passo 5 (remover do Passo 2 e Passo 3); rótulo com o modelo escolhido | [2026-06-07--19h45--TASK-BG-023.md](./2026-06-07--19h45--TASK-BG-023.md) |
+| TASK-BG-024 | Detalhamento exibe TODAS as categorias (não informadas com toggle off); financiamento/aluguel some só quando quitada | [2026-06-07--20h15--TASK-BG-024.md](./2026-06-07--20h15--TASK-BG-024.md) |
+| TASK-RF-6.32 | Toggle de M.O. "Padrão / Estimado" (controle único) + tela de onboarding de M.O. (componente; wiring na RF-6.31); ADR-013/014 | [2026-06-07--20h35--TASK-RF-6.32.md](./2026-06-07--20h35--TASK-RF-6.32.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |

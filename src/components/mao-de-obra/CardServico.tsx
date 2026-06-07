@@ -157,7 +157,7 @@ export function CardServico({
               </p>
             ) : estimativaMaoDeObra.globalLigado ? (
               <p className="text-[10px] leading-tight text-warning">
-                Estimativa de mão de obra (~) ligada em Preferências.
+                Modo Estimado: mão de obra estimada (~) aplicada a todos os serviços sem valor.
               </p>
             ) : (
               <button

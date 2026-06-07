@@ -2,7 +2,7 @@
 // docs/arquitetura/estimativa-mao-de-obra.md. Esta é a estimativa "chutada"
 // opt-in: só entra no cálculo quando o usuário liga, sempre rotulada como ~.
 
-import type { PerfilUsuario } from '../types/perfil';
+import type { PerfilUsuario, ServicoIndependente } from '../types/perfil';
 import type { PresetMoto } from '../types/calculos';
 
 // Tempário: horas de mão de obra por serviço (baseline ~125cc).
@@ -68,4 +68,24 @@ export function montarEstimativaMaoDeObra(
     porServicoLigado: perfil.perfilManutencao.estimativaMaoDeObraPorServico?.[servicoId] ?? false,
     valorEstimado: estimarMaoDeObra(servicoId, preset?.marca, preset?.fatorMaoDeObra ?? 1),
   };
+}
+
+// Soma a M.O. estimável de uma lista de serviços (os sem tempário somam 0 e não
+// contam). Usado no onboarding para o exemplo "com × sem estimativa" — quanto a
+// estimativa adicionaria nos avulsos sem valor oficial.
+export function somarMaoDeObraEstimavel(
+  servicos: ServicoIndependente[],
+  marca: string | undefined,
+  fatorMaoDeObra = 1,
+): { total: number; quantidade: number } {
+  let total = 0;
+  let quantidade = 0;
+  for (const servico of servicos) {
+    const estimado = estimarMaoDeObra(servico.id, marca, fatorMaoDeObra);
+    if (estimado > 0) {
+      total += estimado;
+      quantidade += 1;
+    }
+  }
+  return { total: Math.round(total * 100) / 100, quantidade };
 }

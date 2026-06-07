@@ -308,7 +308,12 @@ export function PaginaDetalhamento() {
           </NotaRodape>
         </CategoriaAccordion>
 
-        {CATEGORIAS_SIMPLES.filter((c) => custos[c.chave].ativo).map((c) => (
+        {/* Mostra TODAS as categorias simples (mesmo não informadas) para o usuário saber o que está
+            fora do cálculo; o toggle de cada uma controla a inclusão. Única exceção: financiamento/
+            aluguel some quando a moto é quitada (não há essa despesa). */}
+        {CATEGORIAS_SIMPLES.filter((c) =>
+          c.chave === 'financiamento' ? perfil.financeiro.situacaoMoto !== 'quitada' : true,
+        ).map((c) => (
           <CategoriaAccordion
             key={c.chave}
             label={obterLabelCategoriaSimples(c.label, c.chave, perfil.financeiro.situacaoMoto)}

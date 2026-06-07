@@ -40,7 +40,7 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
     expect(input).toHaveAttribute('readonly');
   });
 
-  it('com estimativa global ligada: nota "ligada em Preferências" e sem toggle', () => {
+  it('com estimativa global ligada (modo Estimado): nota e sem toggle', () => {
     render(
       <CardServico
         servico={servico}
@@ -50,7 +50,7 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
       />,
     );
 
-    expect(screen.getByText(/ligada em Preferências/)).toBeInTheDocument();
+    expect(screen.getByText(/Modo Estimado/)).toBeInTheDocument();
     expect(screen.queryByText(/Estimar mão de obra/)).not.toBeInTheDocument();
   });
 

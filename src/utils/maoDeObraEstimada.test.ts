@@ -1,8 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { estimarMaoDeObra, montarEstimativaMaoDeObra, taxaHoraDaMarca } from './maoDeObraEstimada';
+import {
+  estimarMaoDeObra,
+  montarEstimativaMaoDeObra,
+  somarMaoDeObraEstimavel,
+  taxaHoraDaMarca,
+} from './maoDeObraEstimada';
 import { perfilPadrao } from '../context/perfilDefaults';
-import type { PerfilUsuario } from '../types/perfil';
+import type { PerfilUsuario, ServicoIndependente } from '../types/perfil';
 import type { PresetMoto } from '../types/calculos';
+
+function servico(over: Partial<ServicoIndependente> & { id: string }): ServicoIndependente {
+  return {
+    nome: over.id,
+    intervalKm: 18000,
+    precoIndependente: 0,
+    precoTotalAutorizada: 0,
+    statusPrecoAutorizada: 'nao_informado',
+    incluidoNaRevisaoAutorizada: false,
+    ativo: true,
+    ehExcepcional: false,
+    ...over,
+  };
+}
 
 describe('estimarMaoDeObra', () => {
   it('estima horas × taxa × fator (kit transmissão 2h × 110 × 1.0 = 220)', () => {
@@ -24,6 +43,23 @@ describe('estimarMaoDeObra', () => {
   it('usa a taxa padrão para marca desconhecida e fator inválido vira 1', () => {
     expect(taxaHoraDaMarca('Suzuki')).toBe(110);
     expect(estimarMaoDeObra('troca-sapata-traseira', undefined, 0)).toBeCloseTo(71.5, 1);
+  });
+});
+
+describe('somarMaoDeObraEstimavel', () => {
+  it('soma só os serviços com tempário e conta a quantidade', () => {
+    const lista = [
+      servico({ id: 'troca-kit-transmissao' }), // 220
+      servico({ id: 'troca-sapata-traseira' }), // 0,65 × 110 = 71,5
+      servico({ id: 'servico-sem-temparario' }), // 0 → não conta
+    ];
+    const { total, quantidade } = somarMaoDeObraEstimavel(lista, 'Yamaha', 1);
+    expect(total).toBeCloseTo(291.5, 1);
+    expect(quantidade).toBe(2);
+  });
+
+  it('lista vazia → total 0 e quantidade 0', () => {
+    expect(somarMaoDeObraEstimavel([], 'Honda', 1)).toEqual({ total: 0, quantidade: 0 });
   });
 });
 

@@ -1,7 +1,7 @@
 import type { Dispatch } from 'react';
 import type { PerfilUsuario, PerfilAction } from '../../types/perfil';
 import { SlidersHorizontal } from 'lucide-react';
-import { Segmentado } from '../Segmentado';
+import { ControleEstimativaMaoDeObra } from '../mao-de-obra/ControleEstimativaMaoDeObra';
 import { BotaoReset } from '../BotaoReset';
 import { TituloSecao } from '@/components/TituloSecao';
 
@@ -29,20 +29,10 @@ export function SecaoPreferencias({ perfilManutencao, dispatch }: Props) {
       <p className="text-xs text-muted-foreground uppercase tracking-wider">
         Estimativas de mão de obra
       </p>
-      <Segmentado
-        opcoes={[
-          { label: 'Só valor real', valor: 'nao' },
-          { label: 'Incluir ~estimativa', valor: 'sim' },
-        ]}
-        valor={perfilManutencao.incluirEstimativaMaoDeObra ? 'sim' : 'nao'}
-        onChange={(v) =>
-          dispatch({ type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA', valor: v === 'sim' })
-        }
+      <ControleEstimativaMaoDeObra
+        ligada={perfilManutencao.incluirEstimativaMaoDeObra === true}
+        dispatch={dispatch}
       />
-      <p className="text-[10px] text-muted-foreground/60 leading-tight">
-        Completa a mão de obra que a concessionária não informa com uma estimativa (~), marcada como
-        aproximada. Desligado, o custo mostra só valores reais.
-      </p>
     </section>
   );
 }

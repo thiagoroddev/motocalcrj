@@ -62,36 +62,125 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
   **Pré-requisito:** esta ordem É a decisão de produto (acima). Implementar via as sub-tarefas; esta
   task coordena a sequência/rotas/progresso e o smoke final. Provável ADR de fluxo do onboarding.
 
+---
+
+## Decomposição da RF-6.31 em subtarefas (registrada 07/06/26)
+
+> **Contexto para quem pegar isto depois.** O épico do onboarding já entregou as TELAS; falta a
+> **integração** (ordem, rotas, progresso, confirmação, smoke). Telas já prontas e concluídas:
+> Marca ([Passo1.tsx](../../src/pages/onboarding/passos/Passo1.tsx)), Modelo ([Passo2.tsx](../../src/pages/onboarding/passos/Passo2.tsx)),
+> Ano ([Passo3.tsx](../../src/pages/onboarding/passos/Passo3.tsx)), Vida útil ([Passo4.tsx](../../src/pages/onboarding/passos/Passo4.tsx)),
+> Km/consumo ([Passo5.tsx](../../src/pages/onboarding/passos/Passo5.tsx)), Últimas manutenções
+> ([Passo5Manutencoes.tsx](../../src/pages/onboarding/passos/Passo5Manutencoes.tsx)), Situação
+> ([Passo6.tsx](../../src/pages/onboarding/passos/Passo6.tsx) + `Passo6Financiamento`/`Passo6Aluguel`/`Passo6Responsabilidade`),
+> Seguro ([Passo7.tsx](../../src/pages/onboarding/passos/Passo7.tsx)), Internet ([Passo8.tsx](../../src/pages/onboarding/passos/Passo8.tsx)),
+> Alimentação ([Passo9.tsx](../../src/pages/onboarding/passos/Passo9.tsx)), Confirmação
+> ([PassoConfirmacao.tsx](../../src/pages/onboarding/passos/PassoConfirmacao.tsx)) e **Mão de obra**
+> ([PassoMaoDeObra.tsx](../../src/pages/onboarding/passos/PassoMaoDeObra.tsx) — pronta mas **NÃO roteada**).
+>
+> **Fonte da ordem/numeração:** o bloco mestre RF-6.31 acima (BLOCOS A/B/C). Roteamento/numeração vivem
+> em [onboardingUtils.ts](../../src/pages/onboarding/onboardingUtils.ts) (`CONFIG_PASSOS`, `MAPA_PROXIMO`,
+> `MAPA_ANTERIOR`) e [FluxoOnboarding.tsx](../../src/pages/onboarding/FluxoOnboarding.tsx) (`<Routes>`).
+> O gate é `npm run verify` (rodar no Windows nativo). **Não commitar** (é do humano).
+
+### Mapa atual → alvo
+
+| # alvo | Tela (componente) | Rota atual | Bloco |
+| --- | --- | --- | --- |
+| 1 | **Modelo** (unificar Marca+Modelo) | `1` (Passo1) + `2` (Passo2) | A essencial |
+| 2 | Ano (Passo3) | `3` | A |
+| 3 | Km + consumo (Passo5) | `5` | A |
+| 4 | Situação (Passo6 + subs) | `6`, `6/financiamento`, `6/aluguel`, `6/responsabilidade` | A |
+| 5 | Seguro (Passo7) | `7` | B opcional (default 0) |
+| 6 | Alimentação (Passo9) | `9` | B |
+| 7 | Internet (Passo8) | `8` | B |
+| 8 | Vida útil (Passo4) | `4` | C config |
+| 9 | **Mão de obra** (PassoMaoDeObra) | — (não roteada) | C |
+| 10 | Últimas manutenções (Passo5Manutencoes) | `5trocas` | C |
+| 11 | Confirmação (PassoConfirmacao) | `confirmacao` | — |
+
+---
+
+### TASK-RF-6.31.1 — ADR do fluxo de onboarding + esquema de rotas e progresso
+- **Modo:** Strict · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** P/M · **Dep.:** - (faz primeiro)
+- **Objetivo:** registrar a decisão do fluxo numa ADR nova (próximo número livre em `docs/arquitetura/ADR/`)
+  e **fixar o esquema de rotas e de progresso** que as demais subtarefas vão implementar. Sem código de telas.
+- **Decidir e documentar:**
+  1. **Ordem canônica** (11 passos do mapa acima) + blocos A (essencial, bloqueia avanço) / B (opcional,
+     default 0, nunca bloqueia) / C (config que afeta cálculo, não bloqueia).
+  2. **Esquema de rotas:** escolher entre **(a) numéricas sequenciais** (`/onboarding/1..10` + `confirmacao`)
+     ou **(b) semânticas** (`/onboarding/modelo`, `/ano`, `/km`, `/situacao`, …). Recomendação: semânticas
+     (robustas a futuras reordenações; eliminam o legado `5trocas`). Definir os nomes das sub-rotas de
+     Situação (financiamento/aluguel/responsabilidade).
+  3. **Progresso:** regra de `label` ("PASSO X DE N") e `percentual` por passo — N considerando que as
+     sub-rotas de Situação contam como o mesmo passo (hoje `6/*` repete "PASSO 6"). Definir como contar.
+  4. **Ramificações:** quitada → pula sub-rotas de Situação; financiada → financiamento; alugada →
+     aluguel → responsabilidade. Manter a lógica de `MAPA_PROXIMO`/`MAPA_ANTERIOR` por `situacaoMoto`.
+- **Critérios de aceite:** ADR criada e aceita, com a tabela de ordem, o esquema de rotas escolhido e a
+  regra de progresso. Índice de ADRs atualizado se houver. **Sem mudança de código.**
+
+### TASK-RF-6.31.2 — Unificar Marca + Modelo numa única etapa
+- **Modo:** Standard · **Valor:** Importante · **Urgência:** IMEDIATA · **Esforço:** M · **Dep.:** RF-6.31.1
+- **Objetivo:** uma só tela escolhe **marca e modelo** (hoje são 2 telas). Entregar o **componente**; o
+  wiring final fica na RF-6.31.3.
+- **Estado atual:** `Passo1` (grid de marcas, grava `moto.marca`) → `Passo2` (lista modelos da marca via
+  `getModelosPorMarca`, grava `moto.modelo`). `Passo2` já mostra `subtitulo={perfil.moto.marca}`.
+- **Alvo:** criar `PassoModelo.tsx` (nome semântico) com seleção de marca (ex.: chips/seletor no topo via
+  `getMarcasDisponiveis`) + lista de modelos da marca selecionada (`getModelosPorMarca`). Grava marca e
+  modelo no `moto`. `podeContinuar` só com modelo selecionado. Reaproveitar a lógica de auto-seleção
+  quando a marca tem 1 modelo. Manter o card só com o nome do modelo (sem consumo — ver BG-023).
+- **Arquivos:** novo `PassoModelo.tsx`; `Passo1.tsx`/`Passo2.tsx` ficam para a 6.31.3 remover/rotear.
+- **Critérios de aceite:** componente seleciona marca+modelo e grava no estado; `verify` verde. (Validação
+  visual em fluxo só após a 6.31.3 roteá-lo.)
+
+### TASK-RF-6.31.3 — Reordenar rotas, progresso e wiring (FluxoOnboarding + onboardingUtils)
+- **Modo:** Strict · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** G · **Dep.:** RF-6.31.1, RF-6.31.2
+- **Objetivo:** implementar a ordem canônica da ADR (6.31.1) — é o coração da RF-6.31.
+- **Fazer:**
+  1. `FluxoOnboarding.tsx` `<Routes>`: registrar todas as telas na nova ordem/rotas, incluindo a
+     **PassoMaoDeObra** (hoje fora) e a **PassoModelo** (6.31.2) no lugar de Passo1+Passo2. Remover a rota
+     legada `5trocas` (renomear conforme a ADR). Remover Passo1/Passo2 antigos se substituídos.
+  2. `onboardingUtils.ts`: reescrever `MAPA_PROXIMO`, `MAPA_ANTERIOR` (com as ramificações por
+     `situacaoMoto`) e `CONFIG_PASSOS` (labels "PASSO X DE N" + percentuais) para a nova ordem.
+  3. Conferir `RotaProtegida` e `PaginaPerfil` (navegam para `/onboarding/1`/primeira rota) — ajustar se as
+     rotas mudarem de nome.
+- **Critérios de aceite:** dá para percorrer o onboarding inteiro na ordem nova (Modelo→Ano→Km→Situação→
+  Seguro→Alimentação→Internet→Vida útil→M.O.→Últimas manutenções→Confirmação); voltar funciona; ramos
+  quitada/financiada/alugada corretos; progresso coerente; `verify` verde. Validação visual humana.
+
+### TASK-RF-6.31.4 — Confirmação (links "Editar") + regra final do PassoLayout
+- **Modo:** Standard · **Valor:** Importante · **Urgência:** IMEDIATA · **Esforço:** P/M · **Dep.:** RF-6.31.3
+- **Estado atual:** `PassoConfirmacao` usa `editarPasso('2'|'5'|'6'|'7'|'8'|'9')` (rotas hardcoded) e tem
+  seções de resumo numa ordem antiga. `PassoLayout` decide o rótulo do botão por `passo === '9'`
+  ([PassoLayout.tsx:23](../../src/pages/onboarding/PassoLayout.tsx#L23)).
+- **Fazer:** atualizar os `editarPasso(...)` para as novas rotas; reordenar/rever as seções de resumo
+  conforme a nova ordem (incluindo o que faltar resumir, ex.: vida útil/M.O. se fizer sentido); ajustar a
+  regra do `PassoLayout` para detectar o **último passo** (não mais o literal `'9'`) para o texto
+  "Concluir"/percentual 100%.
+- **Critérios de aceite:** cada "Editar" leva ao passo certo; botão final aparece como "Concluir" só no
+  último passo; `verify` verde. Validação visual.
+
+### TASK-RF-6.31.5 — Smoke completo da navegação + docs
+- **Modo:** Standard · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** M/G · **Dep.:** RF-6.31.3, RF-6.31.4
+- **Fazer:**
+  1. Atualizar o smoke do fluxo feliz em [App.smoke.test.tsx](../../src/App.smoke.test.tsx) para a nova
+     ordem/títulos (inclui a tela de M.O. agora roteada).
+  2. Adicionar **teste da matriz de navegação**: `getProximoPasso`/`getPassoAnterior` para cada passo nos
+     3 ramos (`quitada`, `financiada`, `alugada`), incluindo **voltar**, garantindo ida e volta coerentes.
+  3. Atualizar docs: requisitos do onboarding, `_glossario.md`, `contexto-projeto-ai.md` e a lista de
+     rotas, refletindo a ordem/rotas finais.
+- **Critérios de aceite:** smoke percorre o fluxo novo ponta a ponta; matriz de navegação testada nos 3
+  ramos; docs sincronizadas; `verify` verde. Validação visual final do onboarding completo.
+
+---
+
+
 _(A TASK-RF-6.33 saiu daqui para `em-andamento.md` em 07/06/26.)_
 
 _(A TASK-RF-6.29 saiu daqui para `em-andamento.md` em 07/06/26.)_
 
-## TASK-RF-6.32 - Onboarding "Valor de mão de obra" + toggle "Padrão / Estimado"
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Dependências:** TASK-RF-6.28 (derivação de avulsos)
-- **REQ/ADR/DT:** ADR-013, ADR-014, ADR-018, INV-CALC-2 (ver RF-6.31 item 9)
-- **Observações:** **Tela 9** do onboarding (bloco C) + mudança no toggle global de estimativa de M.O.
-  (vale também na aba Mão de Obra). **Tela:** mostra a seção de M.O. dos serviços avulsos; explica que
-  o app usa os **valores oficiais** para **revisões periódicas**, mas que para os **avulsos não há
-  dados para todos**, e que isso **pode ser estimado — para todos ou cada um individualmente**.
-  Mostrar um **exemplo do total de M.O. com e sem estimativa** ao ligar/desligar o toggle ali mesmo.
-  **Renomear o toggle** "Valor real / Incluir estimativa" → **"Padrão / Estimado"** com esta
-  semântica (CORRIGE minha nota anterior — **NÃO** é "default ligado"):
-  - **"Padrão" (DEFAULT, estimativa geral DESLIGADA):** permite **ativar a estimativa individualmente
-    por item** OU **inserir um valor** por item. Itens editáveis. (= comportamento atual default-off,
-    `incluirEstimativaMaoDeObra: false` permanece o default — ADR-013/014 preservadas nesse ponto.)
-  - **"Estimado":** **não permite edição** e aplica a estimativa em **todos** os itens sem valor
-    oficial (`~`, read-only).
-  Implica: o modo "Estimado" (global on) passa a **desabilitar a edição** e aplicar a todos; ajustar
-  `CardServico`/`PaginaMaoDeObra` e os textos do toggle. Reusar `montarEstimativaMaoDeObra` e a
-  derivação de avulsos da RF-6.28; não criar estado paralelo; o `~` e a perda para valor real
-  continuam (ADR-013/014). **Atualizar ADR-013/014** com a renomeação e a semântica read-only do modo
-  Estimado. Testes: exemplo com/sem, modo Padrão edita por item, modo Estimado read-only em todos.
-  Validação visual humana antes de concluir.
+_(A TASK-RF-6.32 foi concluída em 07/06/26 — ver `concluidas/2026-06-07--20h35--TASK-RF-6.32.md`.
+A tela `PassoMaoDeObra` ficou pronta como componente; o wiring no fluxo é da RF-6.31, item 9.)_
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 

@@ -357,7 +357,7 @@ describe('App - smoke UI', () => {
     });
   });
 
-  it('o chip de M.O. abre o popup de estimativa (Segmentado Só valor real / Incluir ~estimativa)', async () => {
+  it('o chip de M.O. abre o popup de estimativa (Segmentado Padrão / Estimado)', async () => {
     salvarPresetNoStorage();
     renderizarAppEm('/estimativa/detalhamento');
     await screen.findByText('Total estimado no ano');
@@ -366,7 +366,7 @@ describe('App - smoke UI', () => {
       screen.getByRole('button', { name: 'Editar modo de estimativa de mão de obra' }),
     );
 
-    expect(await screen.findByText('Só valor real')).toBeInTheDocument();
-    expect(screen.getByText('Incluir ~estimativa')).toBeInTheDocument();
+    expect(await screen.findByText('Padrão')).toBeInTheDocument();
+    expect(screen.getByText('Estimado')).toBeInTheDocument();
   });
 });
