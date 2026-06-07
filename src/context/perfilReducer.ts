@@ -6,7 +6,7 @@ import type {
   ServicoIndependente,
 } from '../types/perfil';
 import { perfilSchema } from '../schemas/perfilSchema';
-import { CATALOGO } from '../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmLPorAno } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
@@ -100,26 +100,24 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       }
 
       const modeloDados = CATALOGO[state.perfil.moto.modelo];
-      const usaComBau = state.perfil.moto.perfilUso === 'entrega';
-      const autonomiaGas = modeloDados
-        ? usaComBau
-          ? modeloDados.consumoKmLComBau
-          : modeloDados.consumoKmL
-        : state.perfil.financeiro.combustiveis.comum.autonomia;
+      const autonomiaGas = obterConsumoKmLPorAno(state.perfil.moto.modelo, state.perfil.moto.ano);
+
+      if (!modeloDados || autonomiaGas === undefined) {
+        return state;
+      }
+
       const autonomiaEtanol = Math.round(autonomiaGas * dadosRJ.autonomiaEtanolFatorReducao);
 
-      const combustiveisComBase = modeloDados
-        ? {
-            comum: { ...state.perfil.financeiro.combustiveis.comum, autonomia: autonomiaGas },
-            aditivada: {
-              ...state.perfil.financeiro.combustiveis.aditivada,
-              autonomia: autonomiaGas,
-            },
-            etanol: modeloDados.aceitaEtanol
-              ? { ...state.perfil.financeiro.combustiveis.etanol, autonomia: autonomiaEtanol }
-              : state.perfil.financeiro.combustiveis.etanol,
-          }
-        : state.perfil.financeiro.combustiveis;
+      const combustiveisComBase = {
+        comum: { ...state.perfil.financeiro.combustiveis.comum, autonomia: autonomiaGas },
+        aditivada: {
+          ...state.perfil.financeiro.combustiveis.aditivada,
+          autonomia: autonomiaGas,
+        },
+        etanol: modeloDados.aceitaEtanol
+          ? { ...state.perfil.financeiro.combustiveis.etanol, autonomia: autonomiaEtanol }
+          : state.perfil.financeiro.combustiveis.etanol,
+      };
 
       const financeiro = { ...state.perfil.financeiro, combustiveis: combustiveisComBase };
 
@@ -430,22 +428,58 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       return comPerfil({ ...state.perfil, fipeCache: action.cache });
 
     // ── Ajustes de predefinição ─────────────────
-    case 'SET_ANO_MOTO':
+    case 'SET_ANO_MOTO': {
+      const modeloDados = CATALOGO[state.perfil.moto.modelo];
+      const autonomiaGas = obterConsumoKmLPorAno(state.perfil.moto.modelo, action.ano);
+
+      if (!modeloDados || autonomiaGas === undefined) {
+        return state;
+      }
+
+      const autonomiaEtanol = Math.round(autonomiaGas * dadosRJ.autonomiaEtanolFatorReducao);
+      const valorFipe = modeloDados.tabelaFipe[String(action.ano)];
+      const fipeCache =
+        valorFipe === undefined
+          ? null
+          : {
+              valor: valorFipe,
+              codigoFipe: modeloDados.codigoFipe,
+              dataConsulta: new Date().toISOString().slice(0, 10),
+              anoModelo: action.ano,
+              marca: modeloDados.marca,
+              modelo: state.perfil.moto.modelo,
+            };
+
       return comPerfil({
         ...state.perfil,
         moto: { ...state.perfil.moto, ano: action.ano },
+        fipeCache,
+        financeiro: {
+          ...state.perfil.financeiro,
+          combustiveis: {
+            comum: {
+              ...state.perfil.financeiro.combustiveis.comum,
+              autonomia: autonomiaGas,
+            },
+            aditivada: {
+              ...state.perfil.financeiro.combustiveis.aditivada,
+              autonomia: autonomiaGas,
+            },
+            etanol: modeloDados.aceitaEtanol
+              ? {
+                  ...state.perfil.financeiro.combustiveis.etanol,
+                  autonomia: autonomiaEtanol,
+                }
+              : state.perfil.financeiro.combustiveis.etanol,
+          },
+        },
       });
+    }
 
     case 'SET_KM_ULTIMA_REVISAO':
       return comPerfil({
         ...state.perfil,
         moto: { ...state.perfil.moto, kmUltimaRevisao: action.km },
-      });
-
-    case 'SET_PERFIL_USO':
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, perfilUso: action.perfilUso },
       });
 
     case 'SET_MODO_REVISAO':

@@ -3,7 +3,6 @@ import type { PerfilAction } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { presetEntrySchema } from '../schemas/perfilSchema';
-import { migrarPerfil } from '../services/migracoes';
 import { normalizarPerfilContraPreset } from '../services/normalizarPerfilContraPreset';
 import { obterPreset } from '../data/repositorioPresets';
 import { estadoPadrao, perfilReducer, type EstadoApp } from './perfilReducer';
@@ -57,7 +56,7 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
 
     let houveLimpeza = false;
     const presets = presetsRaw.map((p) => {
-      const validado = presetEntrySchema.parse({ ...p, perfil: migrarPerfil(p.perfil) });
+      const validado = presetEntrySchema.parse(p);
       const presetCanonico = obterPreset(validado.perfil.moto.modelo);
 
       if (!presetCanonico) {

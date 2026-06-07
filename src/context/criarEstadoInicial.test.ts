@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { criarEstadoInicial, perfilPadrao } from './PerfilContext';
 import type { IPerfilStorage } from '../services/perfilStorage';
-import type { PeriodicidadeAluguel, PresetEntry, PerfilUsuario } from '../types/perfil';
+import type { PresetEntry, PerfilUsuario } from '../types/perfil';
 import { PRESETS } from '../data/repositorioPresets';
 
 // Storage falso configurável - o ciclo de tarefa pede injeção de storage para
@@ -67,25 +67,6 @@ function perfilPopComOrfaos(sufixo: string): PerfilUsuario {
         intervaloKmEditado: null,
       },
     ],
-  };
-}
-
-function presetLegadoV1(
-  aluguelMensal: number | null,
-  aluguelPeriodicidade: PeriodicidadeAluguel | null,
-): unknown {
-  const financeiroV1: Record<string, unknown> = { ...perfilPadrao.financeiro };
-  delete financeiroV1.aluguelValor;
-  financeiroV1.aluguelMensal = aluguelMensal;
-  financeiroV1.aluguelPeriodicidade = aluguelPeriodicidade;
-
-  return {
-    ...presetValido('p1'),
-    perfil: {
-      ...perfilPadrao,
-      schemaVersion: 1,
-      financeiro: financeiroV1,
-    },
   };
 }
 
@@ -219,28 +200,23 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
-  it.each([
-    ['mensal', 800, 'mensal'],
-    ['semanal', 200, 'semanal'],
-    ['nulo', null, null],
-  ] as const)(
-    'migra aluguel %s do schema v1 para v2 preservando valor e periodicidade',
-    (_cenario, aluguelMensal, aluguelPeriodicidade) => {
-      const storage = criarStorageFalso(
-        [presetLegadoV1(aluguelMensal, aluguelPeriodicidade)],
-        'p1',
-      );
+  it('schema v2 não é migrado no pré-lançamento e cai para o estado recuperável', () => {
+    const presetV2 = {
+      ...presetValido('p1'),
+      perfil: {
+        ...perfilPadrao,
+        schemaVersion: 2,
+      } as unknown as PerfilUsuario,
+    };
+    const storage = criarStorageFalso([presetV2], 'p1');
 
-      const estado = criarEstadoInicial(storage);
+    const estado = criarEstadoInicial(storage);
 
-      expect(estado.presetAtivoId).toBe('p1');
-      expect(estado.perfil.schemaVersion).toBe(2);
-      expect(estado.perfil.financeiro.aluguelValor).toBe(aluguelMensal);
-      expect(estado.perfil.financeiro.aluguelPeriodicidade).toBe(aluguelPeriodicidade);
-      expect('aluguelMensal' in estado.perfil.financeiro).toBe(false);
-      expect(storage.preservarCorrompido).not.toHaveBeenCalled();
-    },
-  );
+    expect(estado.presetAtivoId).toBeNull();
+    expect(estado.presets).toEqual([]);
+    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(storage.preservarCorrompido).toHaveBeenCalledTimes(1);
+  });
 
   it('blob corrompido (perfil sem `moto`) → estado padrão e preserva o blob', () => {
     const perfilSemMoto: Record<string, unknown> = { ...perfilPadrao };

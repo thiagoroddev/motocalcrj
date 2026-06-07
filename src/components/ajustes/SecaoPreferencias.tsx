@@ -1,5 +1,5 @@
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, PerfilUso } from '../../types/perfil';
+import type { PerfilUsuario, PerfilAction } from '../../types/perfil';
 import { SlidersHorizontal } from 'lucide-react';
 import { Segmentado } from '../Segmentado';
 import { BotaoReset } from '../BotaoReset';
@@ -7,19 +7,16 @@ import { TituloSecao } from '@/components/TituloSecao';
 
 interface Props {
   perfilManutencao: PerfilUsuario['perfilManutencao'];
-  moto: PerfilUsuario['moto'];
   dispatch: Dispatch<PerfilAction>;
 }
 
-export function SecaoPreferencias({ perfilManutencao, moto, dispatch }: Props) {
+export function SecaoPreferencias({ perfilManutencao, dispatch }: Props) {
   const temAlteracao =
     perfilManutencao.modoRevisao !== 'autorizadas' ||
-    moto.perfilUso !== 'entrega' ||
     perfilManutencao.incluirEstimativaMaoDeObra === true;
 
   function resetar() {
     dispatch({ type: 'SET_MODO_REVISAO', modo: 'autorizadas' });
-    dispatch({ type: 'SET_PERFIL_USO', perfilUso: 'entrega' });
     dispatch({ type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA', valor: false });
   }
 
@@ -29,15 +26,6 @@ export function SecaoPreferencias({ perfilManutencao, moto, dispatch }: Props) {
         <TituloSecao icone={SlidersHorizontal}>Preferências</TituloSecao>
         <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
       </div>
-      <p className="text-xs text-muted-foreground uppercase tracking-wider">Perfil de trabalho</p>
-      <Segmentado
-        opcoes={[
-          { label: 'Entrega', valor: 'entrega' },
-          { label: 'Passageiro', valor: 'passageiro' },
-        ]}
-        valor={moto.perfilUso}
-        onChange={(v) => dispatch({ type: 'SET_PERFIL_USO', perfilUso: v as PerfilUso })}
-      />
       <p className="text-xs text-muted-foreground uppercase tracking-wider">
         Estimativas de mão de obra
       </p>

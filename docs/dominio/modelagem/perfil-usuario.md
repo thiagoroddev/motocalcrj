@@ -52,7 +52,7 @@ export interface PerfilUsuario {
 
 | Atributo              | Tipo             | Descrição                                                                            |
 | --------------------- | ---------------- | ------------------------------------------------------------------------------------ |
-| `schemaVersion`       | number           | Versão do schema. **Atual: 2.** Perfis v1 são migrados na carga; versões desconhecidas são rejeitadas com fallback recuperável |
+| `schemaVersion`       | number           | Versão do schema. **Atual: 3.** Versões diferentes são rejeitadas com fallback recuperável no pré-lançamento |
 | `userId`              | `string \| null` | Login-ready (RNF-LR-02). Sempre `null` em V1. UUID do backend em V2                  |
 | `onboardingConcluido` | boolean          | Gatilho de `RotaProtegida` se `false`, app redireciona para `/onboarding/1`          |
 | `apelido`             | `string \| null` | Apelido do Motoboy. Opcional. Aparece no header se preenchido                        |
@@ -65,7 +65,8 @@ export interface PerfilUsuario {
 ### 🏍️ `moto`
 
 **Arquivo:** `bloco-moto.md`
-**O quê:** dados da motocicleta marca, modelo, ano, perfil de uso (entrega/passageiro), km atual, km da última revisão.
+**O quê:** dados da motocicleta: marca, modelo, ano, km atual e km da última revisão. O ano
+seleciona referências específicas quando o modelo as oferece.
 
 ### ⏰ `trabalho`
 
@@ -143,7 +144,7 @@ Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver
 | Mão de obra e revisão   | `SET_SERVICO_INDEPENDENTE`, `RESET_SERVICOS_INDEPENDENTES`, `SET_REVISAO_AUTORIZADA_OVERRIDE`, `RESET_REVISAO_AUTORIZADA_OVERRIDE` |
 | Financeiro              | `SET_INTERNET`, `SET_SEGURO`, `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR` |
 | Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`, `MARCAR_TROCAS_REVISAO`        |
-| Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_PERFIL_USO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
+| Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
 | FIPE                    | `SET_FIPE_CACHE`                                                           |
 | Persistência            | `CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`                     |
 

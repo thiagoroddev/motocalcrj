@@ -3,8 +3,18 @@
   "modelo": "Pop 110i",
   "nomeCurto": "Pop 110i",
   "nomeFipe": "POP 110I",
-  "consumoKmL": 36.0,
-  "consumoKmLComBau": 33.0,
+  "consumoKmLPorAno": {
+    "2016": 54.0,
+    "2017": 54.0,
+    "2018": 54.0,
+    "2019": 54.0,
+    "2020": 54.0,
+    "2021": 54.0,
+    "2022": 54.0,
+    "2023": 54.0,
+    "2024": 54.0,
+    "2025": 49.1
+  },
   "aceitaEtanol": false,
   "fatorMaoDeObra": 1.0,
   "codigoFipe": "811132-4",
@@ -28,23 +38,30 @@
       "inicio": 2016,
       "fim": 2024
     },
+    "consumoAnoModelo": {
+      "inicio": 2016,
+      "fim": 2025
+    },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 811132-4. Modelo: POP 110i.",
-    "consumoNota": "consumoKmL = sem baú (36 km/L). consumoKmLComBau = com baú/bag (33 km/L). Fonte: manual + telemetria real."
+    "consumoNota": "Referência profissional por ano. Pop 110i 2016-2024: 54 km/L, valor conservador definido em 06/06/2026 a partir do relato real do proprietário de uma Pop 110i 2024 (55 km/L); a Honda divulga 59,6 km/L em uso urbano segundo medições do Instituto Mauá. Pop 110i ES 2025: 49,1 km/L, número fornecido pela Honda e aferido pelo Instituto Mauá.",
+    "consumoFontes": [
+      "https://saladeimprensa.honda.com.br/releases/honda-pop-completa-15-anos-no-mercado-nacional",
+      "https://saladeimprensa.honda.com.br/releases/honda-pop-110i-es-2025-ainda-mais-pratica-nova-geracao-traz-motor-inedito-com-partida",
+      "https://motor1.uol.com.br/news/723390/impressoes-honda-pop-110i-2025/"
+    ]
   },
 
   "pecas": [
     {
       "id": "oleo_motor",
       "nome": "Óleo do motor",
-      "intervaloKm": 6000,
-      "intervaloKmEntrega": 1250,
+      "intervaloKm": 3000,
       "intervaloMeses": 12,
       "precoOriginal": 40,
       "precoParalela": 23,
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
-        "intervaloKmNota": "Manual: trocar a cada 6.000 km ou 1× por ano (o que ocorrer primeiro).",
-        "intervaloKmEntregaNota": "Telemetria real: motoboy urbano troca entre 1.000-1.500 km. Média adotada: 1.250 km.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 3.000 km. Manual: trocar a cada 6.000 km ou 1× por ano.",
         "precoOriginalNota": "Pro Honda SAE 10W-30 SL JASO MA (1L). Inclui troca (0,8L + serviço mão de obra básica).",
         "precoParalelaNota": "Mobil Super Moto 10W-30 ou equivalente nacional."
       }
@@ -52,14 +69,13 @@
     {
       "id": "vela_ignicao",
       "nome": "Vela de ignição",
-      "intervaloKm": 12000,
-      "intervaloKmEntrega": 12000,
+      "intervaloKm": 6000,
       "intervaloMeses": 0,
       "precoOriginal": 82,
       "precoParalela": 29,
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
-        "intervaloKmNota": "Manual: verificar a cada 12.000 km; trocar se necessário. Em entrega, substituir preventivamente no intervalo.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 6.000 km. Manual: verificar a cada 12.000 km e trocar se necessário.",
         "precoOriginalNota": "NGK CPR6EA-9S genuína Honda (código Honda OEM).",
         "precoParalelaNota": "NGK CPR6EA-9S aftermarket (Mercado Livre / Shopee)."
       }
@@ -67,15 +83,13 @@
     {
       "id": "filtro_ar",
       "nome": "Filtro de ar (tipo viscoso)",
-      "intervaloKm": 18000,
-      "intervaloKmEntrega": 12000,
+      "intervaloKm": 6000,
       "intervaloMeses": 0,
       "precoOriginal": 47,
       "precoParalela": 19,
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
-        "intervaloKmNota": "Manual: trocar a cada 18.000 km. Em uso com poluição urbana: antecipar para 12.000 km.",
-        "intervaloKmEntregaNota": "Dado real: trocado na revisão de 12.000 km pelo usuário.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 6.000 km. Manual: trocar a cada 18.000 km; poluição urbana pode exigir antecipação.",
         "precoOriginalNota": "Filtro compatível de marca (ML/Shopee R$45-50, média R$47). Genuíno Honda OEM ≈ R$50-52.",
         "precoParalelaNota": "Filtro genérico compatível - diversas marcas (ML/Shopee)."
       }
@@ -83,15 +97,13 @@
     {
       "id": "kit_relacao",
       "nome": "Kit relação (corrente + coroa + pinhão)",
-      "intervaloKm": 15000,
-      "intervaloKmEntrega": 18000,
+      "intervaloKm": 18000,
       "intervaloMeses": 0,
       "precoOriginal": 230,
       "precoParalela": 82,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Manual: verificar, ajustar e lubrificar a cada 1.000 km. Troca estimada por pesquisa de campo RJ.",
-        "intervaloKmEntregaNota": "Com lubrificação regular a cada 1.000 km o kit dura 15.000-20.000 km. Mock: 18.000 km.",
+        "intervaloKmNota": "Referência profissional: 18.000 km. Com lubrificação regular a cada 1.000 km, a pesquisa de campo indica 15.000-20.000 km.",
         "precoOriginalNota": "Kit HAMP (Honda Authentic Motorcycle Parts).",
         "precoParalelaNota": "Kit Riffel ou similar - corrente + coroa + pinhão com retentor O-ring."
       }
@@ -99,15 +111,13 @@
     {
       "id": "sapata_freio_dianteiro",
       "nome": "Sapata de freio dianteiro",
-      "intervaloKm": 20000,
-      "intervaloKmEntrega": 12000,
+      "intervaloKm": 12000,
       "intervaloMeses": 0,
       "precoOriginal": 82,
       "precoParalela": 17,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i básica usa freio a tambor nas duas rodas.",
-        "intervaloKmEntregaNota": "Mesma estimativa da traseira para uso urbano RJ. Mock: 12.000 km.",
+        "intervaloKmNota": "Referência profissional: 12.000 km. Manual: verificar desgaste a cada 6.000 km.",
         "precoOriginalNota": "Par HAMP Nissin R$ 163,64 (informado pelo usuário 25/05/26); valor individual ≈ R$ 82.",
         "precoParalelaNota": "Par paralela ≈ R$ 34 (informado pelo usuário 25/05/26); valor individual ≈ R$ 17."
       }
@@ -115,15 +125,13 @@
     {
       "id": "sapata_freio_traseiro",
       "nome": "Sapata de freio traseiro",
-      "intervaloKm": 20000,
-      "intervaloKmEntrega": 12000,
+      "intervaloKm": 12000,
       "intervaloMeses": 0,
       "precoOriginal": 91,
       "precoParalela": 47,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i usa freio a tambor traseiro.",
-        "intervaloKmEntregaNota": "No anda-e-para urbano RJ o desgaste é acelerado. Estimativa conservadora: 10.000-15.000 km. Mock: 12.000 km.",
+        "intervaloKmNota": "Referência profissional: 12.000 km. No anda-e-para urbano, a estimativa conservadora é 10.000-15.000 km.",
         "precoOriginalNota": "Patim/lona HAMP Nissin (par, dianteiro + traseiro).",
         "precoParalelaNota": "Lona compatível Cobreq ou similar (par)."
       }
@@ -144,14 +152,13 @@
     {
       "id": "kit_embreagem",
       "nome": "Kit embreagem",
-      "intervaloKm": 40000,
-      "intervaloKmEntrega": 40000,
+      "intervaloKm": 42000,
       "intervaloMeses": 0,
       "precoOriginal": 300.33,
       "precoParalela": 68.00,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Vida útil estimada em uso de entrega RJ: 40.000 km. Pop 110i é embreagem centrífuga (sem disco manual).",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 42.000 km. Pop 110i usa embreagem centrífuga.",
         "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
         "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
       }
@@ -160,7 +167,6 @@
       "id": "kit_revisao",
       "nome": "Kit revisão",
       "intervaloKm": 6000,
-      "intervaloKmEntrega": 6000,
       "intervaloMeses": 0,
       "precoOriginal": 152.83,
       "precoParalela": 102.93,
@@ -174,14 +180,13 @@
     {
       "id": "kit_cilindro",
       "nome": "Kit cilindro",
-      "intervaloKm": 100000,
-      "intervaloKmEntrega": 100000,
+      "intervaloKm": 102000,
       "intervaloMeses": 0,
       "precoOriginal": 360.83,
       "precoParalela": 163.31,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Caminho alternativo à Retífica completa. Vida útil ≈ 100.000 km. Concessionária Honda raramente executa em Pop 110i - serviço típico de oficina independente.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 102.000 km. Caminho alternativo à retífica completa.",
         "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
         "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
       }
@@ -192,12 +197,12 @@
     {
       "id": "pneu_dianteiro",
       "posicao": "dianteiro",
-      "vidaUtilKm": 25000,
+      "vidaUtilKm": 24000,
       "precoOriginal": 209,
       "precoParalela": 130,
       "_fonte": {
         "especificacao": "60/100-17 M/C 33L",
-        "vidaUtilNota": "Pneu dianteiro sofre menos tração. Dado real: ~1 ano de uso. Mock: 25.000 km (≈ 1,5× o traseiro).",
+        "vidaUtilNota": "Referência profissional sincronizada com a revisão: 24.000 km. O pneu dianteiro sofre menos tração.",
         "precoOriginalNota": "Michelin Street ou Levorin Matrix (60/100-17).",
         "precoParalelaNota": "Ira Soho, Kenda ou similar."
       }
@@ -205,12 +210,12 @@
     {
       "id": "pneu_traseiro",
       "posicao": "traseiro",
-      "vidaUtilKm": 16000,
+      "vidaUtilKm": 18000,
       "precoOriginal": 245,
       "precoParalela": 137,
       "_fonte": {
         "especificacao": "80/100-14 M/C REINF 49L",
-        "vidaUtilNota": "Dado real de telemetria: durou 16.000 km com baú. Usado como referência principal.",
+        "vidaUtilNota": "Referência profissional sincronizada com a revisão: 18.000 km, próxima do dado real de 16.000 km com baú.",
         "precoOriginalNota": "Levorin Dakar Evo, Rinaldi BS32 ou Vipal ST300 (80/100-14).",
         "precoParalelaNota": "Robust Vitesse ou similar."
       }

@@ -3,8 +3,17 @@
   "modelo": "Factor 125i",
   "nomeCurto": "Factor 125i",
   "nomeFipe": "YBR 125i FACTOR ED/FLEX",
-  "consumoKmL": 42.0,
-  "consumoKmLComBau": 38.0,
+  "consumoKmLPorAno": {
+    "2017": 38.0,
+    "2018": 38.0,
+    "2019": 38.0,
+    "2020": 38.0,
+    "2021": 38.0,
+    "2022": 38.0,
+    "2023": 38.0,
+    "2024": 38.0,
+    "2025": 38.0
+  },
   "aceitaEtanol": true,
   "fatorMaoDeObra": 1.0,
   "codigoFipe": "827104-6",
@@ -28,7 +37,7 @@
       "fim": 2025
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827104-6. Modelo: YBR 125i FACTOR ED/FLEX.",
-    "consumoNota": "Estimativa operacional para motor Blueflex 125cc em trânsito urbano com e sem baú; validar com fonte específica quando disponível.",
+    "consumoNota": "Referência profissional/intensa de 38 km/L registrada explicitamente para cada ano suportado de 2017 a 2025; validar com fonte específica por ano quando disponível.",
     "fontesLocais": [
       "outros/dados yamaha/factor-125-i-ubs-2024/fipe-factor-125i.md",
       "outros/dados yamaha/factor-125-i-ubs-2024/precos-pecas.md",
@@ -40,14 +49,12 @@
       "id": "oleo_motor",
       "nome": "Óleo do motor",
       "intervaloKm": 5000,
-      "intervaloKmEntrega": 1750,
       "intervaloMeses": 6,
       "precoOriginal": 57.98,
       "precoParalela": 55.30,
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
-        "intervaloKmNota": "As verificações devem ser efetuadas a cada 5.000 km ou 6 meses.",
-        "intervaloKmEntregaNota": "Uso severo (entregas RJ): antecipar para 1.500-2.000 km. Média: 1.750 km.",
+        "intervaloKmNota": "Referência profissional e revisão Yamaha: 5.000 km ou 6 meses.",
         "precoOriginalNota": "Média consolidada da tabela de peças originais: Yamalube 1L (R$ 59,90 / R$ 56,05). Cotação de troca simples completa registrada à parte: R$ 116,58.",
         "precoParalelaNota": "Apenas o litro do óleo Motul 5100 ou Mobil Super Moto Semissintético (sem mão de obra)."
       }
@@ -56,7 +63,6 @@
       "id": "filtro_oleo",
       "nome": "Filtro de óleo",
       "intervaloKm": 10000,
-      "intervaloKmEntrega": 10000,
       "intervaloMeses": 0,
       "precoOriginal": 29.43,
       "precoParalela": 19.08,
@@ -71,7 +77,6 @@
       "id": "filtro_combustivel",
       "nome": "Filtro de combustível",
       "intervaloKm": 15000,
-      "intervaloKmEntrega": 15000,
       "intervaloMeses": 0,
       "precoOriginal": 58.95,
       "precoParalela": 33.98,
@@ -86,7 +91,6 @@
       "id": "vela_ignicao",
       "nome": "Vela de ignição",
       "intervaloKm": 10000,
-      "intervaloKmEntrega": 10000,
       "intervaloMeses": 18,
       "precoOriginal": 46.27,
       "precoParalela": 26.49,
@@ -101,14 +105,12 @@
       "id": "filtro_ar",
       "nome": "Filtro de ar (tipo viscoso)",
       "intervaloKm": 15000,
-      "intervaloKmEntrega": 11000,
       "intervaloMeses": 24,
       "precoOriginal": 115.00,
       "precoParalela": 37.62,
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
-        "intervaloKmNota": "Inspecionar com mais frequência em áreas com muita poeira.",
-        "intervaloKmEntregaNota": "Devido à poluição urbana no RJ, a saturação do papel ocorre aos 11.000 km.",
+        "intervaloKmNota": "Referência profissional: 15.000 km. Inspecionar com mais frequência em áreas com muita poeira ou poluição.",
         "precoOriginalNota": "Genuíno Yamaha Y-TEQ.",
         "precoParalelaNota": "Marcas premium compatíveis (Tecfil, Fram)."
       }
@@ -116,15 +118,13 @@
     {
       "id": "kit_relacao",
       "nome": "Kit relação (corrente + coroa + pinhão)",
-      "intervaloKm": 30000,
-      "intervaloKmEntrega": 25000,
+      "intervaloKm": 25000,
       "intervaloMeses": 0,
       "precoOriginal": 194.08,
       "precoParalela": 101.68,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Manual: Ajustar e lubrificar a cada 500 km.",
-        "intervaloKmEntregaNota": "Kits com retentor rodam ~25.000 km nas entregas.",
+        "intervaloKmNota": "Referência profissional: 25.000 km. Manual: ajustar e lubrificar a cada 500 km.",
         "precoOriginalNota": "Kit Y-TEQ / D.I.D. Nota: Estimativa de Mão de Obra cobrada por fora na oficina é de R$ 220,00.",
         "precoParalelaNota": "Média do mercado paralelo."
       }
@@ -132,15 +132,13 @@
     {
       "id": "pastilha_freio_dianteiro",
       "nome": "Pastilha de freio dianteiro",
-      "intervaloKm": 15000,
-      "intervaloKmEntrega": 11500,
+      "intervaloKm": 10000,
       "intervaloMeses": 0,
       "precoOriginal": 68.60,
       "precoParalela": 32.77,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Manual: Trocar sempre que gastas até o limite.",
-        "intervaloKmEntregaNota": "Frenagem severa (para-e-anda) reduz o TTL. Mock: 11.500 km.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 10.000 km. Trocar ao atingir o limite de desgaste.",
         "precoOriginalNota": "Y-TEQ Original.",
         "precoParalelaNota": "Cobreq ou similar."
       }
@@ -148,8 +146,7 @@
     {
       "id": "disco_freio_dianteiro",
       "nome": "Disco de freio dianteiro",
-      "intervaloKm": 60000,
-      "intervaloKmEntrega": 50000,
+      "intervaloKm": 50000,
       "intervaloMeses": 0,
       "precoOriginal": 679.26,
       "precoParalela": 160.03,
@@ -163,15 +160,13 @@
     {
       "id": "sapata_freio_traseiro",
       "nome": "Sapata de freio traseiro",
-      "intervaloKm": 25000,
-      "intervaloKmEntrega": 20000,
+      "intervaloKm": 20000,
       "intervaloMeses": 0,
       "precoOriginal": 56.88,
       "precoParalela": 30.80,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Ajuste obrigatório a cada 5.000 km. Troca por desgaste no tambor.",
-        "intervaloKmEntregaNota": "Freio traseiro dura mais devido à menor carga estática.",
+        "intervaloKmNota": "Referência profissional: 20.000 km. Ajuste obrigatório a cada 5.000 km.",
         "precoOriginalNota": "Y-TEQ Original. Nota: Custo de Mão de Obra orçado por fora: R$ 70,00.",
         "precoParalelaNota": "Lona compatível Cobreq."
       }
@@ -192,15 +187,13 @@
     {
       "id": "kit_embreagem",
       "nome": "Kit embreagem (Discos, Platô, Cubo)",
-      "intervaloKm": 60000,
-      "intervaloKmEntrega": 40000,
+      "intervaloKm": 40000,
       "intervaloMeses": 0,
       "precoOriginal": 426.03,
       "precoParalela": 132.62,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Verificar o funcionamento e ajustar a cada 5.000 km.",
-        "intervaloKmEntregaNota": "Desgaste real (patinação) aos 40.000 km pelo excesso de trocas de marcha em ladeiras.",
+        "intervaloKmNota": "Referência profissional: 40.000 km. Verificar o funcionamento e ajustar a cada 5.000 km.",
         "precoOriginalNota": "Y-TEQ / FCC (completo).",
         "precoParalelaNota": "Magnetron, Scud."
       }
@@ -208,8 +201,7 @@
     {
       "id": "kit_cilindro",
       "nome": "Kit cilindro (Motor Superior)",
-      "intervaloKm": 150000,
-      "intervaloKmEntrega": 115000,
+      "intervaloKm": 115000,
       "intervaloMeses": 0,
       "precoOriginal": 358.98,
       "precoParalela": 234.84,
@@ -225,12 +217,12 @@
     {
       "id": "pneu_dianteiro",
       "posicao": "dianteiro",
-      "vidaUtilKm": 30000,
+      "vidaUtilKm": 22500,
       "precoOriginal": 288.07,
       "precoParalela": 118.97,
       "_fonte": {
         "especificacao": "2.75-18 ou 80/100-18 Tubeless",
-        "vidaUtilNota": "Base passeio/OEM: 30.000 km. Referência de rotina severa/entregas: 22.500 km; deve virar fator de uso, não campo paralelo.",
+        "vidaUtilNota": "Referência profissional direta: 22.500 km.",
         "precoOriginalNota": "Michelin Pilot Street 2, Levorin Dakar.",
         "precoParalelaNota": "Marcas genéricas asiáticas/nacionais."
       }
@@ -238,12 +230,12 @@
     {
       "id": "pneu_traseiro",
       "posicao": "traseiro",
-      "vidaUtilKm": 20000,
+      "vidaUtilKm": 15000,
       "precoOriginal": 311.41,
       "precoParalela": 128.35,
       "_fonte": {
         "especificacao": "90/90-18 Tubeless",
-        "vidaUtilNota": "Base passeio/OEM: 20.000 km. Referência de rotina severa/entregas: 15.000 km por torque, tração contínua e peso do baú; deve virar fator de uso, não campo paralelo.",
+        "vidaUtilNota": "Referência profissional direta: 15.000 km por torque e tração contínua.",
         "precoOriginalNota": "Metzeler ME Street, Levorin Matrix.",
         "precoParalelaNota": "Marcas de entrada."
       }

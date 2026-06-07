@@ -4,7 +4,7 @@
 >
 > Mantido pelo `modelador-dominio`. Atualizado a cada novo conceito.
 >
-> **Versão atual:** 2026-06-04 (v9) — sincronizado com o MVP de manutenção (TASK-REF-31 + pacote 32.x). Validado contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts`, `src/utils/itensManutencao.ts`, `src/utils/maoDeObraEstimada.ts` e os presets em `src/presets/*.json`.
+> **Versão atual:** 2026-06-06 (v10) — fonte explícita da vida útil (TASK-REF-42). Validado contra `src/types/perfil.ts`, `src/types/calculos.ts`, `src/utils/calculos.ts`, `src/utils/servicosManutencaoPreset.ts` e os presets em `src/presets/*.json`.
 > **Documentos de requisitos ativos:** `docs/requisitos/funcionais.md`, `docs/requisitos/nao-funcionais.md` e `docs/requisitos/regras-negocio.md`.
 
 ---
@@ -138,12 +138,10 @@ Quando um serviço avulso ativo está `nao_informado` e sem estimativa, o cálcu
 
 Tipo: `'original' | 'paralela'`. Define se o Motoboy compra peças originais (mais caras, vida útil maior) ou paralelas. É **global** via `perfil.perfilManutencao.perfilPecasGlobal`. Override por peça existe em `pecasOverrides[]` apenas para **preço** (campos `precoEditadoOriginal` e `precoEditadaParalela`) - o perfil ativo (original ou paralela) é único para todas as peças.
 
-### Perfil de Uso (`PerfilUso`)
+### Referência Profissional
 
-Tipo: `'entrega' | 'passageiro'`. Define como a moto é usada:
-
-- **`entrega`:** entregador com baú/caixa. Usa `consumoKmLComBau` (consumo menor por causa do baú).
-- **`passageiro`:** transporte de passageiros (Uber Moto, etc). Hoje usa o consumo/intervalo base; o desgaste extra esperado em pneus, freios e suspensão está registrado como DT-18.
+Conjunto inicial de consumo e vida útil voltado ao uso profissional e intenso. Não é um perfil
+automático: o usuário ajusta consumo, rodagem, preços e intervalos conforme a própria realidade.
 
 ### Situação da Moto (`SituacaoMoto`)
 
@@ -224,7 +222,10 @@ Estrutura usada **internamente nos cálculos** para decidir quais categorias ent
 
 ### Peça
 
-Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`, `intervaloKm` (manual da Honda), `intervaloKmEntrega` (real para motoboy, geralmente menor), `precoOriginal`, `precoParalela`, `incluidoNaRevisaoAutorizada` (se a peça é trocada nas revisões periódicas Honda - ver Modo de Revisão e INV-CALC-3). Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
+Item de manutenção mecânica em `PresetMoto.pecas[]`. Cada Peça tem: `id`, `nome`,
+`intervaloKm` (fallback profissional único), `precoOriginal`, `precoParalela` e
+`incluidoNaRevisaoAutorizada` (se a peça é trocada nas revisões periódicas da marca - ver Modo de
+Revisão e INV-CALC-3). Exemplos de IDs: `oleo_motor`, `kit_relacao`, `vela_ignicao`, `filtro_ar`.
 
 ### Pneu
 
@@ -232,9 +233,10 @@ Tratado separadamente das peças no Preset JSON, em `PresetMoto.pneus[]`. Tem: `
 
 ### Vida Útil
 
-Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. Para Peças: `intervaloKm` ou `intervaloKmEntrega` (do Preset JSON). Para Pneus: `vidaUtilKm`.
+Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. O preset mantém uma única
+referência profissional de fallback: `intervaloKm` para Peças e `vidaUtilKm` para Pneus.
 
-**Fonte canônica do intervalo (convenção ADR-014):** a vida útil / intervalo de troca **mora no serviço** (aba Mão de Obra); **Insumos informa apenas o preço da peça, sem vida útil**. O intervalo realista do serviço é **sincronizado com a revisão fixa da marca mais próxima** (Honda ×6.000, Yamaha ×5.000; empate → arredonda para baixo), porque o avulso é executado junto de uma revisão. Excepcionais (pneu Yamaha, retíficas) usam a vida útil direta. A aba Insumos exibe o intervalo efetivo somente leitura. Prioridade de resolução: override de peça → serviço editado → preset (INV-VIDA-UTIL-1). ⚠️ A unificação peça↔serviço hoje depende de o default global estar defasado vs. o preset — fragilidade registrada na **DT-19**.
+**Fonte canônica do intervalo (convenção ADR-014):** a vida útil / intervalo de troca **mora no serviço** (aba Mão de Obra); **Insumos informa apenas o preço da peça, sem vida útil**. O intervalo realista do serviço é **sincronizado com a revisão fixa da marca mais próxima** (Honda ×6.000, Yamaha ×5.000; empate → arredonda para baixo), porque o avulso é executado junto de uma revisão. Excepcionais (pneu Yamaha, retíficas) usam a vida útil direta. A aba Insumos exibe o intervalo efetivo somente leitura. Prioridade de resolução: override de peça → serviço efetivo → fallback do preset. O preset fornece a base e uma edição consciente vence por `intervaloKmInformadoUsuario` (INV-VIDA-UTIL-1).
 
 **Ciclo de troca e km da última troca (RF-6.7):** quando o Motoboy informa o km da última troca de um item no card "Últimas manutenções" (`moto.kmUltimaTrocas`), o cálculo ancora o ciclo nesse km. `CustoPeca.trocasNoAno` passa a contar as trocas dos próximos 12 meses a partir do ponto real do ciclo, e `custoAnual = trocasNoAno × preço`. Sem o km informado, usa o valor amortizado (`trocasNoAno = kmAnual / intervalo`).
 
@@ -301,7 +303,9 @@ Atualizado anualmente (licenciamento/aliquotas) e mensalmente (combustível).
 
 ### Catálogo de Modelos
 
-Lista de modelos suportados no onboarding, definida em `src/data/catalogoModelos.ts`. Cada entrada informa marca, nome de exibição, nome FIPE e consumo (com e sem baú). É usada para inicializar autonomias no `COMMIT_ONBOARDING`.
+Lista de modelos suportados no onboarding, definida em `src/data/catalogoModelos.ts`. Cada entrada
+informa marca, nome de exibição, nome FIPE e o mapa de consumo profissional por ano. É usada para
+inicializar a autonomia no `COMMIT_ONBOARDING`; ano sem consumo explícito não é aceito.
 
 ### Service Worker / PWA
 
@@ -351,3 +355,4 @@ Listados aqui para evitar confusão com termos de domínio:
 | 2026-05-22 (v7) | Vida Útil | Ciclo de troca ancorado no km da última troca; `CustoPeca.trocasNoAno` | TASK-RF-6.7 (ADR-006) |
 | 2026-05-24 (v8) | Modo de Exibição, Diário de Trabalho, Histórico de Manutenção | **Termos eliminados** - conceitos removidos pelas TASK-REF-18/REF-19 (ADR-003, modo único, sem Registros). `Perfil de Peças` atualizado (`perfilPecasOverride` por peça não existe mais). `Categoria Display` ganhou `imprevistos`. Override ganhou nota sobre modo único. | TASK-DOC-009 |
 | 2026-06-04 (v9) | Serviço Independente, Modo de Revisão, Vida Útil + **8 termos novos** | `ServicoIndependente` corrigido (`precoIndependente`, `precoTotalAutorizada`, `statusPrecoAutorizada`, `concessionariaIncluiPeca`, `incluidoNaRevisaoAutorizada`). Adicionados: Serviços de Manutenção do Preset, Status do Preço Autorizado, Concessionária Inclui Peça, Estimativa de M.O. (~), Fator de M.O., Item-componente, MAPA_PECA_PARA_SERVICO, Custo Incompleto. Nota MVP (autorizadas) e convenção de intervalo (ADR-014) + DT-19. | TASK-DOC-014 |
+| 2026-06-06 (v10) | Vida Útil | Serviço efetivo virou fonte canônica explícita; edição do usuário é marcada por `intervaloKmInformadoUsuario` e a DT-19 foi encerrada. | TASK-REF-42 |

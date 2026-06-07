@@ -3,7 +3,6 @@ import {
   resolverKmDia,
   calcularKmAnual,
   calcularDiasAno,
-  resolverConsumoEfetivo,
   calcularCpkCombustivel,
   resolverIntervaloPeca,
   resolverPrecoPeca,
@@ -32,6 +31,7 @@ import {
   MAPA_PECA_PARA_SERVICO,
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
+import { obterConsumoKmLPorAno } from '../data/catalogoModelos';
 import pop110i from '../presets/pop110i.json';
 import factor125i from '../presets/factor125i.json';
 import type {
@@ -47,6 +47,7 @@ import type { PresetMoto, CustosPorCategoria, FiltrosCategorias, DadosRJ } from 
 // 'dianteiro' | 'traseiro'. Cast único aqui (mesmo padrão da produção, que
 // tipa os presets carregados via import.meta.glob). Ver TASK-BG-016.
 const presetPop110i = pop110i as PresetMoto;
+const presetFactor125i = factor125i as PresetMoto;
 
 // ─── Fixtures ────────────────────────────────────────────────────
 
@@ -54,14 +55,12 @@ const itensSubstituidosMock = ['Óleo Pro Honda 10w30'];
 const servicosExecutadosMock = [{ categoria: 'Ajuste', servicos: ['Corrente de Transmissão'] }];
 
 const presetMock: PresetMoto = {
-  consumoKmL: 36,
-  consumoKmLComBau: 33,
+  consumoKmLPorAno: { '2024': 36 },
   pecas: [
     {
       id: 'oleo_motor',
       nome: 'Óleo do motor',
       intervaloKm: 6000,
-      intervaloKmEntrega: 1250,
       precoOriginal: 40,
       precoParalela: 23,
       incluidoNaRevisaoAutorizada: true,
@@ -70,7 +69,6 @@ const presetMock: PresetMoto = {
       id: 'vela_ignicao',
       nome: 'Vela de ignição',
       intervaloKm: 12000,
-      intervaloKmEntrega: 12000,
       precoOriginal: 82,
       precoParalela: 29,
       incluidoNaRevisaoAutorizada: true,
@@ -79,7 +77,6 @@ const presetMock: PresetMoto = {
       id: 'kit_relacao',
       nome: 'Kit relação',
       intervaloKm: 15000,
-      intervaloKmEntrega: 18000,
       precoOriginal: 230,
       precoParalela: 82,
       incluidoNaRevisaoAutorizada: false,
@@ -208,18 +205,6 @@ describe('calcularDiasAno', () => {
   });
 });
 
-// ─── II. Consumo ─────────────────────────────────────────────────
-
-describe('resolverConsumoEfetivo', () => {
-  it('retorna consumo com baú quando usaBau=true', () => {
-    expect(resolverConsumoEfetivo(presetMock, true)).toBe(33);
-  });
-
-  it('retorna consumo sem baú quando usaBau=false', () => {
-    expect(resolverConsumoEfetivo(presetMock, false)).toBe(36);
-  });
-});
-
 describe('calcularCpkCombustivel', () => {
   it('divide preço pelo consumo (R$/km)', () => {
     expect(calcularCpkCombustivel(6.61, 33)).toBeCloseTo(0.2003, 3);
@@ -236,17 +221,12 @@ describe('calcularCpkCombustivel', () => {
 // ─── III. CPK por Peça ───────────────────────────────────────────
 
 describe('resolverIntervaloPeca', () => {
-  it('usa intervaloKmEntrega para tipoUso entrega', () => {
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega')).toBe(1250);
+  it('usa o intervalo profissional do preset', () => {
+    expect(resolverIntervaloPeca('oleo_motor', presetMock)).toBe(6000);
   });
 
-  it('usa intervaloKm para tipoUso passageiro', () => {
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'passageiro')).toBe(6000);
-  });
-
-  it('usa vidaUtilKm para pneus (igual para entrega e passageiro)', () => {
-    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega')).toBe(16000);
-    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'passageiro')).toBe(16000);
+  it('usa vidaUtilKm para pneus', () => {
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock)).toBe(16000);
   });
 
   it('usa override.intervaloKmEditado quando presente', () => {
@@ -258,7 +238,7 @@ describe('resolverIntervaloPeca', () => {
         intervaloKmEditado: 2500,
       },
     ];
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', overrides)).toBe(2500);
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, overrides)).toBe(2500);
   });
 
   it('override.intervaloKmEditado tem prioridade sobre serviço vinculado', () => {
@@ -283,17 +263,15 @@ describe('resolverIntervaloPeca', () => {
       },
     ];
 
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', overrides, servicos)).toBe(
-      2500,
-    );
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, overrides, servicos)).toBe(2500);
   });
 
-  it('serviço mapeado EDITADO (≠ default) sobrepõe o intervalo do preset (DT-15 / Decisão C)', () => {
+  it('serviço mapeado é a fonte canônica do intervalo da peça', () => {
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-oleo',
         nome: 'Troca de óleo',
-        intervalKm: 2000, // editado: o default de troca-oleo é 3000
+        intervalKm: 2000,
         precoIndependente: 25,
         precoTotalAutorizada: 0,
         incluidoNaRevisaoAutorizada: true,
@@ -301,15 +279,15 @@ describe('resolverIntervaloPeca', () => {
         ehExcepcional: false,
       },
     ];
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], servicos)).toBe(2000);
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, [], servicos)).toBe(2000);
   });
 
-  it('serviço mapeado no valor DEFAULT não sobrepõe - usa o preset entrega (Decisão C)', () => {
+  it('serviço mapeado permanece canônico quando coincide com o antigo default global', () => {
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-oleo',
         nome: 'Troca de óleo',
-        intervalKm: 3000, // = default de troca-oleo → considerado não editado
+        intervalKm: 3000,
         precoIndependente: 25,
         precoTotalAutorizada: 0,
         incluidoNaRevisaoAutorizada: true,
@@ -317,8 +295,7 @@ describe('resolverIntervaloPeca', () => {
         ehExcepcional: false,
       },
     ];
-    // entrega: cai no preset (intervaloKmEntrega 1250), não nos 3000 do serviço default
-    expect(resolverIntervaloPeca('oleo_motor', presetMock, 'entrega', [], servicos)).toBe(1250);
+    expect(resolverIntervaloPeca('oleo_motor', presetMock, [], servicos)).toBe(3000);
   });
 
   it('usa ServicoIndependente.intervalKm mapeado para pneus', () => {
@@ -334,10 +311,10 @@ describe('resolverIntervaloPeca', () => {
         ehExcepcional: false,
       },
     ];
-    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], servicos)).toBe(9000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, [], servicos)).toBe(9000);
   });
 
-  it('ignora ServicoIndependente mapeado inativo e cai no preset', () => {
+  it('usa a vida útil do serviço inativo porque ativo controla custo, não desgaste', () => {
     const servicos: ServicoIndependente[] = [
       {
         id: 'troca-pneu-traseiro',
@@ -350,7 +327,7 @@ describe('resolverIntervaloPeca', () => {
         ehExcepcional: false,
       },
     ];
-    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, 'entrega', [], servicos)).toBe(16000);
+    expect(resolverIntervaloPeca('pneu_traseiro', presetMock, [], servicos)).toBe(9000);
   });
 });
 
@@ -385,7 +362,6 @@ describe('calcularCpkPorPeca', () => {
   it('inclui peças e pneus no mapa de saída', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -396,23 +372,21 @@ describe('calcularCpkPorPeca', () => {
     expect(resultado.has('pneu_traseiro')).toBe(true);
   });
 
-  it('cpk do óleo para entrega com peça paralela: 23/1250', () => {
+  it('cpk do óleo usa a referência profissional única: 23/6000', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 7280,
     });
-    expect(resultado.get('oleo_motor')!.cpk).toBeCloseTo(23 / 1250, 5);
+    expect(resultado.get('oleo_motor')!.cpk).toBeCloseTo(23 / 6000, 5);
   });
 
   it('custoAnual = cpk × kmAnual', () => {
     const kmAnual = 7280;
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -425,7 +399,6 @@ describe('calcularCpkPorPeca', () => {
   it('fonte = preset quando predefinidos', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -445,7 +418,6 @@ describe('calcularCpkPorPeca', () => {
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -460,7 +432,6 @@ describe('calcularCpkPorPeca', () => {
     const kmAnual = 10_000;
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'original',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -489,7 +460,6 @@ describe('calcularCpkPecasTotal', () => {
   it('soma todos os cpks do mapa', () => {
     const mapa = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'original',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -1573,6 +1543,101 @@ describe('calcularResultado - CPK sem alimentação', () => {
   });
 });
 
+describe('calcularCustosPorCategoria - coerência do cache FIPE', () => {
+  const dadosRJMock: DadosRJ = {
+    ipva: { aliquotaMotos: 0.02, isencaoIdadeMinimaMeses: 0 },
+    licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
+  };
+  const perfilComFipe = {
+    ...perfilPadrao,
+    moto: {
+      ...perfilPadrao.moto,
+      marca: 'Honda',
+      modelo: 'pop110i',
+      ano: 2024,
+    },
+    fipeCache: {
+      valor: 10000,
+      codigoFipe: '811132-4',
+      dataConsulta: '2026-06-06',
+      anoModelo: 2024,
+      marca: 'Honda',
+      modelo: 'pop110i',
+    },
+  };
+
+  it('usa FIPE quando marca, modelo e ano coincidem com a moto atual', () => {
+    const resultado = calcularCustosPorCategoria(perfilComFipe, presetMock, dadosRJMock);
+
+    expect(resultado.documentos.detalhes.ipva).toBe(200);
+  });
+
+  it('ignora FIPE de outro ano para não calcular IPVA com cache obsoleto', () => {
+    const resultado = calcularCustosPorCategoria(
+      {
+        ...perfilComFipe,
+        fipeCache: { ...perfilComFipe.fipeCache, anoModelo: 2023 },
+      },
+      presetMock,
+      dadosRJMock,
+    );
+
+    expect(resultado.documentos.detalhes.ipva).toBe(0);
+  });
+});
+
+describe('calcularCustosPorCategoria - baseline de combustível profissional (DT-18 / TASK-REF-41.2)', () => {
+  const dadosRJMock: DadosRJ = {
+    ipva: { aliquotaMotos: 0.02, isencaoIdadeMinimaMeses: 0 },
+    licenciamento: { tabela: {} },
+    autonomiaEtanolFatorReducao: 0.78,
+  };
+
+  // Pop 110i 2024: a TASK-REF-41.2 re-caracterizou o consumo profissional de 33 → 54 km/L
+  // (fonte no preset). O custo de combustível só depende da autonomia gravada no perfil,
+  // do preço e do km anual. Este baseline fixa o valor em reais para flagrar qualquer
+  // mudança silenciosa futura de consumo ou preço.
+  function perfilPopCom(autonomia: number): PerfilUsuario {
+    return {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, marca: 'Honda', modelo: 'pop110i', ano: 2024 },
+      // 100 km/dia × 6 dias × 52 = 31.200 km/ano
+      trabalho: { ...perfilPadrao.trabalho, kmPorDia: 100, diasPorSemana: 6 },
+      financeiro: {
+        ...perfilPadrao.financeiro,
+        tipoGasolinaPreferida: 'comum',
+        combustiveis: {
+          ...perfilPadrao.financeiro.combustiveis,
+          comum: { preco: 5.4, autonomia },
+        },
+      },
+    };
+  }
+
+  it('a referência viva de consumo do Pop 2024 é 54 km/L (não o antigo 33)', () => {
+    expect(obterConsumoKmLPorAno('pop110i', 2024)).toBe(54);
+  });
+
+  it('custo anual de combustível do Pop 2024 reflete 54 km/L', () => {
+    const resultado = calcularCustosPorCategoria(perfilPopCom(54), presetPop110i, dadosRJMock);
+
+    // R$ 5,40 ÷ 54 km/L = R$ 0,10/km × 31.200 km = R$ 3.120,00/ano
+    expect(resultado.combustivel.total).toBeCloseTo(3120, 2);
+  });
+
+  it('o consumo profissional (54) custa menos que o antigo 33 km/L', () => {
+    const com54 = calcularCustosPorCategoria(perfilPopCom(54), presetPop110i, dadosRJMock)
+      .combustivel.total;
+    const com33 = calcularCustosPorCategoria(perfilPopCom(33), presetPop110i, dadosRJMock)
+      .combustivel.total;
+
+    expect(com54).toBeLessThan(com33);
+    // R$ 5,40 ÷ 33 km/L ≈ R$ 0,16364/km × 31.200 km ≈ R$ 5.105,45/ano
+    expect(com33).toBeCloseTo(5105.45, 2);
+  });
+});
+
 describe('calcularCustosPorCategoria - revisaoAutorizadaOverrides', () => {
   const dadosRJMock: DadosRJ = {
     ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
@@ -1677,7 +1742,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
   it('modo autorizado: exclui peças cobertas pela revisão Honda (óleo, vela)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -1690,7 +1754,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
   it('modo autorizado: mantém peças fora da revisão (kit relação) e pneus', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -1703,7 +1766,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
   it('modo independente: mantém todas as peças, inclusive as cobertas pela revisão', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -1735,7 +1797,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -1762,7 +1823,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -1791,7 +1851,6 @@ describe('calcularCpkPorPeca - exclusão de peças no modo autorizado', () => {
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -1935,7 +1994,6 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
     // pneu_traseiro: intervalo 16.000, preço paralela 137; última troca 10.000 → 1 troca no ano
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 13000,
@@ -1954,7 +2012,6 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
   it('peça sem km informado mantém custo amortizado', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 13000,
@@ -1971,7 +2028,6 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
   it('kmUltimaTrocas omitido equivale a tudo zero (fallback amortizado)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetMock,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 13000,
@@ -1999,10 +2055,9 @@ describe('calcularCpkPorPeca - kmUltimaTrocas alimenta o ciclo (RF-6.7)', () => 
       },
     };
     // perfilPadrao: 70 km/dia × 5 dias × 52 = 18.200 km/ano.
-    // troca-pneu-traseiro está no valor default (não editado) → o intervalo vem do preset
-    // (vidaUtilKm 16.000), não do serviço (Decisão C da revisão da REF-29).
+    // O serviço vinculado é canônico: 10.000 + 15.000 = próxima troca em 25.000 km.
     const resultado = calcularCustosPorCategoria(perfil, presetMock, dadosRJ);
-    expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(26000);
+    expect(resultado.manutencao.detalhes.get('pneu_traseiro')!.proximaTrocaKm).toBe(25000);
   });
 });
 
@@ -2027,7 +2082,6 @@ describe('TASK-RF-6.14 - bateria com driver temporal', () => {
   it('bateria com intervaloMeses=24 deriva trocasNoAno do tempo (0,5/ano)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComBateria,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -2044,7 +2098,6 @@ describe('TASK-RF-6.14 - bateria com driver temporal', () => {
   it('bateria com kmAnual=0 ainda gera custoAnual e cpk=0 (sem divisão por zero)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComBateria,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -2065,7 +2118,6 @@ describe('TASK-RF-6.14 - kit revisão (incluido na revisão autorizada)', () => 
         id: 'kit_revisao',
         nome: 'Kit revisão',
         intervaloKm: 6000,
-        intervaloKmEntrega: 6000,
         precoOriginal: 152.83,
         precoParalela: 102.93,
         incluidoNaRevisaoAutorizada: true,
@@ -2076,7 +2128,6 @@ describe('TASK-RF-6.14 - kit revisão (incluido na revisão autorizada)', () => 
   it('modo autorizado: kit_revisao não aparece (já no pacote Honda)', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComKitRevisao,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -2088,7 +2139,6 @@ describe('TASK-RF-6.14 - kit revisão (incluido na revisão autorizada)', () => 
   it('modo independente: kit_revisao entra no CPK como peça cíclica regular', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComKitRevisao,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -2110,7 +2160,6 @@ describe('TASK-RF-6.14 - kit cilindro como peça cíclica regular', () => {
         id: 'kit_cilindro',
         nome: 'Kit cilindro',
         intervaloKm: 100000,
-        intervaloKmEntrega: 100000,
         precoOriginal: 360.83,
         precoParalela: 163.31,
         incluidoNaRevisaoAutorizada: false,
@@ -2121,7 +2170,6 @@ describe('TASK-RF-6.14 - kit cilindro como peça cíclica regular', () => {
   it('kit_cilindro entra no CPK com intervaloKm=100000', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComKitCilindro,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
@@ -2143,7 +2191,6 @@ describe('TASK-RF-6.14 - modo autorizado soma precoTotalAutorizada de troca-kit-
           id: 'kit_embreagem',
           nome: 'Kit embreagem',
           intervaloKm: 40000,
-          intervaloKmEntrega: 40000,
           precoOriginal: 300.33,
           precoParalela: 68,
           incluidoNaRevisaoAutorizada: false,
@@ -2164,7 +2211,6 @@ describe('TASK-RF-6.14 - modo autorizado soma precoTotalAutorizada de troca-kit-
     ];
     const resultado = calcularCpkPorPeca({
       preset: presetComKitEmbreagem,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'autorizadas',
       kmAtual: 0,
@@ -2183,7 +2229,6 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   it('campos zerados mantêm custo amortizado para peças de vida útil longa', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetPop110i,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual,
@@ -2191,11 +2236,11 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
       kmUltimaTrocas: kmUltimaTrocasVazio,
     });
 
-    expect(resultado.get('kit_embreagem')?.custoAnual).toBeCloseTo((68 / 40000) * kmAnual, 2);
-    expect(resultado.get('kit_cilindro')?.custoAnual).toBeCloseTo((163.31 / 100000) * kmAnual, 2);
+    expect(resultado.get('kit_embreagem')?.custoAnual).toBeCloseTo((68 / 42000) * kmAnual, 2);
+    expect(resultado.get('kit_cilindro')?.custoAnual).toBeCloseTo((163.31 / 102000) * kmAnual, 2);
     expect(resultado.get('kit_revisao')?.custoAnual).toBeCloseTo((102.93 / 6000) * kmAnual, 2);
-    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo((29 / 12000) * kmAnual, 2);
-    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo((19 / 12000) * kmAnual, 2);
+    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo((29 / 6000) * kmAnual, 2);
+    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo((19 / 6000) * kmAnual, 2);
     expect(resultado.get('sapata_freio_dianteiro')?.custoAnual).toBeCloseTo(
       (17 / 12000) * kmAnual,
       2,
@@ -2209,7 +2254,6 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   it('campos preenchidos usam eventos inteiros na janela de 12 meses', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetPop110i,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual,
@@ -2229,12 +2273,12 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
     expect(resultado.get('kit_embreagem')?.custoAnual).toBeCloseTo(68, 2);
     expect(resultado.get('kit_cilindro')?.trocasNoAno).toBe(1);
     expect(resultado.get('kit_cilindro')?.custoAnual).toBeCloseTo(163.31, 2);
-    expect(resultado.get('vela_ignicao')?.trocasNoAno).toBe(2);
-    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo(29 * 2, 2);
+    expect(resultado.get('vela_ignicao')?.trocasNoAno).toBe(3);
+    expect(resultado.get('vela_ignicao')?.custoAnual).toBeCloseTo(29 * 3, 2);
     expect(resultado.get('vela_ignicao')?.modo).toBe('ancorado');
-    expect(resultado.get('vela_ignicao')?.kmDasProximasTrocas).toEqual([96000, 108000]);
-    expect(resultado.get('filtro_ar')?.trocasNoAno).toBe(2);
-    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo(19 * 2, 2);
+    expect(resultado.get('vela_ignicao')?.kmDasProximasTrocas).toEqual([96000, 102000, 108000]);
+    expect(resultado.get('filtro_ar')?.trocasNoAno).toBe(3);
+    expect(resultado.get('filtro_ar')?.custoAnual).toBeCloseTo(19 * 3, 2);
     expect(resultado.get('sapata_freio_dianteiro')?.trocasNoAno).toBe(2);
     expect(resultado.get('sapata_freio_dianteiro')?.custoAnual).toBeCloseTo(17 * 2, 2);
     expect(resultado.get('sapata_freio_traseiro')?.trocasNoAno).toBe(2);
@@ -2244,7 +2288,6 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   it('kit_revisao ignora kmUltimaTrocas legado e segue automático no ciclo independente', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetPop110i,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual,
@@ -2263,7 +2306,6 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   it('bateria com km informado continua usando driver temporal', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetPop110i,
-      tipoUso: 'entrega',
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual,
@@ -2343,6 +2385,37 @@ describe('MAPA_PECA_PARA_SERVICO', () => {
       expect(idsPecasEPneus.has(pecaId)).toBe(true);
     }
   });
+
+  it.each([
+    ['Pop 110i', presetPop110i],
+    ['Factor 125i', presetFactor125i],
+  ] as const)(
+    'mantém os fallbacks profissionais de %s alinhados aos serviços do preset',
+    (_nome, preset) => {
+      const servicos = new Map(
+        (preset.servicosManutencao ?? []).map((servico) => [servico.id, servico.intervalKm]),
+      );
+      const componentes = [...preset.pecas, ...preset.pneus];
+
+      for (const componente of componentes) {
+        const servicoId = MAPA_PECA_PARA_SERVICO[componente.id];
+        const intervaloServico = servicos.get(servicoId);
+        if (intervaloServico === undefined) continue;
+
+        if ('intervaloMeses' in componente && componente.intervaloKm === undefined) {
+          expect(componente.intervaloMeses).toBeGreaterThan(0);
+          expect(intervaloServico, `${componente.id} deve permanecer temporal`).toBe(0);
+          continue;
+        }
+
+        const intervaloFallback =
+          'vidaUtilKm' in componente ? componente.vidaUtilKm : componente.intervaloKm;
+        expect(intervaloFallback, `${componente.id} deve acompanhar ${servicoId}`).toBe(
+          intervaloServico,
+        );
+      }
+    },
+  );
 
   it('mapeia sapatas dianteira e traseira para os serviços de troca correspondentes (ADR-007)', () => {
     expect(MAPA_PECA_PARA_SERVICO['sapata_freio_dianteiro']).toBe('troca-sapata-dianteira');

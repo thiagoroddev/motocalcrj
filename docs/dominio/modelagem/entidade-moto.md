@@ -19,7 +19,6 @@ moto: {
   marca: string;
   modelo: string;
   ano: number;
-  perfilUso: PerfilUso; // 'entrega' | 'passageiro'
   kmAtual: number;
   kmUltimaRevisao: number | null;
 }
@@ -61,7 +60,8 @@ moto: {
 ## Relacionamentos
 
 - `moto.modelo` referencia um preset tecnico em `src/presets/*.json`.
-- `moto.perfilUso` determina qual consumo do preset e usado (`consumoKmL` vs `consumoKmLComBau`).
+- `moto.ano` seleciona dados que variam por ano, como consumo e tabelas de revisão autorizada.
+- Peças, pneus e serviços avulsos permanecem compartilhados entre os anos do mesmo modelo.
 
 ---
 

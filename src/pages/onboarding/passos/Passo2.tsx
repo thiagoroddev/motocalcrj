@@ -57,7 +57,7 @@ export function Passo2() {
           >
             <p className="text-foreground font-semibold">{modelo.nome}</p>
             <p className="text-muted-foreground text-xs mt-1">
-              {modelo.consumoKmL} km/L · {modelo.consumoKmLComBau} km/L com baú
+              Consumo profissional definido pelo ano
             </p>
           </Button>
         ))}

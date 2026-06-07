@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dadosLocaisSchema } from '../schemas/dadosLocaisSchema';
 import { presetMotoCatalogoSchema } from '../schemas/presetSchema';
-import { CATALOGO } from './catalogoModelos';
+import { CATALOGO, obterConsumoKmLPorAno } from './catalogoModelos';
 import dadosRJJson from './dados_rj.json';
 import { PRESETS } from './repositorioPresets';
 
@@ -51,11 +51,49 @@ describe('catalogoModelos - presets', () => {
         nomeFipe: preset.nomeFipe,
         codigoFipe: preset.codigoFipe,
         tabelaFipe: preset.tabelaFipe,
-        consumoKmL: preset.consumoKmL,
-        consumoKmLComBau: preset.consumoKmLComBau,
+        consumoKmLPorAno: preset.consumoKmLPorAno,
         aceitaEtanol: preset.aceitaEtanol,
       });
     }
+  });
+
+  it('publica a referência profissional explícita por modelo e ano', () => {
+    expect(obterConsumoKmLPorAno('pop110i', 2016)).toBe(54);
+    expect(obterConsumoKmLPorAno('pop110i', 2024)).toBe(54);
+    expect(obterConsumoKmLPorAno('pop110i', 2025)).toBe(49.1);
+    expect(obterConsumoKmLPorAno('pop110i', 2026)).toBeUndefined();
+    expect(obterConsumoKmLPorAno('factor125i', 2017)).toBe(38);
+    expect(obterConsumoKmLPorAno('factor125i', 2025)).toBe(38);
+
+    const intervalos = (modelo: keyof typeof PRESETS) =>
+      Object.fromEntries(
+        (PRESETS[modelo].servicosManutencao ?? []).map((servico) => [
+          servico.id,
+          servico.intervalKm,
+        ]),
+      );
+
+    expect(intervalos('pop110i')).toMatchObject({
+      'troca-oleo': 3000,
+      'troca-kit-transmissao': 18000,
+      'troca-pneu-dianteiro': 24000,
+      'troca-pneu-traseiro': 18000,
+      'troca-sapata-dianteira': 12000,
+      'troca-sapata-traseira': 12000,
+      'troca-kit-embreagem': 42000,
+      'troca-kit-cilindro': 102000,
+    });
+    expect(intervalos('factor125i')).toMatchObject({
+      'troca-oleo': 5000,
+      'troca-kit-transmissao': 25000,
+      'troca-pneu-dianteiro': 22500,
+      'troca-pneu-traseiro': 15000,
+      'troca-pastilha-dianteira': 10000,
+      'troca-disco-dianteiro': 50000,
+      'troca-sapata-traseira': 20000,
+      'troca-kit-embreagem': 40000,
+      'troca-kit-cilindro': 115000,
+    });
   });
 
   it('mantém a política de pneus avulsos por marca no MVP', () => {

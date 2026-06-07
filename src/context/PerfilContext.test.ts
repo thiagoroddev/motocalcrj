@@ -105,6 +105,40 @@ describe('perfilReducer', () => {
     expect(resultado.presetAtivoId).toBe(resultado.presets[0].presetId);
   });
 
+  it('COMMIT_ONBOARDING aplica 54 km/L à Pop 2024', () => {
+    const estadoComDados: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({ moto: { ano: 2024 } }),
+    };
+
+    const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(54);
+  });
+
+  it('COMMIT_ONBOARDING aplica 49,1 km/L à Pop 2025', () => {
+    const estadoComDados: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({ moto: { ano: 2025 } }),
+    };
+
+    const resultado = perfilReducer(estadoComDados, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(49.1);
+    expect(resultado.perfil.financeiro.combustiveis.aditivada.autonomia).toBe(49.1);
+  });
+
+  it('COMMIT_ONBOARDING rejeita ano sem referência de consumo', () => {
+    const estadoComAnoInvalido: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({ moto: { ano: 2026 } }),
+    };
+
+    const resultado = perfilReducer(estadoComAnoInvalido, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado).toBe(estadoComAnoInvalido);
+  });
+
   it('COMMIT_ONBOARDING ativa categoriasAtivas com base nas respostas', () => {
     const estadoComDados: EstadoApp = {
       ...estadoVazio,
@@ -159,6 +193,76 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.onboardingConcluido).toBe(false);
     expect(resultado.presets).toHaveLength(0);
     expect(resultado.presetAtivoId).toBeNull();
+  });
+
+  it('SET_ANO_MOTO reaplica a autonomia padrão do novo ano', () => {
+    const estado2024: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido({
+        financeiro: {
+          combustiveis: {
+            ...perfilPadrao.financeiro.combustiveis,
+            comum: {
+              ...perfilPadrao.financeiro.combustiveis.comum,
+              autonomia: 60,
+            },
+          },
+        },
+      }),
+    };
+
+    const resultado = perfilReducer(estado2024, { type: 'SET_ANO_MOTO', ano: 2025 });
+
+    expect(resultado.perfil.moto.ano).toBe(2025);
+    expect(resultado.perfil.financeiro.combustiveis.comum.autonomia).toBe(49.1);
+    expect(resultado.perfil.financeiro.combustiveis.aditivada.autonomia).toBe(49.1);
+  });
+
+  it('SET_ANO_MOTO limpa FIPE anterior quando o novo ano não possui valor', () => {
+    const estado2024: EstadoApp = {
+      ...estadoVazio,
+      perfil: {
+        ...criarPerfilValido(),
+        fipeCache: {
+          valor: 12126,
+          codigoFipe: '811132-4',
+          dataConsulta: '2026-06-06',
+          anoModelo: 2024,
+          marca: 'Honda',
+          modelo: 'pop110i',
+        },
+      },
+    };
+
+    const resultado = perfilReducer(estado2024, { type: 'SET_ANO_MOTO', ano: 2025 });
+
+    expect(resultado.perfil.fipeCache).toBeNull();
+  });
+
+  it('SET_ANO_MOTO atualiza a FIPE quando o novo ano possui valor', () => {
+    const estado2024: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido(),
+    };
+
+    const resultado = perfilReducer(estado2024, { type: 'SET_ANO_MOTO', ano: 2023 });
+
+    expect(resultado.perfil.fipeCache).toMatchObject({
+      valor: 11802,
+      codigoFipe: '811132-4',
+      anoModelo: 2023,
+      marca: 'Honda',
+      modelo: 'pop110i',
+    });
+  });
+
+  it('SET_ANO_MOTO rejeita ano sem referência de consumo', () => {
+    const estado2024: EstadoApp = {
+      ...estadoVazio,
+      perfil: criarPerfilValido(),
+    };
+
+    expect(perfilReducer(estado2024, { type: 'SET_ANO_MOTO', ano: 2026 })).toBe(estado2024);
   });
 
   // ── Display ───────────────────────────────────

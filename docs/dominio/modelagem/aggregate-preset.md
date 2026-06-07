@@ -3,7 +3,7 @@
 > **Status:** Engenharia reversa baseada em código real (`src/types/perfil.ts`).
 > **Tipo:** Aggregate Root raiz do aggregate de dados persistidos.
 > **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `estimamoto:v1:presets`.
-> **Última atualização:** 2026-05-31 (TASK-REF-30).
+> **Última atualização:** 2026-06-06 (TASK-REF-41.2).
 
 ---
 
@@ -67,7 +67,7 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `2`. Na carga, perfis v1 são migrados para v2 antes da validação integral.
+O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `3`. Na carga, o envelope completo é validado sem migração pré-lançamento.
 
 ---
 

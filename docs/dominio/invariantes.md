@@ -211,18 +211,28 @@ if (!servicoIndependenteComIntervaloValido(action.payload)) return state; // INV
 
 ---
 
-#### INV-VIDA-UTIL-1: ServicoIndependente EDITADO é fonte canônica de intervalKm para peças vinculadas
-**Regra:** Para peças vinculadas a um `ServicoIndependente` ativo via `MAPA_PECA_PARA_SERVICO`, o serviço só é a fonte canônica de `intervalKm` **quando o usuário editou o intervalo** (valor difere do default em `SERVICOS_INDEPENDENTES_PADRAO`). Enquanto o serviço estiver no valor default, a fonte canônica é o Preset JSON - que conhece a distinção entrega/passageiro. A tela Insumos exibe o valor **efetivo** como somente leitura; só a aba Mão de Obra permite editá-lo. Prioridade completa: override de peça → serviço editado → preset.
+#### INV-VIDA-UTIL-1: ServicoIndependente é fonte canônica de intervalKm para peças vinculadas
+**Regra:** Para peças vinculadas via `MAPA_PECA_PARA_SERVICO`, o serviço efetivo é a fonte
+canônica de `intervalKm`, esteja ativo ou não. `ativo` controla a inclusão do custo do serviço,
+não a vida útil da peça. O preset fornece o intervalo-base; o perfil só o substitui quando
+`intervaloKmInformadoUsuario === true`. A tela Insumos exibe o valor efetivo como somente leitura
+e a aba Mão de Obra permite editá-lo. Prioridade completa: override explícito de peça → serviço
+efetivo → fallback da peça/pneu no preset quando não houver serviço vinculado.
 
-**Por quê:** Evitar conflito de fonte de verdade (cálculo e display precisam do mesmo valor) **sem descartar** os intervalos de entrega pesquisados do preset nem mudar a estimativa default. Ligar o serviço incondicionalmente sobreporia o `intervaloKmEntrega` (telemetria real) por um default genérico - ver Decisão C da revisão da REF-29.
+**Por quê:** Cálculo, Mão de Obra, Insumos e Detalhamento precisam usar uma única origem sem
+inferir procedência pela diferença contra um default global. A flag distingue edição consciente
+do usuário de valor-base publicado pelo preset.
 
 **Onde é protegida:**
-- `src/utils/calculos.ts` - `resolverServicoComIntervaloEditado`: resolve `pecaId → servicoId` via `MAPA_PECA_PARA_SERVICO` e só retorna o serviço se `intervalKm` ≠ default; `resolverIntervaloPeca` o consome.
-- `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` - `resolverIntervalo`: usam o mesmo helper, mantendo display e cálculo consistentes.
+- `src/utils/servicosManutencaoPreset.ts` - mescla preset/perfil e só aceita o intervalo do perfil
+  quando a flag de procedência está presente.
+- `src/utils/calculos.ts` - `resolverServicoPorPeca` e `resolverIntervaloPeca` aplicam a prioridade
+  canônica; `calcularCustosPorCategoria` resolve a lista efetiva na fronteira.
+- `src/pages/PaginaInsumos.tsx` e `src/components/detalhamento/DialogEdicaoCusto.tsx` usam a mesma
+  lista efetiva.
 
-**Histórico:** DT-15 endereçada pela TASK-REF-29 com mapeamento explícito peça↔serviço; a revisão da REF-29 (31/05/26) aplicou a **Decisão C** (serviço sobrepõe só quando editado) para preservar os intervalos de entrega e a estimativa default.
-
-⚠️ **Fragilidade (DT-19, REF-32.6):** como o cálculo usa o perfil mesclado (intervalos do preset), o serviço quase sempre difere do default e acaba ditando o intervalo da peça também — unificando peça e M.O. Isso depende de o default global estar defasado vs. o preset; "corrigir" o default quebraria a unificação. Recomendado tornar a fonte explícita junto da DT-18.
+**Histórico:** a TASK-REF-29 criou o vínculo explícito peça-serviço. A TASK-REF-42 removeu a
+inferência pelo default global, adicionou a procedência explícita e encerrou a DT-19.
 
 ---
 
@@ -328,3 +338,4 @@ Quando o `modelador-dominio` for chamado para tasks específicas, expandir esta 
 | 2026-05-20 | INV-VIDA-UTIL-1 | Nova - fonte canônica de intervalKm para peças com ServicoIndependente vinculado | TASK-DOC-005: gap identificado na revisão geral do bloco ADR-004 |
 | 2026-05-22 | INV-CALC-3 | Nova - sem dupla contagem de peças no modo autorizado | TASK-BG-003 (ADR-006) |
 | 2026-06-04 | INV-MANUT-2, INV-MANUT-3 | Novas - estimativa de M.O. opt-in (`~`, ADR-013) e anti-duplicação peça↔serviço por componente (ADR-014); nota DT-19 em INV-VIDA-UTIL-1; INV-CALC-2 contagem de testes → ponteiro `npm run test` | TASK-DOC-014 |
+| 2026-06-06 | INV-VIDA-UTIL-1 | Serviço efetivo passa a ser fonte explícita; procedência do usuário deixa de ser inferida pelo default global | TASK-REF-42 / ADR-018 |

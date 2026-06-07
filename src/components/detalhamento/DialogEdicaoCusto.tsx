@@ -12,11 +12,14 @@ import { SecaoUsoDiario } from '../ajustes/SecaoUsoDiario';
 import { SecaoPreferencias } from '../ajustes/SecaoPreferencias';
 import { Segmentado } from '../Segmentado';
 import { perfilPadrao } from '../../context/PerfilContext';
-import { CATALOGO } from '../../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmLPorAno } from '../../data/catalogoModelos';
 import { dadosRJ } from '../../data/dadosRJ';
 import { obterPreset } from '../../data/repositorioPresets';
-import { MAPA_PECA_PARA_SERVICO, resolverServicoComIntervaloEditado } from '../../utils/calculos';
-import { resolverServicosManutencaoPerfil } from '../../utils/servicosManutencaoPreset';
+import { MAPA_PECA_PARA_SERVICO, resolverServicoPorPeca } from '../../utils/calculos';
+import {
+  obterServicosManutencaoBase,
+  resolverServicosManutencaoPerfil,
+} from '../../utils/servicosManutencaoPreset';
 import { montarEstimativaMaoDeObra } from '../../utils/maoDeObraEstimada';
 import type {
   PerfilUsuario,
@@ -124,13 +127,7 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
   if (alvo.tipo === 'usoDiario')
     return <SecaoUsoDiario trabalho={perfil.trabalho} dispatch={dispatch} />;
   if (alvo.tipo === 'preferencias')
-    return (
-      <SecaoPreferencias
-        perfilManutencao={perfil.perfilManutencao}
-        moto={perfil.moto}
-        dispatch={dispatch}
-      />
-    );
+    return <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />;
   if (alvo.tipo === 'estimativaMaoDeObra')
     return <ConteudoEstimativaMaoDeObra perfil={perfil} dispatch={dispatch} />;
   if (alvo.tipo === 'servicoExcepcional')
@@ -154,6 +151,15 @@ function resolverServicoEfetivo(
 ): ServicoIndependente | undefined {
   const preset = obterPreset(perfil.moto.modelo);
   return resolverServicosManutencaoPerfil(perfil, preset).find((s) => s.id === servicoId);
+}
+
+function resolverServicoBase(
+  perfil: PerfilUsuario,
+  servicoId: string,
+): ServicoIndependente | undefined {
+  return obterServicosManutencaoBase(obterPreset(perfil.moto.modelo)).find(
+    (servico) => servico.id === servicoId,
+  );
 }
 
 // Bundle de estimativa por-item passado ao CardServico (ADR-014, A), via o
@@ -214,7 +220,11 @@ function ConteudoServicoExcepcional({
           Mão de obra
         </span>
       </div>
-      <CardServico servico={servico} dispatch={dispatch} />
+      <CardServico
+        servico={servico}
+        servicoPadrao={resolverServicoBase(perfil, servico.id)}
+        dispatch={dispatch}
+      />
     </div>
   );
 }
@@ -242,6 +252,7 @@ function ConteudoServicoAutorizada({
       </div>
       <CardServico
         servico={servico}
+        servicoPadrao={resolverServicoBase(perfil, servico.id)}
         dispatch={dispatch}
         modo="autorizada"
         estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}
@@ -259,17 +270,14 @@ function ConteudoCombustivel({
 }) {
   const catalogo = CATALOGO[perfil.moto.modelo];
   const aceitaEtanol = catalogo?.aceitaEtanol ?? true;
-  const usaComBau = perfil.moto.perfilUso === 'entrega';
   const tipos: TipoCombustivel[] = [
     'comum',
     'aditivada',
     ...(aceitaEtanol ? (['etanol'] as TipoCombustivel[]) : []),
   ];
-  const autonomiaBase = catalogo
-    ? usaComBau
-      ? catalogo.consumoKmLComBau
-      : catalogo.consumoKmL
-    : perfilPadrao.financeiro.combustiveis.comum.autonomia;
+  const autonomiaBase =
+    obterConsumoKmLPorAno(perfil.moto.modelo, perfil.moto.ano) ??
+    perfil.financeiro.combustiveis.comum.autonomia;
   const padraoCombustiveis: Record<TipoCombustivel, ConfiguracaoCombustivel> = {
     comum: { preco: perfilPadrao.financeiro.combustiveis.comum.preco, autonomia: autonomiaBase },
     aditivada: {
@@ -311,11 +319,9 @@ function ConteudoPecaComMO({
   if (!preset) {
     return <p className="text-sm text-muted-foreground">Preset não encontrado.</p>;
   }
-  const usaComBau = perfil.moto.perfilUso === 'entrega';
+  const servicosManutencao = resolverServicosManutencaoPerfil(perfil, preset);
   function resolverIntervalo(id: string, fallback: number): number {
-    return (
-      resolverServicoComIntervaloEditado(id, perfil.servicosIndependentes)?.intervalKm ?? fallback
-    );
+    return resolverServicoPorPeca(id, servicosManutencao)?.intervalKm ?? fallback;
   }
 
   const peca = preset.pecas.find((p) => p.id === pecaId);
@@ -330,10 +336,7 @@ function ConteudoPecaComMO({
         nome: peca.nome,
         precoOriginal: peca.precoOriginal,
         precoParalela: peca.precoParalela,
-        intervaloKm: resolverIntervalo(
-          peca.id,
-          (usaComBau ? peca.intervaloKmEntrega : peca.intervaloKm) ?? 0,
-        ),
+        intervaloKm: resolverIntervalo(peca.id, peca.intervaloKm ?? 0),
       }
     : {
         id: pneu!.id,
@@ -378,6 +381,7 @@ function ConteudoPecaComMO({
           </div>
           <CardServico
             servico={servico}
+            servicoPadrao={resolverServicoBase(perfil, servico.id)}
             dispatch={dispatch}
             modo="autorizada"
             estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}

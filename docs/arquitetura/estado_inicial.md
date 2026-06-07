@@ -1,9 +1,9 @@
 # MotoCalc RJ - Estado Inicial e Arquitetura de Persistência
 
 > **Status:** Engenharia reversa validada contra código real.
-> **Última atualização:** 2026-06-06 (TASK-REF-38).
+> **Última atualização:** 2026-06-06 (TASK-REF-41.2).
 > **Verdade primária:** `src/context/PerfilContext.tsx` (`perfilPadrao`, reducer, validação de carga) e `src/services/perfilStorage.ts` (acesso ao localStorage).
-> **Schema atual:** v2 (com migração pública e estreita de v1 para v2).
+> **Schema atual:** v3 (sem migração pré-lançamento).
 
 ---
 
@@ -20,7 +20,7 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado - INV-PRESET-3)
 | `estimamoto:v1:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
 | `estimamoto:v1:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
-> **Nota:** a TASK-REF-30 zerou o contrato de storage. Chaves antigas `motocalc:v5:*` são ignoradas; perfis públicos v1 são migrados para v2 e dados inválidos ou de versão desconhecida caem no fallback recuperável.
+> **Nota:** a TASK-REF-30 zerou o contrato de storage. Chaves antigas `motocalc:v5:*` são ignoradas; versões diferentes da atual e dados inválidos caem no fallback recuperável.
 
 ### I.2 - Envelope: `PresetEntry`
 
@@ -43,7 +43,7 @@ export interface PresetEntry {
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
 2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
-3. Migra cada perfil público v1 para v2 com `migrarPerfil` e valida o resultado completo com `presetEntrySchema`.
+3. Valida cada `PresetEntry` completo com `presetEntrySchema`.
 4. Se a chave de ativo estiver ausente mas houver presets válidos, seleciona `presets[0]` como recuperação; se não há preset recuperável OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
@@ -55,7 +55,7 @@ O objeto inicial criado quando o usuário começa um onboarding novo. Valores re
 
 ```typescript
 export const perfilPadrao: PerfilUsuario = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   userId: null,
   onboardingConcluido: false,
   apelido: null,
@@ -65,7 +65,6 @@ export const perfilPadrao: PerfilUsuario = {
     marca: '',
     modelo: '',
     ano: new Date().getFullYear(),
-    perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
     kmUltimaTrocas: {
@@ -259,9 +258,9 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ### IV.9 - Ajustes de predefinição
 
-`SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_PERFIL_USO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO`.
+`SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO`.
 
-> `RESETAR_AJUSTES_PADRAO` (BG-004): zera custos (alimentação, seguro, gastosCustom) e volta uso/modo de revisão ao padrão. **Não** mexe em moto nem em mão de obra.
+> `RESETAR_AJUSTES_PADRAO` (BG-004): zera custos (alimentação, seguro, gastosCustom) e volta o modo de revisão ao padrão. **Não** mexe em moto nem em mão de obra.
 
 ### IV.10 - Presets (envelope)
 
@@ -277,25 +276,22 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ---
 
-## VI - Schema Público e Migração
+## VI - Schema Público
 
-A TASK-REF-30 descartou a cadeia histórica pré-lançamento. A TASK-REF-38 criou a primeira
-migração do contrato público:
+A TASK-REF-41.2 consolida a política pré-lançamento definida pelas ADR-010 e ADR-018:
 
-- `schemaVersion` atual é `2`.
+- `schemaVersion` atual é `3`.
 - `perfilSchema` aceita somente a versão atual.
-- `criarEstadoInicial` faz `carregar → migrar → validar`.
-- `migrarPerfil` reconhece somente v1 e move `financeiro.aluguelMensal` para
-  `financeiro.aluguelValor`, preservando `aluguelPeriodicidade`.
+- `criarEstadoInicial` faz `carregar → validar`.
 - Dado histórico não suportado, futuro, parcial ou corrompido volta para `estadoPadrao` e é
   preservado em `.corrupted` quando possível.
-- Próximas migrações devem ser explícitas, estreitas e seguidas da validação integral do schema.
+- Migrações só devem ser criadas depois de existir dado real que precise ser preservado.
 
 ---
 
 ## VII - Fixture de dev (`src/fixtures/usuario_teste.json`)
 
-Fixture em `schemaVersion: 2`, acompanhando o contrato público atual.
+Fixture em `schemaVersion: 3`, acompanhando o contrato atual.
 
 ---
 
@@ -309,3 +305,4 @@ Fixture em `schemaVersion: 2`, acompanhando o contrato público atual.
 | 2026-05-31 | TASK-REF-30 - reset pré-lançamento: schema v1, namespace `estimamoto:v1:*`, sem migrações históricas |
 | 2026-05-27 | TASK-RF-6.24 - sincronizado com schema 20; `kitRevisao` removido de `kmUltimaTrocas` |
 | 2026-06-06 | TASK-REF-38 - schema v2, `aluguelValor` e migração pública v1→v2 |
+| 2026-06-06 | TASK-REF-41.2 - schema v3, remoção de `PerfilUso` e retirada do migrador pré-lançamento |

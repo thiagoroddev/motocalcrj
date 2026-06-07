@@ -1,13 +1,14 @@
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
-import { CATALOGO } from '../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmLPorAno } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { obterPreset } from '../data/repositorioPresets';
 import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
 import { TituloSecao } from '@/components/TituloSecao';
-import { resolverServicoComIntervaloEditado } from '../utils/calculos';
+import { resolverServicoPorPeca } from '../utils/calculos';
+import { resolverServicosManutencaoPerfil } from '../utils/servicosManutencaoPreset';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
 
 // ── PaginaInsumos ────────────────────────────────────────────
@@ -15,9 +16,9 @@ import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
 export function PaginaInsumos() {
   const { perfil, dispatch } = usePerfil();
   const preset = obterPreset(perfil.moto.modelo);
+  const servicosManutencao = resolverServicosManutencaoPerfil(perfil, preset);
   const catalogo = CATALOGO[perfil.moto.modelo];
   const aceitaEtanol = catalogo?.aceitaEtanol ?? true;
-  const usaComBau = perfil.moto.perfilUso === 'entrega';
 
   const tiposCombustivel: TipoCombustivel[] = [
     'comum',
@@ -25,11 +26,9 @@ export function PaginaInsumos() {
     ...(aceitaEtanol ? (['etanol'] as TipoCombustivel[]) : []),
   ];
 
-  const autonomiaBase = catalogo
-    ? usaComBau
-      ? catalogo.consumoKmLComBau
-      : catalogo.consumoKmL
-    : perfilPadrao.financeiro.combustiveis.comum.autonomia;
+  const autonomiaBase =
+    obterConsumoKmLPorAno(perfil.moto.modelo, perfil.moto.ano) ??
+    perfil.financeiro.combustiveis.comum.autonomia;
 
   const padraoCombustiveis: Record<TipoCombustivel, ConfiguracaoCombustivel> = {
     comum: { preco: perfilPadrao.financeiro.combustiveis.comum.preco, autonomia: autonomiaBase },
@@ -44,9 +43,7 @@ export function PaginaInsumos() {
   };
 
   function resolverIntervalo(id: string, fallback: number): number {
-    return (
-      resolverServicoComIntervaloEditado(id, perfil.servicosIndependentes)?.intervalKm ?? fallback
-    );
+    return resolverServicoPorPeca(id, servicosManutencao)?.intervalKm ?? fallback;
   }
 
   const itensPecas = preset
@@ -58,10 +55,7 @@ export function PaginaInsumos() {
             nome: p.nome,
             precoOriginal: p.precoOriginal,
             precoParalela: p.precoParalela,
-            intervaloKm: resolverIntervalo(
-              p.id,
-              (usaComBau ? p.intervaloKmEntrega : p.intervaloKm) ?? 0,
-            ),
+            intervaloKm: resolverIntervalo(p.id, p.intervaloKm ?? 0),
           })),
         ...preset.pneus.map((p) => ({
           id: p.id,

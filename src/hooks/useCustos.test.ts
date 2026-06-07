@@ -44,6 +44,7 @@ describe('normalizarPerfilMvp', () => {
 
     // Yamaha não troca pneu: excepcional desligado, não avulso de concessionária.
     expect(pneuDianteiro).toMatchObject({ ehExcepcional: true, ativo: false });
+    expect(pneuDianteiro?.intervalKm).toBe(22500);
     expect(kitRelacao?.intervalKm).toBe(25000);
   });
 
@@ -92,6 +93,46 @@ describe('normalizarPerfilMvp', () => {
     expect(kitRelacao?.statusPrecoAutorizada).toBe('informado_usuario');
     expect(kitRelacao?.intervalKm).toBe(25000);
     expect(kitRelacao?.precoIndependente).toBe(0);
+  });
+
+  it('ignora intervalo divergente sem procedência explícita e usa o preset', () => {
+    const perfil = {
+      ...perfilPadrao,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+        servico.id === 'troca-kit-transmissao' ? { ...servico, intervalKm: 19000 } : servico,
+      ),
+    };
+
+    const normalizado = normalizarPerfilMvp(perfil, PRESETS.factor125i);
+    const kitRelacao = normalizado.servicosIndependentes.find(
+      (servico) => servico.id === 'troca-kit-transmissao',
+    );
+
+    expect(kitRelacao?.intervalKm).toBe(25000);
+    expect(kitRelacao?.intervaloKmInformadoUsuario).toBeUndefined();
+  });
+
+  it('preserva intervalo informado conscientemente pelo usuário ao aplicar o preset', () => {
+    const perfil = {
+      ...perfilPadrao,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico) =>
+        servico.id === 'troca-kit-transmissao'
+          ? {
+              ...servico,
+              intervalKm: 19000,
+              intervaloKmInformadoUsuario: true,
+            }
+          : servico,
+      ),
+    };
+
+    const normalizado = normalizarPerfilMvp(perfil, PRESETS.factor125i);
+    const kitRelacao = normalizado.servicosIndependentes.find(
+      (servico) => servico.id === 'troca-kit-transmissao',
+    );
+
+    expect(kitRelacao?.intervalKm).toBe(19000);
+    expect(kitRelacao?.intervaloKmInformadoUsuario).toBe(true);
   });
 
   it('descarta preço de concessionária legado (sem informado_usuario) e segue o preset (B2)', () => {

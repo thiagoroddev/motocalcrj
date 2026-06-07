@@ -2,9 +2,8 @@
 // Enums / literais
 // ──────────────────────────────────────────────
 
-export const VERSAO_SCHEMA_ATUAL = 2 as const;
+export const VERSAO_SCHEMA_ATUAL = 3 as const;
 
-export type PerfilUso = 'entrega' | 'passageiro';
 export type ModoRevisao = 'autorizadas' | 'independentes';
 export type TipoCombustivel = 'comum' | 'aditivada' | 'etanol';
 export type PerfilPecas = 'original' | 'paralela';
@@ -76,6 +75,9 @@ export interface ServicoIndependente {
   // Serviços km-driven exigem valor > 0. Temporais conhecidos (ex.: bateria)
   // usam 0 como marcador de "sem driver por km".
   intervalKm: number;
+  // Presente apenas quando o usuário editou conscientemente a vida útil.
+  // Ausente significa que o intervalo-base do preset continua canônico.
+  intervaloKmInformadoUsuario?: boolean;
   // Preço cobrado por oficina independente. Para serviços NORMAIS é só a M.O.
   // (a peça é precificada à parte nos Insumos). Para serviços EXCEPCIONAIS
   // (ehExcepcional=true, ex.: retíficas) é o valor ÚNICO peças + M.O., pois a
@@ -146,7 +148,6 @@ export interface PerfilUsuario {
     marca: string;
     modelo: string;
     ano: number;
-    perfilUso: PerfilUso;
     kmAtual: number;
     kmUltimaRevisao: number | null;
     kmUltimaTrocas: KmUltimaTrocas;
@@ -270,7 +271,7 @@ export type PerfilAction =
   | { type: 'SET_GASTO_CUSTOM_VALOR'; id: string; valorAnual: number }
 
   // FIPE
-  | { type: 'SET_FIPE_CACHE'; cache: FipeCache }
+  | { type: 'SET_FIPE_CACHE'; cache: FipeCache | null }
 
   // Histórico de manutenção
   | { type: 'SET_KM_ULTIMA_TROCA'; componente: keyof KmUltimaTrocas; km: number }
@@ -284,7 +285,6 @@ export type PerfilAction =
   // Ajustes de predefinição
   | { type: 'SET_ANO_MOTO'; ano: number }
   | { type: 'SET_KM_ULTIMA_REVISAO'; km: number | null }
-  | { type: 'SET_PERFIL_USO'; perfilUso: PerfilUso }
   | { type: 'SET_MODO_REVISAO'; modo: ModoRevisao }
   | { type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA'; valor: boolean }
   | { type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO'; id: string }

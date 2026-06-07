@@ -2,7 +2,7 @@
 
 > **Propósito:** oferecer a visão geral necessária para uma IA entender o produto, localizar as fontes de verdade e trabalhar sem reintroduzir decisões superadas.
 > **Público principal:** agentes de IA. Desenvolvedores também podem usar este documento como mapa.
-> **Última atualização:** 06/06/2026, após ADR-017 e TASK-REF-39.
+> **Última atualização:** 06/06/2026, após ADR-017 e TASK-REF-39; detalhado o script de atualização FIPE (ADR-015).
 > **Nome atual do produto:** EstimaMoto. Documentos históricos e alguns identificadores internos ainda usam MotoCalc RJ; não renomear em massa sem tarefa própria.
 
 ---
@@ -281,6 +281,20 @@ O detalhe das funções pertence a `docs/arquitetura/calculos-visao.md` e ao có
 - Atualização mensal: `npm run fipe:check` e `npm run fipe:update`, com revisão do diff.
 - A API Parallelum é usada pelo script de manutenção, não pelo app em execução.
 - BrasilAPI está aposentada.
+
+#### Como a FIPE é atualizada (script de manutenção)
+
+- **Onde:** `scripts/atualizar-fipe-presets.mjs` (rodado por `npm run fipe:update`; `fipe:check` é dry-run).
+- **Pra que serve:** atualizar os dados FIPE hardcoded de cada preset, fora do runtime do app — a
+  FIPE muda devagar (referência mensal) e não pode estar no caminho crítico do onboarding.
+- **Como funciona:** chama a REST da **Parallelum FIPE v2** (`https://parallelum.com.br/fipe/api/v2`),
+  a API FIPE open-source (repo `parallelum/fipe-go`), com `fetch` nativo — **sem SDK nem dependência
+  npm** (não introduzir Go no toolchain). Resolve `codigoFipe`, consulta o endpoint `/years` (que
+  retorna **todos os anos** do modelo) e o preço de cada ano, e grava `tabelaFipe` (ano → valor) +
+  `codigoFipe` direto no JSON do preset. Mensal e versionado no Git.
+- **Implicação reusável:** `preset.tabelaFipe` é, portanto, a **lista canônica e auto-mantida dos
+  anos reais de um modelo**. Usar suas chaves como fonte dos anos suportados (ex.: seletor de ano do
+  onboarding). Detalhe completo em ADR-015 e no próprio script.
 
 ### ADR-016 - Revisão Geral amortizada
 

@@ -77,3 +77,41 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
     expect(screen.getByText(/ainda não informado/)).toBeInTheDocument();
   });
 });
+
+describe('CardServico - procedência da vida útil', () => {
+  it('marca o intervalo como informado pelo usuário ao editar', () => {
+    const dispatch = vi.fn();
+    render(<CardServico servico={servico} servicoPadrao={servico} dispatch={dispatch} />);
+
+    const inputIntervalo = screen.getByDisplayValue('18000');
+    fireEvent.change(inputIntervalo, { target: { value: '21000' } });
+    fireEvent.blur(inputIntervalo);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: {
+        ...servico,
+        intervalKm: 21000,
+        intervaloKmInformadoUsuario: true,
+      },
+    });
+  });
+
+  it('reset envia o serviço-base sem a marca de edição', () => {
+    const dispatch = vi.fn();
+    const servicoEditado: ServicoIndependente = {
+      ...servico,
+      intervalKm: 21000,
+      intervaloKmInformadoUsuario: true,
+    };
+    render(<CardServico servico={servicoEditado} servicoPadrao={servico} dispatch={dispatch} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Restaurar valor padrão' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Restaurar' }));
+
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: servico,
+    });
+  });
+});

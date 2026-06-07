@@ -19,7 +19,6 @@ function criarPerfilValido(motoRevisaoOverrides: MotoRevisaoOverrides = {}): Per
       marca: 'Honda',
       modelo: 'pop110i',
       ano: 2024,
-      perfilUso: 'entrega',
       kmAtual: 12500,
       kmUltimaRevisao: 12000,
       kmUltimaTrocas: { ...perfilPadrao.moto.kmUltimaTrocas },
@@ -165,7 +164,18 @@ describe('App - smoke UI', () => {
     await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
     clicarProximo();
 
-    await screen.findByText('Como você usa a moto?');
+    await screen.findByText('Uso profissional e intenso');
+    expect(screen.queryByRole('button', { name: 'Entregas' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Passageiro' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Voltar' }));
+
+    const inputAnoRetorno = await screen.findByRole('spinbutton');
+    fireEvent.change(inputAnoRetorno, { target: { value: '2025' } });
+    await screen.findByText('49,1 km/L', {}, { timeout: 2000 });
+    await screen.findByText(/Valor FIPE indisponível para 2025/i);
+    clicarProximo();
+
+    await screen.findByText('Uso profissional e intenso');
     clicarProximo();
 
     fireEvent.change(await screen.findByLabelText(/KM atual do hodômetro/i), {
@@ -205,6 +215,8 @@ describe('App - smoke UI', () => {
     const presets = JSON.parse(presetsRaw!) as PresetEntry[];
     expect(presets).toHaveLength(1);
     expect(presets[0].perfil.onboardingConcluido).toBe(true);
+    expect(presets[0].perfil.financeiro.combustiveis.comum.autonomia).toBe(49.1);
+    expect(presets[0].perfil.fipeCache).toBeNull();
     expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[0].presetId);
   });
 
@@ -273,7 +285,35 @@ describe('App - smoke UI', () => {
     expect(screen.getByText('Kit relação (corrente + coroa + pinhão)')).toBeInTheDocument();
     expect(screen.getByText('Pneu dianteiro')).toBeInTheDocument();
     expect(screen.getByText('Pneu traseiro')).toBeInTheDocument();
+    expect(
+      within(obterCardPorTexto('Kit relação (corrente + coroa + pinhão)')).getByText(
+        'Vida útil: 18.000 km · Alterar na aba M. Obra',
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByTestId('lista-insumos-pecas')).toHaveClass('sm:grid-cols-2');
+  });
+
+  it('preserva em Insumos a vida útil conscientemente editada no serviço', async () => {
+    const perfil = criarPerfilValido();
+    perfil.servicosIndependentes = perfil.servicosIndependentes.map((servico) =>
+      servico.id === 'troca-kit-transmissao'
+        ? {
+            ...servico,
+            intervalKm: 21000,
+            intervaloKmInformadoUsuario: true,
+          }
+        : servico,
+    );
+    salvarPresetNoStorage(criarPreset(perfil));
+
+    renderizarAppEm('/insumos');
+
+    await screen.findByText('Peças e Pneus');
+    expect(
+      within(obterCardPorTexto('Kit relação (corrente + coroa + pinhão)')).getByText(
+        'Vida útil: 21.000 km · Alterar na aba M. Obra',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renderiza detalhamento e alternar Alimentação muda total sem quebrar CPK', async () => {

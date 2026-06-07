@@ -111,3 +111,4 @@ Itens que exigem decisao ou validacao de produto:
 | 2026-05-11 (v3) | Inclusao do aggregate-perfil e alinhamento com reducer                |
 | 2026-05-24 (v4) | TASK-DOC-009: removidos `historico-manutencao.md` e `diario-trabalho.md` (conceitos eliminados pela ADR-003 / REF-19). `servicosMaoDeObra` substituido por `servicosIndependentes[]` (REF-11). |
 | 2026-06-04 (v5) | TASK-DOC-014: sincronizado com o MVP de manutenção (REF-31/32.x). Criado `entidade-preset-moto.md`; glossário, `bloco-perfil-manutencao`, `overrides`, `invariantes` e `arquitetura/calculos-visao` atualizados (estimativa, `statusPrecoAutorizada`, `concessionariaIncluiPeca`, composição como visão, DT-19). |
+| 2026-06-06 (v6) | TASK-REF-42: procedência explícita do intervalo, serviço efetivo canônico e encerramento da DT-19. |

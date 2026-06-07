@@ -10,7 +10,6 @@ export interface PecaPreset {
   // Peças com driver temporal (ex.: bateria) omitem `intervaloKm` e usam
   // apenas `intervaloMeses`. Sem nenhum dos dois, a peça é ignorada no cálculo.
   intervaloKm?: number;
-  intervaloKmEntrega?: number;
   intervaloMeses?: number;
   precoOriginal: number;
   precoParalela: number;
@@ -53,8 +52,7 @@ export interface PresetMoto {
   codigoFipe?: string;
   tabelaFipe?: Record<string, number>;
   aceitaEtanol?: boolean;
-  consumoKmL: number;
-  consumoKmLComBau: number;
+  consumoKmLPorAno: Record<string, number>;
   pecas: PecaPreset[];
   pneus: PneuPreset[];
   revisaoAutorizada: RevisaoAutorizadaPreset[];

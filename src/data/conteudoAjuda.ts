@@ -129,12 +129,11 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
       },
       {
         titulo: 'Preferências',
-        texto: 'Perfil de trabalho usado no cálculo: entrega ou passageiro.',
+        texto: 'Configura como as revisões e estimativas de mão de obra entram no cálculo.',
       },
       {
         titulo: 'Uso diário',
-        texto:
-          'Km/dia, dias/semana e perfil de uso (entrega ou passageiro) - o mesmo uso da Estimativa.',
+        texto: 'Km/dia e dias/semana usados para projetar a rodagem e os custos da Estimativa.',
       },
       {
         titulo: 'Financeiro',

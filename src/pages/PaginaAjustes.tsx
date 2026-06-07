@@ -52,11 +52,7 @@ export function PaginaAjustes() {
           <SecaoVeiculo moto={perfil.moto} dispatch={dispatch} />
         </div>
         <SecaoUltimasManutencoes moto={perfil.moto} dispatch={dispatch} />
-        <SecaoPreferencias
-          perfilManutencao={perfil.perfilManutencao}
-          moto={perfil.moto}
-          dispatch={dispatch}
-        />
+        <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />
         <SecaoUsoDiario trabalho={perfil.trabalho} dispatch={dispatch} />
         <SecaoFinanceiro financeiro={perfil.financeiro} dispatch={dispatch} />
         <SecaoSituacaoLegal financeiro={perfil.financeiro} dispatch={dispatch} />

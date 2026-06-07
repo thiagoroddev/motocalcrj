@@ -49,7 +49,6 @@ perfilManutencao: {
 | Action                                  | Comportamento                                                |
 | --------------------------------------- | ------------------------------------------------------------ |
 | `SET_MODO_REVISAO`                      | Alterna entre `'autorizadas'` e `'independentes'` (Ajustes)  |
-| `SET_PERFIL_USO`                        | Define perfil de uso (afeta `bloco-moto`, mas controla qual intervalo de peça usar: entrega vs casual) |
 | `SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA`    | Liga/desliga a estimativa **global** (`incluirEstimativaMaoDeObra`). Disparada pelo Segmentado de Preferências e pelo chip do card de total (ADR-013) |
 | `TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO` | Alterna a estimativa **por serviço** (`estimativaMaoDeObraPorServico[id]`). Disparada pelo toggle do `CardServico` no avulso sem valor (ADR-014) |
 

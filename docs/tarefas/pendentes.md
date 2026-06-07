@@ -9,41 +9,21 @@ Obedeça essa ordem:
 
 #### Dívida técnica vigente (auditoria 06/06/26)
 
-## TASK-REF-41.1 - Consolidar contrato profissional único dos presets
-- **Status:** Pendente
+## TASK-REF-44 - Selecionar revisões fixas por faixa de ano
+- **Status:** Pendente - aguarda validação final do levantamento
 - **Modo:** Strict
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/G
-- **Data-hora origem:** 06/06/26 18:00
-- **Dependências:** TASK-REF-42
-- **REQ/ADR/DT:** DT-18, ADR-018, ADR-011, ADR-014, INV-CALC-2
-- **Observações:** após a REF-42 tornar `servicosManutencao[].intervalKm` canônico, reduzir o
-  contrato técnico dos presets ao padrão profissional único. Substituir `consumoKmL` +
-  `consumoKmLComBau` por um único consumo profissional por modelo. Remover
-  `intervaloKmEntrega` e campos de vida útil duplicados que não forem mais fontes de runtime,
-  preservando preço, driver temporal e metadados necessários. Atualizar os dois JSONs, tipos,
-  schemas, catálogo e testes de contrato. Os valores escolhidos devem reproduzir o caminho
-  profissional atual: consumo hoje associado ao uso com baú e intervalos efetivos dos serviços.
-  Não alterar estado/UI de `PerfilUso` nesta fatia. Critério: presets validam com uma única
-  referência e baselines dos dois modelos ficam caracterizados.
-
-## TASK-REF-41.2 - Remover PerfilUso do estado e do cálculo
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** G/G
-- **Data-hora origem:** 06/06/26 18:00
-- **Dependências:** TASK-REF-41.1
-- **REQ/ADR/DT:** DT-18, ADR-018, ADR-010, INV-CALC-2
-- **Observações:** remover `PerfilUso`, `moto.perfilUso`, `SET_PERFIL_USO` e todos os branches de
-  consumo/intervalo ligados a entrega/passageiro. O commit do onboarding passa a copiar o único
-  consumo profissional do preset; o cálculo continua usando a autonomia editável persistida.
-  Elevar `VERSAO_SCHEMA_ATUAL`, atualizar Zod, defaults, reducer, fixtures e testes. Não criar
-  migration: não existem usuários e dados locais de desenvolvimento incompatíveis podem cair no
-  fluxo inicial recuperável. Critério: zero ocorrências vivas de `PerfilUso`/`perfilUso` e cálculos
-  sem parâmetros de finalidade.
+- **Esforço-H/IA:** M/G
+- **Data-hora origem:** 06/06/26 22:05
+- **Dependências:** validação humana de `revisoes-pop110i.md`
+- **REQ/ADR/DT:** ADR-011, ADR-018, INV-CALC-2, INV-CALC-3
+- **Observações:** manter peças, pneus e serviços avulsos compartilhados pelo modelo. Modelar
+  revisões fixas Honda pelas faixas 2016-2024, 2025-2026 e 2027; Yamaha conserva tabela única para
+  todos os anos. Criar resolver canônico por modelo/ano e usá-lo em cálculo, Detalhamento, Mão de
+  Obra, projeção de próximas revisões e normalização de overrides. Antes de executar, confirmar
+  duas inconsistências da fonte: título `2017-2024` versus faixa decidida `2016-2024`, e total de
+  1.000 km em 2025-2026 (`120,44 + 0` registrado como `120,64`). Não inventar correções.
 
 ## TASK-REF-41.3 - Remover seleção de uso da UI e ajustar onboarding
 - **Status:** Pendente
@@ -54,12 +34,67 @@ Obedeça essa ordem:
 - **Data-hora origem:** 06/06/26 18:00
 - **Dependências:** TASK-REF-41.2
 - **REQ/ADR/DT:** DT-18, ADR-018, RNF-09
-- **Observações:** remover temporariamente o Passo 4 entrega/passageiro, o segmentado "Perfil de
-  trabalho" de Ajustes, labels de uso na confirmação/Detalhamento e textos de ajuda. Atualizar
-  rotas, progresso, navegação e smoke do onboarding para oito passos, sem implementar ainda a
-  TASK-RF-6.28. Não deixar lacuna de navegação nem referência visível aos modos removidos.
-  Critério: onboarding completo funciona em menos de três minutos e Ajustes não contém controle
-  sem efeito.
+- **Observações:** a TASK-REF-41.2 já removeu o segmentado de Ajustes, labels de
+  confirmação/Detalhamento e textos de ajuda, mantendo o Passo 4 apenas como aviso transitório.
+  Nesta tarefa, remover o Passo 4 informativo da rota, atualizar progresso, navegação e smoke do
+  onboarding para oito passos, sem implementar ainda a TASK-RF-6.28. Não deixar lacuna de
+  navegação nem referência visível aos modos removidos. Critério: onboarding completo funciona em
+  menos de três minutos e o passo removido não é mais alcançável por URL ou navegação.
+
+## TASK-RF-6.29 - Onboarding "O que foi trocado?": remover óleo e incluir todas as peças avulsas
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 06/06/26 22:56
+- **Dependências:** TASK-RF-6.28 (reusar a derivação de peças avulsas do preset)
+- **REQ/ADR/DT:** ADR-014, ADR-018, RF-6.3.4
+- **Observações:** A tela `Passo5Trocas.tsx` ("O que foi trocado?" / "Na revisão de X km") hoje
+  lista uma constante hardcoded de 4 itens — `oleo`, `pneuDianteiro`, `pneuTraseiro`, `kitRelacao`
+  (`src/pages/onboarding/passos/Passo5Trocas.tsx:7`). Dois ajustes pedidos pelo humano (06/06/26):
+  **(1) remover "Troca de óleo"** — o óleo é sempre trocado em qualquer revisão, então perguntar é
+  redundante. ATENÇÃO/decisão: como o óleo é sempre trocado, **não apenas sumir com a âncora** —
+  avaliar com o humano auto-ancorar `oleo` em `kmRevisao` (despachando junto no `MARCAR_TROCAS_REVISAO`)
+  para o ciclo do óleo continuar ancorado, em vez de perder o anchor. **(2) Incluir TODAS as peças
+  avulsas da marca**, não os 4 fixos. Derivar a lista do preset ativo (`obterPreset(perfil.moto.modelo)`),
+  com o mesmo filtro de avulso usado em Mão de Obra/Insumos
+  (`!incluidoNaRevisaoAutorizada && intervalKm > 0`, ver `PaginaMaoDeObra.tsx:129` e
+  `calculos.ts:490`), mapeando cada peça/serviço para sua chave de `KmUltimaTrocas` via
+  `MAPA_PECA_PARA_KM_ULTIMA_TROCA` (`calculos.ts:122`); itens sem chave de anchor ficam de fora.
+  A lista varia por marca (Honda Pop ≠ Yamaha Factor) — não voltar a hardcodar. Reusar a mesma
+  derivação de avulsos da TASK-RF-6.28 (não criar uma segunda fonte divergente). Preservar o bloco
+  "Motor refeito" atual (excepcional, `kmAtual >= 60.000`) — fora do escopo. Ícones via `iconePeca`.
+  Atualizar o smoke do onboarding e cobrir: óleo ausente da lista, lista derivada por marca, dispatch
+  de `MARCAR_TROCAS_REVISAO` com as chaves corretas.
+
+## TASK-RF-6.30 - Onboarding "Qual o ano da moto?": selecionar ano em vez de digitar
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 06/06/26 22:56
+- **Dependências:** -
+- **REQ/ADR/DT:** ADR-015, ADR-018, RNF-09
+- **Observações:** Hoje o `Passo3.tsx` ("Qual o ano da moto?") usa `<Input type="number">` livre,
+  com faixa `ANO_MIN=2000`/`ANO_MAX=ano+1` (`src/pages/onboarding/passos/Passo3.tsx:9-10,77-86`).
+  Isso deixa digitar ano inexistente para o modelo (ex.: Pop 110i 2008 → "Ainda não há referência de
+  consumo para 2008" + "Valor FIPE indisponível"), só bloqueando o avançar. Trocar por um **seletor**
+  que ofereça apenas os anos válidos do modelo — assim o ano inexistente nem aparece e o bug some.
+  **Fonte dos anos (decidido): chaves de `preset.tabelaFipe`**, a lista canônica dos anos reais do
+  modelo, auto-mantida pelo script de atualização FIPE (endpoint `/years` traz todos os anos; ver
+  ADR-015 e `scripts/atualizar-fipe-presets.mjs`). Ordenar desc. Todo ano da `tabelaFipe` também tem
+  consumo — o `superRefine` do `presetSchema` exige `consumoKmLPorAno[ano]` para cada ano da FIPE —
+  então qualquer ano listado permite prosseguir.
+  **Implementação:** usar o wrapper de Select já existente (`@/components/ui/select`); default = o
+  `perfil.moto.ano` atual se estiver na lista, senão o ano mais recente; ao escolher, manter os mesmos
+  dispatches atuais (`SET_FIPE_CACHE` com cache do ano ou `null`, e `SET_ONBOARDING_CAMPO` de `moto.ano`).
+  Remover `ANO_MIN`/`ANO_MAX`, o aviso "Use um ano entre…" e o aviso "Ainda não há referência de
+  consumo…" (inalcançáveis com seletor). Preservar o painel de Consumo de referência / FIPE / IPVA do
+  ano selecionado. **Relacionado (verificar, não obrigatório aqui):** o ano em Ajustes (`SET_ANO_MOTO`)
+  hoje já rejeita ano sem referência, mas se também for input livre, alinhar para seletor pela mesma
+  fonte. Atualizar smoke do onboarding: seletor lista os anos do modelo e não permite ano inexistente.
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 

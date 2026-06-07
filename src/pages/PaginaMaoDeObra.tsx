@@ -141,7 +141,11 @@ export function PaginaMaoDeObra() {
   function servicoDifereDopadraoIndependente(s: ServicoIndependente): boolean {
     const p = servicosPadrao.find((ps) => ps.id === s.id);
     if (!p) return false;
-    return s.precoIndependente !== p.precoIndependente || s.intervalKm !== p.intervalKm;
+    return (
+      s.precoIndependente !== p.precoIndependente ||
+      s.intervaloKmInformadoUsuario === true ||
+      s.intervalKm !== p.intervalKm
+    );
   }
 
   function servicoDifereDopadraoAutorizada(s: ServicoIndependente): boolean {
@@ -150,6 +154,7 @@ export function PaginaMaoDeObra() {
     return (
       s.precoTotalAutorizada !== p.precoTotalAutorizada ||
       resolverStatusPrecoAutorizada(s) !== resolverStatusPrecoAutorizada(p) ||
+      s.intervaloKmInformadoUsuario === true ||
       s.intervalKm !== p.intervalKm
     );
   }

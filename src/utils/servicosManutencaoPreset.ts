@@ -15,12 +15,14 @@ function mesclarComOverrideDoPerfil(
     return servicoBase;
   }
 
+  const temOverrideIntervalo = servicoPerfil.intervaloKmInformadoUsuario === true;
   const padraoGlobal = obterServicoPadraoGlobal(servicoPerfil.id);
 
   if (!padraoGlobal) {
     return {
       ...servicoBase,
-      intervalKm: servicoPerfil.intervalKm,
+      intervalKm: temOverrideIntervalo ? servicoPerfil.intervalKm : servicoBase.intervalKm,
+      ...(temOverrideIntervalo ? { intervaloKmInformadoUsuario: true } : {}),
       precoIndependente: servicoPerfil.precoIndependente,
       precoTotalAutorizada: servicoPerfil.precoTotalAutorizada,
       statusPrecoAutorizada:
@@ -39,10 +41,8 @@ function mesclarComOverrideDoPerfil(
 
   return {
     ...servicoBase,
-    intervalKm:
-      servicoPerfil.intervalKm !== padraoGlobal.intervalKm
-        ? servicoPerfil.intervalKm
-        : servicoBase.intervalKm,
+    intervalKm: temOverrideIntervalo ? servicoPerfil.intervalKm : servicoBase.intervalKm,
+    ...(temOverrideIntervalo ? { intervaloKmInformadoUsuario: true } : {}),
     precoIndependente:
       servicoPerfil.precoIndependente !== padraoGlobal.precoIndependente
         ? servicoPerfil.precoIndependente
@@ -66,7 +66,7 @@ function servicoTemOverrideDoPerfil(
   padraoGlobal: ServicoIndependente,
 ): boolean {
   return (
-    servicoPerfil.intervalKm !== padraoGlobal.intervalKm ||
+    servicoPerfil.intervaloKmInformadoUsuario === true ||
     servicoPerfil.precoIndependente !== padraoGlobal.precoIndependente ||
     // Só edição consciente do preço de concessionária conta como override (B2).
     servicoPerfil.statusPrecoAutorizada === 'informado_usuario' ||

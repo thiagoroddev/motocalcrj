@@ -11,11 +11,10 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 //
 // É deliberadamente tolerante onde o tipo permite (`.nullable()`), para não
 // gerar falso-positivo que rejeite dado bom. Validar é a fronteira de carga:
-// carregar → migrar → validar; dado desconhecido/corrompido volta para o onboarding.
+// carregar → validar; dado desconhecido/corrompido volta para o onboarding.
 // ──────────────────────────────────────────────
 
 // Enums / literais
-const perfilUso = z.enum(['entrega', 'passageiro']);
 const modoRevisao = z.enum(['autorizadas', 'independentes']);
 const tipoCombustivel = z.enum(['comum', 'aditivada', 'etanol']);
 const perfilPecas = z.enum(['original', 'paralela']);
@@ -91,6 +90,7 @@ export const servicoIndependente = z
     id: z.string(),
     nome: z.string(),
     intervalKm: inteiroNaoNegativo,
+    intervaloKmInformadoUsuario: z.boolean().optional(),
     precoIndependente: dinheiroNaoNegativo,
     precoTotalAutorizada: dinheiroNaoNegativo,
     statusPrecoAutorizada: statusPrecoAutorizada.optional(),
@@ -160,7 +160,6 @@ export const perfilSchema = z
       marca: z.string(),
       modelo: z.string(),
       ano: inteiroPositivo,
-      perfilUso,
       kmAtual: inteiroNaoNegativo,
       kmUltimaRevisao: inteiroNaoNegativo.nullable(),
       kmUltimaTrocas,

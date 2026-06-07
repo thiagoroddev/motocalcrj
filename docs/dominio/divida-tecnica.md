@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v14, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v15, auditada contra código, testes e ADRs em 06/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -23,105 +23,46 @@ O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas taref
 
 | ID | Dívida vigente | Prioridade relativa |
 | --- | --- | --- |
-| DT-18 | `PerfilUso` mistura finalidade, carga e severidade de desgaste | Média |
-| DT-19 | Intervalo peça-serviço depende de comparação com default global | Alta |
+| DT-18 | Onboarding ainda contém passo transitório de referência profissional | Média |
 
 ---
 
-## DT-18: `PerfilUso` mistura finalidade, carga e severidade
+## DT-18: passo transitório de referência profissional no onboarding
 
 ### Situação atual
 
-`PerfilUso` aceita somente `entrega | passageiro` e concentra dimensões diferentes:
+Após a TASK-REF-41.2, os presets e o cálculo possuem uma referência profissional explícita por
+modelo e ano:
 
-- `entrega` seleciona consumo com baú e `intervaloKmEntrega` para peças;
-- `passageiro` usa consumo e intervalos-base;
-- pneus têm uma única `vidaUtilKm`;
-- carga, passageiro frequente, baú e uso severo não são fatores independentes;
+- `consumoKmLComBau` e `intervaloKmEntrega` foram removidos;
+- `PerfilUso`, seu campo persistido, action e parâmetros de cálculo foram removidos;
+- Preferências, confirmação e Detalhamento não exibem mais entrega/passageiro;
+- o Passo 4 permanece temporariamente como aviso informativo até a TASK-REF-41.3 removê-lo da rota;
 - não há modo casual;
 - suspensão não está modelada como item de desgaste.
 
-Além disso, a ADR-014 definiu que o intervalo canônico do componente deve morar no serviço,
-enquanto as peças ainda carregam `intervaloKm` e `intervaloKmEntrega`. A coexistência desses
-dois modelos alimenta a fragilidade da DT-19.
+O serviço efetivo é a fonte canônica da vida útil. `intervaloKm` e `vidaUtilKm` permanecem apenas
+como fallbacks profissionais do preset.
 
 ### Por que é dívida técnica
 
-O enum mistura finalidade de uso com condição física da moto. Isso limita novos perfis e
-pode subestimar desgaste de pneus, freios, suspensão e consumo sem permitir explicar qual
-fator causou a diferença.
+O núcleo da dívida foi resolvido. Resta retirar o passo transitório da navegação e apresentar os
+campos editáveis de vida útil no onboarding, sem reintroduzir perfis automáticos.
 
 ### Por que não corrigir agora
 
-A decisão de produto foi fechada pela ADR-018: não haverá fatores nem modos de finalidade no MVP.
-A correção ainda atravessa schema, onboarding, Ajustes, presets, cálculo e explicações da UI e
-depende da TASK-REF-42 para consolidar uma fonte canônica editável de intervalo.
+A remoção foi dividida para reduzir o risco. A 41.1 consolidou os dados e a 41.2 removeu o campo
+persistido e seus consumidores. A TASK-REF-41.3 encerra a parte visual.
 
 ### Gatilho
 
-- adicionar uso casual;
-- comparar custos entre perfis;
-- incluir carga, baú ou passageiro como escolhas independentes;
-- modelar suspensão;
-- cadastrar modelo que exija fatores de desgaste diferentes.
+- concluir a TASK-REF-41.3.
 
 ### Recomendação
 
-Aplicar a ADR-018: remover `PerfilUso`, manter uma única referência profissional editável por
-modelo e eliminar `consumoKmLComBau`/`intervaloKmEntrega` após a TASK-REF-42 tornar explícita a
-fonte canônica. Uso casual e suspensão permanecem fora do MVP até existirem dados e requisito
+Concluir a TASK-REF-41.3 removendo o passo transitório e expondo no onboarding apenas os campos
+editáveis aprovados. Uso casual e suspensão permanecem fora do MVP até existirem dados e requisito
 próprios.
-
----
-
-## DT-19: Intervalo peça-serviço depende do default global
-
-### Situação atual
-
-`normalizarPerfilMvp` mescla os serviços do preset no perfil usado pelo cálculo.
-`resolverServicoComIntervaloEditado`, porém, decide se um intervalo foi editado comparando
-o valor recebido com `SERVICOS_INDEPENDENTES_PADRAO`.
-
-Com isso, um intervalo vindo do preset e diferente do default global é tratado como se fosse
-override do usuário. A peça passa a usar o intervalo do serviço por consequência dessa
-diferença. Se o default global for atualizado para o mesmo valor, a peça volta ao intervalo
-próprio do preset.
-
-Existe também diferença entre consumidores:
-
-- o cálculo recebe serviços normalizados pelo preset;
-- `PaginaInsumos` e parte de `DialogEdicaoCusto` resolvem o intervalo usando
-  `perfil.servicosIndependentes` sem a mesma normalização.
-
-Exemplo atual: na Pop 110i, o pneu dianteiro tem `vidaUtilKm: 25.000`, o serviço efetivo do
-preset usa `24.000` e o default global usa `25.000`. O cálculo pode adotar `24.000`, enquanto
-Insumos cai no fallback de `25.000`.
-
-### Por que é dívida técnica
-
-- a origem do intervalo não é representada no dado;
-- valor de preset e edição do usuário são inferidos por comparação;
-- atualizar um default aparentemente inofensivo pode alterar o cálculo;
-- cálculo e UI podem apresentar intervalos diferentes para o mesmo componente.
-
-### Por que não corrigir agora
-
-A correção toca `src/utils/calculos.ts`, persistência de overrides e consumidores de
-manutenção. Também precisa ser alinhada com a decisão de modelagem da DT-18.
-
-### Gatilho
-
-- corrigir a divergência de intervalo exibido e calculado;
-- revisar a modelagem de `PerfilUso`;
-- alterar defaults globais de serviços;
-- adicionar novos modelos com intervalos diferentes.
-
-### Recomendação
-
-Representar explicitamente a procedência do intervalo ou persistir somente overrides reais
-do usuário. Todos os consumidores devem receber a mesma lista efetiva de serviços. Adicionar
-teste de integração que compare o intervalo exibido, o intervalo da peça no cálculo e o
-intervalo do serviço vinculado.
 
 ---
 
@@ -143,11 +84,11 @@ intervalo do serviço vinculado.
 | DT-12 | Removida: resolvida | Os dois fluxos de abastecimento citados foram removidos. |
 | DT-13 | Removida: resolvida | Overrides de revisão autorizada são aplicados no cálculo e nas projeções. |
 | DT-14 | Removida: resolvida no escopo original | `SET_ONBOARDING_CAMPO` só é usado dentro do onboarding e o reducer valida o perfil resultante. |
-| DT-15 | Removida: resolvida | O vínculo peça-serviço usa `MAPA_PECA_PARA_SERVICO`; a fragilidade restante está descrita na DT-19. |
+| DT-15 | Removida: resolvida | O vínculo peça-serviço usa `MAPA_PECA_PARA_SERVICO`; a TASK-REF-42 eliminou também a inferência de procedência que restava na DT-19. |
 | DT-16 | Removida: resolvida | Serviços excepcionais são excluídos de `revisao.total` e tratados como imprevistos sugeridos. |
 | DT-17 | Removida: resolvida | `tw-animate-css` está instalado e importado em `src/index.css`. |
 | DT-18 | Mantida e atualizada | O enum e os caminhos de cálculo continuam simplificados; referências à TASK-REF-32 como trabalho futuro foram removidas. |
-| DT-19 | Mantida e elevada | A dependência do default global permanece e já permite divergência entre intervalo exibido e calculado. |
+| DT-19 | Removida: resolvida pela TASK-REF-42 / ADR-018 | A procedência é explícita; serviço efetivo é canônico e cálculo, Insumos e Detalhamento usam a mesma mesclagem preset/perfil. |
 
 ---
 
@@ -181,3 +122,4 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 06/06/2026 | v12 | TASK-REF-39 e ADR-017 encerram DT-10; lista ativa reduzida a DT-11, DT-18 e DT-19. |
 | 06/06/2026 | v13 | TASK-REF-40 e ADR-010 encerram DT-11; lista ativa reduzida a DT-18 e DT-19. |
 | 06/06/2026 | v14 | ADR-018 fecha a decisão da DT-18: padrão profissional único e editável, sem entrega/passageiro ou fatores automáticos. |
+| 06/06/2026 | v15 | TASK-REF-42 encerra DT-19 com procedência explícita e serviço efetivo canônico; lista ativa reduzida à DT-18. |

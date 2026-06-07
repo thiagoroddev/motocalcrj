@@ -1,6 +1,5 @@
 import type {
   PerfilUsuario,
-  PerfilUso,
   PerfilPecas,
   ModoRevisao,
   PecaOverride,
@@ -24,12 +23,12 @@ import type {
   ResultadoCalculo,
   Periodo,
 } from '../types/calculos';
-import { SERVICOS_INDEPENDENTES_PADRAO } from '../context/perfilDefaults';
 import {
   resolverStatusPrecoAutorizada,
   temPrecoAutorizadaInformado,
 } from './statusPrecoAutorizada';
 import { estimarMaoDeObra } from './maoDeObraEstimada';
+import { resolverServicosManutencaoPerfil } from './servicosManutencaoPreset';
 
 function valorNaoNegativo(valor: number): number {
   return Number.isFinite(valor) && valor > 0 ? valor : 0;
@@ -51,12 +50,6 @@ export function calcularDiasAno(diasSemana: number): number {
   return valorNaoNegativo(diasSemana) * 52;
 }
 
-// ─── II. Consumo de Combustível ──────────────────────────────────
-
-export function resolverConsumoEfetivo(preset: PresetMoto, usaBau: boolean): number {
-  return usaBau ? preset.consumoKmLComBau : preset.consumoKmL;
-}
-
 export function calcularCpkCombustivel(precoGasolina: number, consumoKmL: number): number {
   const preco = valorNaoNegativo(precoGasolina);
   const consumo = valorNaoNegativo(consumoKmL);
@@ -68,7 +61,6 @@ export function calcularCpkCombustivel(precoGasolina: number, consumoKmL: number
 export function resolverIntervaloPeca(
   pecaId: string,
   preset: PresetMoto,
-  tipoUso: PerfilUso,
   pecasOverrides: PecaOverride[] = [],
   servicosIndependentes: ServicoIndependente[] = [],
 ): number {
@@ -77,10 +69,10 @@ export function resolverIntervaloPeca(
     return valorNaoNegativo(override.intervaloKmEditado);
   }
 
-  // ServicoIndependente ativo vinculado à peça sobrepõe o intervalo do preset APENAS
-  // quando o usuário editou (intervalo ≠ default). Sem edição, o preset - que conhece
-  // entrega/passageiro - segue canônico (Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1).
-  const servico = resolverServicoComIntervaloEditado(pecaId, servicosIndependentes);
+  // A lista recebida já representa a mesclagem efetiva entre preset e perfil.
+  // O serviço vinculado é a fonte canônica da vida útil, esteja ele ativo ou não:
+  // `ativo` controla o custo do serviço, não o desgaste da peça.
+  const servico = resolverServicoPorPeca(pecaId, servicosIndependentes);
   if (servico) {
     return valorNaoNegativo(servico.intervalKm);
   }
@@ -89,8 +81,7 @@ export function resolverIntervaloPeca(
   if (peca) {
     // Peças com driver temporal (ex.: bateria) podem omitir intervalo em km.
     // Caller (calcularCpkPorPeca) trata 0 como sinal para usar intervaloMeses.
-    const intervaloPorTipo = tipoUso === 'entrega' ? peca.intervaloKmEntrega : peca.intervaloKm;
-    return intervaloPorTipo ?? 0;
+    return peca.intervaloKm ?? 0;
   }
 
   const pneu = preset.pneus.find((p) => p.id === pecaId);
@@ -169,32 +160,12 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   kit_cilindro: 'troca-kit-cilindro',
 };
 
-export function resolverServicoIndependentePorPeca(
+export function resolverServicoPorPeca(
   pecaId: string,
   servicosIndependentes: ServicoIndependente[] = [],
 ): ServicoIndependente | undefined {
   const servicoId = MAPA_PECA_PARA_SERVICO[pecaId] ?? pecaId;
-  return servicosIndependentes.find((servico) => servico.id === servicoId && servico.ativo);
-}
-
-// Intervalos default por serviço - base para detectar edição do usuário (Decisão C).
-const INTERVALOS_PADRAO_SERVICO = new Map<string, number>(
-  SERVICOS_INDEPENDENTES_PADRAO.map((servico) => [servico.id, servico.intervalKm]),
-);
-
-// Retorna o serviço vinculado à peça SOMENTE quando o usuário editou o intervalo
-// (difere do default). Sem edição, o intervalo canônico segue o do preset (que conhece
-// entrega/passageiro) - Decisão C da revisão da REF-29 / INV-VIDA-UTIL-1.
-export function resolverServicoComIntervaloEditado(
-  pecaId: string,
-  servicosIndependentes: ServicoIndependente[] = [],
-): ServicoIndependente | undefined {
-  const servico = resolverServicoIndependentePorPeca(pecaId, servicosIndependentes);
-  if (!servico) return undefined;
-  const intervaloPadrao = INTERVALOS_PADRAO_SERVICO.get(servico.id);
-  return intervaloPadrao === undefined || servico.intervalKm !== intervaloPadrao
-    ? servico
-    : undefined;
+  return servicosIndependentes.find((servico) => servico.id === servicoId);
 }
 
 function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTrocas | undefined {
@@ -293,7 +264,6 @@ export function calcularKmDasProximasTrocas(
 
 export interface OpcoesCpkPorPeca {
   preset: PresetMoto;
-  tipoUso: PerfilUso;
   perfilPecas: PerfilPecas;
   modoRevisao: ModoRevisao;
   kmAtual: number;
@@ -306,7 +276,6 @@ export interface OpcoesCpkPorPeca {
 export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca> {
   const {
     preset,
-    tipoUso,
     perfilPecas,
     modoRevisao,
     kmAtual,
@@ -363,13 +332,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
   ];
 
   for (const { id, label } of todasPecas) {
-    const intervalo = resolverIntervaloPeca(
-      id,
-      preset,
-      tipoUso,
-      pecasOverrides,
-      servicosIndependentes,
-    );
+    const intervalo = resolverIntervaloPeca(id, preset, pecasOverrides, servicosIndependentes);
     const preco = resolverPrecoPeca(id, preset, perfilPecas, pecasOverrides);
 
     const pecaPreset = preset.pecas.find((p) => p.id === id);
@@ -818,6 +781,7 @@ export function calcularCustosPorCategoria(
   dadosRJ: DadosRJ,
 ): CustosPorCategoria {
   const anoAtual = new Date().getFullYear();
+  const servicosManutencao = resolverServicosManutencaoPerfil(perfil, preset);
 
   const kmDia = resolverKmDia(perfil.trabalho.kmPorDia);
   const diasSemana = perfil.trabalho.diasPorSemana;
@@ -825,7 +789,11 @@ export function calcularCustosPorCategoria(
   const diasAno = calcularDiasAno(diasSemana);
 
   // Documentos
-  const valorFipe = perfil.fipeCache?.valor ?? 0;
+  const cacheFipeAtual =
+    perfil.fipeCache?.anoModelo === perfil.moto.ano &&
+    perfil.fipeCache.marca === perfil.moto.marca &&
+    perfil.fipeCache.modelo === perfil.moto.modelo;
+  const valorFipe = cacheFipeAtual && perfil.fipeCache ? perfil.fipeCache.valor : 0;
   const ipva = calcularIPVA(valorFipe, dadosRJ.ipva.aliquotaMotos, perfil.moto.ano, anoAtual);
   const licenciamento = calcularLicenciamento(anoAtual, dadosRJ.licenciamento.tabela);
 
@@ -844,7 +812,7 @@ export function calcularCustosPorCategoria(
     custoCicloCompleto,
     quantidadeRevisoesCiclo: preset.revisaoAutorizada.length,
     kmCicloRevisao,
-    servicosIndependentes: perfil.servicosIndependentes,
+    servicosIndependentes: servicosManutencao,
     kmAtual: perfil.moto.kmAtual,
     kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
     marca: preset.marca,
@@ -856,14 +824,13 @@ export function calcularCustosPorCategoria(
   // Manutenção por peça
   const detalhePecas = calcularCpkPorPeca({
     preset,
-    tipoUso: perfil.moto.perfilUso,
     perfilPecas: perfil.perfilManutencao.perfilPecasGlobal,
     modoRevisao: perfil.perfilManutencao.modoRevisao,
     kmAtual: perfil.moto.kmAtual,
     kmAnual,
     kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
     pecasOverrides: perfil.pecasOverrides,
-    servicosIndependentes: perfil.servicosIndependentes,
+    servicosIndependentes: servicosManutencao,
   });
   const cpkPecasTotal = calcularCpkPecasTotal(detalhePecas);
 
@@ -901,7 +868,7 @@ export function calcularCustosPorCategoria(
   const imprevistosSugeridos = new Map<string, CustoImprevistoSugerido>(
     [
       ...calcularImprevistosSugeridosAnual(
-        perfil.servicosIndependentes,
+        servicosManutencao,
         kmAnual,
         perfil.perfilManutencao.modoRevisao,
         perfil.moto.kmAtual,

@@ -48,10 +48,6 @@ export function PassoConfirmacao() {
             label="Marca / Modelo"
             valor={`${moto.marca} ${getNomeModelo(moto.modelo)} ${moto.ano}`}
           />
-          <LinhaResumo
-            label="Uso"
-            valor={moto.perfilUso === 'entrega' ? 'Entregas' : 'Passageiro'}
-          />
         </SessaoResumo>
 
         <SessaoResumo titulo="Quilometragem" aoEditar={() => editarPasso('5')}>

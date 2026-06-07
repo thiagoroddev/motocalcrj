@@ -78,7 +78,7 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 
 **Regra:** se nao ha presets, o app inicia com `perfilPadrao` e exige onboarding. Se ha presets validos mas a chave de ativo esta ausente, o app recupera selecionando `presets[0]`.
 
-**Onde e protegida:** `criarEstadoInicial()` retorna `estadoPadrao` quando `presets.length === 0`; quando ha presets validos, migra/valida e usa `presets.find(presetAtivoId) ?? presets[0]`.
+**Onde e protegida:** `criarEstadoInicial()` retorna `estadoPadrao` quando `presets.length === 0`; quando ha presets validos, valida e usa `presets.find(presetAtivoId) ?? presets[0]`.
 
 ### INV-AGG-4: Referências relacionais canônicas
 

@@ -140,3 +140,6 @@
 | TASK-REF-38 | Contrato v2 com `aluguelValor`, migração v1→v2 e encerramento da DT-8 | [2026-06-06--08h20--TASK-REF-38.md](./2026-06-06--08h20--TASK-REF-38.md) |
 | TASK-REF-39 | Hierarquia visual dos filtros de Manutenção, persistência dos subtoggles e encerramento da DT-10 | [2026-06-06--09h48--TASK-REF-39.md](./2026-06-06--09h48--TASK-REF-39.md) |
 | TASK-REF-40 | Normalizar perfis contra o preset canônico na carga (read repair) e encerramento da DT-11 | [2026-06-06--16h47--TASK-REF-40.md](./2026-06-06--16h47--TASK-REF-40.md) |
+| TASK-REF-42 | Serviço como fonte canônica explícita da vida útil e encerramento da DT-19 | [2026-06-06--19h58--TASK-REF-42.md](./2026-06-06--19h58--TASK-REF-42.md) |
+| TASK-REF-41.1 | Contrato profissional dos presets por ano (`consumoKmLPorAno`, FIPE por ano) | [2026-06-06--23h21--TASK-REF-41.1.md](./2026-06-06--23h21--TASK-REF-41.1.md) |
+| TASK-REF-41.2 | Remover `PerfilUso` do estado e do cálculo (schema v3, sem migração) | [2026-06-06--23h22--TASK-REF-41.2.md](./2026-06-06--23h22--TASK-REF-41.2.md) |

@@ -231,7 +231,6 @@ export const perfilPadrao: PerfilUsuario = {
     marca: '',
     modelo: '',
     ano: new Date().getFullYear(),
-    perfilUso: 'entrega',
     kmAtual: 0,
     kmUltimaRevisao: null,
     kmUltimaTrocas: KM_ULTIMA_TROCAS_PADRAO,
@@ -252,6 +251,8 @@ export const perfilPadrao: PerfilUsuario = {
 
   financeiro: {
     tipoGasolinaPreferida: 'comum',
+    // Fallback válido antes de existir modelo selecionado. O commit do onboarding
+    // substitui as autonomias pela referência profissional do preset escolhido.
     combustiveis: {
       comum: { preco: 6.61, autonomia: 36 },
       aditivada: { preco: 6.99, autonomia: 36 },

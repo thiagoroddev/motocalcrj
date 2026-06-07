@@ -3,7 +3,7 @@
 > **Status:** Engenharia reversa baseada em código real.
 > **Tipo:** Conceito arquitetural fundamental + 3 estruturas em `PerfilUsuario`.
 > **Implementação:** `pecasOverrides`, `servicosIndependentes`, `revisaoAutorizadaOverrides` em `src/types/perfil.ts`. Lógica de resolução em `src/utils/calculos.ts`.
-> **Última atualização:** 2026-05-24 (TASK-DOC-009).
+> **Última atualização:** 2026-06-06 (TASK-REF-42).
 
 ---
 
@@ -67,6 +67,7 @@ interface ServicoIndependente {
   id: string;                 // ex: 'troca-oleo', 'troca-kit-transmissao'
   nome: string;
   intervalKm: number;         // > 0 km-driven; 0 só para temporal conhecido (INV-MANUT-1)
+  intervaloKmInformadoUsuario?: boolean; // true = override consciente sobre o preset
   precoIndependente: number;  // M.O. de oficina independente (era precoMaoDeObra, BG-011).
                               // Em excepcionais, é o preço ÚNICO peças + M.O. (ADR-007)
   precoTotalAutorizada: number;       // preço de concessionária do serviço avulso (ADR-007)
@@ -138,20 +139,20 @@ return 0;  // fallback (não deveria acontecer)
 1. **Override explícito** (Motoboy digitou um valor na coluna ativa)
 2. **Preset JSON** (fallback)
 
-### `resolverIntervaloPeca(pecaId, preset, tipoUso, pecasOverrides, servicosIndependentes)`
+### `resolverIntervaloPeca(pecaId, preset, pecasOverrides, servicosIndependentes)`
 
 ```typescript
 // 1. Override individual vence
 const override = pecasOverrides.find((o) => o.id === pecaId);
 if (override?.intervaloKmEditado != null) return override.intervaloKmEditado;
 
-// 2. ServicoIndependente vinculado SÓ QUANDO EDITADO (≠ default global) — Decisão C da REF-29
-const servico = resolverServicoComIntervaloEditado(pecaId, servicosIndependentes);
+// 2. Serviço efetivo vinculado é a fonte canônica
+const servico = resolverServicoPorPeca(pecaId, servicosIndependentes);
 if (servico) return servico.intervalKm;
 
-// 3. Cai no Preset JSON (intervaloKmEntrega para 'entrega', intervaloKm caso contrário)
+// 3. Cai na referência profissional única do Preset JSON
 const peca = preset.pecas.find((p) => p.id === pecaId);
-if (peca) return tipoUso === 'entrega' ? peca.intervaloKmEntrega : peca.intervaloKm;
+if (peca) return peca.intervaloKm;
 
 const pneu = preset.pneus.find((p) => p.id === pecaId);
 if (pneu) return pneu.vidaUtilKm;
@@ -161,10 +162,12 @@ return 1;  // evita divisão por zero
 
 🔍 **Três fontes em ordem de prioridade (INV-VIDA-UTIL-1):**
 1. **Override individual** (`pecasOverrides[].intervaloKmEditado`)
-2. **`ServicoIndependente.intervalKm`** via `MAPA_PECA_PARA_SERVICO`, **só quando difere do default** em `SERVICOS_INDEPENDENTES_PADRAO` (`resolverServicoComIntervaloEditado`) — preserva o `intervaloKmEntrega` real do preset quando o serviço está no default (REF-29).
-3. **Preset JSON** (`intervaloKmEntrega`/`intervaloKm` da peça; `vidaUtilKm` do pneu).
+2. **`ServicoIndependente.intervalKm` efetivo** via `MAPA_PECA_PARA_SERVICO`. O preset fornece a
+   base e o perfil só vence com `intervaloKmInformadoUsuario === true`.
+3. **Preset JSON da peça/pneu**, apenas quando não houver serviço vinculado.
 
-⚠️ **DT-19:** como o cálculo usa o perfil **mesclado** (intervalos do preset via `normalizarPerfilMvp`), o serviço quase sempre difere do default e acaba sendo a fonte do intervalo da peça também — o que mantém peça e M.O. amortizando juntas. Essa unificação é implícita/frágil (depende do default global estar defasado). Ver `divida-tecnica.md` DT-19.
+`ativo` não altera essa prioridade: ele controla custo, não desgaste. A procedência não depende
+mais de comparação com `SERVICOS_INDEPENDENTES_PADRAO` (TASK-REF-42).
 
 ---
 
@@ -286,6 +289,7 @@ export interface ServicoIndependente {
   id: string;
   nome: string;
   intervalKm: number;
+  intervaloKmInformadoUsuario?: boolean;
   precoIndependente: number;
   precoTotalAutorizada: number;
   statusPrecoAutorizada?: StatusPrecoAutorizada;
@@ -319,4 +323,6 @@ Documentação validada contra:
 - INV-OVR-1 protegida na fronteira de carga pela TASK-REF-40.
 - INV-OVR-4 (anoFimOriginal força paralela) mencionada em RN-11 mas não implementada em `calculos.ts`
 - **Sincronizado em 04/06/26 (TASK-DOC-014):** `ServicoIndependente` corrigido (`precoIndependente` em vez de `precoMaoDeObra`, + `precoTotalAutorizada`/`statusPrecoAutorizada`/`concessionariaIncluiPeca`/`incluidoNaRevisaoAutorizada`); `resolverIntervaloPeca` passo 2 ajustado para "só quando editado" (`resolverServicoComIntervaloEditado`, REF-29) + nota DT-19; defaults atualizados (12 normais + 2 excepcionais; `servicosManutencao` por preset); removida seção duplicada de `revisaoAutorizadaOverrides`.
+- **Sincronizado em 06/06/26 (TASK-REF-42):** procedência do intervalo representada por
+  `intervaloKmInformadoUsuario`; serviço efetivo canônico sem comparação com default global.
 - Atualização anterior em 24/05/26 (DOC-009): `PecaOverride` reescrito; `servicosMaoDeObra` → `servicosIndependentes` (REF-11); seção "Override vs Registro" removida.

@@ -21,6 +21,26 @@ describe('perfilSchema - validação de runtime', () => {
     expect(resultado).toEqual(perfilPadrao);
   });
 
+  it('aceita procedência explícita no intervalo de serviço', () => {
+    const perfilComIntervaloInformado = {
+      ...perfilPadrao,
+      servicosIndependentes: perfilPadrao.servicosIndependentes.map((servico, index) =>
+        index === 0
+          ? {
+              ...servico,
+              intervalKm: 4500,
+              intervaloKmInformadoUsuario: true,
+            }
+          : servico,
+      ),
+    };
+
+    expect(perfilSchema.parse(perfilComIntervaloInformado).servicosIndependentes[0]).toMatchObject({
+      intervalKm: 4500,
+      intervaloKmInformadoUsuario: true,
+    });
+  });
+
   it('aceita override de revisão autorizada quando precoTotal fecha com peças + mão de obra', () => {
     const valido = {
       ...perfilPadrao,

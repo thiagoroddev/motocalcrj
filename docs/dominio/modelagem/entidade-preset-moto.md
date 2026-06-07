@@ -45,8 +45,7 @@ export interface PresetMoto {
   tabelaFipe?: Record<string, number>;  // ano → valor (fallback offline da FIPE)
   aceitaEtanol?: boolean;
 
-  consumoKmL: number;        // sem baú
-  consumoKmLComBau: number;  // com baú (perfil 'entrega')
+  consumoKmLPorAno: Record<string, number>; // ano → referência profissional
 
   pecas: PecaPreset[];
   pneus: PneuPreset[];
@@ -63,14 +62,28 @@ type PresetMotoCatalogo = PresetMoto & {
 };
 ```
 
+O repositório usa o nome do arquivo como identificador do modelo: atualmente existe um preset por
+modelo suportado (`pop110i.json`, `factor125i.json`). `tabelaFipe` e `consumoKmLPorAno` diferenciam
+valores por ano sem duplicar o restante dos dados técnicos. Todo ano publicado em `tabelaFipe`
+deve possuir consumo, mas o mapa de consumo pode incluir um ano ainda sem FIPE local.
+
+Ao concluir o onboarding, o valor exato de `consumoKmLPorAno[ano]` é copiado para
+`perfil.financeiro.combustiveis.*.autonomia`. Um ano sem referência explícita não pode ser
+confirmado. Depois da inicialização, a autonomia continua editável; trocar o ano da moto reaplica
+o padrão do novo ano.
+
+Peças, pneus e `servicosManutencao` são compartilhados entre todos os anos do modelo. As revisões
+fixas constituem a outra exceção anual: Honda Pop seleciona uma tabela pelas faixas 2016-2024,
+2025-2026 e 2027; Yamaha Factor usa uma única tabela em todos os anos. A modelagem dessa seleção
+está na TASK-REF-44 e não exige duplicar o preset completo.
+
 ### `PecaPreset`
 
 ```typescript
 interface PecaPreset {
   id: string;                 // ex.: 'oleo_motor', 'kit_relacao'
   nome: string;
-  intervaloKm?: number;       // manual (passeio)
-  intervaloKmEntrega?: number;// telemetria real (entrega) — geralmente menor
+  intervaloKm?: number;       // fallback profissional por quilometragem
   intervaloMeses?: number;    // driver temporal (ex.: bateria); sem km
   precoOriginal: number;
   precoParalela: number;
@@ -78,7 +91,10 @@ interface PecaPreset {
 }
 ```
 
-> **Vida útil mora no serviço (ADR-014):** embora a peça ainda carregue `intervaloKm`/`intervaloKmEntrega`, a convenção atual é que o **intervalo canônico é o do serviço** (`servicosManutencao[].intervalKm`, sincronizado com a revisão). Insumos informa só o preço. Ver INV-VIDA-UTIL-1 e DT-19.
+> **Vida útil mora no serviço (ADR-014):** a peça mantém apenas `intervaloKm` como fallback
+> profissional. O **intervalo canônico é o do serviço efetivo**
+> (`servicosManutencao[].intervalKm`, sincronizado com a revisão). O perfil só vence essa base com
+> `intervaloKmInformadoUsuario === true`. Insumos informa só o preço. Ver INV-VIDA-UTIL-1.
 
 ### `PneuPreset`
 

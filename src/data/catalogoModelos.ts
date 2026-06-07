@@ -7,8 +7,7 @@ export interface DadosModeloCatalogo {
   nomeFipe: string;
   codigoFipe: string;
   tabelaFipe: Record<string, number>;
-  consumoKmL: number;
-  consumoKmLComBau: number;
+  consumoKmLPorAno: Record<string, number>;
   aceitaEtanol: boolean;
 }
 
@@ -19,8 +18,7 @@ const LISTA: DadosModeloCatalogo[] = LISTA_PRESETS.map(({ id, preset }) => ({
   nomeFipe: preset.nomeFipe,
   codigoFipe: preset.codigoFipe,
   tabelaFipe: preset.tabelaFipe,
-  consumoKmL: preset.consumoKmL,
-  consumoKmLComBau: preset.consumoKmLComBau,
+  consumoKmLPorAno: preset.consumoKmLPorAno,
   aceitaEtanol: preset.aceitaEtanol,
 })).sort((a, b) => a.marca.localeCompare(b.marca) || a.nome.localeCompare(b.nome));
 
@@ -38,4 +36,8 @@ export function getModelosPorMarca(marca: string): DadosModeloCatalogo[] {
 
 export function getNomeModelo(modeloId: string): string {
   return CATALOGO[modeloId]?.nome ?? modeloId;
+}
+
+export function obterConsumoKmLPorAno(modeloId: string, ano: number): number | undefined {
+  return CATALOGO[modeloId]?.consumoKmLPorAno[String(ano)];
 }

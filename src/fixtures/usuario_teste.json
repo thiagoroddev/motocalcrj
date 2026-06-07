@@ -12,7 +12,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho - Pop 110i",
@@ -22,7 +22,6 @@
           "marca": "Honda",
           "modelo": "pop110i",
           "ano": 2024,
-          "perfilUso": "entrega",
           "kmAtual": 18500,
           "kmUltimaRevisao": 12000,
           "kmUltimaTrocas": {
@@ -57,9 +56,9 @@
         "financeiro": {
           "tipoGasolinaPreferida": "comum",
           "combustiveis": {
-            "comum": { "preco": 6.61, "autonomia": 33 },
-            "aditivada": { "preco": 6.99, "autonomia": 33 },
-            "etanol": { "preco": 4.29, "autonomia": 26 }
+            "comum": { "preco": 6.61, "autonomia": 54 },
+            "aditivada": { "preco": 6.99, "autonomia": 54 },
+            "etanol": { "preco": 4.29, "autonomia": 42 }
           },
           "internet": 50,
           "seguro": {
@@ -149,7 +148,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal - Pop 110i",
@@ -159,7 +158,6 @@
           "marca": "Honda",
           "modelo": "pop110i",
           "ano": 2024,
-          "perfilUso": "passageiro",
           "kmAtual": 18500,
           "kmUltimaRevisao": 12000,
           "kmUltimaTrocas": {
@@ -194,9 +192,9 @@
         "financeiro": {
           "tipoGasolinaPreferida": "aditivada",
           "combustiveis": {
-            "comum": { "preco": 6.61, "autonomia": 36 },
-            "aditivada": { "preco": 6.99, "autonomia": 36 },
-            "etanol": { "preco": 4.29, "autonomia": 28 }
+            "comum": { "preco": 6.61, "autonomia": 54 },
+            "aditivada": { "preco": 6.99, "autonomia": 54 },
+            "etanol": { "preco": 4.29, "autonomia": 42 }
           },
           "internet": 0,
           "seguro": {

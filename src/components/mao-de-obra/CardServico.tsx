@@ -77,7 +77,7 @@ export function CardServico({
   const temOverridePreco =
     valorPadrao !== undefined &&
     (valorAtual !== valorPadrao || (modo === 'autorizada' && statusAutorizada !== statusPadrao));
-  const temOverrideIntervalo = padrao !== undefined && servico.intervalKm !== padrao.intervalKm;
+  const temOverrideIntervalo = servico.intervaloKmInformadoUsuario === true;
   const temOverride = temOverridePreco || temOverrideIntervalo;
 
   function handleBlurPreco() {
@@ -103,7 +103,14 @@ export function CardServico({
       setIntervalo(String(servico.intervalKm));
       return;
     }
-    dispatch({ type: 'SET_SERVICO_INDEPENDENTE', payload: { ...servico, intervalKm: num } });
+    dispatch({
+      type: 'SET_SERVICO_INDEPENDENTE',
+      payload: {
+        ...servico,
+        intervalKm: num,
+        intervaloKmInformadoUsuario: true,
+      },
+    });
   }
 
   return (

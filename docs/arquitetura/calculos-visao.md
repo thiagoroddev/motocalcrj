@@ -1,7 +1,7 @@
 # MotoCalc RJ - Visão da Camada de Cálculo
 
 > **Propósito:** mapa de alto nível das funções de cálculo, suas assinaturas atuais e o pipeline de orquestração. **Não é referência detalhada de implementação** - para isso, ler diretamente `src/utils/calculos.ts` e `src/types/calculos.ts`.
-> **Última atualização:** 2026-06-04 (TASK-DOC-014) - MVP de manutenção (ADR-012/013/014).
+> **Última atualização:** 2026-06-06 (TASK-REF-42) - fonte explícita da vida útil.
 > **Verdade primária:** `src/utils/calculos.ts`, `src/types/calculos.ts`, `src/hooks/useCustos.ts`, `src/utils/itensManutencao.ts`, `src/utils/maoDeObraEstimada.ts`.
 
 ---
@@ -31,7 +31,7 @@ ETAPA 1 - Rodagem
                             │
                             ▼
 ETAPA 2 - CPK por peça
-  calcularCpkPorPeca({preset, tipoUso, perfilPecas, modoRevisao,
+  calcularCpkPorPeca({preset, perfilPecas, modoRevisao,
                       kmAtual, kmAnual, kmUltimaTrocas,
                       pecasOverrides, servicosIndependentes})
     → Map<pecaId, CustoPeca>
@@ -78,7 +78,6 @@ calcularDiasAno(diasSemana: number): number                  // diasSemana × 52
 ### III.2 - Combustível
 
 ```typescript
-resolverConsumoEfetivo(preset: PresetMoto, usaBau: boolean): number
 calcularCpkCombustivel(precoGasolina: number, consumoKmL: number): number
 calcularCustoCombustivelAnual(cpkCombustivel: number, kmAnual: number): number
 ```
@@ -86,7 +85,7 @@ calcularCustoCombustivelAnual(cpkCombustivel: number, kmAnual: number): number
 ### III.3 - CPK por peça
 
 ```typescript
-resolverIntervaloPeca(pecaId, preset, tipoUso, pecasOverrides?, servicosIndependentes?): number
+resolverIntervaloPeca(pecaId, preset, pecasOverrides?, servicosIndependentes?): number
 resolverPrecoPeca(pecaId, preset, perfilPecas, pecasOverrides?): number
 calcularCicloPeca(kmUltimaTroca, intervalo, kmAtual, kmAnual): { proximaTrocaKm, trocasNoAno }
 calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca>
@@ -96,8 +95,8 @@ calcularCustoManutencaoAnual(cpkPecasTotal: number, kmAnual: number): number
 
 **Ordem de resolução em `resolverIntervaloPeca`:**
 1. Override individual (`pecasOverrides[].intervaloKmEditado`)
-2. `ServicoIndependente.intervalKm` ativo vinculado via `MAPA_PECA_PARA_SERVICO` (ADR-004)
-3. Preset JSON (`intervaloKmEntrega` se `'entrega'`, senão `intervaloKm`)
+2. `ServicoIndependente.intervalKm` vinculado via `MAPA_PECA_PARA_SERVICO` (ADR-004)
+3. Preset JSON (`intervaloKm` para peça ou `vidaUtilKm` para pneu)
 4. Fallback `1` se peça não existe
 
 **Ordem em `resolverPrecoPeca`:**
@@ -233,7 +232,7 @@ resolverServicosManutencaoPerfil(perfil, preset?): ServicoIndependente[]
 | Peça avulsa duplicada com o serviço (Honda)      | `ehPecaCobertaPorServicoAutorizada` pula só no `informado` oficial + `concessionariaIncluiPeca` (INV-MANUT-3) |
 | M.O. estimada somada em silêncio                 | Só quando ligada (global ou por-serviço), sempre `~` (INV-MANUT-2)        |
 | Recalcular na fusão do item-componente           | `montarItensManutencao` é só visão; total vem dos mapas de `calculos.ts`  |
-| Intervalo peça ≠ serviço no mesmo componente     | Unificado via merge + `resolverServicoComIntervaloEditado`; fragilidade na DT-19 |
+| Intervalo peça ≠ serviço no mesmo componente     | Serviço efetivo é canônico via `resolverServicoPorPeca`; perfil só vence o preset com procedência explícita |
 
 ---
 
@@ -243,3 +242,4 @@ resolverServicosManutencaoPerfil(perfil, preset?): ServicoIndependente[]
 | ---------- | ------- |
 | 2026-05-24 | Criação (TASK-DOC-009) - substitui `calculos-api.md` (espec pré-implementação obsoleta deletada na mesma task) |
 | 2026-06-04 | TASK-DOC-014: sincronizado com o MVP de manutenção - assinaturas 3-arg, avulsos de concessionária + estimativa + pendências no autorizado, view-model `montarItensManutencao` + `maoDeObraEstimada`, tipos novos, ponteiro de testes, MVP/composição (ADR-012/013/014, DT-19) |
+| 2026-06-06 | TASK-REF-42: serviço efetivo tornou-se fonte canônica explícita da vida útil; removida inferência por default global e alinhados cálculo, Insumos e Detalhamento |

@@ -122,7 +122,6 @@ export function PaginaDetalhamento() {
     : incluiEstimativaMaoDeObra
       ? 'Inclui estimativas de mão de obra (~) onde a concessionária não informa o valor.'
       : undefined;
-  const tipoUsoLabel = perfil.moto.perfilUso === 'entrega' ? 'Entrega' : 'Passageiro';
   const modoRevisaoLabel = 'Concessionária';
   const precoCombustivel =
     perfil.financeiro.combustiveis[perfil.financeiro.tipoGasolinaPreferida].preco;
@@ -185,11 +184,6 @@ export function PaginaDetalhamento() {
               label: `${perfil.trabalho.diasPorSemana} dias/semana`,
               onClick: () => setEdicao({ tipo: 'usoDiario' }),
               ariaLabel: 'Editar dias por semana',
-            },
-            {
-              label: tipoUsoLabel,
-              onClick: () => setEdicao({ tipo: 'preferencias' }),
-              ariaLabel: 'Editar perfil de uso',
             },
             {
               label: `Revisão ${modoRevisaoLabel}`,

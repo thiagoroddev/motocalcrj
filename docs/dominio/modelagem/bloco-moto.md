@@ -8,7 +8,7 @@
 
 ## Conceito no Mundo Real
 
-Bloco que representa **a motocicleta** dentro do Preset. Não é a Moto-modelo do catálogo (Honda Pop 110i 2024 em geral), nem o Preset JSON imutável é **a moto específica do Motoboy** com seus dados próprios (km atual, perfil de uso real).
+Bloco que representa **a motocicleta** dentro do Preset. Não é a Moto-modelo do catálogo (Honda Pop 110i 2024 em geral), nem o Preset JSON imutável: é **a moto específica do Motoboy** com seus dados próprios (ano e quilometragem).
 
 ⚠️ **Distinção importante:**
 
@@ -26,7 +26,6 @@ moto: {
   marca: string;
   modelo: string;
   ano: number;
-  perfilUso: PerfilUso; // 'entrega' | 'passageiro'
   kmAtual: number;
   kmUltimaRevisao: number | null;
 }
@@ -37,11 +36,11 @@ moto: {
 | `marca`           | string           | Fabricante. Ex: `"Honda"`, `"Yamaha"`                                                                          | Onboarding P1                                                 |
 | `modelo`          | string           | Identificador do modelo. Ex: `"pop110i"`, `"cg_titan160"`. **Aponta para o nome do arquivo em `src/presets/`** | Onboarding P2                                                 |
 | `ano`             | number           | Ano de fabricação                                                                                              | Onboarding P3                                                 |
-| `perfilUso`       | `PerfilUso`      | `'entrega'` (com baú) ou `'passageiro'` (Uber Moto)                                                            | Onboarding P4                                                 |
 | `kmAtual`         | number           | Quilometragem atual do hodômetro                                                                               | Onboarding P5 + atualizado pelos Registros de Rodagem (RN-24) |
 | `kmUltimaRevisao` | `number \| null` | KM da última revisão. `null` se Motoboy não soube informar                                                     | Onboarding P5                                                 |
 
-> **Nota de modelagem:** `perfilUso` ainda é simplificado demais para representar finalidade, baú/carga, passageiro frequente e uso casual. O código atual diferencia principalmente entrega vs. não-entrega. A evolução está registrada como DT-18.
+> **Nota de modelagem:** não existe perfil automático de entrega/passageiro. O preset fornece uma
+> referência profissional por modelo e ano, e os valores permanecem editáveis. Ver ADR-018.
 
 ---
 
@@ -116,7 +115,6 @@ O `Math.max` garante que `kmAtual` **nunca regrida** mesmo se o Motoboy registra
 PerfilUsuario.moto
 ├── marca/modelo → referencia src/presets/{modelo}.json (Preset JSON)
 ├── ano → afeta cálculo de IPVA (isenção em moto ≥ 15 anos no RJ)
-├── perfilUso → afeta cálculo de combustível (consumoKmL vs consumoKmLComBau) e alguns intervalos de manutenção; modelagem completa de carga/desgaste está em DT-18
 ├── kmAtual → entra em vários cálculos (alertas, intervalos)
 └── kmUltimaRevisao → base para calcularKmParaProximaRevisao()
 ```
@@ -152,14 +150,11 @@ Lista de marcas + modelos suportados está implícita pelos arquivos em `src/pre
 ```typescript
 // src/types/perfil.ts
 
-export type PerfilUso = 'entrega' | 'passageiro';
-
 // Dentro de PerfilUsuario:
 moto: {
   marca: string;
   modelo: string;
   ano: number;
-  perfilUso: PerfilUso;
   kmAtual: number;
   kmUltimaRevisao: number | null;
 }

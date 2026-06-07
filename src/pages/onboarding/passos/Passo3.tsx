@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
-import { getNomeModelo, CATALOGO } from '../../../data/catalogoModelos';
+import { getNomeModelo, CATALOGO, obterConsumoKmLPorAno } from '../../../data/catalogoModelos';
 import { dadosRJ } from '../../../data/dadosRJ';
 import { Input } from '../../../components/ui/input';
 
@@ -27,6 +27,8 @@ export function Passo3() {
   // FIPE vem da tabela hardcoded do preset (atualizada mensalmente pelo script
   // `npm run fipe:update`). Sem consulta em runtime — ver ADR-015.
   const valorFipe = valido && modeloDados ? modeloDados.tabelaFipe[String(anoNum)] : undefined;
+  const consumoKmL = valido ? obterConsumoKmLPorAno(modelo, anoNum) : undefined;
+  const anoSuportado = consumoKmL !== undefined;
 
   // Alíquota de IPVA da fonte canônica (`dados_rj.json` via dadosRJ) — ADR/REV-001-A06.
   const aliquotaIpva = dadosRJ.ipva.aliquotaMotos;
@@ -35,19 +37,24 @@ export function Passo3() {
   });
 
   function salvarEAvancar() {
-    if (valorFipe !== undefined && modeloDados) {
-      dispatch({
-        type: 'SET_FIPE_CACHE',
-        cache: {
-          valor: valorFipe,
-          codigoFipe: modeloDados.codigoFipe,
-          dataConsulta: new Date().toISOString().slice(0, 10),
-          anoModelo: anoNum,
-          marca,
-          modelo,
-        },
-      });
+    if (!anoSuportado) {
+      return;
     }
+
+    dispatch({
+      type: 'SET_FIPE_CACHE',
+      cache:
+        valorFipe !== undefined && modeloDados
+          ? {
+              valor: valorFipe,
+              codigoFipe: modeloDados.codigoFipe,
+              dataConsulta: new Date().toISOString().slice(0, 10),
+              anoModelo: anoNum,
+              marca,
+              modelo,
+            }
+          : null,
+    });
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'moto',
@@ -65,7 +72,7 @@ export function Passo3() {
           : undefined
       }
       aoProximo={salvarEAvancar}
-      podeContinuar={valido}
+      podeContinuar={valido && anoSuportado}
     >
       <Input
         type="number"
@@ -79,7 +86,20 @@ export function Passo3() {
       />
 
       {valido && ano.length >= 4 && (
-        <div className="mt-4">
+        <div className="mt-4 space-y-2">
+          {consumoKmL !== undefined ? (
+            <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
+              <span className="text-muted-foreground text-sm">Consumo de referência</span>
+              <span className="text-foreground font-semibold">
+                {consumoKmL.toLocaleString('pt-BR')} km/L
+              </span>
+            </div>
+          ) : (
+            <p className="text-warning text-sm">
+              Ainda não há referência de consumo para {anoNum}.
+            </p>
+          )}
+
           {valorFipe !== undefined ? (
             <div className="space-y-1">
               <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
