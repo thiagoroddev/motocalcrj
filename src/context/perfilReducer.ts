@@ -576,18 +576,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         moto: { ...state.perfil.moto, kmMotorRefeito: action.km },
       });
 
-    case 'MARCAR_TROCAS_REVISAO':
-      return comPerfil({
-        ...state.perfil,
-        moto: {
-          ...state.perfil.moto,
-          kmUltimaTrocas: {
-            ...state.perfil.moto.kmUltimaTrocas,
-            ...Object.fromEntries(action.componentesMarcados.map((c) => [c, action.kmRevisao])),
-          },
-        },
-      });
-
     case 'RESETAR_AJUSTES_PADRAO':
       // ADR-005: o reset ZERA os custos; o app não presume gastos.
       // Uso (kmPorDia, diasPorSemana) e modo de revisão voltam ao padrão por serem

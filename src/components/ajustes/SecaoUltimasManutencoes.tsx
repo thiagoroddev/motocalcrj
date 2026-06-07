@@ -15,8 +15,6 @@ const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'pneuDianteiro', label: 'Pneu dianteiro' },
   { key: 'pneuTraseiro', label: 'Pneu traseiro' },
   { key: 'kitRelacao', label: 'Kit relação' },
-  { key: 'velaIgnicao', label: 'Vela de ignição' },
-  { key: 'filtroAr', label: 'Filtro de ar' },
   { key: 'sapataFreioDianteiro', label: 'Sapata de freio dianteiro' },
   { key: 'sapataFreioTraseiro', label: 'Sapata de freio traseiro' },
   { key: 'bateria', label: 'Bateria' },

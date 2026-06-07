@@ -143,7 +143,7 @@ Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver
 | Overrides de peça       | `SET_PECA_OVERRIDE`, `RESET_PECA_OVERRIDE`                                 |
 | Mão de obra e revisão   | `SET_SERVICO_INDEPENDENTE`, `RESET_SERVICOS_INDEPENDENTES`, `SET_REVISAO_AUTORIZADA_OVERRIDE`, `RESET_REVISAO_AUTORIZADA_OVERRIDE` |
 | Financeiro              | `SET_INTERNET`, `SET_SEGURO`, `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR` |
-| Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`, `MARCAR_TROCAS_REVISAO`        |
+| Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`                                 |
 | Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
 | FIPE                    | `SET_FIPE_CACHE`                                                           |
 | Persistência            | `CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`                     |

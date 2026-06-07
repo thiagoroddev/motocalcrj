@@ -173,7 +173,7 @@ describe('App - smoke UI', () => {
     // Consumo já vem pré-preenchido com o do modelo (Pop = 54 km/L); não editamos.
     clicarProximo();
 
-    await screen.findByText('O que foi trocado?');
+    await screen.findByText('Últimas manutenções do veículo');
     clicarProximo();
 
     await screen.findByText('Qual a situação da sua moto?');

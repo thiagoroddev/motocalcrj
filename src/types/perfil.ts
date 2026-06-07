@@ -276,11 +276,6 @@ export type PerfilAction =
   // Histórico de manutenção
   | { type: 'SET_KM_ULTIMA_TROCA'; componente: keyof KmUltimaTrocas; km: number }
   | { type: 'SET_MOTOR_REFEITO'; km: number | null }
-  | {
-      type: 'MARCAR_TROCAS_REVISAO';
-      componentesMarcados: (keyof KmUltimaTrocas)[];
-      kmRevisao: number;
-    }
 
   // Ajustes de predefinição
   | { type: 'SET_ANO_MOTO'; ano: number }

@@ -14,7 +14,7 @@ import { Passo2 } from './passos/Passo2';
 import { Passo3 } from './passos/Passo3';
 import { Passo4 } from './passos/Passo4';
 import { Passo5 } from './passos/Passo5';
-import { Passo5Trocas } from './passos/Passo5Trocas';
+import { Passo5Manutencoes } from './passos/Passo5Manutencoes';
 import { Passo6 } from './passos/Passo6';
 import { Passo6Financiamento } from './passos/Passo6Financiamento';
 import { Passo6Aluguel } from './passos/Passo6Aluguel';
@@ -83,7 +83,7 @@ export function FluxoOnboarding() {
         <Route path="3" element={<Passo3 />} />
         <Route path="4" element={<Passo4 />} />
         <Route path="5" element={<Passo5 />} />
-        <Route path="5trocas" element={<Passo5Trocas />} />
+        <Route path="5trocas" element={<Passo5Manutencoes />} />
         <Route path="6" element={<Passo6 />} />
         <Route path="6/financiamento" element={<Passo6Financiamento />} />
         <Route path="6/aluguel" element={<Passo6Aluguel />} />

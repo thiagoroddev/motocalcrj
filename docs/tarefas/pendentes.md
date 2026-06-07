@@ -64,27 +64,7 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
 
 _(A TASK-RF-6.33 saiu daqui para `em-andamento.md` em 07/06/26.)_
 
-## TASK-RF-6.29 - Onboarding "Últimas manutenções do veículo" (km atual destacado + card editável)
-- **Status:** Pendente (REDEFINIDA em 07/06/26 — supersede a versão "remover óleo")
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Dependências:** TASK-RF-6.28 (derivação de avulsos)
-- **REQ/ADR/DT:** ADR-014, ADR-018, RF-6.3.4 (ver RF-6.31 item 10)
-- **Observações:** Esta é a **tela 10** do onboarding (bloco C). Substitui o atual `Passo5Trocas.tsx`
-  ("O que foi trocado?"). **Conteúdo:** (a) mostrar **destacado o km atual** informado no passo 3
-  **ao lado do card da última revisão geral** (`kmUltimaRevisao`, **0 por padrão**); (b) uma
-  **explicação breve** de como preencher (ou não) o km da última revisão e das trocas impacta os
-  cálculos (ciclo ancorado vs amortizado — ADR-006); (c) **abaixo**, exatamente o card de Ajustes
-  **'KM - últimas trocas/manutenções'** (`src/components/ajustes/SecaoUltimasManutencoes.tsx`),
-  permitindo **editar o km da última troca de cada peça** com trocas sem km fixo. **Remover do card**
-  os itens já cobertos pelos **pacotes de revisão fixa**: **vela de ignição** e **filtro de ar**.
-  **Manter a troca de óleo** no card (o humano vai futuramente permitir troca de óleo avulsa como
-  excepcional — ele troca a cada ~1.500 km em casa). Reusar o componente de Ajustes (não duplicar);
-  derivação de itens consistente com a RF-6.28. **CORREÇÃO vs versão anterior:** o óleo **fica** (não
-  é mais removido); a tela deixa de ser um checklist e passa a ser a edição de km (mostra tudo
-  editável, não exige). Atualizar smoke.
+_(A TASK-RF-6.29 saiu daqui para `em-andamento.md` em 07/06/26.)_
 
 ## TASK-RF-6.32 - Onboarding "Valor de mão de obra" + toggle "Padrão / Estimado"
 - **Status:** Pendente
