@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
-import { getNomeModelo, CATALOGO, obterConsumoKmLPorAno } from '../../../data/catalogoModelos';
+import { getNomeModelo, CATALOGO, obterAnosModelo } from '../../../data/catalogoModelos';
 import { dadosRJ } from '../../../data/dadosRJ';
-import { Input } from '../../../components/ui/input';
-
-const ANO_MIN = 2000;
-const ANO_MAX = new Date().getFullYear() + 1;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../components/ui/select';
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -16,28 +19,29 @@ function formatarMoeda(valor: number) {
 export function Passo3() {
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
-  const [ano, setAno] = useState(String(perfil.moto.ano));
-
-  const anoNum = parseInt(ano, 10);
-  const valido = !isNaN(anoNum) && anoNum >= ANO_MIN && anoNum <= ANO_MAX;
 
   const { marca, modelo } = perfil.moto;
   const modeloDados = CATALOGO[modelo];
 
-  // FIPE vem da tabela hardcoded do preset (atualizada mensalmente pelo script
-  // `npm run fipe:update`). Sem consulta em runtime — ver ADR-015.
-  const valorFipe = valido && modeloDados ? modeloDados.tabelaFipe[String(anoNum)] : undefined;
-  const consumoKmL = valido ? obterConsumoKmLPorAno(modelo, anoNum) : undefined;
-  const anoSuportado = consumoKmL !== undefined;
+  // Anos do modelo = anos que a FIPE conhece (ela precifica cada ano-modelo).
+  // Auto-mantida pelo script de atualização FIPE; ordenados desc.
+  const anos = obterAnosModelo(modelo);
+  const anoInicial = anos.includes(perfil.moto.ano)
+    ? perfil.moto.ano
+    : (anos[0] ?? perfil.moto.ano);
+  const [ano, setAno] = useState<number>(anoInicial);
 
-  // Alíquota de IPVA da fonte canônica (`dados_rj.json` via dadosRJ) — ADR/REV-001-A06.
+  // FIPE é por ano (deprecia). Consumo é do modelo (manual/INMETRO), não muda por ano.
+  const valorFipe = modeloDados ? modeloDados.tabelaFipe[String(ano)] : undefined;
+  const consumoKmL = modeloDados?.consumoKmL;
+
   const aliquotaIpva = dadosRJ.ipva.aliquotaMotos;
   const percentualIpva = (aliquotaIpva * 100).toLocaleString('pt-BR', {
     maximumFractionDigits: 2,
   });
 
   function salvarEAvancar() {
-    if (!anoSuportado) {
+    if (anos.length === 0) {
       return;
     }
 
@@ -49,7 +53,7 @@ export function Passo3() {
               valor: valorFipe,
               codigoFipe: modeloDados.codigoFipe,
               dataConsulta: new Date().toISOString().slice(0, 10),
-              anoModelo: anoNum,
+              anoModelo: ano,
               marca,
               modelo,
             }
@@ -58,7 +62,7 @@ export function Passo3() {
     dispatch({
       type: 'SET_ONBOARDING_CAMPO',
       campo: 'moto',
-      valor: { ...perfil.moto, ano: anoNum },
+      valor: { ...perfil.moto, ano },
     });
     irParaProximo();
   }
@@ -72,68 +76,58 @@ export function Passo3() {
           : undefined
       }
       aoProximo={salvarEAvancar}
-      podeContinuar={valido && anoSuportado}
+      podeContinuar={anos.length > 0}
     >
-      <Input
-        type="number"
-        value={ano}
-        onChange={(e) => setAno(e.target.value)}
-        min={ANO_MIN}
-        max={ANO_MAX}
-        placeholder={String(new Date().getFullYear())}
-        autoFocus
-        className="min-h-touch rounded-input border-muted text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
-      />
+      <Select value={String(ano)} onValueChange={(valor) => setAno(Number(valor))}>
+        <SelectTrigger aria-label="Ano da moto">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {anos.map((anoOpcao) => (
+            <SelectItem key={anoOpcao} value={String(anoOpcao)}>
+              {anoOpcao}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-      {valido && ano.length >= 4 && (
-        <div className="mt-4 space-y-2">
-          {consumoKmL !== undefined ? (
+      <div className="mt-4 space-y-2">
+        {consumoKmL !== undefined && (
+          <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
+            <span className="text-muted-foreground text-sm">Consumo de referência</span>
+            <span className="text-foreground font-semibold">
+              {consumoKmL.toLocaleString('pt-BR')} km/L
+            </span>
+          </div>
+        )}
+
+        {valorFipe !== undefined ? (
+          <div className="space-y-1">
             <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-              <span className="text-muted-foreground text-sm">Consumo de referência</span>
-              <span className="text-foreground font-semibold">
-                {consumoKmL.toLocaleString('pt-BR')} km/L
-              </span>
+              <span className="text-muted-foreground text-sm">Valor FIPE</span>
+              <span className="text-foreground font-semibold">{formatarMoeda(valorFipe)}</span>
             </div>
-          ) : (
-            <p className="text-warning text-sm">
-              Ainda não há referência de consumo para {anoNum}.
-            </p>
-          )}
-
-          {valorFipe !== undefined ? (
-            <div className="space-y-1">
+            {new Date().getFullYear() - ano < 15 ? (
               <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-                <span className="text-muted-foreground text-sm">Valor FIPE</span>
-                <span className="text-foreground font-semibold">{formatarMoeda(valorFipe)}</span>
+                <span className="text-muted-foreground text-sm">
+                  IPVA estimado ({percentualIpva}% a.a.)
+                </span>
+                <span className="text-foreground font-semibold">
+                  {formatarMoeda(valorFipe * aliquotaIpva)}
+                </span>
               </div>
-              {new Date().getFullYear() - anoNum < 15 ? (
-                <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-                  <span className="text-muted-foreground text-sm">
-                    IPVA estimado ({percentualIpva}% a.a.)
-                  </span>
-                  <span className="text-foreground font-semibold">
-                    {formatarMoeda(valorFipe * aliquotaIpva)}
-                  </span>
-                </div>
-              ) : (
-                <p className="text-muted-foreground/50 text-xs px-1">
-                  Moto com mais de 15 anos - isenta de IPVA no RJ.
-                </p>
-              )}
-            </div>
-          ) : (
-            <p className="text-muted-foreground/60 text-sm">
-              Valor FIPE indisponível para {anoNum}. O IPVA será calculado quando disponível.
-            </p>
-          )}
-        </div>
-      )}
-
-      {!valido && ano.length >= 4 && (
-        <p className="text-warning text-sm mt-2">
-          Use um ano entre {ANO_MIN} e {ANO_MAX}.
-        </p>
-      )}
+            ) : (
+              <p className="text-muted-foreground/50 text-xs px-1">
+                Moto com mais de 15 anos - isenta de IPVA no RJ.
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-muted-foreground/60 text-sm">
+            Valor FIPE indisponível para {ano}. O IPVA será calculado quando disponível.
+          </p>
+        )}
+      </div>
     </PassoLayout>
   );
 }

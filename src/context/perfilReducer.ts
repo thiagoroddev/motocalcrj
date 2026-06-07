@@ -6,7 +6,7 @@ import type {
   ServicoIndependente,
 } from '../types/perfil';
 import { perfilSchema } from '../schemas/perfilSchema';
-import { CATALOGO, obterConsumoKmLPorAno } from '../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmL } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
 import {
@@ -100,7 +100,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       }
 
       const modeloDados = CATALOGO[state.perfil.moto.modelo];
-      const autonomiaGas = obterConsumoKmLPorAno(state.perfil.moto.modelo, state.perfil.moto.ano);
+      const autonomiaGas = obterConsumoKmL(state.perfil.moto.modelo);
 
       if (!modeloDados || autonomiaGas === undefined) {
         return state;
@@ -429,50 +429,26 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
     // ── Ajustes de predefinição ─────────────────
     case 'SET_ANO_MOTO': {
+      // Consumo é do modelo e não muda com o ano; trocar o ano só atualiza a FIPE
+      // (que é por ano) e o próprio ano. A autonomia gravada permanece editável.
       const modeloDados = CATALOGO[state.perfil.moto.modelo];
-      const autonomiaGas = obterConsumoKmLPorAno(state.perfil.moto.modelo, action.ano);
-
-      if (!modeloDados || autonomiaGas === undefined) {
-        return state;
-      }
-
-      const autonomiaEtanol = Math.round(autonomiaGas * dadosRJ.autonomiaEtanolFatorReducao);
-      const valorFipe = modeloDados.tabelaFipe[String(action.ano)];
+      const valorFipe = modeloDados?.tabelaFipe[String(action.ano)];
       const fipeCache =
-        valorFipe === undefined
-          ? null
-          : {
+        modeloDados && valorFipe !== undefined
+          ? {
               valor: valorFipe,
               codigoFipe: modeloDados.codigoFipe,
               dataConsulta: new Date().toISOString().slice(0, 10),
               anoModelo: action.ano,
               marca: modeloDados.marca,
               modelo: state.perfil.moto.modelo,
-            };
+            }
+          : null;
 
       return comPerfil({
         ...state.perfil,
         moto: { ...state.perfil.moto, ano: action.ano },
         fipeCache,
-        financeiro: {
-          ...state.perfil.financeiro,
-          combustiveis: {
-            comum: {
-              ...state.perfil.financeiro.combustiveis.comum,
-              autonomia: autonomiaGas,
-            },
-            aditivada: {
-              ...state.perfil.financeiro.combustiveis.aditivada,
-              autonomia: autonomiaGas,
-            },
-            etanol: modeloDados.aceitaEtanol
-              ? {
-                  ...state.perfil.financeiro.combustiveis.etanol,
-                  autonomia: autonomiaEtanol,
-                }
-              : state.perfil.financeiro.combustiveis.etanol,
-          },
-        },
       });
     }
 

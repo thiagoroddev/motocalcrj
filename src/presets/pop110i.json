@@ -3,18 +3,7 @@
   "modelo": "Pop 110i",
   "nomeCurto": "Pop 110i",
   "nomeFipe": "POP 110I",
-  "consumoKmLPorAno": {
-    "2016": 54.0,
-    "2017": 54.0,
-    "2018": 54.0,
-    "2019": 54.0,
-    "2020": 54.0,
-    "2021": 54.0,
-    "2022": 54.0,
-    "2023": 54.0,
-    "2024": 54.0,
-    "2025": 49.1
-  },
+  "consumoKmL": 54.0,
   "aceitaEtanol": false,
   "fatorMaoDeObra": 1.0,
   "codigoFipe": "811132-4",
@@ -38,15 +27,10 @@
       "inicio": 2016,
       "fim": 2024
     },
-    "consumoAnoModelo": {
-      "inicio": 2016,
-      "fim": 2025
-    },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 811132-4. Modelo: POP 110i.",
-    "consumoNota": "Referência profissional por ano. Pop 110i 2016-2024: 54 km/L, valor conservador definido em 06/06/2026 a partir do relato real do proprietário de uma Pop 110i 2024 (55 km/L); a Honda divulga 59,6 km/L em uso urbano segundo medições do Instituto Mauá. Pop 110i ES 2025: 49,1 km/L, número fornecido pela Honda e aferido pelo Instituto Mauá.",
+    "consumoNota": "Consumo do modelo (não varia por ano): Pop 110i 2016-2024 = 54 km/L, valor conservador definido em 06/06/2026 a partir do relato real de proprietário de Pop 110i 2024 (55 km/L); a Honda divulga 59,6 km/L em uso urbano (medições do Instituto Mauá). A Pop 110i ES 2025+ é outro modelo (nova geração) e NÃO faz parte deste preset.",
     "consumoFontes": [
       "https://saladeimprensa.honda.com.br/releases/honda-pop-completa-15-anos-no-mercado-nacional",
-      "https://saladeimprensa.honda.com.br/releases/honda-pop-110i-es-2025-ainda-mais-pratica-nova-geracao-traz-motor-inedito-com-partida",
       "https://motor1.uol.com.br/news/723390/impressoes-honda-pop-110i-2025/"
     ]
   },

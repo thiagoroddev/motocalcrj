@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dadosLocaisSchema } from '../schemas/dadosLocaisSchema';
 import { presetMotoCatalogoSchema } from '../schemas/presetSchema';
-import { CATALOGO, obterConsumoKmLPorAno } from './catalogoModelos';
+import { CATALOGO, obterConsumoKmL, obterAnosModelo } from './catalogoModelos';
 import dadosRJJson from './dados_rj.json';
 import { PRESETS } from './repositorioPresets';
 
@@ -51,20 +51,28 @@ describe('catalogoModelos - presets', () => {
         nomeFipe: preset.nomeFipe,
         codigoFipe: preset.codigoFipe,
         tabelaFipe: preset.tabelaFipe,
-        consumoKmLPorAno: preset.consumoKmLPorAno,
+        consumoKmL: preset.consumoKmL,
         aceitaEtanol: preset.aceitaEtanol,
       });
     }
   });
 
-  it('publica a referência profissional explícita por modelo e ano', () => {
-    expect(obterConsumoKmLPorAno('pop110i', 2016)).toBe(54);
-    expect(obterConsumoKmLPorAno('pop110i', 2024)).toBe(54);
-    expect(obterConsumoKmLPorAno('pop110i', 2025)).toBe(49.1);
-    expect(obterConsumoKmLPorAno('pop110i', 2026)).toBeUndefined();
-    expect(obterConsumoKmLPorAno('factor125i', 2017)).toBe(38);
-    expect(obterConsumoKmLPorAno('factor125i', 2025)).toBe(38);
+  it('publica o consumo profissional por modelo (não por ano)', () => {
+    expect(obterConsumoKmL('pop110i')).toBe(54);
+    expect(obterConsumoKmL('factor125i')).toBe(38);
+    expect(obterConsumoKmL('inexistente')).toBeUndefined();
+  });
 
+  it('publica os anos do modelo a partir da tabela FIPE (Pop sem 2025 - ES é outro modelo)', () => {
+    expect(obterAnosModelo('pop110i')).toEqual([
+      2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016,
+    ]);
+    expect(obterAnosModelo('pop110i')).not.toContain(2025);
+    expect(obterAnosModelo('factor125i')[0]).toBeGreaterThanOrEqual(2024);
+    expect(obterAnosModelo('inexistente')).toEqual([]);
+  });
+
+  it('mantém os intervalos canônicos dos serviços avulsos por modelo', () => {
     const intervalos = (modelo: keyof typeof PRESETS) =>
       Object.fromEntries(
         (PRESETS[modelo].servicosManutencao ?? []).map((servico) => [

@@ -1,6 +1,6 @@
 import { usePerfil } from '../hooks/usePerfil';
 import { perfilPadrao } from '../context/PerfilContext';
-import { CATALOGO, obterConsumoKmLPorAno } from '../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmL } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { obterPreset } from '../data/repositorioPresets';
 import { Fuel, Cog } from 'lucide-react';
@@ -27,8 +27,7 @@ export function PaginaInsumos() {
   ];
 
   const autonomiaBase =
-    obterConsumoKmLPorAno(perfil.moto.modelo, perfil.moto.ano) ??
-    perfil.financeiro.combustiveis.comum.autonomia;
+    obterConsumoKmL(perfil.moto.modelo) ?? perfil.financeiro.combustiveis.comum.autonomia;
 
   const padraoCombustiveis: Record<TipoCombustivel, ConfiguracaoCombustivel> = {
     comum: { preco: perfilPadrao.financeiro.combustiveis.comum.preco, autonomia: autonomiaBase },

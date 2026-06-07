@@ -52,7 +52,7 @@ export interface PresetMoto {
   codigoFipe?: string;
   tabelaFipe?: Record<string, number>;
   aceitaEtanol?: boolean;
-  consumoKmLPorAno: Record<string, number>;
+  consumoKmL: number;
   pecas: PecaPreset[];
   pneus: PneuPreset[];
   revisaoAutorizada: RevisaoAutorizadaPreset[];

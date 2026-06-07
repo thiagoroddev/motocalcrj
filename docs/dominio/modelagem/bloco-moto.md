@@ -40,7 +40,8 @@ moto: {
 | `kmUltimaRevisao` | `number \| null` | KM da última revisão. `null` se Motoboy não soube informar                                                     | Onboarding P5                                                 |
 
 > **Nota de modelagem:** não existe perfil automático de entrega/passageiro. O preset fornece uma
-> referência profissional por modelo e ano, e os valores permanecem editáveis. Ver ADR-018.
+> referência profissional do modelo (consumo é do modelo; o valor FIPE é por ano), e os valores
+> permanecem editáveis. Ver ADR-018.
 
 ---
 

@@ -45,7 +45,7 @@ export interface PresetMoto {
   tabelaFipe?: Record<string, number>;  // ano → valor (fallback offline da FIPE)
   aceitaEtanol?: boolean;
 
-  consumoKmLPorAno: Record<string, number>; // ano → referência profissional
+  consumoKmL: number; // referência profissional do modelo (manual/INMETRO), não varia por ano
 
   pecas: PecaPreset[];
   pneus: PneuPreset[];
@@ -63,12 +63,12 @@ type PresetMotoCatalogo = PresetMoto & {
 ```
 
 O repositório usa o nome do arquivo como identificador do modelo: atualmente existe um preset por
-modelo suportado (`pop110i.json`, `factor125i.json`). `tabelaFipe` e `consumoKmLPorAno` diferenciam
-valores por ano sem duplicar o restante dos dados técnicos. Todo ano publicado em `tabelaFipe`
-deve possuir consumo, mas o mapa de consumo pode incluir um ano ainda sem FIPE local.
+modelo suportado (`pop110i.json`, `factor125i.json`). A `tabelaFipe` traz o valor por ano (a FIPE
+precifica cada ano-modelo) e é a **fonte dos anos suportados** do modelo; `consumoKmL` é do modelo
+(não varia por ano). A Pop 110i ES 2025+ é outro modelo e não está neste preset.
 
-Ao concluir o onboarding, o valor exato de `consumoKmLPorAno[ano]` é copiado para
-`perfil.financeiro.combustiveis.*.autonomia`. Um ano sem referência explícita não pode ser
+Ao concluir o onboarding, o `consumoKmL` do modelo é copiado para
+`perfil.financeiro.combustiveis.*.autonomia`. Um ano fora da `tabelaFipe` do modelo não pode ser
 confirmado. Depois da inicialização, a autonomia continua editável; trocar o ano da moto reaplica
 o padrão do novo ano.
 

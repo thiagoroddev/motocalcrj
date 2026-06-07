@@ -31,7 +31,7 @@ import {
   MAPA_PECA_PARA_SERVICO,
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
-import { obterConsumoKmLPorAno } from '../data/catalogoModelos';
+import { obterConsumoKmL } from '../data/catalogoModelos';
 import pop110i from '../presets/pop110i.json';
 import factor125i from '../presets/factor125i.json';
 import type {
@@ -55,7 +55,7 @@ const itensSubstituidosMock = ['Óleo Pro Honda 10w30'];
 const servicosExecutadosMock = [{ categoria: 'Ajuste', servicos: ['Corrente de Transmissão'] }];
 
 const presetMock: PresetMoto = {
-  consumoKmLPorAno: { '2024': 36 },
+  consumoKmL: 36,
   pecas: [
     {
       id: 'oleo_motor',
@@ -1615,8 +1615,8 @@ describe('calcularCustosPorCategoria - baseline de combustível profissional (DT
     };
   }
 
-  it('a referência viva de consumo do Pop 2024 é 54 km/L (não o antigo 33)', () => {
-    expect(obterConsumoKmLPorAno('pop110i', 2024)).toBe(54);
+  it('a referência viva de consumo do Pop é 54 km/L (do modelo, não por ano)', () => {
+    expect(obterConsumoKmL('pop110i')).toBe(54);
   });
 
   it('custo anual de combustível do Pop 2024 reflete 54 km/L', () => {

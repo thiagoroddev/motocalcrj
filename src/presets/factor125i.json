@@ -3,17 +3,7 @@
   "modelo": "Factor 125i",
   "nomeCurto": "Factor 125i",
   "nomeFipe": "YBR 125i FACTOR ED/FLEX",
-  "consumoKmLPorAno": {
-    "2017": 38.0,
-    "2018": 38.0,
-    "2019": 38.0,
-    "2020": 38.0,
-    "2021": 38.0,
-    "2022": 38.0,
-    "2023": 38.0,
-    "2024": 38.0,
-    "2025": 38.0
-  },
+  "consumoKmL": 38.0,
   "aceitaEtanol": true,
   "fatorMaoDeObra": 1.0,
   "codigoFipe": "827104-6",
@@ -37,7 +27,7 @@
       "fim": 2025
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827104-6. Modelo: YBR 125i FACTOR ED/FLEX.",
-    "consumoNota": "Referência profissional/intensa de 38 km/L registrada explicitamente para cada ano suportado de 2017 a 2025; validar com fonte específica por ano quando disponível.",
+    "consumoNota": "Consumo do modelo (não varia por ano): 38 km/L, referência profissional/intensa. Validar com fonte específica quando disponível.",
     "fontesLocais": [
       "outros/dados yamaha/factor-125-i-ubs-2024/fipe-factor-125i.md",
       "outros/dados yamaha/factor-125-i-ubs-2024/precos-pecas.md",

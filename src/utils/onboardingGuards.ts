@@ -1,4 +1,4 @@
-import { CATALOGO, obterConsumoKmLPorAno } from '../data/catalogoModelos';
+import { CATALOGO, obterConsumoKmL } from '../data/catalogoModelos';
 import type { PerfilUsuario } from '../types/perfil';
 
 export function perfilProntoParaCommit(perfil: PerfilUsuario): boolean {
@@ -10,7 +10,7 @@ export function perfilProntoParaCommit(perfil: PerfilUsuario): boolean {
     modelo.trim().length > 0 &&
     modeloDados !== undefined &&
     modeloDados.marca === marca &&
-    obterConsumoKmLPorAno(modelo, perfil.moto.ano) !== undefined &&
+    obterConsumoKmL(modelo) !== undefined &&
     Number.isFinite(kmAtual) &&
     kmAtual > 0
   );

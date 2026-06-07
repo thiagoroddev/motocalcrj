@@ -159,18 +159,9 @@ describe('App - smoke UI', () => {
     fireEvent.click(await screen.findByRole('button', { name: /Pop 110i/i }));
     clicarProximo();
 
-    const inputAno = await screen.findByRole('spinbutton');
-    fireEvent.change(inputAno, { target: { value: '2024' } });
+    // Passo 3: seletor de ano (Pop default = ano mais recente da tabela FIPE, 2024).
+    await screen.findByText('54 km/L');
     await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
-    clicarProximo();
-
-    await screen.findByText('Vida útil das peças');
-    fireEvent.click(screen.getByRole('button', { name: 'Voltar' }));
-
-    const inputAnoRetorno = await screen.findByRole('spinbutton');
-    fireEvent.change(inputAnoRetorno, { target: { value: '2025' } });
-    await screen.findByText('49,1 km/L', {}, { timeout: 2000 });
-    await screen.findByText(/Valor FIPE indisponível para 2025/i);
     clicarProximo();
 
     await screen.findByText('Vida útil das peças');
@@ -213,8 +204,8 @@ describe('App - smoke UI', () => {
     const presets = JSON.parse(presetsRaw!) as PresetEntry[];
     expect(presets).toHaveLength(1);
     expect(presets[0].perfil.onboardingConcluido).toBe(true);
-    expect(presets[0].perfil.financeiro.combustiveis.comum.autonomia).toBe(49.1);
-    expect(presets[0].perfil.fipeCache).toBeNull();
+    expect(presets[0].perfil.financeiro.combustiveis.comum.autonomia).toBe(54);
+    expect(presets[0].perfil.fipeCache).toMatchObject({ anoModelo: 2024, valor: 12126 });
     expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[0].presetId);
   });
 

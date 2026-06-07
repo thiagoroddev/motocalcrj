@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Bike } from 'lucide-react';
 import { TituloSecao } from '@/components/TituloSecao';
-import { CATALOGO } from '../../data/catalogoModelos';
+import { obterAnosModelo } from '../../data/catalogoModelos';
 
 interface Props {
   moto: PerfilUsuario['moto'];
@@ -16,9 +16,7 @@ interface Props {
 export function SecaoVeiculo({ moto, dispatch }: Props) {
   const idKmAtual = useId();
   const idKmUltimaRevisao = useId();
-  const anos = Object.keys(CATALOGO[moto.modelo]?.consumoKmLPorAno ?? {})
-    .map(Number)
-    .sort((a, b) => b - a);
+  const anos = obterAnosModelo(moto.modelo);
 
   return (
     <section className="bg-card rounded-lg p-4 space-y-3">

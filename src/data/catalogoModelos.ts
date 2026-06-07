@@ -7,7 +7,7 @@ export interface DadosModeloCatalogo {
   nomeFipe: string;
   codigoFipe: string;
   tabelaFipe: Record<string, number>;
-  consumoKmLPorAno: Record<string, number>;
+  consumoKmL: number;
   aceitaEtanol: boolean;
 }
 
@@ -18,7 +18,7 @@ const LISTA: DadosModeloCatalogo[] = LISTA_PRESETS.map(({ id, preset }) => ({
   nomeFipe: preset.nomeFipe,
   codigoFipe: preset.codigoFipe,
   tabelaFipe: preset.tabelaFipe,
-  consumoKmLPorAno: preset.consumoKmLPorAno,
+  consumoKmL: preset.consumoKmL,
   aceitaEtanol: preset.aceitaEtanol,
 })).sort((a, b) => a.marca.localeCompare(b.marca) || a.nome.localeCompare(b.nome));
 
@@ -38,6 +38,15 @@ export function getNomeModelo(modeloId: string): string {
   return CATALOGO[modeloId]?.nome ?? modeloId;
 }
 
-export function obterConsumoKmLPorAno(modeloId: string, ano: number): number | undefined {
-  return CATALOGO[modeloId]?.consumoKmLPorAno[String(ano)];
+// Consumo é característica do MODELO (manual/INMETRO/relato), não varia por ano.
+export function obterConsumoKmL(modeloId: string): number | undefined {
+  return CATALOGO[modeloId]?.consumoKmL;
+}
+
+// Anos suportados de um modelo = anos que a tabela FIPE conhece (a FIPE precifica
+// cada ano-modelo). Auto-mantida pelo script de atualização FIPE. Ordenados desc.
+export function obterAnosModelo(modeloId: string): number[] {
+  return Object.keys(CATALOGO[modeloId]?.tabelaFipe ?? {})
+    .map(Number)
+    .sort((a, b) => b - a);
 }

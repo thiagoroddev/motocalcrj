@@ -9,21 +9,7 @@ Obedeça essa ordem:
 
 #### Dívida técnica vigente (auditoria 06/06/26)
 
-## TASK-REF-44 - Selecionar revisões fixas por faixa de ano
-- **Status:** Pendente - aguarda validação final do levantamento
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 06/06/26 22:05
-- **Dependências:** validação humana de `revisoes-pop110i.md`
-- **REQ/ADR/DT:** ADR-011, ADR-018, INV-CALC-2, INV-CALC-3
-- **Observações:** manter peças, pneus e serviços avulsos compartilhados pelo modelo. Modelar
-  revisões fixas Honda pelas faixas 2016-2024, 2025-2026 e 2027; Yamaha conserva tabela única para
-  todos os anos. Criar resolver canônico por modelo/ano e usá-lo em cálculo, Detalhamento, Mão de
-  Obra, projeção de próximas revisões e normalização de overrides. Antes de executar, confirmar
-  duas inconsistências da fonte: título `2017-2024` versus faixa decidida `2016-2024`, e total de
-  1.000 km em 2025-2026 (`120,44 + 0` registrado como `120,64`). Não inventar correções.
+_(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era por modelo, não por ano. Ver ADR-019 e `concluidas/2026-06-07--15h05--TASK-REF-44-CANCELADA.md`.)_
 
 ## TASK-RF-6.29 - Onboarding "O que foi trocado?": remover óleo e incluir todas as peças avulsas
 - **Status:** Pendente
@@ -52,33 +38,7 @@ Obedeça essa ordem:
   Atualizar o smoke do onboarding e cobrir: óleo ausente da lista, lista derivada por marca, dispatch
   de `MARCAR_TROCAS_REVISAO` com as chaves corretas.
 
-## TASK-RF-6.30 - Onboarding "Qual o ano da moto?": selecionar ano em vez de digitar
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 06/06/26 22:56
-- **Dependências:** -
-- **REQ/ADR/DT:** ADR-015, ADR-018, RNF-09
-- **Observações:** Hoje o `Passo3.tsx` ("Qual o ano da moto?") usa `<Input type="number">` livre,
-  com faixa `ANO_MIN=2000`/`ANO_MAX=ano+1` (`src/pages/onboarding/passos/Passo3.tsx:9-10,77-86`).
-  Isso deixa digitar ano inexistente para o modelo (ex.: Pop 110i 2008 → "Ainda não há referência de
-  consumo para 2008" + "Valor FIPE indisponível"), só bloqueando o avançar. Trocar por um **seletor**
-  que ofereça apenas os anos válidos do modelo — assim o ano inexistente nem aparece e o bug some.
-  **Fonte dos anos (decidido): chaves de `preset.tabelaFipe`**, a lista canônica dos anos reais do
-  modelo, auto-mantida pelo script de atualização FIPE (endpoint `/years` traz todos os anos; ver
-  ADR-015 e `scripts/atualizar-fipe-presets.mjs`). Ordenar desc. Todo ano da `tabelaFipe` também tem
-  consumo — o `superRefine` do `presetSchema` exige `consumoKmLPorAno[ano]` para cada ano da FIPE —
-  então qualquer ano listado permite prosseguir.
-  **Implementação:** usar o wrapper de Select já existente (`@/components/ui/select`); default = o
-  `perfil.moto.ano` atual se estiver na lista, senão o ano mais recente; ao escolher, manter os mesmos
-  dispatches atuais (`SET_FIPE_CACHE` com cache do ano ou `null`, e `SET_ONBOARDING_CAMPO` de `moto.ano`).
-  Remover `ANO_MIN`/`ANO_MAX`, o aviso "Use um ano entre…" e o aviso "Ainda não há referência de
-  consumo…" (inalcançáveis com seletor). Preservar o painel de Consumo de referência / FIPE / IPVA do
-  ano selecionado. **Relacionado (verificar, não obrigatório aqui):** o ano em Ajustes (`SET_ANO_MOTO`)
-  hoje já rejeita ano sem referência, mas se também for input livre, alinhar para seletor pela mesma
-  fonte. Atualizar smoke do onboarding: seletor lista os anos do modelo e não permite ano inexistente.
+_(A TASK-RF-6.30 saiu daqui para `em-andamento.md` em 07/06/26 — implementada com `<select>` nativo, aguardando validação visual.)_
 
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 

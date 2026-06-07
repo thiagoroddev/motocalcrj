@@ -48,5 +48,5 @@
   },
 
   "autonomiaEtanolFatorReducao": 0.78,
-  "notaAutonomiaEtanol": "Autonomia com etanol ≈ 78% da autonomia com gasolina (menor poder calorífico). Aplica-se ao consumoKmLPorAno do preset."
+  "notaAutonomiaEtanol": "Autonomia com etanol ≈ 78% da autonomia com gasolina (menor poder calorífico). Aplica-se ao consumoKmL do preset."
 }
