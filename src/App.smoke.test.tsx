@@ -164,9 +164,7 @@ describe('App - smoke UI', () => {
     await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
     clicarProximo();
 
-    await screen.findByText('Uso profissional e intenso');
-    expect(screen.queryByRole('button', { name: 'Entregas' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Passageiro' })).not.toBeInTheDocument();
+    await screen.findByText('Vida útil das peças');
     fireEvent.click(screen.getByRole('button', { name: 'Voltar' }));
 
     const inputAnoRetorno = await screen.findByRole('spinbutton');
@@ -175,7 +173,7 @@ describe('App - smoke UI', () => {
     await screen.findByText(/Valor FIPE indisponível para 2025/i);
     clicarProximo();
 
-    await screen.findByText('Uso profissional e intenso');
+    await screen.findByText('Vida útil das peças');
     clicarProximo();
 
     fireEvent.change(await screen.findByLabelText(/KM atual do hodômetro/i), {

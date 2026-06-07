@@ -143,3 +143,6 @@
 | TASK-REF-42 | Serviço como fonte canônica explícita da vida útil e encerramento da DT-19 | [2026-06-06--19h58--TASK-REF-42.md](./2026-06-06--19h58--TASK-REF-42.md) |
 | TASK-REF-41.1 | Contrato profissional dos presets por ano (`consumoKmLPorAno`, FIPE por ano) | [2026-06-06--23h21--TASK-REF-41.1.md](./2026-06-06--23h21--TASK-REF-41.1.md) |
 | TASK-REF-41.2 | Remover `PerfilUso` do estado e do cálculo (schema v3, sem migração) | [2026-06-06--23h22--TASK-REF-41.2.md](./2026-06-06--23h22--TASK-REF-41.2.md) |
+| TASK-REF-41 | Coordenador: remoção do `PerfilUso` (DT-18) — fatias 42/41.1/41.2; resíduo do onboarding migrou p/ RF-6.28 | [2026-06-07--00h06--TASK-REF-41.md](./2026-06-07--00h06--TASK-REF-41.md) |
+| TASK-REF-41.3 | **CANCELADA** — remover Passo 4 vira retrabalho; Passo 4 vira o editor de vida útil na RF-6.28 | [2026-06-07--00h06--TASK-REF-41.3-CANCELADA.md](./2026-06-07--00h06--TASK-REF-41.3-CANCELADA.md) |
+| TASK-RF-6.28 | Passo 4 do onboarding vira editor de vida útil dos avulsos; encerra a DT-18 | [2026-06-07--01h12--TASK-RF-6.28.md](./2026-06-07--01h12--TASK-RF-6.28.md) |

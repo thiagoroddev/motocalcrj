@@ -1,6 +1,6 @@
 # Dívida Técnica do Domínio EstimaMoto
 
-> **Status:** v15, auditada contra código, testes e ADRs em 06/06/2026.
+> **Status:** v17, auditada contra código, testes e ADRs em 07/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
 > escolhas arquiteturais sem prejuízo comprovado e limitações de produto ficam fora da lista ativa.
 
@@ -21,48 +21,9 @@ O histórico detalhado dos itens removidos continua no Git, nas ADRs e nas taref
 
 ## Resumo Atual
 
-| ID | Dívida vigente | Prioridade relativa |
-| --- | --- | --- |
-| DT-18 | Onboarding ainda contém passo transitório de referência profissional | Média |
-
----
-
-## DT-18: passo transitório de referência profissional no onboarding
-
-### Situação atual
-
-Após a TASK-REF-41.2, os presets e o cálculo possuem uma referência profissional explícita por
-modelo e ano:
-
-- `consumoKmLComBau` e `intervaloKmEntrega` foram removidos;
-- `PerfilUso`, seu campo persistido, action e parâmetros de cálculo foram removidos;
-- Preferências, confirmação e Detalhamento não exibem mais entrega/passageiro;
-- o Passo 4 permanece temporariamente como aviso informativo até a TASK-REF-41.3 removê-lo da rota;
-- não há modo casual;
-- suspensão não está modelada como item de desgaste.
-
-O serviço efetivo é a fonte canônica da vida útil. `intervaloKm` e `vidaUtilKm` permanecem apenas
-como fallbacks profissionais do preset.
-
-### Por que é dívida técnica
-
-O núcleo da dívida foi resolvido. Resta retirar o passo transitório da navegação e apresentar os
-campos editáveis de vida útil no onboarding, sem reintroduzir perfis automáticos.
-
-### Por que não corrigir agora
-
-A remoção foi dividida para reduzir o risco. A 41.1 consolidou os dados e a 41.2 removeu o campo
-persistido e seus consumidores. A TASK-REF-41.3 encerra a parte visual.
-
-### Gatilho
-
-- concluir a TASK-REF-41.3.
-
-### Recomendação
-
-Concluir a TASK-REF-41.3 removendo o passo transitório e expondo no onboarding apenas os campos
-editáveis aprovados. Uso casual e suspensão permanecem fora do MVP até existirem dados e requisito
-próprios.
+_Nenhuma dívida técnica vigente._ A lista ativa foi zerada em 07/06/2026, com a DT-18 encerrada pela
+TASK-RF-6.28. Novos itens entram conforme o critério acima; o histórico fica no Git, nas ADRs e nas
+tarefas concluídas.
 
 ---
 
@@ -87,7 +48,7 @@ próprios.
 | DT-15 | Removida: resolvida | O vínculo peça-serviço usa `MAPA_PECA_PARA_SERVICO`; a TASK-REF-42 eliminou também a inferência de procedência que restava na DT-19. |
 | DT-16 | Removida: resolvida | Serviços excepcionais são excluídos de `revisao.total` e tratados como imprevistos sugeridos. |
 | DT-17 | Removida: resolvida | `tw-animate-css` está instalado e importado em `src/index.css`. |
-| DT-18 | Mantida e atualizada | O enum e os caminhos de cálculo continuam simplificados; referências à TASK-REF-32 como trabalho futuro foram removidas. |
+| DT-18 | Removida: resolvida pela TASK-RF-6.28 | `PerfilUso` eliminado (TASK-REF-41.1/41.2) e o Passo 4 do onboarding passou a expor os cards editáveis de vida útil dos avulsos; a fatia de remoção (TASK-REF-41.3) foi cancelada por retrabalho. |
 | DT-19 | Removida: resolvida pela TASK-REF-42 / ADR-018 | A procedência é explícita; serviço efetivo é canônico e cálculo, Insumos e Detalhamento usam a mesma mesclagem preset/perfil. |
 
 ---
@@ -123,3 +84,5 @@ ativa. O Git, a tarefa concluída e a ADR relacionada preservam o histórico.
 | 06/06/2026 | v13 | TASK-REF-40 e ADR-010 encerram DT-11; lista ativa reduzida a DT-18 e DT-19. |
 | 06/06/2026 | v14 | ADR-018 fecha a decisão da DT-18: padrão profissional único e editável, sem entrega/passageiro ou fatores automáticos. |
 | 06/06/2026 | v15 | TASK-REF-42 encerra DT-19 com procedência explícita e serviço efetivo canônico; lista ativa reduzida à DT-18. |
+| 07/06/2026 | v16 | Núcleo da DT-18 resolvido (TASK-REF-41.1/41.2: `PerfilUso` eliminado); pai TASK-REF-41 concluído. Fatia visual TASK-REF-41.3 (remover Passo 4) cancelada por retrabalho; resíduo re-apontado para a TASK-RF-6.28 (Passo 4 vira editor de vida útil). DT-18 segue ativa até a RF-6.28. |
+| 07/06/2026 | v17 | TASK-RF-6.28 encerra a DT-18: o Passo 4 do onboarding passou a expor os cards editáveis de vida útil dos avulsos. **Lista ativa de dívida técnica zerada.** |

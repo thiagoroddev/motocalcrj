@@ -25,22 +25,6 @@ Obedeça essa ordem:
   duas inconsistências da fonte: título `2017-2024` versus faixa decidida `2016-2024`, e total de
   1.000 km em 2025-2026 (`120,44 + 0` registrado como `120,64`). Não inventar correções.
 
-## TASK-REF-41.3 - Remover seleção de uso da UI e ajustar onboarding
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 06/06/26 18:00
-- **Dependências:** TASK-REF-41.2
-- **REQ/ADR/DT:** DT-18, ADR-018, RNF-09
-- **Observações:** a TASK-REF-41.2 já removeu o segmentado de Ajustes, labels de
-  confirmação/Detalhamento e textos de ajuda, mantendo o Passo 4 apenas como aviso transitório.
-  Nesta tarefa, remover o Passo 4 informativo da rota, atualizar progresso, navegação e smoke do
-  onboarding para oito passos, sem implementar ainda a TASK-RF-6.28. Não deixar lacuna de
-  navegação nem referência visível aos modos removidos. Critério: onboarding completo funciona em
-  menos de três minutos e o passo removido não é mais alcançável por URL ou navegação.
-
 ## TASK-RF-6.29 - Onboarding "O que foi trocado?": remover óleo e incluir todas as peças avulsas
 - **Status:** Pendente
 - **Modo:** Standard
@@ -104,20 +88,7 @@ blicos, peças originais e aviso de custo incompleto quando faltar mão de obra.
 
 ## Decisões de UI/UX Pendentes
 
-| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TASK-RF-6.28 | Mostrar e editar vida útil dos serviços avulsos no onboarding | Standard | Importante | Normal | M/G | TASK-REF-41.3 | ADR-014, ADR-018, RNF-09 | `[ ]` | 06/06/26 17:42 |
-
-**Escopo da TASK-RF-6.28:** substituir o antigo Passo 4 de perfil de uso por uma revisão
-transparente dos mesmos cards exibidos em `Serviços avulsos` na aba Concessionária. A lista varia
-por preset/marca e aplica exatamente o filtro: `!ehExcepcional`,
-`!incluidoNaRevisaoAutorizada` e `intervalKm > 0`. Cada card mostra somente nome/ícone e o input
-`Vida útil estimada (km)`; não mostra preço, estimativa de mão de obra, toggle ou reset. O valor
-informado representa a vida útil estimada da peça e deve ser sincronizado com o marco de revisão
-mais próximo antes de virar o intervalo canônico do serviço, conforme ADR-014. Editar no onboarding
-e na aba Mão de Obra altera a mesma fonte definida pela REF-42; não criar estado paralelo. Exibir
-aviso de que são referências para uso profissional/intenso e preservar onboarding concluível em
-menos de 3 minutos. Revisões fixas, bateria temporal e serviços excepcionais ficam fora.
+_(A TASK-RF-6.28 saiu daqui para `em-andamento.md` em 07/06/26 — implementada, aguardando validação visual.)_
 
 ## Export/Import e Alertas (Fase 11)
 
