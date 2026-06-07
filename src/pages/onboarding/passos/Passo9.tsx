@@ -11,7 +11,7 @@ export function Passo9() {
 
   const [comeNaRua, setComeNaRua] = useState(perfil.financeiro.alimentacaoDia > 0);
   const [gastoDia, setGastoDia] = useState(
-    perfil.financeiro.alimentacaoDia > 0 ? String(perfil.financeiro.alimentacaoDia) : '20',
+    perfil.financeiro.alimentacaoDia > 0 ? String(perfil.financeiro.alimentacaoDia) : '',
   );
 
   function salvarEAvancar() {
@@ -65,7 +65,7 @@ export function Passo9() {
               onChange={(e) => setGastoDia(e.target.value)}
               min={0}
               step={0.01}
-              placeholder="20,00"
+              placeholder="0,00"
               className="min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </label>

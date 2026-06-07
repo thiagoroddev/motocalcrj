@@ -185,9 +185,7 @@ describe('App - smoke UI', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Não' }));
     clicarProximo();
 
-    fireEvent.change(await screen.findByLabelText('Valor mensal (R$)'), {
-      target: { value: '50' },
-    });
+    await screen.findByText('Plano de Internet');
     clicarProximo();
 
     await screen.findByText('Alimentação no trabalho');
@@ -205,6 +203,12 @@ describe('App - smoke UI', () => {
     expect(presets).toHaveLength(1);
     expect(presets[0].perfil.onboardingConcluido).toBe(true);
     expect(presets[0].perfil.financeiro.combustiveis.comum.autonomia).toBe(54);
+    expect(presets[0].perfil.financeiro.internet).toBe(0);
+    expect(presets[0].perfil.financeiro.seguro.valorAnual).toBe(0);
+    expect(presets[0].perfil.financeiro.alimentacaoDia).toBe(0);
+    expect(presets[0].perfil.configuracaoDisplay.categoriasAtivas.internet).toBe(false);
+    expect(presets[0].perfil.configuracaoDisplay.categoriasAtivas.seguro).toBe(false);
+    expect(presets[0].perfil.configuracaoDisplay.categoriasAtivas.alimentacao).toBe(false);
     expect(presets[0].perfil.fipeCache).toMatchObject({ anoModelo: 2024, valor: 12126 });
     expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[0].presetId);
   });

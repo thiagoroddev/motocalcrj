@@ -270,7 +270,7 @@ export const perfilPadrao: PerfilUsuario = {
     dataReferenciaParcelas: null,
     aluguelValor: null,
     aluguelPeriodicidade: null,
-    alimentacaoDia: 20,
+    alimentacaoDia: 0,
     gastosCustom: PRESETS_GASTOS_PADRAO,
     responsabilidadeAluguel: {
       documentos: 'eu',
@@ -282,7 +282,7 @@ export const perfilPadrao: PerfilUsuario = {
   configuracaoDisplay: {
     categoriasAtivas: {
       combustivel: true,
-      alimentacao: true,
+      alimentacao: false,
       manutencao: true,
       documentacao: true,
       internet: false,

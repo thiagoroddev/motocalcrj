@@ -115,7 +115,7 @@ export const perfilPadrao: PerfilUsuario = {
     dataReferenciaParcelas: null,        // mês ISO do snapshot de parcelas (ADR-009)
     aluguelValor: null,
     aluguelPeriodicidade: null,
-    alimentacaoDia: 20,
+    alimentacaoDia: 0,
     gastosCustom: PRESETS_GASTOS_PADRAO,  // ver II.1
     responsabilidadeAluguel: {
       documentos: 'eu',
@@ -127,7 +127,7 @@ export const perfilPadrao: PerfilUsuario = {
   configuracaoDisplay: {
     categoriasAtivas: {
       combustivel:   true,
-      alimentacao:   true,
+      alimentacao:   false,  // ativada por COMMIT_ONBOARDING se > 0
       manutencao:    true,
       documentacao:  true,
       internet:      false,  // ativada por COMMIT_ONBOARDING se > 0

@@ -47,6 +47,15 @@ function servicoPadrao(id: string): ServicoIndependente {
 }
 
 describe('perfilReducer', () => {
+  it('perfilPadrao não presume custos opcionais do onboarding', () => {
+    expect(perfilPadrao.financeiro.internet).toBe(0);
+    expect(perfilPadrao.financeiro.seguro.valorAnual).toBe(0);
+    expect(perfilPadrao.financeiro.alimentacaoDia).toBe(0);
+    expect(perfilPadrao.configuracaoDisplay.categoriasAtivas.internet).toBe(false);
+    expect(perfilPadrao.configuracaoDisplay.categoriasAtivas.seguro).toBe(false);
+    expect(perfilPadrao.configuracaoDisplay.categoriasAtivas.alimentacao).toBe(false);
+  });
+
   // ── Rodagem ──────────────────────────────────
 
   it('SET_KM_POR_DIA atualiza trabalho.kmPorDia', () => {
@@ -159,6 +168,7 @@ describe('perfilReducer', () => {
     expect(categoriasAtivas.seguro).toBe(false);
     expect(categoriasAtivas.internet).toBe(false);
     expect(categoriasAtivas.financiamento).toBe(false);
+    expect(categoriasAtivas.alimentacao).toBe(false);
   });
 
   it('COMMIT_ONBOARDING com perfil vazio nao cria preset invalido', () => {
