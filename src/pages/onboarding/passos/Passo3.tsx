@@ -31,9 +31,8 @@ export function Passo3() {
     : (anos[0] ?? perfil.moto.ano);
   const [ano, setAno] = useState<number>(anoInicial);
 
-  // FIPE é por ano (deprecia). Consumo é do modelo (manual/INMETRO), não muda por ano.
+  // FIPE é por ano (deprecia). O consumo é do modelo e fica só no passo de km/consumo (Passo5).
   const valorFipe = modeloDados ? modeloDados.tabelaFipe[String(ano)] : undefined;
-  const consumoKmL = modeloDados?.consumoKmL;
 
   const aliquotaIpva = dadosRJ.ipva.aliquotaMotos;
   const percentualIpva = (aliquotaIpva * 100).toLocaleString('pt-BR', {
@@ -92,15 +91,6 @@ export function Passo3() {
       </Select>
 
       <div className="mt-4 space-y-2">
-        {consumoKmL !== undefined && (
-          <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">
-            <span className="text-muted-foreground text-sm">Consumo de referência</span>
-            <span className="text-foreground font-semibold">
-              {consumoKmL.toLocaleString('pt-BR')} km/L
-            </span>
-          </div>
-        )}
-
         {valorFipe !== undefined ? (
           <div className="space-y-1">
             <div className="bg-card rounded-lg px-4 py-2 flex justify-between items-center">

@@ -160,7 +160,7 @@ describe('App - smoke UI', () => {
     clicarProximo();
 
     // Passo 3: seletor de ano (Pop default = ano mais recente da tabela FIPE, 2024).
-    await screen.findByText('54 km/L');
+    // Consumo não aparece mais aqui - vive só no Passo 5 (editável).
     await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
     clicarProximo();
 

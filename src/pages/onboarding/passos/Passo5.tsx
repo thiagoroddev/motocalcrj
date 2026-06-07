@@ -4,7 +4,7 @@ import { perfilPadrao } from '../../../context/PerfilContext';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { Input } from '../../../components/ui/input';
-import { obterConsumoKmL } from '../../../data/catalogoModelos';
+import { obterConsumoKmL, getNomeModelo } from '../../../data/catalogoModelos';
 
 export function Passo5() {
   const { perfil, dispatch } = usePerfil();
@@ -17,6 +17,7 @@ export function Passo5() {
   // Consumo é do modelo (manual/INMETRO); pré-preenchido e editável. Grava na
   // autonomia da gasolina do perfil - mesma fonte do cálculo de combustível.
   const consumoModelo = obterConsumoKmL(perfil.moto.modelo);
+  const nomeModelo = `${perfil.moto.marca} ${getNomeModelo(perfil.moto.modelo)}`.trim();
   const autonomiaAtual = perfil.financeiro.combustiveis.comum.autonomia;
   // No primeiro acesso a autonomia ainda é o default pré-modelo: mostra o consumo
   // do modelo. Se o passo já rodou (ou o usuário editou), mostra o valor gravado.
@@ -87,7 +88,9 @@ export function Passo5() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-sm font-medium">Consumo médio</span>
+          <span className="text-muted-foreground text-sm font-medium">
+            Consumo médio - {nomeModelo}
+          </span>
           <span className="text-muted-foreground/60 text-xs">
             Já preenchido com a referência do modelo - ajuste se o seu for diferente
           </span>
