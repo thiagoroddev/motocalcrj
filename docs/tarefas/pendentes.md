@@ -158,7 +158,8 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
   Seguro→Alimentação→Internet→Vida útil→M.O.→Últimas manutenções→Confirmação); voltar funciona; ramos
   quitada/financiada/alugada corretos; progresso coerente; `verify` verde. Validação visual humana.
 
-### TASK-RF-6.31.4 — Confirmação (links "Editar") + regra final do PassoLayout
+### ✅ TASK-RF-6.31.4 — Confirmação (links "Editar") + regra final do PassoLayout (CONCLUÍDA 08/06/26)
+> **Concluída** — ver `concluidas/2026-06-08--15h00--TASK-RF-6.31.4.md`.
 - **Modo:** Standard · **Valor:** Importante · **Urgência:** IMEDIATA · **Esforço:** P/M · **Dep.:** RF-6.31.3
 - **Estado atual:** `PassoConfirmacao` usa `editarPasso('2'|'5'|'6'|'7'|'8'|'9')` (rotas hardcoded) e tem
   seções de resumo numa ordem antiga. `PassoLayout` decide o rótulo do botão por `passo === '9'`
@@ -181,6 +182,43 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
      rotas, refletindo a ordem/rotas finais.
 - **Critérios de aceite:** smoke percorre o fluxo novo ponta a ponta; matriz de navegação testada nos 3
   ramos; docs sincronizadas; `verify` verde. Validação visual final do onboarding completo.
+- **Dep. extra:** depende também da **RF-6.31.6** (passo Rodagem + editar-volta), que muda a ordem e a navegação.
+
+### ✅ TASK-RF-6.31.6 — "Editar" volta à Confirmação + Rodagem inline + seções faltantes (CONCLUÍDA 08/06/26)
+> **Concluída** — editar-volta, Rodagem inline destacada e Vida útil/Últimas manutenções no resumo. Ver
+> `concluidas/2026-06-08--15h01--TASK-RF-6.31.6.md`. (Rodagem ficou **inline na Confirmação**, não virou passo.)
+- **Modo:** Strict (mexe na navegação do fluxo + ADR-020) · **Valor:** Crítico · **Urgência:** IMEDIATA
+  · **Esforço:** M/G · **Dep.:** RF-6.31.3, RF-6.31.4
+- **Contexto:** dois achados de uso real na tela de Confirmação:
+  1. Clicar **"Editar"** leva ao passo, mas depois **obriga a percorrer todo o resto do fluxo** (Próximo,
+     Próximo…) até a Confirmação de novo. Deve **editar e voltar direto à Confirmação**.
+  2. **Rodagem** (km/dia + dias/semana) aparece no resumo mas **sem "Editar"** — e **não tem tela** no
+     onboarding (hoje usa defaults 70/5). Deve virar passo editável, **reusando exatamente o
+     `SecaoRodagem`** da tela inicial Estimativa ([components/estimativa/SecaoRodagem.tsx](../../src/components/estimativa/SecaoRodagem.tsx)).
+
+- **Item 1 — Editar volta à Confirmação:**
+  - `PassoConfirmacao.editarPasso(rota)` navega com **`state: { editando: true }`**.
+  - `FluxoOnboarding`: ler `location.state?.editando`. Em modo edição, `irParaProximo` vai para
+    `confirmacao`, **exceto** quando o próximo é sub-rota de Situação (`situacao/financiamento|aluguel|
+    responsabilidade`) — nesses casos segue a sub-rota **carregando `editando`** (ex.: trocar para
+    financiada na edição precisa passar pelo financiamento e então voltar à confirmação). `irParaAnterior`/
+    **Voltar** em edição volta à Confirmação (cancela).
+  - `Passo6` (navega sozinho com `getProximoPasso('situacao', …)`) precisa respeitar `editando` igual.
+  - Propagar `editando` nas navegações internas (passar `state` no `navigate`).
+- **Item 2 — Rodagem editável INLINE na Confirmação (NÃO é passo novo):** decisão do humano — Rodagem não
+  tem tela própria; é editada **na própria tela de Confirmação**. Então:
+  - Em `PassoConfirmacao`, renderizar o **card real `SecaoRodagem`** (o mesmo da Estimativa), **editável
+    inline**, com estado local de km/dia (string + onBlur → `SET_KM_POR_DIA`) e `dias` via
+    `SET_DIAS_POR_SEMANA` (espelha `PaginaEstimativa`).
+  - **Posição: primeiro (topo)** do resumo da Confirmação.
+  - **Destaque visual** (borda/realce) — é a única seção **editável inline**, diferente das demais
+    (que são read-only com "Editar"). Remover a antiga seção read-only "Rodagem".
+  - **Sem** rota/passo novo, **sem** mudança de ordem do fluxo, **sem** mudança de progresso, **sem** ADR.
+- **Critérios de aceite:** (1) editar qualquer item read-only da Confirmação altera o valor e **volta
+  direto** à Confirmação (inclusive trocar Situação para financiada/alugada, passando pelas sub-rotas);
+  Voltar em edição também volta à Confirmação. (2) Rodagem aparece em **primeiro** na Confirmação, como o
+  card `SecaoRodagem` editável inline e destacado. `verify` verde + validação visual.
+- **Ordem:** fazer **antes** da RF-6.31.5 (a matriz/smoke devem cobrir o modo edição).
 
 ---
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
 import { getProximoPasso } from '../onboardingUtils';
@@ -15,6 +15,8 @@ const OPCOES: { valor: SituacaoMoto; titulo: string; descricao: string }[] = [
 export function Passo6() {
   const { perfil, dispatch } = usePerfil();
   const navigate = useNavigate();
+  const location = useLocation();
+  const editando = (location.state as { editando?: boolean } | null)?.editando === true;
   const [situacao, setSituacao] = useState<SituacaoMoto>(perfil.financeiro.situacaoMoto);
 
   function salvarEAvancar() {
@@ -25,6 +27,16 @@ export function Passo6() {
     });
     // Usa situacao local - não perfil.financeiro.situacaoMoto que ainda é o valor antigo
     const proximo = getProximoPasso('situacao', situacao);
+    // Em edição (veio da Confirmação): se a nova situação exige sub-rota
+    // (financiada/alugada), percorre-a carregando a edição; senão volta à Confirmação.
+    if (editando) {
+      if (proximo && proximo.startsWith('situacao/')) {
+        navigate(`/onboarding/${proximo}`, { state: { editando: true } });
+      } else {
+        navigate('/onboarding/confirmacao');
+      }
+      return;
+    }
     if (proximo && proximo !== 'concluir') {
       navigate(`/onboarding/${proximo}`);
     }

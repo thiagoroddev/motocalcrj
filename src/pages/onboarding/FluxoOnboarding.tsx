@@ -49,6 +49,9 @@ export function FluxoOnboarding() {
 
   const passo = parsePasso(location.pathname);
   const config = CONFIG_PASSOS[passo] ?? CONFIG_PASSOS['modelo'];
+  // Modo edição: o usuário veio da Confirmação via "Editar". Ao salvar, deve
+  // voltar direto à Confirmação em vez de percorrer o resto do fluxo (RF-6.31.6).
+  const editando = (location.state as { editando?: boolean } | null)?.editando === true;
 
   if (passo === 'confirmacao' && !perfilProntoParaCommit(perfil)) {
     return <Navigate to="/onboarding/modelo" replace />;
@@ -59,6 +62,16 @@ export function FluxoOnboarding() {
     if (!proximo) {
       return;
     }
+    // Em edição, volta à Confirmação — exceto quando o próximo é uma sub-rota
+    // obrigatória de Situação, que precisa ser percorrida (carregando a edição).
+    if (editando) {
+      if (proximo.startsWith('situacao/')) {
+        navigate(`/onboarding/${proximo}`, { state: { editando: true } });
+      } else {
+        navigate('/onboarding/confirmacao');
+      }
+      return;
+    }
     if (proximo === 'concluir') {
       navigate('/estimativa', { replace: true });
     } else {
@@ -67,13 +80,17 @@ export function FluxoOnboarding() {
   }
 
   function irParaAnterior() {
+    if (editando) {
+      navigate('/onboarding/confirmacao');
+      return;
+    }
     const anterior = getPassoAnterior(passo, perfil.financeiro.situacaoMoto);
     if (anterior) {
       navigate(`/onboarding/${anterior}`);
     }
   }
 
-  const temAnterior = getPassoAnterior(passo, perfil.financeiro.situacaoMoto) !== null;
+  const temAnterior = editando || getPassoAnterior(passo, perfil.financeiro.situacaoMoto) !== null;
 
   return (
     <OnboardingCtx.Provider value={{ passo, config, irParaProximo, irParaAnterior, temAnterior }}>

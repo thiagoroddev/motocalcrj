@@ -157,4 +157,6 @@
 | TASK-RF-6.31.2 | Unificar Marca+Modelo numa etapa (componente PassoModelo; wiring na 6.31.3) | [2026-06-07--22h35--TASK-RF-6.31.2.md](./2026-06-07--22h35--TASK-RF-6.31.2.md) |
 | TASK-RF-6.31.3 | Reordenar rotas/progresso/wiring do onboarding (rotas semânticas, ADR-020); roteia PassoModelo/PassoMaoDeObra; remove Passo1/2 e 5trocas | [2026-06-07--23h26--TASK-RF-6.31.3.md](./2026-06-07--23h26--TASK-RF-6.31.3.md) |
 | TASK-RF-6.32.1 | Tela de M.O. do onboarding: cards dos avulsos (M.O.-only via CardServico) + total dinâmico | [2026-06-07--23h25--TASK-RF-6.32.1.md](./2026-06-07--23h25--TASK-RF-6.32.1.md) |
+| TASK-RF-6.31.4 | Confirmação: ordem do resumo (Alimentação antes de Internet) + linha de M.O.; PassoLayout sem o literal '9' | [2026-06-08--15h00--TASK-RF-6.31.4.md](./2026-06-08--15h00--TASK-RF-6.31.4.md) |
+| TASK-RF-6.31.6 | "Editar" volta à Confirmação + Rodagem editável inline (card destacado) + Vida útil/Últimas manutenções no resumo | [2026-06-08--15h01--TASK-RF-6.31.6.md](./2026-06-08--15h01--TASK-RF-6.31.6.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |

@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
+import { SecaoRodagem } from '../../../components/estimativa/SecaoRodagem';
 import { getNomeModelo } from '../../../data/catalogoModelos';
 import { Button } from '../../../components/ui/button';
 import type { SituacaoMoto } from '../../../types/perfil';
@@ -17,8 +18,29 @@ const SITUACAO_LABEL: Record<SituacaoMoto, string> = {
 export function PassoConfirmacao() {
   const { perfil, dispatch } = usePerfil();
   const navigate = useNavigate();
-  const { moto, trabalho, financeiro } = perfil;
+  const { moto, trabalho, financeiro, perfilManutencao } = perfil;
   const podeConcluir = perfilProntoParaCommit(perfil);
+  const vidaUtilPersonalizada = perfil.servicosIndependentes.some(
+    (s) => s.intervaloKmInformadoUsuario === true,
+  );
+  const trocasRegistradas = Object.values(moto.kmUltimaTrocas).filter((km) => km > 0).length;
+
+  // Rodagem não tem passo próprio: é editada inline aqui, com o mesmo card da Estimativa.
+  const [kmDiaInput, setKmDiaInput] = useState(String(trabalho.kmPorDia));
+  function handleKmDiaBlur() {
+    const v = parseInt(kmDiaInput, 10);
+    if (!isNaN(v) && v >= 1 && v <= 999) {
+      dispatch({ type: 'SET_KM_POR_DIA', valor: v });
+    } else {
+      setKmDiaInput(String(trabalho.kmPorDia));
+    }
+  }
+  function stepDias(delta: number) {
+    const novo = trabalho.diasPorSemana + delta;
+    if (novo >= 1 && novo <= 7) {
+      dispatch({ type: 'SET_DIAS_POR_SEMANA', valor: novo });
+    }
+  }
 
   function concluir() {
     if (!podeConcluir) {
@@ -31,7 +53,8 @@ export function PassoConfirmacao() {
   }
 
   function editarPasso(passo: string) {
-    navigate(`/onboarding/${passo}`);
+    // `editando` faz o passo voltar direto à Confirmação ao salvar (RF-6.31.6).
+    navigate(`/onboarding/${passo}`, { state: { editando: true } });
   }
 
   return (
@@ -43,6 +66,17 @@ export function PassoConfirmacao() {
       textoBotao="Concluir configuração"
     >
       <div className="flex flex-col gap-2">
+        {/* Rodagem: única seção editável inline aqui (não tem passo próprio) — destacada. */}
+        <div className="rounded-lg ring-2 ring-primary/50">
+          <SecaoRodagem
+            kmDiaInput={kmDiaInput}
+            onKmDiaChange={setKmDiaInput}
+            onKmDiaBlur={handleKmDiaBlur}
+            dias={trabalho.diasPorSemana}
+            onStepDias={stepDias}
+          />
+        </div>
+
         <SessaoResumo titulo="Moto" aoEditar={() => editarPasso('modelo')}>
           <LinhaResumo
             label="Marca / Modelo"
@@ -60,11 +94,6 @@ export function PassoConfirmacao() {
                 : '-'
             }
           />
-        </SessaoResumo>
-
-        <SessaoResumo titulo="Rodagem" aoEditar={undefined}>
-          <LinhaResumo label="Km por dia (padrão)" valor={`${trabalho.kmPorDia} km`} />
-          <LinhaResumo label="Dias por semana (padrão)" valor={`${trabalho.diasPorSemana} dias`} />
         </SessaoResumo>
 
         <SessaoResumo titulo="Situação da moto" aoEditar={() => editarPasso('situacao')}>
@@ -96,13 +125,6 @@ export function PassoConfirmacao() {
           )}
         </SessaoResumo>
 
-        <SessaoResumo titulo="Gastos operacionais" aoEditar={() => editarPasso('internet')}>
-          <LinhaResumo
-            label="Internet"
-            valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '-'}
-          />
-        </SessaoResumo>
-
         <SessaoResumo titulo="Alimentação" aoEditar={() => editarPasso('alimentacao')}>
           <LinhaResumo
             label="Alimentação"
@@ -111,6 +133,37 @@ export function PassoConfirmacao() {
                 ? `R$ ${financeiro.alimentacaoDia.toFixed(2)}/dia`
                 : 'Não come na rua'
             }
+          />
+        </SessaoResumo>
+
+        <SessaoResumo titulo="Gastos operacionais" aoEditar={() => editarPasso('internet')}>
+          <LinhaResumo
+            label="Internet"
+            valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '-'}
+          />
+        </SessaoResumo>
+
+        <SessaoResumo titulo="Vida útil das peças" aoEditar={() => editarPasso('vida-util')}>
+          <LinhaResumo
+            label="Intervalos de troca"
+            valor={vidaUtilPersonalizada ? 'Personalizada' : 'Padrão'}
+          />
+        </SessaoResumo>
+
+        <SessaoResumo titulo="Mão de obra" aoEditar={() => editarPasso('mao-de-obra')}>
+          <LinhaResumo
+            label="Estimativa"
+            valor={perfilManutencao.incluirEstimativaMaoDeObra ? 'Estimado' : 'Padrão'}
+          />
+        </SessaoResumo>
+
+        <SessaoResumo
+          titulo="Últimas manutenções"
+          aoEditar={() => editarPasso('ultimas-manutencoes')}
+        >
+          <LinhaResumo
+            label="Trocas registradas"
+            valor={trocasRegistradas > 0 ? `${trocasRegistradas}` : 'Nenhuma'}
           />
         </SessaoResumo>
       </div>

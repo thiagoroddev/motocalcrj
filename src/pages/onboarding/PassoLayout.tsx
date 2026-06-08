@@ -19,8 +19,10 @@ export function PassoLayout({
   textoBotao,
   children,
 }: Props) {
-  const { config, passo, irParaAnterior, temAnterior } = useOnboarding();
-  const labelBotao = textoBotao ?? (passo === '9' ? 'Concluir' : 'Próximo');
+  const { config, irParaAnterior, temAnterior } = useOnboarding();
+  // Rotas semânticas (ADR-020): cada passo mostra "Próximo"; a Confirmação define
+  // seu próprio rótulo via `textoBotao`.
+  const labelBotao = textoBotao ?? 'Próximo';
 
   return (
     <div className="min-h-screen bg-background flex flex-col ">
