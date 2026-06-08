@@ -1,6 +1,6 @@
 import { Wrench, Package } from 'lucide-react';
 import type { Dispatch } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { CardCombustivel } from '../custos-pecas/CardCombustivel';
 import { CardItemPreco } from '../custos-pecas/CardItemPreco';
 import { CardServico } from '../mao-de-obra/CardServico';
@@ -96,6 +96,9 @@ export function DialogEdicaoCusto({ alvo, perfil, dispatch, onClose }: Props) {
           <>
             <DialogHeader>
               <DialogTitle>{tituloDoAlvo(alvo, perfil)}</DialogTitle>
+              <DialogDescription>
+                Edite os valores - as alterações são aplicadas automaticamente
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
               <ConteudoEdicao alvo={alvo} perfil={perfil} dispatch={dispatch} />

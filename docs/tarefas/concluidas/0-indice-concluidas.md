@@ -161,3 +161,4 @@
 | TASK-RF-6.31.6 | "Editar" volta à Confirmação + Rodagem editável inline (card destacado) + Vida útil/Últimas manutenções no resumo | [2026-06-08--15h01--TASK-RF-6.31.6.md](./2026-06-08--15h01--TASK-RF-6.31.6.md) |
 | TASK-RF-6.31.5 | Matriz de navegação (3 ramos + voltar + modo edição) + sync de docs; fecha o épico RF-6.31 | [2026-06-08--15h30--TASK-RF-6.31.5.md](./2026-06-08--15h30--TASK-RF-6.31.5.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |
+| TASK-BG-025 | `DialogEdicaoCusto` ganha `DialogDescription` (a11y); elimina o warning do Radix no smoke (REV-003-A01) | [2026-06-08--16h20--TASK-BG-025.md](./2026-06-08--16h20--TASK-BG-025.md) |
