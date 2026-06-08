@@ -162,3 +162,4 @@
 | TASK-RF-6.31.5 | Matriz de navegação (3 ramos + voltar + modo edição) + sync de docs; fecha o épico RF-6.31 | [2026-06-08--15h30--TASK-RF-6.31.5.md](./2026-06-08--15h30--TASK-RF-6.31.5.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |
 | TASK-BG-025 | `DialogEdicaoCusto` ganha `DialogDescription` (a11y); elimina o warning do Radix no smoke (REV-003-A01) | [2026-06-08--16h20--TASK-BG-025.md](./2026-06-08--16h20--TASK-BG-025.md) |
+| TASK-TEST-005 | Testes de render para PassoModelo e PassoMaoDeObra (onboarding) | [2026-06-08--17h47--TASK-TEST-005.md](./2026-06-08--17h47--TASK-TEST-005.md) |

@@ -14,25 +14,6 @@ Obedeça essa ordem:
 
 #### Geradas pela Revisão Geral REV-003 08/06/26
 
-## TASK-TEST-005 - Testes de render para PassoModelo e PassoMaoDeObra (onboarding)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Desejável
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 08/06/26
-- **Dependências:** -
-- **REQ/ADR/DT:** REV-003-A05
-- **Observações:** As telas criadas no épico RF-6.31 não têm teste de render dedicado — só o
-  `App.smoke.test.tsx` (fluxo feliz) passa por elas. **Cobrir:**
-  - `PassoModelo.tsx`: selecionar marca lista os modelos; marca com 1 modelo auto-seleciona; trocar de
-    marca limpa o modelo; avançar grava `moto.marca`+`moto.modelo`; `podeContinuar` só com modelo.
-  - `PassoMaoDeObra.tsx`: lista os avulsos sem valor oficial como cards M.O.-only; total dinâmico via
-    `somarMaoDeObraEfetiva` começa em 0 e sobe ao ligar estimativa/editar; toggle Padrão/Estimado.
-  **Nota técnica:** ambos usam `useOnboarding` (via `PassoLayout`), cujo contexto é privado de
-  `FluxoOnboarding`. Para testar isolado, exportar um helper/provider de teste do `OnboardingCtx` **ou**
-  renderizar dentro de `MemoryRouter` + `FluxoOnboarding` na rota correspondente. **Achado:** REV-003-A05
-  (severidade 🟢). Lógica pura (`somarMaoDeObraEfetiva`, `onboardingUtils`) já tem teste.
 
 ## Export/Import e Alertas (Fase 11)
 

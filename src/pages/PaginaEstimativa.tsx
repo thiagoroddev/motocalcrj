@@ -129,14 +129,14 @@ export function PaginaEstimativa() {
       />
 
       <div className="grid grid-cols-2 gap-2">
-        <CardPeriodo label="Por Hora" valor={porHora} />
-        <CardPeriodo label="Por Dia" valor={granularidades.diario} />
-        <CardPeriodo label="Estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
-        <CardPeriodo label="Estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
+        <CardPeriodo label="Custo por hora" valor={porHora} />
+        <CardPeriodo label="Custo por dia" valor={granularidades.diario} />
+        <CardPeriodo label="Custo estimado por semana" valor={granularidades.semanal} km={kmAnual / 52} />
+        <CardPeriodo label="Custo estimado por mês" valor={granularidades.mensal} km={kmAnual / 12} />
       </div>
 
       <div className="space-y-2">
-        <CardPeriodo label="Estimado por ano" valor={granularidades.anual} km={kmAnual} />
+        <CardPeriodo label="Custo estimado por ano" valor={granularidades.anual} km={kmAnual} />
       </div>
 
       <DistribuicaoCustos segmentos={segmentos} diasAno={diasAno} horasDia={horas} />

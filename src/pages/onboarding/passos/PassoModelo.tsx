@@ -5,10 +5,9 @@ import { PassoLayout } from '../PassoLayout';
 import { getMarcasDisponiveis, getModelosPorMarca } from '../../../data/catalogoModelos';
 import { Button } from '../../../components/ui/button';
 
-const MARCAS = getMarcasDisponiveis();
-
 // Etapa única de marca + modelo (ADR-020, passo 1; unifica os antigos Passo1/Passo2).
 export function PassoModelo() {
+  const MARCAS = getMarcasDisponiveis();
   const { perfil, dispatch } = usePerfil();
   const { irParaProximo } = useOnboarding();
 

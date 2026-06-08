@@ -225,7 +225,7 @@ describe('App - smoke UI', () => {
     renderizarAppEm('/estimativa');
 
     await screen.findByText('Custo de operação por km');
-    expect(screen.getByText('Estimado por ano')).toBeInTheDocument();
+    expect(screen.getByText('Custo estimado por ano')).toBeInTheDocument();
     expect(screen.queryByText(/Modelo não encontrado/i)).not.toBeInTheDocument();
   });
 
