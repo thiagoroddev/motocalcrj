@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePerfil } from '../../../hooks/usePerfil';
 import { PassoLayout } from '../PassoLayout';
-import { getProximoPasso } from '../onboardingUtils';
+import { getProximoPasso, proximoEmEdicao } from '../onboardingUtils';
 import { Button } from '../../../components/ui/button';
 import type { SituacaoMoto } from '../../../types/perfil';
 
@@ -26,17 +26,17 @@ export function Passo6() {
       valor: { ...perfil.financeiro, situacaoMoto: situacao },
     });
     // Usa situacao local - não perfil.financeiro.situacaoMoto que ainda é o valor antigo
-    const proximo = getProximoPasso('situacao', situacao);
     // Em edição (veio da Confirmação): se a nova situação exige sub-rota
     // (financiada/alugada), percorre-a carregando a edição; senão volta à Confirmação.
     if (editando) {
-      if (proximo && proximo.startsWith('situacao/')) {
-        navigate(`/onboarding/${proximo}`, { state: { editando: true } });
-      } else {
-        navigate('/onboarding/confirmacao');
-      }
+      const destino = proximoEmEdicao('situacao', situacao);
+      navigate(
+        `/onboarding/${destino}`,
+        destino === 'confirmacao' ? undefined : { state: { editando: true } },
+      );
       return;
     }
+    const proximo = getProximoPasso('situacao', situacao);
     if (proximo && proximo !== 'concluir') {
       navigate(`/onboarding/${proximo}`);
     }

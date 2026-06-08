@@ -145,7 +145,7 @@ automático: o usuário ajusta consumo, rodagem, preços e intervalos conforme a
 
 ### Situação da Moto (`SituacaoMoto`)
 
-Tipo: `'quitada' | 'financiada' | 'alugada'`. Determina o branch do Passo 6 do Onboarding e como o custo de "Financiamento/Aluguel" é calculado.
+Tipo: `'quitada' | 'financiada' | 'alugada'`. Determina o branch do passo de Situação do Onboarding (`/onboarding/situacao` + sub-rotas) e como o custo de "Financiamento/Aluguel" é calculado.
 
 ### Responsabilidade de Custo (`ResponsabilidadeCusto`)
 
@@ -277,7 +277,7 @@ Bloco visual editável na Estimativa que contém: `kmPorDia` (input) + `diasPorS
 
 ### Onboarding
 
-Fluxo de primeiro uso, dividido em 9 passos numerados (10 efetivos no fluxo aluguel devido ao Passo 6d). **Não persiste durante o fluxo** apenas a action `COMMIT_ONBOARDING` salva tudo de uma vez.
+Fluxo de primeiro uso com 10 passos (rotas semânticas) + Confirmação; ordem canônica e ramificações na ADR-020. **Não persiste durante o fluxo** — apenas a action `COMMIT_ONBOARDING` salva tudo de uma vez.
 
 ### COMMIT_ONBOARDING
 
@@ -285,11 +285,11 @@ Action única do reducer responsável pela primeira persistência. Antes desse c
 
 ### FIPE Cache (`FipeCache`)
 
-Snapshot do valor venal escolhido no Passo 3 do Onboarding, persistido no perfil e consumido pelo cálculo de IPVA (`calcularCustosPorCategoria` lê `perfil.fipeCache.valor`). Estrutura: `{ valor, dataConsulta, codigoFipe, anoModelo, marca, modelo }`. O valor vem da `tabelaFipe[ano]` do preset (não mais de consulta em runtime — ver ADR-015); `dataConsulta` registra quando o snapshot foi gravado.
+Snapshot do valor venal escolhido no passo de Ano do Onboarding, persistido no perfil e consumido pelo cálculo de IPVA (`calcularCustosPorCategoria` lê `perfil.fipeCache.valor`). Estrutura: `{ valor, dataConsulta, codigoFipe, anoModelo, marca, modelo }`. O valor vem da `tabelaFipe[ano]` do preset (não mais de consulta em runtime — ver ADR-015); `dataConsulta` registra quando o snapshot foi gravado.
 
 ### FIPE (hardcoded por preset)
 
-O valor venal da moto vem da `tabelaFipe` (ano → valor) **hardcoded** em cada preset (`src/presets/*.json`), exposta pelo catálogo (`src/data/catalogoModelos.ts`). É atualizada mensalmente pelo script `npm run fipe:update` (TASK-CHORE-017), que consulta a API REST da Parallelum FIPE e commita os valores. **Não há consulta de FIPE em runtime** — a BrasilAPI foi aposentada (ADR-015, TASK-REF-36); o onboarding Passo 3 lê o valor de forma síncrona da tabela.
+O valor venal da moto vem da `tabelaFipe` (ano → valor) **hardcoded** em cada preset (`src/presets/*.json`), exposta pelo catálogo (`src/data/catalogoModelos.ts`). É atualizada mensalmente pelo script `npm run fipe:update` (TASK-CHORE-017), que consulta a API REST da Parallelum FIPE e commita os valores. **Não há consulta de FIPE em runtime** — a BrasilAPI foi aposentada (ADR-015, TASK-REF-36); o passo de Ano do onboarding lê o valor de forma síncrona da tabela.
 
 ### Dados RJ (`DadosRJ`)
 
@@ -304,8 +304,9 @@ Atualizado anualmente (licenciamento/aliquotas) e mensalmente (combustível).
 ### Catálogo de Modelos
 
 Lista de modelos suportados no onboarding, definida em `src/data/catalogoModelos.ts`. Cada entrada
-informa marca, nome de exibição, nome FIPE e o mapa de consumo profissional por ano. É usada para
-inicializar a autonomia no `COMMIT_ONBOARDING`; ano sem consumo explícito não é aceito.
+informa marca, nome de exibição, nome FIPE, o **consumo do modelo** (`consumoKmL`, único — ADR-019) e
+a `tabelaFipe` (fonte dos anos suportados). O consumo é pré-preenchido no passo de Km/consumo (editável)
+e semeia a autonomia; o `COMMIT_ONBOARDING` preserva o valor escolhido (RF-6.33).
 
 ### Service Worker / PWA
 

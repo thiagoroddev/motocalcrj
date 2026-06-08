@@ -131,10 +131,10 @@ Não recriar o monólito nem usar versões antigas dele para implementar FIPE, m
 
 1. O app abre dentro de `ThemeProvider` e `PerfilProvider`.
 2. O estado é carregado pelo service de perfil e validado com Zod.
-3. Sem preset ativo válido ou com onboarding incompleto, `RotaProtegida` envia para `/onboarding/1`.
+3. Sem preset ativo válido ou com onboarding incompleto, `RotaProtegida` envia para `/onboarding/modelo`.
 4. Com perfil válido, a raiz redireciona para `/estimativa`.
 
-O onboarding tem nove passos principais, ramificações da situação da moto, um passo auxiliar de últimas trocas e uma confirmação final. Nada é persistido antes de `COMMIT_ONBOARDING`.
+O onboarding tem 10 passos (rotas semânticas) + Confirmação, com ramificações da situação da moto; a ordem canônica vive na ADR-020. A Rodagem (km/dia, dias/semana) é editada inline na Confirmação, e "Editar" em qualquer seção volta direto à Confirmação. Nada é persistido antes de `COMMIT_ONBOARDING`.
 
 ### 3.2 Rotas e telas
 

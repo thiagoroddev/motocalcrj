@@ -159,4 +159,5 @@
 | TASK-RF-6.32.1 | Tela de M.O. do onboarding: cards dos avulsos (M.O.-only via CardServico) + total dinâmico | [2026-06-07--23h25--TASK-RF-6.32.1.md](./2026-06-07--23h25--TASK-RF-6.32.1.md) |
 | TASK-RF-6.31.4 | Confirmação: ordem do resumo (Alimentação antes de Internet) + linha de M.O.; PassoLayout sem o literal '9' | [2026-06-08--15h00--TASK-RF-6.31.4.md](./2026-06-08--15h00--TASK-RF-6.31.4.md) |
 | TASK-RF-6.31.6 | "Editar" volta à Confirmação + Rodagem editável inline (card destacado) + Vida útil/Últimas manutenções no resumo | [2026-06-08--15h01--TASK-RF-6.31.6.md](./2026-06-08--15h01--TASK-RF-6.31.6.md) |
+| TASK-RF-6.31.5 | Matriz de navegação (3 ramos + voltar + modo edição) + sync de docs; fecha o épico RF-6.31 | [2026-06-08--15h30--TASK-RF-6.31.5.md](./2026-06-08--15h30--TASK-RF-6.31.5.md) |
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |

@@ -4,6 +4,7 @@ import {
   parsePasso,
   getProximoPasso,
   getPassoAnterior,
+  proximoEmEdicao,
   CONFIG_PASSOS,
   type ConfigPasso,
 } from './onboardingUtils';
@@ -65,11 +66,11 @@ export function FluxoOnboarding() {
     // Em edição, volta à Confirmação — exceto quando o próximo é uma sub-rota
     // obrigatória de Situação, que precisa ser percorrida (carregando a edição).
     if (editando) {
-      if (proximo.startsWith('situacao/')) {
-        navigate(`/onboarding/${proximo}`, { state: { editando: true } });
-      } else {
-        navigate('/onboarding/confirmacao');
-      }
+      const destino = proximoEmEdicao(passo, perfil.financeiro.situacaoMoto);
+      navigate(
+        `/onboarding/${destino}`,
+        destino === 'confirmacao' ? undefined : { state: { editando: true } },
+      );
       return;
     }
     if (proximo === 'concluir') {

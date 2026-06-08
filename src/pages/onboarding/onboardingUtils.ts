@@ -86,3 +86,11 @@ export function getPassoAnterior(passo: string, situacao: SituacaoMoto): string 
 export function parsePasso(pathname: string): string {
   return pathname.replace(/^\/onboarding\//, '');
 }
+
+// Destino quando o usuário está editando a partir da Confirmação (RF-6.31.6):
+// volta à Confirmação, exceto quando o próximo é uma sub-rota obrigatória de
+// Situação (financiada/alugada), que precisa ser percorrida antes.
+export function proximoEmEdicao(passo: string, situacao: SituacaoMoto): string {
+  const proximo = getProximoPasso(passo, situacao);
+  return proximo && proximo.startsWith('situacao/') ? proximo : 'confirmacao';
+}

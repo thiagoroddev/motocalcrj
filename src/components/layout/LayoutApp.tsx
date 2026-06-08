@@ -63,7 +63,7 @@ export function LayoutApp() {
               {kmFormatado(perfil.moto.kmAtual)}
             </span>
             <span className="px-1.5 py-0.5 bg-muted/30 text-muted-foreground text-xs rounded">
-              última rev: {kmUltimaRevisaoTexto}
+              última revisão: {kmUltimaRevisaoTexto}
             </span>
           </Link>
         </div>

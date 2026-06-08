@@ -11,12 +11,12 @@
 | ID | Descrição | Critério de Aceite | Status |
 |---|---|---|---|
 | RF-ON-01 | Exibir onboarding apenas no primeiro acesso. Com perfil salvo, ir direto à aba ESTIMATIVA. | `localStorage.perfil.onboardingConcluido === true` → redireciona para `/estimativa`. | ✅ CONCLUÍDO |
-| RF-ON-02 | Barra de progresso visual em todos os passos, indicando "PASSO X DE 9" e percentual. | Porcentagem calculada proporcionalmente. Fluxo aluguel tem 10 passos efetivos (o P6d extra). | ✅ CONCLUÍDO |
-| RF-ON-03 | Navegação "Voltar" funcional em todos os passos exceto P1, sem perder respostas preenchidas. | Estado do onboarding mantido em memória (não persistido até `Concluir`). | ✅ CONCLUÍDO |
-| RF-ON-04 | Lógica condicional em P6: exibir sub-telas corretas conforme situação selecionada. | Testes automatizados validam cada ramo. | ✅ CONCLUÍDO |
-| RF-ON-05 | Ao concluir P9, exibir tela de confirmação com resumo editável antes de salvar. | Botão "Editar" por seção redireciona ao passo correspondente mantendo estado. | ✅ CONCLUÍDO |
+| RF-ON-02 | Barra de progresso visual, indicando "PASSO X DE 10" e percentual (Confirmação = "PASSO FINAL"). | Sub-rotas de Situação contam como o passo de Situação. Ordem canônica em ADR-020. | ✅ CONCLUÍDO |
+| RF-ON-03 | Navegação "Voltar" funcional em todos os passos exceto o primeiro (Modelo), sem perder respostas. | Estado do onboarding mantido em memória (não persistido até `Concluir`). | ✅ CONCLUÍDO |
+| RF-ON-04 | Lógica condicional no passo Situação: exibir sub-telas (financiamento/aluguel/responsabilidade) conforme a situação. | Testes automatizados validam cada ramo (`onboardingUtils.test.ts`). | ✅ CONCLUÍDO |
+| RF-ON-05 | Ao concluir o último passo, exibir confirmação com resumo editável antes de salvar. | "Editar" por seção vai ao passo e **volta direto à confirmação** (ADR-020); Rodagem é editada inline na confirmação. | ✅ CONCLUÍDO |
 | RF-ON-06 | Salvar perfil completo no localStorage apenas ao clicar "Concluir Configuração". Cancelar onboarding não salva nada. | `dispatch({ type: 'COMMIT_ONBOARDING' })` como ação única de persistência. | ✅ CONCLUÍDO |
-| RF-ON-07 | Obter valor venal (FIPE) no passo P3 a partir da `tabelaFipe[ano]` do preset (hardcoded, atualizada mensalmente por script — ADR-015; sem consulta em runtime). | Valor gravado em `perfil.fipeCache` ao avançar. Ano fora da tabela: Passo 3 exibe "valor indisponível". | ✅ CONCLUÍDO |
+| RF-ON-07 | Obter valor venal (FIPE) no passo de Ano a partir da `tabelaFipe[ano]` do preset (hardcoded, atualizada mensalmente por script — ADR-015; sem consulta em runtime). | Valor gravado em `perfil.fipeCache` ao avançar. Ano fora da tabela: o passo exibe "valor indisponível". | ✅ CONCLUÍDO |
 
 ---
 
@@ -114,63 +114,29 @@
 
 ## Fluxo Detalhado de Onboarding (Anexo aos RF-ON)
 
+> **Ordem, rotas e progresso canônicos vivem na [ADR-020](../arquitetura/ADR/ADR-020.md)** (fonte única;
+> reordenado na RF-6.31). Resumo da ordem atual (rotas semânticas, "PASSO X DE 10" + Confirmação):
+>
+> 1. **Modelo** (`/onboarding/modelo`) — marca + modelo numa etapa.
+> 2. **Ano** (`/onboarding/ano`) — FIPE/IPVA lidos da `tabelaFipe` (ADR-015), sem runtime.
+> 3. **Quilometragem + consumo** (`/onboarding/km`) — KM atual (obrigatório) + consumo do modelo editável.
+> 4. **Situação** (`/onboarding/situacao`) — branch: financiada → `/situacao/financiamento`; alugada →
+>    `/situacao/aluguel` → `/situacao/responsabilidade`; quitada segue direto.
+> 5. **Seguro** (`/onboarding/seguro`) · 6. **Alimentação** (`/onboarding/alimentacao`) ·
+>    7. **Internet** (`/onboarding/internet`) — bloco opcional (default 0; não bloqueia).
+> 8. **Vida útil das peças** (`/onboarding/vida-util`).
+> 9. **Mão de obra** (`/onboarding/mao-de-obra`) — toggle Padrão/Estimado + cards dos avulsos sem valor.
+> 10. **Últimas manutenções** (`/onboarding/ultimas-manutencoes`).
+> - **Confirmação** (`/onboarding/confirmacao`) — resumo editável; **Rodagem** (km/dia, dias/semana) é
+>   editada **inline** aqui (não tem passo próprio). "Editar" em qualquer seção volta direto à Confirmação.
+
 ### Estrutura visual de cada passo
 
 - Header com logo e ajuda (?)
-- Barra de progresso: "PASSO X DE 9" + percentual
-- Título da pergunta (H1, bold)
-- Subtítulo explicativo (body)
+- Barra de progresso: "PASSO X DE 10" + percentual (Confirmação = "PASSO FINAL")
+- Título da pergunta (H1, bold) + subtítulo explicativo
 - Área de resposta (varia por passo)
-- Imagem/ilustração opcional
-- Botões "Voltar" (secundário) e "Próximo →" (primário)
-- Último passo: CTA "Concluir Configuração ✓"
-
-### Passo 1 - Marca (11%)
-
-Cards: Honda, Yamaha, Outras Marcas. "Outras Marcas" bloqueia avanço.
-
-### Passo 2 - Modelo (22%)
-
-Lista de modelos com hero image da marca. Selecionado: borda azul + check.
-
-### Passo 3 - Ano de Fabricação (33%)
-
-Input de ano. Card informativo sobre isenção de IPVA > 15 anos. Valor FIPE lido da `tabelaFipe` do preset (ADR-015), sem consulta em runtime.
-
-### Passo 4 - Vida Útil dos Serviços Avulsos (44%) - TASK-RF-6.28
-
-Mostrar os mesmos serviços da seção `Serviços avulsos` da aba Concessionária, variando conforme o
-preset da marca: serviços não excepcionais, fora dos pacotes fixos de revisão e com driver em km.
-Cada card exibe somente nome/ícone e o input `Vida útil estimada (km)`. Informar que são referências
-iniciais para uso profissional/intenso e podem ser ajustadas conforme a realidade do usuário. O
-valor representa a vida útil estimada da peça e é sincronizado com a revisão mais próxima para
-formar o intervalo canônico do serviço. A edição usa a mesma fonte disponível posteriormente em
-Mão de Obra. Não mostrar preço, estimativa de mão de obra, toggles, bateria temporal, revisões fixas
-ou serviços excepcionais.
-
-### Passo 5 - Quilometragem (55%)
-
-Campos: KM ATUAL DO HODÔMETRO (obrigatório), KM NA ÚLTIMA REVISÃO (opcional).
-
-### Passo 6 - Situação da Moto (66%) - Branch
-
-Cards: Quitada (avança para P7), Financiada (vai para P6b), Alugada (vai para P6c).
-
-**P6b - Financiamento:** valor da parcela, parcelas restantes.
-**P6c - Aluguel:** valor do aluguel, periodicidade (Mensal/Semanal).
-**P6d - Responsabilidade (só alugada, 90%):** três seções com "Eu pago tudo" / "Locador paga tudo" / "Dividimos 50/50" para Documentação, Manutenção, Seguro.
-
-### Passo 7 - Seguro (77%)
-
-Cards: "Sim, sou segurado" / "Não possuo seguro". Se Sim: valor, periodicidade (Anual/Mensal).
-
-### Passo 8 - Internet (88%)
-
-Campo: valor mensal (R$).
-
-### Passo 9 - Alimentação (100%)
-
-Cards: "Sim, como na rua" / "Não, levo de casa". Se Sim: gasto médio por dia (R$). Info footer: valores podem ser atualizados depois. CTA: "Concluir Configuração ✓".
+- Botões "Voltar" (secundário) e "Próximo →" (primário); Confirmação: CTA "Concluir Configuração ✓"
 
 ---
 

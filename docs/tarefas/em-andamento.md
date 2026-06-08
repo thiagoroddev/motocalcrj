@@ -2,4 +2,4 @@
 
 ---
 
-_(vazio — TASK-RF-6.31.4 e TASK-RF-6.31.6 concluídas em 08/06/26, ver `concluidas/`)_
+_(vazio — TASK-RF-6.31.5 concluída em 08/06/26; épico RF-6.31 completo. Ver `concluidas/`.)_

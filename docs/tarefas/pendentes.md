@@ -11,8 +11,11 @@ Obedeça essa ordem:
 
 _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era por modelo, não por ano. Ver ADR-019 e `concluidas/2026-06-07--15h05--TASK-REF-44-CANCELADA.md`.)_
 
-## TASK-RF-6.31 - Reformular o onboarding (ordem essencial → não-essencial; tutorial) — REGISTRO MESTRE
-- **Status:** Pendente
+## ✅ TASK-RF-6.31 - Reformular o onboarding — REGISTRO MESTRE (CONCLUÍDO 08/06/26)
+> **Épico completo.** Subtarefas concluídas: 6.31.1 (ADR-020) · 6.31.2 (PassoModelo) · 6.31.3 (rotas/
+> reorder) · 6.31.4 (confirmação) · 6.31.6 (editar-volta + Rodagem inline) · 6.31.5 (matriz + docs).
+> Telas de M.O.: RF-6.32 + 6.32.1. A spec abaixo fica como histórico.
+- **Status:** Concluído (ver subtarefas em `concluidas/`)
 - **Modo:** Strict
 - **Valor:** Crítico
 - **Urgência:** IMEDIATA
@@ -171,7 +174,9 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
 - **Critérios de aceite:** cada "Editar" leva ao passo certo; botão final aparece como "Concluir" só no
   último passo; `verify` verde. Validação visual.
 
-### TASK-RF-6.31.5 — Smoke completo da navegação + docs
+### ✅ TASK-RF-6.31.5 — Smoke completo da navegação + docs (CONCLUÍDA 08/06/26)
+> **Concluída** — matriz de navegação (`onboardingUtils.test.ts`, 3 ramos + voltar + modo edição) e docs
+> sincronizadas (funcionais/contexto/glossário → ADR-020). Ver `concluidas/2026-06-08--15h30--TASK-RF-6.31.5.md`.
 - **Modo:** Standard · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** M/G · **Dep.:** RF-6.31.3, RF-6.31.4
 - **Fazer:**
   1. Atualizar o smoke do fluxo feliz em [App.smoke.test.tsx](../../src/App.smoke.test.tsx) para a nova
