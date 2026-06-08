@@ -107,8 +107,11 @@ export function PaginaDetalhamento() {
       )
     : 0;
 
-  const pct = (valor: number, ativo: boolean = true) =>
-    !ativo || totalFiltrado <= 0 ? '0%' : `${Math.round((valor / totalFiltrado) * 100)}%`;
+  const pct = (valor: number, ativo: boolean = true) => {
+    if (!ativo || totalFiltrado <= 0) return '0%';
+    const p = (valor / totalFiltrado) * 100;
+    return p < 1 ? `${p.toFixed(1).replace('.', ',')}%` : `${Math.round(p)}%`;
+  };
   const pp = (anual: number) => moeda(converterAnualParaPeriodo(anual, periodo, diasAno, horasDia));
   const cvt = (anual: number) => converterAnualParaPeriodo(anual, periodo, diasAno, horasDia);
   const totalFiltradoNoPeriodo = cvt(totalFiltrado);

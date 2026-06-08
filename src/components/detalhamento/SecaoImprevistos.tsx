@@ -88,7 +88,7 @@ export function SecaoImprevistos({
         <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={onToggleExpandido}>
           <TileCategoria categoriaId="gastosCustom" corClasse="bg-warning/60" />
           <span className="flex-1 text-foreground text-sm font-medium flex items-center gap-1.5">
-            Imprevistos
+            Outros
             <button
               type="button"
               onClick={(e) => {
@@ -125,7 +125,7 @@ export function SecaoImprevistos({
           </span>
           <Toggle
             ativo={categoriaAtiva}
-            label={`${categoriaAtiva ? 'Desativar' : 'Ativar'} Imprevistos`}
+            label={`${categoriaAtiva ? 'Desativar' : 'Ativar'} Outros`}
             onClick={onToggleCategoria}
           />
           <svg
@@ -156,6 +156,7 @@ export function SecaoImprevistos({
                   <Toggle
                     ativo={ativo}
                     label={`${ativo ? 'Desativar' : 'Ativar'} ${imprevisto.label}`}
+                    inativoPorPai={!categoriaAtiva}
                     onClick={() => onToggleImprevistoSugerido(id)}
                   />
                   <span className="w-8 text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums">
@@ -190,6 +191,7 @@ export function SecaoImprevistos({
                   <Toggle
                     ativo={g.ativo}
                     label={`${g.ativo ? 'Desativar' : 'Ativar'} ${g.nome}`}
+                    inativoPorPai={!categoriaAtiva}
                     onClick={() => dispatch({ type: 'TOGGLE_GASTO_CUSTOM', id: g.id })}
                   />
                   <span className="w-8 shrink-0" aria-hidden="true" />

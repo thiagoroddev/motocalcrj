@@ -163,3 +163,6 @@
 | TASK-REF-44 | **CANCELADA** — revisão variava por modelo, não por ano; um preset por modelo (ADR-019) | [2026-06-07--15h05--TASK-REF-44-CANCELADA.md](./2026-06-07--15h05--TASK-REF-44-CANCELADA.md) |
 | TASK-BG-025 | `DialogEdicaoCusto` ganha `DialogDescription` (a11y); elimina o warning do Radix no smoke (REV-003-A01) | [2026-06-08--16h20--TASK-BG-025.md](./2026-06-08--16h20--TASK-BG-025.md) |
 | TASK-TEST-005 | Testes de render para PassoModelo e PassoMaoDeObra (onboarding) | [2026-06-08--17h47--TASK-TEST-005.md](./2026-06-08--17h47--TASK-TEST-005.md) |
+| TASK-BG-026 | Melhorias visuais e legendas na seção de Manutenção | [2026-06-08--18h42--TASK-BG-026.md](./2026-06-08--18h42--TASK-BG-026.md) |
+| TASK-BG-029 | Categoria Outros: renomear, bloquear toggles filhos e corrigir Donut < 1% | [2026-06-08--19h45--TASK-BG-029.md](./2026-06-08--19h45--TASK-BG-029.md) |
+| TASK-BG-030 | Distribuição de Custos: porcentagens com 1 casa decimal em vez de arredondamento inteiro | [2026-06-08--20h03--TASK-BG-030.md](./2026-06-08--20h03--TASK-BG-030.md) |

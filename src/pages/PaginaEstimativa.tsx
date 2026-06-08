@@ -25,7 +25,7 @@ const CATEG_CONFIG: Record<string, { label: string; cor: string }> = {
   seguro: { label: 'Seguro', cor: '#0078FF' },
   alimentacao: { label: 'Alimentação', cor: '#FBBF24' },
   financiamento: { label: 'Financiamento', cor: '#F97316' },
-  gastosCustom: { label: 'Imprevistos', cor: '#EC4899' },
+  gastosCustom: { label: 'Outros', cor: '#EC4899' },
 };
 
 export function PaginaEstimativa() {
@@ -87,7 +87,7 @@ export function PaginaEstimativa() {
           : (valores[id] ?? 0),
       cor: cfg.cor,
     }))
-    .filter((s) => s.porcentagem > 0);
+    .filter((s) => s.valorAnual > 0);
 
   function handleKmBlur() {
     const v = parseInt(kmDiaInput, 10);
