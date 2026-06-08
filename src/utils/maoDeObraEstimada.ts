@@ -4,6 +4,7 @@
 
 import type { PerfilUsuario, ServicoIndependente } from '../types/perfil';
 import type { PresetMoto } from '../types/calculos';
+import { resolverStatusPrecoAutorizada } from './statusPrecoAutorizada';
 
 // Tempário: horas de mão de obra por serviço (baseline ~125cc).
 const HORAS_POR_SERVICO: Record<string, number> = {
@@ -70,22 +71,27 @@ export function montarEstimativaMaoDeObra(
   };
 }
 
-// Soma a M.O. estimável de uma lista de serviços (os sem tempário somam 0 e não
-// contam). Usado no onboarding para o exemplo "com × sem estimativa" — quanto a
-// estimativa adicionaria nos avulsos sem valor oficial.
-export function somarMaoDeObraEstimavel(
+// Soma a M.O. **efetiva** de uma lista de serviços, segundo o estado atual do
+// perfil (RF-6.32.1): valor real quando informado (oficial ou digitado pelo
+// usuário); estimativa (~) quando a estimativa está ligada (global OU por-item) e
+// o serviço está sem valor; 0 caso contrário. Usado no onboarding para mostrar,
+// de forma dinâmica, o quanto esses avulsos impactam.
+export function somarMaoDeObraEfetiva(
   servicos: ServicoIndependente[],
-  marca: string | undefined,
-  fatorMaoDeObra = 1,
-): { total: number; quantidade: number } {
+  perfil: PerfilUsuario,
+  preset: PresetMoto | undefined,
+): { total: number; temEstimado: boolean } {
+  const global = perfil.perfilManutencao.incluirEstimativaMaoDeObra ?? false;
+  const porServico = perfil.perfilManutencao.estimativaMaoDeObraPorServico ?? {};
   let total = 0;
-  let quantidade = 0;
+  let temEstimado = false;
   for (const servico of servicos) {
-    const estimado = estimarMaoDeObra(servico.id, marca, fatorMaoDeObra);
-    if (estimado > 0) {
-      total += estimado;
-      quantidade += 1;
+    if (resolverStatusPrecoAutorizada(servico) !== 'nao_informado') {
+      total += servico.precoTotalAutorizada; // valor real (oficial ou do usuário)
+    } else if (global || porServico[servico.id]) {
+      total += estimarMaoDeObra(servico.id, preset?.marca, preset?.fatorMaoDeObra ?? 1);
+      temEstimado = true;
     }
   }
-  return { total: Math.round(total * 100) / 100, quantidade };
+  return { total: Math.round(total * 100) / 100, temEstimado };
 }

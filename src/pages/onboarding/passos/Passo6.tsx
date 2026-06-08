@@ -24,7 +24,7 @@ export function Passo6() {
       valor: { ...perfil.financeiro, situacaoMoto: situacao },
     });
     // Usa situacao local - não perfil.financeiro.situacaoMoto que ainda é o valor antigo
-    const proximo = getProximoPasso('6', situacao);
+    const proximo = getProximoPasso('situacao', situacao);
     if (proximo && proximo !== 'concluir') {
       navigate(`/onboarding/${proximo}`);
     }

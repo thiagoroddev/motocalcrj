@@ -9,8 +9,7 @@ import {
 } from './onboardingUtils';
 import { usePerfil } from '../../hooks/usePerfil';
 import { perfilProntoParaCommit } from '../../utils/onboardingGuards';
-import { Passo1 } from './passos/Passo1';
-import { Passo2 } from './passos/Passo2';
+import { PassoModelo } from './passos/PassoModelo';
 import { Passo3 } from './passos/Passo3';
 import { Passo4 } from './passos/Passo4';
 import { Passo5 } from './passos/Passo5';
@@ -22,6 +21,7 @@ import { Passo6Responsabilidade } from './passos/Passo6Responsabilidade';
 import { Passo7 } from './passos/Passo7';
 import { Passo8 } from './passos/Passo8';
 import { Passo9 } from './passos/Passo9';
+import { PassoMaoDeObra } from './passos/PassoMaoDeObra';
 import { PassoConfirmacao } from './passos/PassoConfirmacao';
 
 interface OnboardingCtxValue {
@@ -48,10 +48,10 @@ export function FluxoOnboarding() {
   const { perfil } = usePerfil();
 
   const passo = parsePasso(location.pathname);
-  const config = CONFIG_PASSOS[passo] ?? CONFIG_PASSOS['1'];
+  const config = CONFIG_PASSOS[passo] ?? CONFIG_PASSOS['modelo'];
 
   if (passo === 'confirmacao' && !perfilProntoParaCommit(perfil)) {
-    return <Navigate to="/onboarding/1" replace />;
+    return <Navigate to="/onboarding/modelo" replace />;
   }
 
   function irParaProximo() {
@@ -78,21 +78,21 @@ export function FluxoOnboarding() {
   return (
     <OnboardingCtx.Provider value={{ passo, config, irParaProximo, irParaAnterior, temAnterior }}>
       <Routes>
-        <Route path="1" element={<Passo1 />} />
-        <Route path="2" element={<Passo2 />} />
-        <Route path="3" element={<Passo3 />} />
-        <Route path="4" element={<Passo4 />} />
-        <Route path="5" element={<Passo5 />} />
-        <Route path="5trocas" element={<Passo5Manutencoes />} />
-        <Route path="6" element={<Passo6 />} />
-        <Route path="6/financiamento" element={<Passo6Financiamento />} />
-        <Route path="6/aluguel" element={<Passo6Aluguel />} />
-        <Route path="6/responsabilidade" element={<Passo6Responsabilidade />} />
-        <Route path="7" element={<Passo7 />} />
-        <Route path="8" element={<Passo8 />} />
-        <Route path="9" element={<Passo9 />} />
+        <Route path="modelo" element={<PassoModelo />} />
+        <Route path="ano" element={<Passo3 />} />
+        <Route path="km" element={<Passo5 />} />
+        <Route path="situacao" element={<Passo6 />} />
+        <Route path="situacao/financiamento" element={<Passo6Financiamento />} />
+        <Route path="situacao/aluguel" element={<Passo6Aluguel />} />
+        <Route path="situacao/responsabilidade" element={<Passo6Responsabilidade />} />
+        <Route path="seguro" element={<Passo7 />} />
+        <Route path="alimentacao" element={<Passo9 />} />
+        <Route path="internet" element={<Passo8 />} />
+        <Route path="vida-util" element={<Passo4 />} />
+        <Route path="mao-de-obra" element={<PassoMaoDeObra />} />
+        <Route path="ultimas-manutencoes" element={<Passo5Manutencoes />} />
         <Route path="confirmacao" element={<PassoConfirmacao />} />
-        <Route path="*" element={<Navigate to="/onboarding/1" replace />} />
+        <Route path="*" element={<Navigate to="/onboarding/modelo" replace />} />
       </Routes>
     </OnboardingCtx.Provider>
   );

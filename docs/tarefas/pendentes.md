@@ -101,7 +101,12 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
 
 ---
 
-### TASK-RF-6.31.1 — ADR do fluxo de onboarding + esquema de rotas e progresso
+### ✅ TASK-RF-6.31.1 — ADR do fluxo de onboarding + esquema de rotas e progresso (CONCLUÍDA 07/06/26)
+> **Concluída** — ver `concluidas/2026-06-07--21h00--TASK-RF-6.31.1.md` e **ADR-020**.
+> **Decisões travadas para as próximas subtarefas:** rotas **semânticas** (`/onboarding/modelo`, `/ano`,
+> `/km`, `/situacao` + subs, `/seguro`, `/alimentacao`, `/internet`, `/vida-util`, `/mao-de-obra`,
+> `/ultimas-manutencoes`, `/confirmacao`; primeira rota = `/onboarding/modelo`); progresso "PASSO X DE 10"
+> + Confirmação "PASSO FINAL". Detalhes e ramificações no ADR-020.
 - **Modo:** Strict · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** P/M · **Dep.:** - (faz primeiro)
 - **Objetivo:** registrar a decisão do fluxo numa ADR nova (próximo número livre em `docs/arquitetura/ADR/`)
   e **fixar o esquema de rotas e de progresso** que as demais subtarefas vão implementar. Sem código de telas.
@@ -119,7 +124,9 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
 - **Critérios de aceite:** ADR criada e aceita, com a tabela de ordem, o esquema de rotas escolhido e a
   regra de progresso. Índice de ADRs atualizado se houver. **Sem mudança de código.**
 
-### TASK-RF-6.31.2 — Unificar Marca + Modelo numa única etapa
+### ✅ TASK-RF-6.31.2 — Unificar Marca + Modelo numa única etapa (CONCLUÍDA 07/06/26)
+> **Concluída** — componente `PassoModelo.tsx` criado (não roteado; wiring na 6.31.3). Ver
+> `concluidas/2026-06-07--22h35--TASK-RF-6.31.2.md`.
 - **Modo:** Standard · **Valor:** Importante · **Urgência:** IMEDIATA · **Esforço:** M · **Dep.:** RF-6.31.1
 - **Objetivo:** uma só tela escolhe **marca e modelo** (hoje são 2 telas). Entregar o **componente**; o
   wiring final fica na RF-6.31.3.
@@ -133,7 +140,10 @@ _(A TASK-REF-44 foi **cancelada** em 07/06/26 — a variação de revisão era p
 - **Critérios de aceite:** componente seleciona marca+modelo e grava no estado; `verify` verde. (Validação
   visual em fluxo só após a 6.31.3 roteá-lo.)
 
-### TASK-RF-6.31.3 — Reordenar rotas, progresso e wiring (FluxoOnboarding + onboardingUtils)
+### ✅ TASK-RF-6.31.3 — Reordenar rotas, progresso e wiring (CONCLUÍDA 07/06/26)
+> **Concluída** — rotas semânticas implementadas; `PassoModelo`/`PassoMaoDeObra` roteados; `Passo1`/
+> `Passo2`/`5trocas` removidos. Ver `concluidas/2026-06-07--23h26--TASK-RF-6.31.3.md`. (Junto saiu a
+> **TASK-RF-6.32.1**: cards de M.O. + total dinâmico na tela de mão de obra.)
 - **Modo:** Strict · **Valor:** Crítico · **Urgência:** IMEDIATA · **Esforço:** G · **Dep.:** RF-6.31.1, RF-6.31.2
 - **Objetivo:** implementar a ordem canônica da ADR (6.31.1) — é o coração da RF-6.31.
 - **Fazer:**

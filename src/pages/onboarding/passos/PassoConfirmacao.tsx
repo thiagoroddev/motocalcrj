@@ -22,7 +22,7 @@ export function PassoConfirmacao() {
 
   function concluir() {
     if (!podeConcluir) {
-      navigate('/onboarding/1', { replace: true });
+      navigate('/onboarding/modelo', { replace: true });
       return;
     }
 
@@ -43,14 +43,14 @@ export function PassoConfirmacao() {
       textoBotao="Concluir configuração"
     >
       <div className="flex flex-col gap-2">
-        <SessaoResumo titulo="Moto" aoEditar={() => editarPasso('2')}>
+        <SessaoResumo titulo="Moto" aoEditar={() => editarPasso('modelo')}>
           <LinhaResumo
             label="Marca / Modelo"
             valor={`${moto.marca} ${getNomeModelo(moto.modelo)} ${moto.ano}`}
           />
         </SessaoResumo>
 
-        <SessaoResumo titulo="Quilometragem" aoEditar={() => editarPasso('5')}>
+        <SessaoResumo titulo="Quilometragem" aoEditar={() => editarPasso('km')}>
           <LinhaResumo label="KM atual" valor={`${moto.kmAtual.toLocaleString('pt-BR')} km`} />
           <LinhaResumo
             label="KM última revisão"
@@ -67,7 +67,7 @@ export function PassoConfirmacao() {
           <LinhaResumo label="Dias por semana (padrão)" valor={`${trabalho.diasPorSemana} dias`} />
         </SessaoResumo>
 
-        <SessaoResumo titulo="Situação da moto" aoEditar={() => editarPasso('6')}>
+        <SessaoResumo titulo="Situação da moto" aoEditar={() => editarPasso('situacao')}>
           <LinhaResumo label="Situação" valor={SITUACAO_LABEL[financeiro.situacaoMoto]} />
           {financeiro.situacaoMoto === 'financiada' && financeiro.parcelaMensal != null && (
             <LinhaResumo
@@ -83,7 +83,7 @@ export function PassoConfirmacao() {
           )}
         </SessaoResumo>
 
-        <SessaoResumo titulo="Seguro" aoEditar={() => editarPasso('7')}>
+        <SessaoResumo titulo="Seguro" aoEditar={() => editarPasso('seguro')}>
           <LinhaResumo label="Seguro" valor={financeiro.seguro.valorAnual > 0 ? 'Sim' : 'Não'} />
           {financeiro.seguro.valorAnual > 0 && (
             <LinhaResumo
@@ -96,14 +96,14 @@ export function PassoConfirmacao() {
           )}
         </SessaoResumo>
 
-        <SessaoResumo titulo="Gastos operacionais" aoEditar={() => editarPasso('8')}>
+        <SessaoResumo titulo="Gastos operacionais" aoEditar={() => editarPasso('internet')}>
           <LinhaResumo
             label="Internet"
             valor={financeiro.internet > 0 ? `R$ ${financeiro.internet.toFixed(2)}/mês` : '-'}
           />
         </SessaoResumo>
 
-        <SessaoResumo titulo="Alimentação" aoEditar={() => editarPasso('9')}>
+        <SessaoResumo titulo="Alimentação" aoEditar={() => editarPasso('alimentacao')}>
           <LinhaResumo
             label="Alimentação"
             valor={

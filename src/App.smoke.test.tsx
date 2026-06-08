@@ -151,42 +151,50 @@ describe('App - smoke UI', () => {
   });
 
   it('conclui onboarding e renderiza estimativa sem modelo não encontrado', async () => {
-    renderizarAppEm('/onboarding/1');
+    renderizarAppEm('/onboarding/modelo');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Honda' }));
-    clicarProximo();
-
+    // Passo 1: Modelo (marca + modelo unificados). Selecionar Honda auto-seleciona Pop 110i.
+    fireEvent.click(await screen.findByRole('button', { name: 'Honda' }));
     fireEvent.click(await screen.findByRole('button', { name: /Pop 110i/i }));
     clicarProximo();
 
-    // Passo 3: seletor de ano (Pop default = ano mais recente da tabela FIPE, 2024).
-    // Consumo não aparece mais aqui - vive só no Passo 5 (editável).
+    // Passo 2: Ano (consumo vive só no Passo 3 de Km/consumo).
     await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
     clicarProximo();
 
-    await screen.findByText('Vida útil das peças');
-    clicarProximo();
-
+    // Passo 3: Km + consumo (consumo já vem pré-preenchido com o do modelo; não editamos).
     fireEvent.change(await screen.findByLabelText(/KM atual do hodômetro/i), {
       target: { value: '12500' },
     });
-    // Consumo já vem pré-preenchido com o do modelo (Pop = 54 km/L); não editamos.
     clicarProximo();
 
-    await screen.findByText('Últimas manutenções do veículo');
-    clicarProximo();
-
+    // Passo 4: Situação (default quitada → pula sub-rotas).
     await screen.findByText('Qual a situação da sua moto?');
     clicarProximo();
 
+    // Passo 5: Seguro.
     await screen.findByText('Você tem seguro?');
     fireEvent.click(screen.getByRole('button', { name: 'Não' }));
     clicarProximo();
 
+    // Passo 6: Alimentação.
+    await screen.findByText('Alimentação no trabalho');
+    clicarProximo();
+
+    // Passo 7: Internet.
     await screen.findByText('Plano de Internet');
     clicarProximo();
 
-    await screen.findByText('Alimentação no trabalho');
+    // Passo 8: Vida útil das peças.
+    await screen.findByText('Vida útil das peças');
+    clicarProximo();
+
+    // Passo 9: Mão de obra.
+    await screen.findByText('Valor de mão de obra');
+    clicarProximo();
+
+    // Passo 10: Últimas manutenções.
+    await screen.findByText('Últimas manutenções do veículo');
     clicarProximo();
 
     fireEvent.click(await screen.findByRole('button', { name: 'Concluir configuração' }));

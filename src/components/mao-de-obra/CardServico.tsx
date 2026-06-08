@@ -19,6 +19,8 @@ interface Props {
   // quando o serviço está sem valor real. `globalLigado` reflete o toggle de
   // Preferências; `porServicoLigado`, o flag específico deste serviço.
   estimativaMaoDeObra?: EstimativaMaoDeObraItem;
+  // Onboarding de M.O. (RF-6.32.1): mostra só o campo de preço, sem o de intervalo.
+  ocultarIntervalo?: boolean;
 }
 
 export function CardServico({
@@ -27,6 +29,7 @@ export function CardServico({
   dispatch,
   modo = 'independente',
   estimativaMaoDeObra,
+  ocultarIntervalo = false,
 }: Props) {
   const padrao = servicoPadrao ?? SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
   const statusAutorizada = resolverStatusPrecoAutorizada(servico);
@@ -129,7 +132,7 @@ export function CardServico({
           }}
         />
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className={ocultarIntervalo ? 'space-y-1' : 'grid grid-cols-2 gap-2'}>
         <div className="space-y-1">
           <span className="label-neutro block">
             {rotuloPreco}
@@ -178,18 +181,20 @@ export function CardServico({
               </button>
             ))}
         </div>
-        <div className="space-y-1">
-          <span className="label-neutro block">Intervalo (km)</span>
-          <Input
-            type="number"
-            className={`rounded-input bg-input min-h-touch text-sm${temOverrideIntervalo ? ' border-primary' : ''}`}
-            value={intervalo}
-            onChange={(e) => setIntervalo(e.target.value)}
-            onBlur={handleBlurIntervalo}
-            min={0}
-            step={500}
-          />
-        </div>
+        {!ocultarIntervalo && (
+          <div className="space-y-1">
+            <span className="label-neutro block">Intervalo (km)</span>
+            <Input
+              type="number"
+              className={`rounded-input bg-input min-h-touch text-sm${temOverrideIntervalo ? ' border-primary' : ''}`}
+              value={intervalo}
+              onChange={(e) => setIntervalo(e.target.value)}
+              onBlur={handleBlurIntervalo}
+              min={0}
+              step={500}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ export function RotaProtegida() {
   const { temPresetAtivo } = usePerfil();
 
   if (!temPresetAtivo) {
-    return <Navigate to="/onboarding/1" replace />;
+    return <Navigate to="/onboarding/modelo" replace />;
   }
 
   return <Outlet />;

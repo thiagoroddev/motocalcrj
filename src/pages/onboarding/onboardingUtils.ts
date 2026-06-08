@@ -5,58 +5,65 @@ export interface ConfigPasso {
   percentual: number;
 }
 
+// Ordem canônica do onboarding (ADR-020): 10 passos + Confirmação, rotas semânticas.
+// Sub-rotas de Situação contam como o mesmo passo 4.
 export const CONFIG_PASSOS: Record<string, ConfigPasso> = {
-  '1': { label: 'PASSO 1 DE 9', percentual: 11 },
-  '2': { label: 'PASSO 2 DE 9', percentual: 22 },
-  '3': { label: 'PASSO 3 DE 9', percentual: 33 },
-  '4': { label: 'PASSO 4 DE 9', percentual: 44 },
-  '5': { label: 'PASSO 5 DE 9', percentual: 55 },
-  '5trocas': { label: 'PASSO 5 DE 9', percentual: 60 },
-  '6': { label: 'PASSO 6 DE 9', percentual: 66 },
-  '6/financiamento': { label: 'PASSO 6 DE 9', percentual: 68 },
-  '6/aluguel': { label: 'PASSO 6 DE 9', percentual: 68 },
-  '6/responsabilidade': { label: 'PASSO 6 DE 9', percentual: 70 },
-  '7': { label: 'PASSO 7 DE 9', percentual: 77 },
-  '8': { label: 'PASSO 8 DE 9', percentual: 88 },
-  '9': { label: 'PASSO FINAL', percentual: 100 },
+  modelo: { label: 'PASSO 1 DE 10', percentual: 10 },
+  ano: { label: 'PASSO 2 DE 10', percentual: 20 },
+  km: { label: 'PASSO 3 DE 10', percentual: 30 },
+  situacao: { label: 'PASSO 4 DE 10', percentual: 40 },
+  'situacao/financiamento': { label: 'PASSO 4 DE 10', percentual: 40 },
+  'situacao/aluguel': { label: 'PASSO 4 DE 10', percentual: 40 },
+  'situacao/responsabilidade': { label: 'PASSO 4 DE 10', percentual: 40 },
+  seguro: { label: 'PASSO 5 DE 10', percentual: 50 },
+  alimentacao: { label: 'PASSO 6 DE 10', percentual: 60 },
+  internet: { label: 'PASSO 7 DE 10', percentual: 70 },
+  'vida-util': { label: 'PASSO 8 DE 10', percentual: 80 },
+  'mao-de-obra': { label: 'PASSO 9 DE 10', percentual: 90 },
+  'ultimas-manutencoes': { label: 'PASSO 10 DE 10', percentual: 100 },
   confirmacao: { label: 'PASSO FINAL', percentual: 100 },
 };
 
 type ProximoFn = string | ((s: SituacaoMoto) => string);
 
 const MAPA_PROXIMO: Record<string, ProximoFn> = {
-  '1': '2',
-  '2': '3',
-  '3': '4',
-  '4': '5',
-  '5': '5trocas',
-  '5trocas': '6',
-  '6': (s) => (s === 'financiada' ? '6/financiamento' : s === 'alugada' ? '6/aluguel' : '7'),
-  '6/financiamento': '7',
-  '6/aluguel': '6/responsabilidade',
-  '6/responsabilidade': '7',
-  '7': '8',
-  '8': '9',
-  '9': 'confirmacao',
+  modelo: 'ano',
+  ano: 'km',
+  km: 'situacao',
+  situacao: (s) =>
+    s === 'financiada' ? 'situacao/financiamento' : s === 'alugada' ? 'situacao/aluguel' : 'seguro',
+  'situacao/financiamento': 'seguro',
+  'situacao/aluguel': 'situacao/responsabilidade',
+  'situacao/responsabilidade': 'seguro',
+  seguro: 'alimentacao',
+  alimentacao: 'internet',
+  internet: 'vida-util',
+  'vida-util': 'mao-de-obra',
+  'mao-de-obra': 'ultimas-manutencoes',
+  'ultimas-manutencoes': 'confirmacao',
   confirmacao: 'concluir',
 };
 
 const MAPA_ANTERIOR: Record<string, ProximoFn | null> = {
-  '1': null,
-  '2': '1',
-  '3': '2',
-  '4': '3',
-  '5': '4',
-  '5trocas': '5',
-  '6': '5trocas',
-  '6/financiamento': '6',
-  '6/aluguel': '6',
-  '6/responsabilidade': '6/aluguel',
-  '7': (s) =>
-    s === 'financiada' ? '6/financiamento' : s === 'alugada' ? '6/responsabilidade' : '6',
-  '8': '7',
-  '9': '8',
-  confirmacao: '9',
+  modelo: null,
+  ano: 'modelo',
+  km: 'ano',
+  situacao: 'km',
+  'situacao/financiamento': 'situacao',
+  'situacao/aluguel': 'situacao',
+  'situacao/responsabilidade': 'situacao/aluguel',
+  seguro: (s) =>
+    s === 'financiada'
+      ? 'situacao/financiamento'
+      : s === 'alugada'
+        ? 'situacao/responsabilidade'
+        : 'situacao',
+  alimentacao: 'seguro',
+  internet: 'alimentacao',
+  'vida-util': 'internet',
+  'mao-de-obra': 'vida-util',
+  'ultimas-manutencoes': 'mao-de-obra',
+  confirmacao: 'ultimas-manutencoes',
 };
 
 function resolver(valor: ProximoFn, situacao: SituacaoMoto): string {

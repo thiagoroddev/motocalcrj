@@ -3,9 +3,11 @@ import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { obterPreset } from '../../../data/repositorioPresets';
 import { normalizarPerfilMvp } from '../../../hooks/useCustos';
+import { obterServicosManutencaoBase } from '../../../utils/servicosManutencaoPreset';
 import { resolverStatusPrecoAutorizada } from '../../../utils/statusPrecoAutorizada';
-import { somarMaoDeObraEstimavel } from '../../../utils/maoDeObraEstimada';
+import { montarEstimativaMaoDeObra, somarMaoDeObraEfetiva } from '../../../utils/maoDeObraEstimada';
 import { ControleEstimativaMaoDeObra } from '../../../components/mao-de-obra/ControleEstimativaMaoDeObra';
+import { CardServico } from '../../../components/mao-de-obra/CardServico';
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -17,20 +19,21 @@ export function PassoMaoDeObra() {
 
   const preset = obterPreset(perfil.moto.modelo);
   const perfilMvp = normalizarPerfilMvp(perfil, preset);
+  const servicosPadrao = obterServicosManutencaoBase(preset);
 
-  // Avulsos km-driven sem valor oficial: são os que a estimativa (~) completaria.
-  const avulsosSemValor = perfilMvp.servicosIndependentes.filter(
+  // Avulsos km-driven SEM valor oficial da concessionária (os já editados pelo
+  // usuário continuam na lista). São os serviços que a estimativa completaria.
+  const avulsos = perfilMvp.servicosIndependentes.filter(
     (s) =>
       !s.ehExcepcional &&
       !s.incluidoNaRevisaoAutorizada &&
       s.intervalKm > 0 &&
-      resolverStatusPrecoAutorizada(s) === 'nao_informado',
+      resolverStatusPrecoAutorizada(s) !== 'informado',
   );
-  const { total: totalEstimado, quantidade } = somarMaoDeObraEstimavel(
-    avulsosSemValor,
-    preset?.marca,
-    preset?.fatorMaoDeObra ?? 1,
-  );
+
+  // Total dinâmico: começa em 0 (tudo sem valor/sem estimativa) e cresce conforme
+  // o usuário edita ou liga estimativas (por item ou no toggle global).
+  const { total, temEstimado } = somarMaoDeObraEfetiva(avulsos, perfil, preset);
   const ligada = perfil.perfilManutencao.incluirEstimativaMaoDeObra === true;
 
   return (
@@ -43,33 +46,42 @@ export function PassoMaoDeObra() {
       <div className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">
           O app usa os <strong className="text-foreground">valores oficiais</strong> para as
-          revisões periódicas. Para alguns{' '}
-          <strong className="text-foreground">serviços avulsos</strong>, porém, a concessionária não
-          publica o preço da mão de obra. Você pode deixá-los em branco ou pedir uma{' '}
-          <strong className="text-foreground">estimativa (~)</strong> — para todos de uma vez agora,
-          ou item a item depois.
+          revisões periódicas. Para os <strong className="text-foreground">serviços avulsos</strong>{' '}
+          abaixo a concessionária não publica o preço da mão de obra. Deixe em branco, digite o
+          valor, ou peça uma <strong className="text-foreground">estimativa (~)</strong> — por item
+          ou em todos pelo botão.
         </p>
 
         <ControleEstimativaMaoDeObra ligada={ligada} dispatch={dispatch} />
 
-        {quantidade > 0 && (
-          <div className="bg-card rounded-lg p-4 space-y-1">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">
-              Exemplo — {quantidade} serviço{quantidade === 1 ? '' : 's'} sem valor oficial
-            </p>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground text-sm">Padrão (sem estimativa)</span>
-              <span className="text-foreground font-semibold">{formatarMoeda(0)}</span>
+        {avulsos.length > 0 && (
+          <>
+            <div className="bg-card rounded-lg p-4 flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                Mão de obra desses {avulsos.length} serviços
+              </span>
+              <span
+                className={`text-lg font-bold ${temEstimado ? 'text-warning' : 'text-foreground'}`}
+              >
+                {temEstimado ? '~' : ''}
+                {formatarMoeda(total)}
+              </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground text-sm">Estimado</span>
-              <span className="text-warning font-semibold">~{formatarMoeda(totalEstimado)}</span>
+
+            <div className="space-y-2">
+              {avulsos.map((s) => (
+                <CardServico
+                  key={s.id}
+                  servico={s}
+                  servicoPadrao={servicosPadrao.find((p) => p.id === s.id)}
+                  dispatch={dispatch}
+                  modo="autorizada"
+                  estimativaMaoDeObra={montarEstimativaMaoDeObra(perfil, preset, s.id)}
+                  ocultarIntervalo
+                />
+              ))}
             </div>
-            <p className="text-[11px] text-muted-foreground/60 pt-1">
-              Mão de obra estimada por ciclo dos serviços sem valor oficial; os valores oficiais não
-              mudam.
-            </p>
-          </div>
+          </>
         )}
       </div>
     </PassoLayout>

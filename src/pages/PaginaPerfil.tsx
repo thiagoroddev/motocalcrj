@@ -30,12 +30,12 @@ export function PaginaPerfil() {
 
   function confirmarApagarTudo() {
     dispatch({ type: 'RESETAR_PERFIL' });
-    navigate('/onboarding/1', { replace: true });
+    navigate('/onboarding/modelo', { replace: true });
   }
 
   function confirmarMudarVeiculo() {
     setDialog(null);
-    navigate('/onboarding/1');
+    navigate('/onboarding/modelo');
   }
 
   return (
