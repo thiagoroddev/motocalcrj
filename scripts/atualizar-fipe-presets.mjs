@@ -110,9 +110,15 @@ async function buscarTabelaFipe(codigoFipe) {
   let mesReferencia = null;
   let modeloFipe = null;
 
+  // A FIPE usa o pseudo-ano "32000" para a referência de 0 km. Ignoramos anos fora
+  // da faixa de ano-modelo real para não poluir a tabela (e quebrar o schema YYYY).
+  const anoMaximoPlausivel = new Date().getFullYear() + 1;
+
   for (const ano of anos) {
     const anoModelo = Number.parseInt(ano.name, 10);
-    if (!Number.isInteger(anoModelo)) continue;
+    if (!Number.isInteger(anoModelo) || anoModelo < 1900 || anoModelo > anoMaximoPlausivel) {
+      continue;
+    }
 
     const detalhe = await fetchJson(`${API_BASE}/${TIPO_VEICULO}/${codigoFipe}/years/${ano.code}`);
     tabela[String(anoModelo)] = parseValorBRL(detalhe.price);
