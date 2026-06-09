@@ -1,5 +1,5 @@
 
-## description: "Núcleo do pacote do agente. Sempre carregado. Contém princípios inegociáveis, processo de trabalho e mapa para os demais módulos." applyTo: "**/*" versao: "3.2" ultima_atualizacao: "2026-06-06"
+## description: "Núcleo do pacote do agente. Sempre carregado. Contém princípios inegociáveis, processo de trabalho e mapa para os demais módulos." applyTo: "**/*" versao: "3.3" ultima_atualizacao: "2026-06-09"
 
 # 🧭 Núcleo do Agente
 
@@ -155,6 +155,10 @@ Revisão geral não é modo de tarefa. É um registro próprio, iniciado **somen
 
 Para esse caso, carregue [`processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md) e [`templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md). A IA pode sugerir uma revisão geral, mas não cria REV por iniciativa própria.
 
+### 4.4 Numeração de IDs de tarefa
+
+Para descobrir o próximo ID de tarefa, consulte o índice de concluídas em `docs/tarefas/concluidas/0-indice-concluidas.md`. Pegue o **maior número já usado daquele prefixo** e gere o **número seguinte**. **Ignore gaps** na sequência — números pulados nunca são reaproveitados. Ex.: se o maior `TASK-BG` no índice é `030`, a próxima é `TASK-BG-031`, mesmo que `027`/`028` não apareçam em lugar nenhum.
+
 ---
 
 ## 5. Anti-Padrões Críticos
@@ -285,6 +289,7 @@ npx tsc --noEmit     # checar tipos sem emitir arquivos
 
 |Versão|Data|Mudança|
 |---|---|---|
+|3.3|2026-06-09|Regra de numeração de IDs de tarefa (§4.4): próximo número após o maior do prefixo no índice de concluídas (`0-indice-concluidas.md`); gaps ignorados, nunca reaproveitados.|
 |3.2|2026-06-06|Anti-padrão de gate não-verificado (typecheck/lint/test/build). Detalhe em `processos/20` (critério de conclusão + regra Strict) e `padroes/10` (narrowing por closure + helper `exigir`).|
 |3.1|2026-06-01|Adicionado comportamento de Revisão Geral completa do projeto sob pedido humano, com registros `REV-NNN.md`.|
 |3.0|2026-05-13|Refatoração para arquitetura modular. Núcleo enxuto + módulos sob demanda.|
