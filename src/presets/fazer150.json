@@ -1,37 +1,43 @@
 {
   "marca": "Yamaha",
-  "modelo": "Factor 150",
-  "nomeCurto": "Factor 150",
-  "nomeFipe": "YBR 150 FACTOR ED/FLEX",
-  "consumoKmL": 39.0,
+  "modelo": "Fazer 150",
+  "nomeCurto": "Fazer 150",
+  "nomeFipe": "YS 150 FAZER SED/ FLEX",
+  "consumoKmL": 35.0,
   "aceitaEtanol": true,
   "fatorMaoDeObra": 1.15,
-  "codigoFipe": "827099-6",
+  "codigoFipe": "827088-0",
   "tabelaFipe": {
-    "2016": 11235,
-    "2017": 12017,
-    "2018": 12782,
-    "2019": 13380,
-    "2020": 13715,
-    "2021": 14058,
-    "2022": 14906,
-    "2023": 15410,
-    "2024": 16357
+    "2014": 11792,
+    "2015": 12698,
+    "2016": 13016,
+    "2017": 13342,
+    "2018": 13676,
+    "2019": 14018,
+    "2020": 14369,
+    "2021": 14729,
+    "2022": 15098,
+    "2023": 15519,
+    "2024": 16495,
+    "2025": 17716
   },
   "_fonte": {
-    "manual": "Yamaha Serviços (revisões periódicas Factor 150, consultadas em 08/06/2026). Peças e serviços avulsos herdados do preset Factor 125i.",
-    "precos": "Revisões: tabela oficial Yamaha Factor 150. Peças, pneus e serviços avulsos reaproveitados do Factor 125i (Mercado Livre RJ + Shopee + oficina). FIPE oficial (jun/2026).",
+    "manual": "Yamaha Serviços (revisões periódicas Fazer 150) + especificações do manual Fazer 150 2024 (consultados em 09/06/2026).",
+    "precos": "Peças e pneus reaproveitados do grupo Yamaha 150 (pecas-yamaha-compartilhadas.md, = Factor); apenas o kit relação tem preço próprio da Fazer 150. FIPE oficial (jun/2026).",
     "dataColeta": "2026-06",
     "anoModelo": {
-      "inicio": 2016,
-      "fim": 2024
+      "inicio": 2014,
+      "fim": 2025
     },
-    "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827099-6. Modelo: YBR 150 FACTOR ED/FLEX.",
-    "consumoNota": "39 km/L (uso profissional/intenso), informado para a Factor 150.",
+    "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827088-0. Modelo: YS 150 FAZER SED/ FLEX.",
+    "consumoNota": "35 km/L (especificações do manual Fazer 150 2024).",
     "fatorMaoDeObraNota": "1.15 pela faixa 150-180cc (149,3 cm³), conforme manutencao-estimativas.md §1.4.",
-    "pecasNota": "Valores de peças, pneus e serviços avulsos reaproveitados do preset Factor 125i por solicitação. Revisar quando houver cotação específica da Factor 150.",
+    "pecasNota": "Peças e pneus do grupo Yamaha 150 (mesmas do Factor). Exceções com preço próprio da Fazer: kit relação (precoOriginal R$220) e pneu traseiro 100/80-18 (precoOriginal R$326). precoParalela mantido do grupo (paralelas não usadas no momento).",
     "fontesLocais": [
-      "docs/dominio/informacoes-modelos-motos/yamaha/factor-150/precos-revisoes-periodicas-factor-150.md"
+      "docs/dominio/informacoes-modelos-motos/yamaha/fazer-150/especificacoes-fazer-150.md",
+      "docs/dominio/informacoes-modelos-motos/yamaha/fazer-150/precos-pecas.md",
+      "docs/dominio/informacoes-modelos-motos/yamaha/fazer-150/precos-revisoes-fazer-150.md",
+      "docs/dominio/informacoes-modelos-motos/yamaha/pecas-yamaha-compartilhadas.md"
     ]
   },
   "pecas": [
@@ -45,7 +51,7 @@
       "incluidoNaRevisaoAutorizada": true,
       "_fonte": {
         "intervaloKmNota": "Referência profissional e revisão Yamaha: 5.000 km ou 6 meses.",
-        "precoOriginalNota": "Média consolidada da tabela de peças originais: Yamalube 1L (R$ 59,90 / R$ 56,05). Cotação de troca simples completa registrada à parte: R$ 116,58.",
+        "precoOriginalNota": "Média da tabela de peças originais: Yamalube 1L (R$ 59,90 / R$ 56,05).",
         "precoParalelaNota": "Apenas o litro do óleo Motul 5100 ou Mobil Super Moto Semissintético (sem mão de obra)."
       }
     },
@@ -110,13 +116,13 @@
       "nome": "Kit relação (corrente + coroa + pinhão)",
       "intervaloKm": 25000,
       "intervaloMeses": 0,
-      "precoOriginal": 194.08,
+      "precoOriginal": 220.00,
       "precoParalela": 101.68,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Referência profissional: 25.000 km. Manual: ajustar e lubrificar a cada 500 km.",
-        "precoOriginalNota": "Kit Y-TEQ / D.I.D. Nota: Estimativa de Mão de Obra cobrada por fora na oficina é de R$ 220,00.",
-        "precoParalelaNota": "Média do mercado paralelo."
+        "precoOriginalNota": "Preço próprio da Fazer 150: média de R$ 232,75 / R$ 209,90 (DID com/sem retentor). Relação não é compartilhada entre modelos (balança/torque diferentes).",
+        "precoParalelaNota": "Mantido do grupo Yamaha 125/150 (sem cotação paralela específica da Fazer)."
       }
     },
     {
@@ -129,7 +135,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Referência profissional sincronizada com a revisão: 10.000 km. Trocar ao atingir o limite de desgaste.",
-        "precoOriginalNota": "Y-TEQ Original.",
+        "precoOriginalNota": "Y-TEQ Original (grupo Street Base: Factor 125/150 e Fazer 150).",
         "precoParalelaNota": "Cobreq ou similar."
       }
     },
@@ -157,7 +163,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Referência profissional: 20.000 km. Ajuste obrigatório a cada 5.000 km.",
-        "precoOriginalNota": "Y-TEQ Original. Nota: Custo de Mão de Obra orçado por fora: R$ 70,00.",
+        "precoOriginalNota": "Y-TEQ Original (mesma lona Factor 125/150 e Fazer 150). Nota: Custo de Mão de Obra orçado por fora: R$ 70,00.",
         "precoParalelaNota": "Lona compatível Cobreq."
       }
     },
@@ -170,7 +176,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloMesesNota": "Vida útil baseada em tempo (bateria VRLA/AGM): 36 meses no uso leve/OEM. Referência de rotina severa/entregas: 27 meses; deve virar fator de uso, não campo paralelo.",
-        "precoOriginalNota": "Yuasa ou Heliar OEM.",
+        "precoOriginalNota": "Yuasa ou Heliar OEM, modelo XTZ6L (grupo 5Ah: Factor 125/150, Fazer 150, Crosser 150, FZ15).",
         "precoParalelaNota": "Moura MA5-D 5Ah."
       }
     },
@@ -184,7 +190,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Referência profissional: 40.000 km. Verificar o funcionamento e ajustar a cada 5.000 km.",
-        "precoOriginalNota": "Y-TEQ / FCC (completo).",
+        "precoOriginalNota": "Y-TEQ / FCC (completo). Bloco compartilhado na família 150cc.",
         "precoParalelaNota": "Magnetron, Scud."
       }
     },
@@ -198,7 +204,7 @@
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Corretiva. Verificação de válvulas previne o desgaste precoce.",
-        "precoOriginalNota": "Mahle/Metal Leve na caixa original Yamaha.",
+        "precoOriginalNota": "Mahle/Metal Leve na caixa original Yamaha. Bloco compartilhado na família 150cc.",
         "precoParalelaNota": "Kit Metal Leve (vendido fora da rede) ou KMP."
       }
     }
@@ -213,7 +219,7 @@
       "_fonte": {
         "especificacao": "2.75-18 ou 80/100-18 Tubeless",
         "vidaUtilNota": "Referência profissional direta: 22.500 km.",
-        "precoOriginalNota": "Michelin Pilot Street 2, Levorin Dakar.",
+        "precoOriginalNota": "Michelin Pilot Street 2, Levorin Dakar (grupo Aro 18: Factor 125/150 e Fazer 150).",
         "precoParalelaNota": "Marcas genéricas asiáticas/nacionais."
       }
     },
@@ -221,13 +227,13 @@
       "id": "pneu_traseiro",
       "posicao": "traseiro",
       "vidaUtilKm": 15000,
-      "precoOriginal": 311.41,
+      "precoOriginal": 326.00,
       "precoParalela": 128.35,
       "_fonte": {
-        "especificacao": "90/90-18 Tubeless",
+        "especificacao": "100/80-18 Tubeless (manual Fazer 150; o Factor usa 90/90-18).",
         "vidaUtilNota": "Referência profissional direta: 15.000 km por torque e tração contínua.",
-        "precoOriginalNota": "Metzeler ME Street, Levorin Matrix.",
-        "precoParalelaNota": "Marcas de entrada."
+        "precoOriginalNota": "Preço próprio 100/80-18 da Fazer: média de R$ 351,50 / R$ 322,92 / R$ 305,15 (Michelin City Extra / Pilot Street 2).",
+        "precoParalelaNota": "Mantido do grupo (paralelas não usadas no momento)."
       }
     }
   ],
@@ -338,7 +344,8 @@
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
             "CAVALETE LATERAL",
             "CABOS E PEÇAS MÓVEIS",
-            "MANOPLA DO ACELERADOR"
+            "MANOPLA DO ACELERADOR",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO"
           ]
         }
       ],
@@ -349,18 +356,18 @@
     {
       "intervaloKm": 10000,
       "intervaloMeses": 18,
-      "precoPecas": 220.00,
+      "precoPecas": 232.00,
       "precoMaoDeObra": 200.00,
-      "precoTotal": 420.00,
+      "precoTotal": 432.00,
       "itensSubstituidos": [
         "YAMALUBE 20W50",
         "GAXETA DRENO",
+        "VELA DE IGNICAO",
         "FILTRO DE OLEO",
-        "ANEL DE BORRACHA FILTRO DE ÓLEO",
         "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
-        "VELA DE IGNICAO (NGK MR8D 9)",
         "CONTRAPINO UBS"
       ],
       "servicosExecutados": [
@@ -374,11 +381,13 @@
             "RODAS",
             "PNEUS",
             "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
             "FIXAÇÕES DO CHASSI",
             "GARFO DIANTEIRO",
             "AMORTECEDOR TRASEIRO",
             "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
-            "BALANÇA TRASEIRA"
+            "LUZES, PISCAS E INTERRUPTORES"
           ]
         },
         {
@@ -407,7 +416,8 @@
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
             "CAVALETE LATERAL",
             "CABOS E PEÇAS MÓVEIS",
-            "MANOPLA DO ACELERADOR"
+            "MANOPLA DO ACELERADOR",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO"
           ]
         }
       ],
@@ -424,11 +434,11 @@
       "itensSubstituidos": [
         "YAMALUBE 20W50",
         "GAXETA DRENO",
+        "FILTRO DE AR",
+        "FILTRO DE GASOLINA",
         "GAXETA TP CABEÇOTE",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
-        "FILTRO DE AR",
-        "FILTRO DE GASOLINA",
         "CONTRAPINO UBS"
       ],
       "servicosExecutados": [
@@ -438,13 +448,11 @@
             "MANGUEIRA DE COMBUSTÍVEL",
             "VELA DE IGNIÇÃO",
             "SISTEMA DE ESCAPE",
-            "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR",
             "FREIO DIANTEIRO",
             "MANGUEIRAS DO FREIO",
             "RODAS",
             "PNEUS",
             "ROLAMENTOS DA RODA",
-            "BALANÇA TRASEIRA",
             "FIXAÇÕES DO CHASSI",
             "GARFO DIANTEIRO",
             "AMORTECEDOR TRASEIRO",
@@ -455,8 +463,8 @@
         {
           "categoria": "Ajuste",
           "servicos": [
-            "VALVULAS",
             "INJEÇÃO DE COMBUSTÍVEL",
+            "VALVULAS",
             "EMBREAGEM",
             "FREIO TRASEIRO",
             "CORRENTE DE TRANSMISSÃO"
@@ -477,6 +485,7 @@
             "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
             "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO",
             "CAVALETE LATERAL",
             "CABOS E PEÇAS MÓVEIS",
             "MANOPLA DO ACELERADOR"
@@ -490,18 +499,18 @@
     {
       "intervaloKm": 20000,
       "intervaloMeses": 30,
-      "precoPecas": 220.00,
+      "precoPecas": 232.00,
       "precoMaoDeObra": 200.00,
-      "precoTotal": 420.00,
+      "precoTotal": 432.00,
       "itensSubstituidos": [
         "YAMALUBE 20W50",
         "GAXETA DRENO",
+        "VELA DE IGNICAO",
         "FILTRO DE OLEO",
-        "ANEL DE BORRACHA FILTRO DE ÓLEO",
         "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
         "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
-        "VELA DE IGNICAO (NGK MR8D 9)",
         "CONTRAPINO UBS"
       ],
       "servicosExecutados": [
@@ -509,6 +518,7 @@
           "categoria": "Verificação",
           "servicos": [
             "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
             "SISTEMA DE ESCAPE",
             "FREIO DIANTEIRO",
             "MANGUEIRAS DO FREIO",
@@ -521,8 +531,7 @@
             "GARFO DIANTEIRO",
             "AMORTECEDOR TRASEIRO",
             "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
-            "LUZES",
-            "PISCAS E INTERRUPTORES"
+            "LUZES, PISCAS E INTERRUPTORES"
           ]
         },
         {
@@ -549,6 +558,7 @@
             "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
             "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO",
             "CAVALETE LATERAL",
             "CABOS E PEÇAS MÓVEIS",
             "MANOPLA DO ACELERADOR"
@@ -556,7 +566,8 @@
         }
       ],
       "_fonte": {
-        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)"
+        "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)",
+        "notaVerificacao": "Lista de Verificação reconstruída a partir da revisão 25.000 km (sibling): no documento de origem esta seção repetiu o conteúdo de Lubrificação."
       }
     },
     {
@@ -618,6 +629,7 @@
             "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
             "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO",
             "CAVALETE LATERAL",
             "MANOPLA DO ACELERADOR",
             "CABOS E PEÇAS MOVEIS"
@@ -637,15 +649,15 @@
       "itensSubstituidos": [
         "YAMALUBE 20W50",
         "GAXETA DRENO",
-        "FILTRO DE OLEO",
-        "ANEL DE BORRACHA FILTRO DE ÓLEO",
-        "GAXETA TP CABEÇOTE",
-        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
-        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
-        "VELA DE IGNICAO (NGK MR8D 9)",
         "FILTRO DE AR",
         "FILTRO DE GASOLINA",
-        "CONTRAPINO UBS"
+        "FILTRO DE OLEO",
+        "GAXETA TP CABEÇOTE",
+        "ANEL DE BORRACHA FILTRO DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR",
+        "CONTRAPINO UBS",
+        "VELA DE IGNICAO"
       ],
       "servicosExecutados": [
         {
@@ -662,9 +674,7 @@
             "GARFO DIANTEIRO",
             "AMORTECEDOR TRASEIRO",
             "INTERRUPTORES DO FREIO DIANTEIRO E TRASEIRO",
-            "LUZES",
-            "PISCAS",
-            "INTERRUPTORES"
+            "LUZES, PISCAS E INTERRUPTORES"
           ]
         },
         {
@@ -680,22 +690,22 @@
         {
           "categoria": "Limpeza",
           "servicos": [
-            "ELEMENTO DO FILTRO DE AR",
             "MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"
           ]
         },
         {
           "categoria": "Lubrificação",
           "servicos": [
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
             "SISTEMA DE FREIO UNIFICADO",
             "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
             "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
             "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CAMBIO",
             "CAVALETE LATERAL",
             "CABOS E PEÇAS MÓVEIS",
-            "MANOPLA DO ACELERADOR",
-            "BALANÇA TRASEIRA",
-            "ROLAMENTO DA DIREÇÃO"
+            "MANOPLA DO ACELERADOR"
           ]
         }
       ],
@@ -893,7 +903,7 @@
       "id": "sistema_freio_hidraulico",
       "nome": "Manutenção do freio hidráulico",
       "intervaloKm": 24000,
-      "nota": "A cada 2 anos (ou 24.000 km), drenar o fluido DOT4 e substituir reparos internos do cilindro mestre/pinça."
+      "nota": "Manual Fazer 150: fluido de freio a cada 2 anos; mangueira do freio a cada 4 anos. Drenar o DOT4 e substituir reparos internos do cilindro mestre/pinça."
     },
     {
       "id": "servico_avulso_relacao",
