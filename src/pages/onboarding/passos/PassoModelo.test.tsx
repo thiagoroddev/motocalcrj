@@ -66,7 +66,8 @@ describe('PassoModelo', () => {
   test('selecionar marca lista os modelos e botão podeContinuar fica falso', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Honda', 'Yamaha']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
-      if (marca === 'Honda') return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
+      if (marca === 'Honda')
+        return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
       return [];
     });
 
@@ -82,7 +83,7 @@ describe('PassoModelo', () => {
     // Agora deve mostrar os modelos da Honda
     expect(screen.getByText('CG 160')).toBeInTheDocument();
     expect(screen.getByText('Biz 125')).toBeInTheDocument();
-    
+
     // Ainda não pode continuar, pois nenhum modelo foi clicado
     expect(botaoAvancar).toBeDisabled();
   });
@@ -108,8 +109,10 @@ describe('PassoModelo', () => {
   test('trocar de marca limpa o modelo selecionado', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Honda', 'Yamaha']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
-      if (marca === 'Honda') return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
-      if (marca === 'Yamaha') return [{ id: 'fz25', nome: 'Fazer 250' } as any, { id: 'mt03', nome: 'MT-03' } as any];
+      if (marca === 'Honda')
+        return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
+      if (marca === 'Yamaha')
+        return [{ id: 'fz25', nome: 'Fazer 250' } as any, { id: 'mt03', nome: 'MT-03' } as any];
       return [];
     });
 
@@ -118,7 +121,7 @@ describe('PassoModelo', () => {
     // Seleciona Honda e depois o modelo CG 160
     fireEvent.click(screen.getByText('Honda'));
     fireEvent.click(screen.getByText('CG 160'));
-    
+
     expect(screen.getByText('Avançar')).not.toBeDisabled();
 
     // Troca para Yamaha
@@ -147,9 +150,9 @@ describe('PassoModelo', () => {
         campo: 'moto',
         valor: expect.objectContaining({
           marca: 'Honda',
-          modelo: 'cg160'
-        })
-      })
+          modelo: 'cg160',
+        }),
+      }),
     );
     expect(irParaProximoMock).toHaveBeenCalled();
   });

@@ -304,5 +304,6 @@ export type PerfilAction =
   // Presets
   | { type: 'CARREGAR_PERFIL'; presetId: string }
   | { type: 'RENOMEAR_PREDEFINICAO'; presetId: string; sufixo: string }
+  | { type: 'DELETAR_PREDEFINICAO'; presetId: string }
   | { type: 'RESETAR_PERFIL' }
   | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario };

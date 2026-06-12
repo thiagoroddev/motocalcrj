@@ -44,6 +44,7 @@ function CampoSeguroConectado({
     },
     presets: [],
     presetAtivoId: null,
+    rascunhoPredefinicao: null,
   } as EstadoApp);
 
   return <CampoSeguro financeiro={estado.perfil.financeiro} dispatch={dispatch} />;

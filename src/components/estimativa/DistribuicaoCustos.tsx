@@ -37,8 +37,7 @@ export function DistribuicaoCustos({ segmentos, diasAno, horasDia }: PropsDistri
   const [periodo, setPeriodo] = useState<Periodo>('mes');
 
   // Filtra e ordena uma única vez: donut e legenda usam a MESMA ordem (% desc).
-  const visiveis = segmentos
-    .sort((a, b) => b.porcentagem - a.porcentagem);
+  const visiveis = segmentos.sort((a, b) => b.porcentagem - a.porcentagem);
 
   const totalAnual = segmentos.reduce((soma, s) => soma + s.valorAnual, 0);
   const totalPeriodo = converterAnualParaPeriodo(totalAnual, periodo, diasAno, horasDia);
@@ -78,7 +77,10 @@ export function DistribuicaoCustos({ segmentos, diasAno, horasDia }: PropsDistri
               {moeda(converterAnualParaPeriodo(s.valorAnual, periodo, diasAno, horasDia))}
             </span>
             <span className="w-9 text-right text-muted-foreground/60 text-xs tabular-nums">
-              {s.porcentagem < 1 ? s.porcentagem.toFixed(1).replace('.', ',') : Math.round(s.porcentagem)}%
+              {s.porcentagem < 1
+                ? s.porcentagem.toFixed(1).replace('.', ',')
+                : Math.round(s.porcentagem)}
+              %
             </span>
           </div>
         ))}

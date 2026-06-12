@@ -341,6 +341,42 @@ describe('App - smoke UI', () => {
     expect(screen.getByText('trabalho')).toBeInTheDocument();
   });
 
+  it('deleta uma predefinição não ativa pela tela Perfil', async () => {
+    const presetAtivo = criarPreset(criarPerfilValido());
+    const presetOutro: PresetEntry = {
+      ...criarPreset(criarPerfilValido()),
+      presetId: 'preset-pop110i-2',
+      nome: 'pop110i_v2',
+      sufixo: 'v2',
+    };
+    localStorage.setItem(CHAVES_PERFIL_STORAGE.presets, JSON.stringify([presetAtivo, presetOutro]));
+    localStorage.setItem(CHAVES_PERFIL_STORAGE.presetAtivo, presetAtivo.presetId);
+
+    renderizarAppEm('/perfil');
+
+    await screen.findByText('Predefinição Atual');
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar predefinição' }));
+
+    // A ativa fica desabilitada; seleciona a não ativa (sufixo v2) e confirma.
+    fireEvent.click(await screen.findByRole('button', { name: /v2/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar' }));
+
+    // O diálogo permanece aberto e confirma a exclusão; a v2 some da lista.
+    expect(await screen.findByRole('status')).toHaveTextContent(/deletada/i);
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /v2/ })).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      const presets = JSON.parse(
+        localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)!,
+      ) as PresetEntry[];
+      expect(presets).toHaveLength(1);
+      expect(presets[0].presetId).toBe(presetAtivo.presetId);
+    });
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presetAtivo.presetId);
+  });
+
   it('renderiza estimativa a partir de preset salvo', async () => {
     salvarPresetNoStorage();
 

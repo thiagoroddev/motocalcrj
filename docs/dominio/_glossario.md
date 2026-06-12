@@ -328,6 +328,10 @@ Botão que **apaga apenas o override de um campo específico**, fazendo o cálcu
 
 Funcionalidade na tela Perfil que limpa o localStorage e reseta o estado para pré-Onboarding. Action `RESETAR_PERFIL` do reducer.
 
+### Deletar predefinição
+
+Funcionalidade na tela Perfil que remove **uma** predefinição não ativa da lista, sem tocar no perfil ativo nem na navegação. A predefinição em uso aparece marcada e não pode ser selecionada. Action `DELETAR_PREDEFINICAO` do reducer, que rejeita exclusão da ativa, de id inexistente ou durante um rascunho de onboarding — a proteção fica no reducer, não só na UI. (RF-PERF-02, ADR-021)
+
 ---
 
 ## Termos Técnicos (não-domínio) que aparecem na conversa

@@ -655,6 +655,69 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.onboardingConcluido).toBe(false);
   });
 
+  describe('DELETAR_PREDEFINICAO', () => {
+    const presetAtivo = {
+      presetId: 'ativo',
+      nome: 'pop110i_v1',
+      sufixo: 'v1',
+      criadoEm: '2026-01-01',
+      atualizadoEm: '2026-01-01',
+      perfil: { ...perfilPadrao, apelido: 'Ativo' },
+    };
+    const presetOutro = {
+      presetId: 'outro',
+      nome: 'pop110i_v2',
+      sufixo: 'v2',
+      criadoEm: '2026-01-02',
+      atualizadoEm: '2026-01-02',
+      perfil: { ...perfilPadrao, apelido: 'Outro' },
+    };
+    const estadoComDoisPresets: EstadoApp = {
+      perfil: presetAtivo.perfil,
+      presets: [presetAtivo, presetOutro],
+      presetAtivoId: 'ativo',
+      rascunhoPredefinicao: null,
+    };
+
+    it('remove só a predefinição escolhida e preserva perfil/presetAtivoId', () => {
+      const resultado = perfilReducer(estadoComDoisPresets, {
+        type: 'DELETAR_PREDEFINICAO',
+        presetId: 'outro',
+      });
+      expect(resultado.presets).toEqual([presetAtivo]);
+      expect(resultado.presetAtivoId).toBe('ativo');
+      expect(resultado.perfil).toBe(presetAtivo.perfil);
+    });
+
+    it('rejeita deletar a predefinição ativa (mesmo via dispatch direto)', () => {
+      const resultado = perfilReducer(estadoComDoisPresets, {
+        type: 'DELETAR_PREDEFINICAO',
+        presetId: 'ativo',
+      });
+      expect(resultado).toBe(estadoComDoisPresets);
+    });
+
+    it('rejeita presetId inexistente', () => {
+      const resultado = perfilReducer(estadoComDoisPresets, {
+        type: 'DELETAR_PREDEFINICAO',
+        presetId: 'fantasma',
+      });
+      expect(resultado).toBe(estadoComDoisPresets);
+    });
+
+    it('rejeita exclusão durante um rascunho de onboarding', () => {
+      const estadoComRascunho: EstadoApp = {
+        ...estadoComDoisPresets,
+        rascunhoPredefinicao: { sufixo: 'v3', presetAtivoAnteriorId: 'ativo' },
+      };
+      const resultado = perfilReducer(estadoComRascunho, {
+        type: 'DELETAR_PREDEFINICAO',
+        presetId: 'outro',
+      });
+      expect(resultado).toBe(estadoComRascunho);
+    });
+  });
+
   it('CARREGAR_PERFIL troca o perfil ativo e o presetAtivoId', () => {
     const perfilAlternativo = { ...perfilPadrao, apelido: 'Pessoal' };
     const estadoInicial: EstadoApp = {

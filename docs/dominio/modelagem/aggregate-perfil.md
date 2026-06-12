@@ -55,6 +55,7 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 | `COMMIT_ONBOARDING` | Cria um novo `PresetEntry`, define `presetAtivoId` e encerra o rascunho |
 | `CARREGAR_PERFIL`   | Troca o perfil ativo e atualiza `presetAtivoId`                               |
 | `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico, respeitando unicidade por modelo |
+| `DELETAR_PREDEFINICAO` | Remove uma entrada não ativa; `perfil` e `presetAtivoId` ficam intactos |
 | `IMPORTAR_PERFIL`   | Cria novo preset importado e o torna ativo                                    |
 | `RESETAR_PERFIL`    | Limpa presets e volta para `perfilPadrao`                                     |
 

@@ -41,6 +41,7 @@ A identidade e `presetId`. Dois presets com os mesmos dados mas IDs diferentes s
 | `COMMIT_ONBOARDING` | Cria o primeiro preset                          |
 | `CARREGAR_PERFIL`   | Troca o preset ativo (carrega perfil)           |
 | `RENOMEAR_PREDEFINICAO` | Edita o sufixo e regenera o nome técnico   |
+| `DELETAR_PREDEFINICAO` | Remove uma predefinição não ativa (rejeita ativa/inexistente/rascunho) |
 | `IMPORTAR_PERFIL`   | Cria preset a partir de arquivo e o torna ativo |
 | `RESETAR_PERFIL`    | Remove todos os presets                         |
 

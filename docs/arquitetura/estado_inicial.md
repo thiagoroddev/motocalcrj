@@ -269,7 +269,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ### IV.10 - Presets (envelope)
 
-`CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
+`CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `DELETAR_PREDEFINICAO`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
 
 ---
 

@@ -725,6 +725,21 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       };
     }
 
+    case 'DELETAR_PREDEFINICAO': {
+      // A ativa é protegida aqui (não só na UI): deletar a referência ativa
+      // deixaria perfil e presetAtivoId apontando para um preset inexistente.
+      // Durante um rascunho de onboarding também não se exclui nada.
+      const existe = state.presets.some((p) => p.presetId === action.presetId);
+      if (!existe || state.rascunhoPredefinicao || action.presetId === state.presetAtivoId) {
+        return state;
+      }
+
+      return {
+        ...state,
+        presets: state.presets.filter((p) => p.presetId !== action.presetId),
+      };
+    }
+
     case 'RESETAR_PERFIL':
       return {
         perfil: perfilPadrao,

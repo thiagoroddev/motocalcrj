@@ -83,8 +83,8 @@
 
 | ID | Descrição | Status |
 |---|---|---|
-| RF-PERF-01 | Exibir predefinição atual: nome canônico do modelo, sufixo em badge visualmente separado, avatar, ano e autonomia. | [ ] PENDENTE |
-| RF-PERF-02 | Botões: Editar predefinição, Criar nova predefinição, Alternar predefinição e Deletar predefinição. A criação aceita múltiplas entradas por modelo com sufixo único; a exclusão só permite entradas não ativas. | [ ] PENDENTE |
+| RF-PERF-01 | Exibir predefinição atual: nome canônico do modelo, sufixo em badge visualmente separado, avatar, ano e autonomia. | [x] CONCLUÍDO |
+| RF-PERF-02 | Botões: Editar predefinição, Criar nova predefinição, Alternar predefinição e Deletar predefinição. A criação aceita múltiplas entradas por modelo com sufixo único; a exclusão só permite entradas não ativas. | [x] CONCLUÍDO |
 | RF-PERF-03 | Seção Exportar & Importar: Exportar Backup (.json) · Importar Backup. | [ ] PENDENTE |
 | RF-PERF-04 | Configurações gerais: Idioma, Aparência, Privacidade e Termos, Versão do app. | [ ] PENDENTE |
 

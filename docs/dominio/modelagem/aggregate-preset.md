@@ -87,6 +87,7 @@ modelo e são regravadas na forma canônica.
 | `COMMIT_ONBOARDING` | Cria um novo `PresetEntry` ao final do onboarding |
 | `CARREGAR_PERFIL`   | Carrega um `PresetEntry` existente como ativo (alternar entre Presets)               |
 | `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico |
+| `DELETAR_PREDEFINICAO` | "Deletar predefinição" remove uma entrada não ativa (a ativa é protegida no reducer) |
 | `IMPORTAR_PERFIL`   | Cria e ativa uma entrada para o perfil importado                                     |
 | `RESETAR_PERFIL`    | "Apagar Tudo" remove todos os Presets do storage                                     |
 
