@@ -6,7 +6,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { TituloSecao } from '@/components/TituloSecao';
 import { DialogConfirmacao } from '@/components/DialogConfirmacao';
+import { AjudaInline } from '@/components/AjudaInline';
 import { CardServico } from '@/components/mao-de-obra/CardServico';
+import { ControleEstimativaMaoDeObra } from '@/components/mao-de-obra/ControleEstimativaMaoDeObra';
 import { LinhaRevisaoConcessionaria } from '@/components/mao-de-obra/LinhaRevisaoConcessionaria';
 import { usePerfil } from '../hooks/usePerfil';
 import { obterPreset } from '../data/repositorioPresets';
@@ -128,6 +130,16 @@ export function PaginaMaoDeObra() {
   const servicosAvulsosAutorizada = servicosNormais.filter(
     (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
   );
+  // "Completo" = a concessionária informa o valor cheio (peça + M.O.) no preset.
+  // O status nasce do serviço-base e não muda com edição/estimativa do usuário
+  // (esses são só M.O.; a peça vai à parte em Insumos). (BG-032)
+  function ehAvulsoCompleto(s: ServicoIndependente): boolean {
+    const base = servicosPadrao.find((p) => p.id === s.id);
+    return base != null && resolverStatusPrecoAutorizada(base) === 'informado';
+  }
+  const avulsosCompletos = servicosAvulsosAutorizada.filter(ehAvulsoCompleto);
+  const avulsosIncompletos = servicosAvulsosAutorizada.filter((s) => !ehAvulsoCompleto(s));
+  const estimativaLigada = perfil.perfilManutencao.incluirEstimativaMaoDeObra === true;
   const menorIntervaloExcepcional = servicosExcepcionais.reduce<number | null>(
     (menor, servico) => (menor === null ? servico.intervalKm : Math.min(menor, servico.intervalKm)),
     null,
@@ -160,9 +172,8 @@ export function PaginaMaoDeObra() {
   }
 
   const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadraoIndependente);
-  const temOverridesAvulsosAutorizada = servicosAvulsosAutorizada.some(
-    servicoDifereDopadraoAutorizada,
-  );
+  const temOverridesCompletos = avulsosCompletos.some(servicoDifereDopadraoAutorizada);
+  const temOverridesIncompletos = avulsosIncompletos.some(servicoDifereDopadraoAutorizada);
 
   function restaurarGrupo(servicos: ServicoIndependente[]) {
     servicos.forEach((s) => {
@@ -214,17 +225,64 @@ export function PaginaMaoDeObra() {
                 )}
 
                 {servicosAvulsosAutorizada.length > 0 && (
-                  <div className="space-y-2 pt-4">
-                    <TituloSecao icone={Tag}>Serviços avulsos</TituloSecao>
-                    <ListaServicos
-                      servicos={servicosAvulsosAutorizada}
-                      dispatch={dispatch}
-                      servicosPadrao={servicosPadrao}
-                      temOverrides={temOverridesAvulsosAutorizada}
-                      onRestaurarTudo={() => restaurarGrupo(servicosAvulsosAutorizada)}
-                      modo="autorizada"
-                      montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
-                    />
+                  <div className="space-y-4 pt-4">
+                    <TituloSecao icone={Tag}>Serviços Extras</TituloSecao>
+
+                    {avulsosCompletos.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="text-sm font-medium text-muted-foreground">
+                            Valor Completo (peça + M.O)
+                          </h3>
+                          <AjudaInline titulo="Valor Completo (peça + M.O)">
+                            A concessionária informa o <strong>valor cheio</strong> deste serviço —
+                            já inclui a peça e a mão de obra. Edite com o{' '}
+                            <strong>preço total</strong> do orçamento da concessionária. Por isso a
+                            peça não aparece separada em Insumos.
+                          </AjudaInline>
+                        </div>
+                        <ListaServicos
+                          servicos={avulsosCompletos}
+                          dispatch={dispatch}
+                          servicosPadrao={servicosPadrao}
+                          temOverrides={temOverridesCompletos}
+                          onRestaurarTudo={() => restaurarGrupo(avulsosCompletos)}
+                          modo="autorizada"
+                          montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
+                        />
+                      </div>
+                    )}
+
+                    {avulsosIncompletos.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="text-sm font-medium text-muted-foreground">
+                            Valor Incompleto (apenas M.O)
+                          </h3>
+                          <AjudaInline titulo="Valor Incompleto (apenas M.O)">
+                            A concessionária <strong>não informa</strong> o preço deste serviço.
+                            Aqui você coloca <strong>apenas a mão de obra</strong> (ou usa a
+                            estimativa ~); a peça é precificada à parte, na aba{' '}
+                            <strong>Insumos</strong>. Por isso edite só o valor da M.O., não o total
+                            com a peça.
+                          </AjudaInline>
+                        </div>
+                        {/* Toggle logo abaixo do título: a estimativa só atinge avulsos sem valor. */}
+                        <ControleEstimativaMaoDeObra
+                          ligada={estimativaLigada}
+                          dispatch={dispatch}
+                        />
+                        <ListaServicos
+                          servicos={avulsosIncompletos}
+                          dispatch={dispatch}
+                          servicosPadrao={servicosPadrao}
+                          temOverrides={temOverridesIncompletos}
+                          onRestaurarTudo={() => restaurarGrupo(avulsosIncompletos)}
+                          modo="autorizada"
+                          montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

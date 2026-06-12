@@ -47,9 +47,15 @@ export function CardServico({
         ? 0
         : padrao?.precoTotalAutorizada
       : padrao?.precoIndependente;
+  // "Completo" = a concessionária informou o valor cheio (peça + M.O.) no preset.
+  // Esse status nasce do serviço-base e NÃO muda quando o usuário digita ou liga a
+  // estimativa: valor manual/estimado é só mão de obra (a peça vai à parte em
+  // Insumos). Por isso o rótulo deriva de `statusPadrao`, não do valor atual. (BG-032)
   const rotuloPreco =
     modo === 'autorizada'
-      ? 'Preço completo concessionária (R$)'
+      ? statusPadrao === 'informado'
+        ? 'Valor Completo (peça + M.O)'
+        : 'Valor Incompleto (apenas M.O)'
       : servico.ehExcepcional
         ? 'Peças + Mão de Obra (R$)'
         : 'Preço Mão de Obra (R$)';

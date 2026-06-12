@@ -78,6 +78,59 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
   });
 });
 
+describe('CardServico - rótulo Completo/Incompleto (BG-032)', () => {
+  const servicoCompletoBase: ServicoIndependente = {
+    ...servico,
+    id: 'pneu_dianteiro',
+    nome: 'Pneu dianteiro',
+    precoTotalAutorizada: 150,
+    statusPrecoAutorizada: 'informado',
+  };
+
+  it('serviço com valor completo da concessionária no preset: "Valor Completo (peça + M.O)"', () => {
+    render(
+      <CardServico
+        servico={servicoCompletoBase}
+        servicoPadrao={servicoCompletoBase}
+        dispatch={vi.fn()}
+        modo="autorizada"
+      />,
+    );
+    expect(screen.getByText('Valor Completo (peça + M.O)')).toBeInTheDocument();
+  });
+
+  it('serviço sem valor da concessionária: "Valor Incompleto (apenas M.O)"', () => {
+    render(
+      <CardServico
+        servico={servico}
+        servicoPadrao={servico}
+        dispatch={vi.fn()}
+        modo="autorizada"
+      />,
+    );
+    expect(screen.getByText('Valor Incompleto (apenas M.O)')).toBeInTheDocument();
+  });
+
+  it('valor digitado pelo usuário NÃO torna o serviço Completo (continua só M.O.)', () => {
+    // Base do preset é nao_informado; usuário digitou um valor (informado_usuario).
+    const servicoComValorUsuario: ServicoIndependente = {
+      ...servico,
+      precoTotalAutorizada: 99,
+      statusPrecoAutorizada: 'informado_usuario',
+    };
+    render(
+      <CardServico
+        servico={servicoComValorUsuario}
+        servicoPadrao={servico}
+        dispatch={vi.fn()}
+        modo="autorizada"
+      />,
+    );
+    expect(screen.getByText('Valor Incompleto (apenas M.O)')).toBeInTheDocument();
+    expect(screen.queryByText('Valor Completo (peça + M.O)')).not.toBeInTheDocument();
+  });
+});
+
 describe('CardServico - procedência da vida útil', () => {
   it('marca o intervalo como informado pelo usuário ao editar', () => {
     const dispatch = vi.fn();
