@@ -138,11 +138,13 @@ Os `fipe-<modelo>.md` antigos são **legado** (pesquisa manual anterior ao scrip
 - **Freio traseiro depende do modelo.** Tambor (Factor 125i/150) → *lona/sapata
   traseira*; **não** tem "pastilha/disco traseiro". Disco → *pastilha + disco traseiro*.
   A especificação decide. Não copie cegamente o bloco de freio entre modelos.
-- **Peça nova sem tempário → M.O. estimada = R$ 0.** O tempário
-  ([`maoDeObraEstimada.ts`](../../../src/utils/maoDeObraEstimada.ts)) não tem horas para
-  _kit caixa de direção_, _disco/pastilha traseiro_ etc. Para incluir uma peça nova:
-  adicionar em `pecas[]` **e** uma linha de horas no tempário (e, se for serviço avulso,
-  em `servicosManutencao[]`).
+- **Peça nova sem tempário → M.O. estimada = R$ 0.** Para incluir uma peça nova é preciso
+  adicionar em `pecas[]`, uma linha de horas no tempário
+  ([`maoDeObraEstimada.ts`](../../../src/utils/maoDeObraEstimada.ts)) **e**, se for serviço
+  avulso, em `servicosManutencao[]` + nos 3 mapas de `calculos.ts` (peça↔km, peça↔serviço) +
+  na chave de `KmUltimaTrocas` (tipo, schema, defaults, `SecaoUltimasManutencoes`) + no ícone.
+  _Exemplo já feito (TASK-RF-6.37): **caixa de direção** (1,5 h). Ainda faltam: disco/pastilha
+  traseiro etc._
 - **Óleo:** a vida útil dele **está no manual** (revisão 5.000 km) — só o preço vem do
   scrape. Não precisa entrar na tabela de vida útil compartilhada.
 - **Pneus na Yamaha** são `ehExcepcional: true` (a concessionária não troca).

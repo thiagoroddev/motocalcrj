@@ -26,6 +26,7 @@ A M.O. é estimada; **a peça é sempre real** (preço do preset).
 | Vela / filtro / bateria | ~0,3h |
 | Óleo | ~0,5h |
 | Sapata de freio | ~0,65h |
+| Caixa de direção | ~1,5h |
 
 ### 1.2 Taxa horária por marca (calibrada por dados reais)
 
@@ -49,6 +50,7 @@ Os 3 reais da Yamaha calibram a taxa: óleo 55 (0,5h), sapata 70 (0,8h), kit tra
 | Pneu (montagem) | — *(não faz)* | ~55 (site: "A combinar") |
 | Sapata | **70** | **(site: cheio 289/212)** |
 | Óleo | **55** | **(site: cheio)** |
+| Caixa de direção | ~165 | ~165 (avulso incompleto: só M.O.; peça à parte) |
 
 ### 1.4 Fator por modelo (`fatorMaoDeObra`, proxy de cilindrada 110–250)
 
@@ -81,6 +83,7 @@ A **vida útil/intervalo mora no serviço** (aba Mão de Obra); Insumos só tem 
 | Sapata traseira | ~12.000 | **12.000** |
 | Kit embreagem | ~40.000 | **42.000** |
 | Kit cilindro | ~100.000 | **102.000** |
+| Caixa de direção | ~40.000 | **42.000** |
 | Bateria | por tempo | — (meses) |
 
 ### 2.2 Factor 125i — Yamaha (×5.000)
@@ -93,6 +96,7 @@ A **vida útil/intervalo mora no serviço** (aba Mão de Obra); Insumos só tem 
 | Disco dianteiro | ~50.000 | **50.000** |
 | Kit embreagem | ~40.000 | **40.000** |
 | Kit cilindro | ~115.000 | **115.000** |
+| Caixa de direção | ~40.000 | **40.000** |
 | Bateria | por tempo | — (meses) |
 | **Pneu diant./tras.** (excepcional) | ~22.500 / 15.000 | **22.500 / 15.000** (direto, não sincroniza) |
 
@@ -140,3 +144,4 @@ kmCiclo            = maior marco de km do ciclo (Honda 36.000)
 |---|---|
 | 03/06/26 | Criado (TASK-REF-32.6 / ADR-013-014). Consolida estimativa de M.O. (horagem × taxa × fator, R$ 110/h, reais Honda/Yamaha) e a convenção de intervalos sincronizados. Substitui `docs/arquitetura/estimativa-mao-de-obra.md`. |
 | 04/06/26 | §3 adicionada: Revisão Geral é amortizada **por design** (não é bug), com a regra de custo por tipo de item. Guardrail anti-"correção" indevida. Popover `PopoverDetalhesRevisao` + util `montarCicloRevisao`. **Implementado na TASK-BG-022** (ciclo por preset + detalhe ancorado em `kmUltimaRevisao`). |
+| 12/06/26 | TASK-RF-6.37: **Caixa de direção** entra como serviço avulso incompleto (só M.O., estimada `~`; peça à parte em Insumos). Tempário 1,5 h; intervalo sincronizado Honda 42.000 / Yamaha 40.000. Adicionada aos 4 presets. |

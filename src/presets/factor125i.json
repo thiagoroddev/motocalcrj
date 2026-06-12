@@ -201,6 +201,20 @@
         "precoOriginalNota": "Mahle/Metal Leve na caixa original Yamaha.",
         "precoParalelaNota": "Kit Metal Leve (vendido fora da rede) ou KMP."
       }
+    },
+    {
+      "id": "caixa_direcao",
+      "nome": "Caixa de direção",
+      "intervaloKm": 40000,
+      "intervaloMeses": 0,
+      "precoOriginal": 208,
+      "precoParalela": 208,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão Yamaha (×5.000): 40.000 km. Rolamentos da coluna de direção têm vida longa; valor conservador para o anda-e-para do RJ.",
+        "precoOriginalNota": "Kit caixa de direção — média de cotações originais (precos-pecas-yamaha-todosmodelos.md, Factor 125/Factor 150/Fazer 150 R$ 208).",
+        "precoParalelaNota": "Sem cotação paralela separada nas docs; adotado = original (oculto no MVP, Insumos original-only)."
+      }
     }
   ],
   "pneus": [
@@ -825,6 +839,17 @@
       "nome": "Troca kit cilindro",
       "intervalKm": 115000,
       "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-caixa-direcao",
+      "nome": "Troca da caixa de direção",
+      "intervalKm": 40000,
+      "precoIndependente": 80,
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
       "incluidoNaRevisaoAutorizada": false,

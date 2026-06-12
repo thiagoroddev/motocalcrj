@@ -20,6 +20,7 @@ const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'bateria', label: 'Bateria' },
   { key: 'kitEmbreagem', label: 'Kit embreagem' },
   { key: 'kitCilindro', label: 'Kit cilindro' },
+  { key: 'caixaDirecao', label: 'Caixa de direção' },
   { key: 'retificaCabecote', label: 'Retífica de cabeçote' },
   { key: 'retificaCompleta', label: 'Retífica completa' },
 ];

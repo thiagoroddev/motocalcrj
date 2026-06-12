@@ -161,4 +161,16 @@ describe('perfilSchema - validação de runtime', () => {
 
     expect(() => perfilSchema.parse(invalido)).toThrow();
   });
+
+  it('preenche caixaDirecao=0 em dado antigo sem o campo (migração não-quebrável — RF-6.37)', () => {
+    const kmSemCaixa: Record<string, unknown> = { ...perfilPadrao.moto.kmUltimaTrocas };
+    delete kmSemCaixa.caixaDirecao;
+    const antigo = {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, kmUltimaTrocas: kmSemCaixa },
+    };
+
+    const resultado = perfilSchema.parse(antigo);
+    expect(resultado.moto.kmUltimaTrocas.caixaDirecao).toBe(0);
+  });
 });

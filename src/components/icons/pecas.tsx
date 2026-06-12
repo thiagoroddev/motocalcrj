@@ -9,6 +9,7 @@ import IconeTransmissao from '~icons/mdi/car-shift-pattern';
 import IconeEmbreagem from '~icons/mdi/car-clutch';
 import IconeCilindro from '~icons/mdi/piston';
 import IconeMotor from '~icons/mdi/engine';
+import IconeDirecao from '~icons/mdi/steering';
 import IconeRevisao from '~icons/mdi/car-wrench';
 import IconeGenerico from '~icons/mdi/wrench';
 
@@ -29,6 +30,7 @@ const ICONES: Record<string, IconePeca> = {
   'troca-kit-transmissao': IconeTransmissao,
   'troca-kit-embreagem': IconeEmbreagem,
   'troca-kit-cilindro': IconeCilindro,
+  'troca-caixa-direcao': IconeDirecao,
   'retifica-cabecote': IconeMotor,
   'retifica-completa': IconeMotor,
   'revisao-geral': IconeRevisao,
@@ -44,6 +46,7 @@ const ICONES: Record<string, IconePeca> = {
   kit_relacao: IconeTransmissao,
   kit_embreagem: IconeEmbreagem,
   kit_cilindro: IconeCilindro,
+  caixa_direcao: IconeDirecao,
   kit_revisao: IconeRevisao,
   // Chaves de KmUltimaTrocas (Ajustes - últimas trocas/manutenções)
   oleo: IconeOleo,
@@ -56,6 +59,7 @@ const ICONES: Record<string, IconePeca> = {
   sapataFreioTraseiro: IconeSapata,
   kitEmbreagem: IconeEmbreagem,
   kitCilindro: IconeCilindro,
+  caixaDirecao: IconeDirecao,
   retificaCabecote: IconeMotor,
   retificaCompleta: IconeMotor,
 };

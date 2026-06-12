@@ -143,6 +143,9 @@ const kmUltimaTrocas = z.object({
   bateria: inteiroNaoNegativo,
   kitEmbreagem: inteiroNaoNegativo,
   kitCilindro: inteiroNaoNegativo,
+  // Campo novo (TASK-RF-6.37): default 0 preenche predefinições salvas antes da
+  // mudança — atualização não-quebrável sem bump de versão.
+  caixaDirecao: inteiroNaoNegativo.default(0),
   retificaCabecote: inteiroNaoNegativo,
   retificaCompleta: inteiroNaoNegativo,
 });

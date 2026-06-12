@@ -22,6 +22,7 @@ const HORAS_POR_SERVICO: Record<string, number> = {
   'troca-kit-transmissao': 2.0,
   'troca-kit-embreagem': 2.5,
   'troca-kit-cilindro': 5.0,
+  'troca-caixa-direcao': 1.5,
 };
 
 // Taxa horária de mão de obra por marca (R$/h), calibrada por dados reais.

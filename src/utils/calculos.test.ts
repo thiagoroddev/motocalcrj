@@ -170,6 +170,7 @@ const kmUltimaTrocasVazio: KmUltimaTrocas = {
   bateria: 0,
   kitEmbreagem: 0,
   kitCilindro: 0,
+  caixaDirecao: 0,
   retificaCabecote: 0,
   retificaCompleta: 0,
 };

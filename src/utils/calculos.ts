@@ -131,6 +131,7 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   bateria: 'bateria',
   kit_embreagem: 'kitEmbreagem',
   kit_cilindro: 'kitCilindro',
+  caixa_direcao: 'caixaDirecao',
 };
 
 const MAPA_SERVICO_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
@@ -158,6 +159,7 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   bateria: 'troca-bateria',
   kit_embreagem: 'troca-kit-embreagem',
   kit_cilindro: 'troca-kit-cilindro',
+  caixa_direcao: 'troca-caixa-direcao',
 };
 
 export function resolverServicoPorPeca(
@@ -190,6 +192,7 @@ const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   bateria: 0,
   kitEmbreagem: 0,
   kitCilindro: 0,
+  caixaDirecao: 0,
   retificaCabecote: 0,
   retificaCompleta: 0,
 };

@@ -36,6 +36,10 @@ describe('estimarMaoDeObra', () => {
     expect(estimarMaoDeObra('troca-kit-transmissao', 'Yamaha', 1.35)).toBeCloseTo(297, 0);
   });
 
+  it('estima a caixa de direção (1,5h × 110 × 1.0 = 165) — RF-6.37', () => {
+    expect(estimarMaoDeObra('troca-caixa-direcao', 'Honda', 1)).toBe(165);
+  });
+
   it('retorna 0 para serviço sem tempário', () => {
     expect(estimarMaoDeObra('servico-desconhecido', 'Honda', 1)).toBe(0);
   });

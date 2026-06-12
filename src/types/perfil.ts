@@ -129,6 +129,7 @@ export interface KmUltimaTrocas {
   bateria: number;
   kitEmbreagem: number;
   kitCilindro: number;
+  caixaDirecao: number;
   retificaCabecote: number;
   retificaCompleta: number;
 }
