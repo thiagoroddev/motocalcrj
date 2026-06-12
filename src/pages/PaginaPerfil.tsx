@@ -21,7 +21,7 @@ import { DialogAlternarPredefinicao } from '../components/perfil/predefinicoes/D
 import { DialogDeletarPredefinicao } from '../components/perfil/predefinicoes/DialogDeletarPredefinicao';
 
 type DialogAberto =
-  | 'apagar'
+  | 'resetar'
   | 'criarPredefinicao'
   | 'alternarPredefinicao'
   | 'deletarPredefinicao'
@@ -37,9 +37,9 @@ export function PaginaPerfil() {
   const consumo = perfil.financeiro.combustiveis[tipoComb].autonomia;
   const nomePreset = `${perfil.moto.marca}: ${nomeModelo}`;
 
-  function confirmarApagarTudo() {
-    dispatch({ type: 'RESETAR_PERFIL' });
-    navigate('/onboarding/modelo', { replace: true });
+  function confirmarResetarPredefinicao() {
+    dispatch({ type: 'RESETAR_PREDEFINICAO_ATIVA' });
+    navigate('/onboarding/ano');
   }
 
   function confirmarCriarPredefinicao(modeloId: string, sufixo: string) {
@@ -115,10 +115,10 @@ export function PaginaPerfil() {
             <Button
               variant="outline"
               className="w-full gap-2 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => setDialog('apagar')}
+              onClick={() => setDialog('resetar')}
             >
               <IcReset />
-              <span>Apagar Tudo</span>
+              <span>Resetar predefinição</span>
             </Button>
           </div>
         </div>
@@ -171,22 +171,24 @@ export function PaginaPerfil() {
 
       <NavBar />
 
-      {/* Dialog: Apagar Tudo */}
-      <Dialog open={dialog === 'apagar'} onOpenChange={(aberto) => !aberto && setDialog(null)}>
+      {/* Dialog: Resetar predefinição */}
+      <Dialog open={dialog === 'resetar'} onOpenChange={(aberto) => !aberto && setDialog(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Apagar Tudo</DialogTitle>
+            <DialogTitle>Resetar predefinição</DialogTitle>
             <DialogDescription>
-              Isso vai apagar permanentemente todos os seus dados e configurações. Essa ação não
-              pode ser desfeita.
+              Isso vai apagar todos os dados editados de <strong>{nomePreset}</strong>
+              {presetAtivo ? ` (${presetAtivo.sufixo})` : ''} e reiniciar o onboarding desta
+              predefinição. As outras predefinições não são afetadas. Essa ação não pode ser
+              desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(null)}>
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={confirmarApagarTudo}>
-              Apagar
+            <Button variant="destructive" onClick={confirmarResetarPredefinicao}>
+              Resetar
             </Button>
           </DialogFooter>
         </DialogContent>

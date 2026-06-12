@@ -88,8 +88,8 @@ modelo e são regravadas na forma canônica.
 | `CARREGAR_PERFIL`   | Carrega um `PresetEntry` existente como ativo (alternar entre Presets)               |
 | `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico |
 | `DELETAR_PREDEFINICAO` | "Deletar predefinição" remove uma entrada não ativa (a ativa é protegida no reducer) |
+| `RESETAR_PREDEFINICAO_ATIVA` | "Resetar predefinição": rascunho de reset (`presetIdEmReset`); `COMMIT_ONBOARDING` sobrescreve a entrada ativa sem criar UUID novo |
 | `IMPORTAR_PERFIL`   | Cria e ativa uma entrada para o perfil importado                                     |
-| `RESETAR_PERFIL`    | "Apagar Tudo" remove todos os Presets do storage                                     |
 
 **As demais Actions do reducer modificam o `PerfilUsuario` dentro do PresetEntry ativo**, atualizando `atualizadoEm` e disparando re-persistência.
 

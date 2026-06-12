@@ -197,6 +197,25 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       };
       const agora = new Date().toISOString();
+
+      // RESET de predefinição existente (TASK-RF-6.36): sobrescreve a entrada
+      // (mesmo presetId/sufixo/nome/criadoEm) em vez de criar uma nova. Não
+      // re-checa unicidade de sufixo — o sufixo já é o da própria entrada.
+      const presetIdEmReset = state.rascunhoPredefinicao?.presetIdEmReset;
+      if (presetIdEmReset) {
+        const existente = state.presets.find((p) => p.presetId === presetIdEmReset);
+        if (!existente) {
+          return state;
+        }
+        const atualizado: PresetEntry = { ...existente, perfil: novoPerfil, atualizadoEm: agora };
+        return {
+          perfil: novoPerfil,
+          presets: state.presets.map((p) => (p.presetId === existente.presetId ? atualizado : p)),
+          presetAtivoId: existente.presetId,
+          rascunhoPredefinicao: null,
+        };
+      }
+
       const novoId = crypto.randomUUID();
       const sufixo =
         state.rascunhoPredefinicao?.sufixo ??
@@ -740,13 +759,38 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       };
     }
 
-    case 'RESETAR_PERFIL':
+    case 'RESETAR_PREDEFINICAO_ATIVA': {
+      // Reseta APENAS a predefinição ativa: abre um rascunho marcado como reset
+      // (presetIdEmReset) e zera o perfil para o padrão, preservando o modelo.
+      // O perfil antigo continua em `presets` até o COMMIT — cancelar o
+      // onboarding o restaura via CANCELAR_NOVA_PREDEFINICAO. (TASK-RF-6.36)
+      if (!state.presetAtivoId || state.rascunhoPredefinicao) {
+        return state;
+      }
+
+      const ativo = state.presets.find((p) => p.presetId === state.presetAtivoId);
+      if (!ativo) {
+        return state;
+      }
+
       return {
-        perfil: perfilPadrao,
-        presets: [],
-        presetAtivoId: null,
-        rascunhoPredefinicao: null,
+        perfil: {
+          ...perfilPadrao,
+          moto: {
+            ...perfilPadrao.moto,
+            marca: ativo.perfil.moto.marca,
+            modelo: ativo.perfil.moto.modelo,
+          },
+        },
+        presets: state.presets,
+        presetAtivoId: state.presetAtivoId,
+        rascunhoPredefinicao: {
+          sufixo: ativo.sufixo,
+          presetAtivoAnteriorId: state.presetAtivoId,
+          presetIdEmReset: state.presetAtivoId,
+        },
       };
+    }
 
     case 'IMPORTAR_PERFIL': {
       const validacao = perfilSchema.safeParse(action.perfil);

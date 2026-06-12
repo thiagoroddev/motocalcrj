@@ -29,21 +29,6 @@ Obedeça essa ordem:
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | TASK-REF-43 | Tornar `IMPORTAR_PERFIL` determinístico e normalizar antes do dispatch | Standard | Importante | Normal | M/M | TASK-RF-7.1 | ADR-010 | `[ ]` | 06/06/26 14:42 |
-## Perfil e predefinições
-
-| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TASK-RF-6.36 | Reformular "Apagar Tudo" em "Resetar predefinição" (reset da ativa + re-onboarding) | Standard | Importante | Normal | M/M | — | RF-PERF-02, ADR-021 | `[ ]` | 12/06/26 16:10 |
-
-> **6.36** — Substituir "Apagar Tudo" (wipe global → `RESETAR_PERFIL`) por **"Resetar predefinição"**:
-> reseta **apenas a predefinição ATIVA** aos dados padrão (mantendo `presetId`/`sufixo`) e **obriga a
-> refazer o onboarding** dessa predefinição. Aviso antes da ação: "todos os dados editados serão
-> apagados e o onboarding será reiniciado". Remove o contrato `RESETAR_PERFIL` (o wipe global fica
-> órfão após a troca do botão) e sincroniza glossário/modelagem. **Decisão de design a resolver no
-> plano:** como re-entrar no onboarding gravando de volta no **mesmo** `presetId` — o fluxo atual cria
-> preset novo via `INICIAR_NOVA_PREDEFINICAO` + `COMMIT_ONBOARDING`. O reset emergencial do
-> ErrorBoundary (`storage.limpar`) permanece como única via de wipe total.
-
 
 ---
 

@@ -24,6 +24,9 @@ export function PassoLayout({
   const { config, irParaAnterior, temAnterior } = useOnboarding();
   const { rascunhoPredefinicao, dispatch } = usePerfil();
   const navigate = useNavigate();
+  // No reset (presetIdEmReset), cancelar restaura a predefinição; fora dele é
+  // o cancelamento da criação de uma predefinição nova. (TASK-RF-6.36)
+  const emReset = rascunhoPredefinicao?.presetIdEmReset != null;
   // Rotas semânticas (ADR-020): cada passo mostra "Próximo"; a Confirmação define
   // seu próprio rótulo via `textoBotao`.
   const labelBotao = textoBotao ?? 'Próximo';
@@ -47,7 +50,7 @@ export function PassoLayout({
                 className="h-7 px-2 text-xs text-muted-foreground"
                 onClick={cancelarCriacao}
               >
-                Cancelar criação
+                {emReset ? 'Cancelar reset' : 'Cancelar criação'}
               </Button>
             )}
             <span className="text-label-sm text-muted-foreground">{config.percentual}%</span>

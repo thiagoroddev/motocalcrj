@@ -56,9 +56,16 @@ export function FluxoOnboarding() {
   // Modo edição: o usuário veio da Confirmação via "Editar". Ao salvar, deve
   // voltar direto à Confirmação em vez de percorrer o resto do fluxo (RF-6.31.6).
   const editando = (location.state as { editando?: boolean } | null)?.editando === true;
+  // Reset de predefinição existente (TASK-RF-6.36): o modelo é fixo (preserva a
+  // identidade modelo↔sufixo da entrada). O passo de modelo fica bloqueado.
+  const emReset = rascunhoPredefinicao?.presetIdEmReset != null;
 
   if (entradaInvalidaNoOnboarding) {
     return <Navigate to="/perfil" replace />;
+  }
+
+  if (emReset && passo === 'modelo') {
+    return <Navigate to="/onboarding/ano" replace />;
   }
 
   if (passo === 'confirmacao' && !perfilProntoParaCommit(perfil)) {
@@ -92,13 +99,20 @@ export function FluxoOnboarding() {
       navigate('/onboarding/confirmacao');
       return;
     }
+    // No reset, o Ano é o primeiro passo: não há "voltar" para o modelo.
+    if (emReset && passo === 'ano') {
+      return;
+    }
     const anterior = getPassoAnterior(passo, perfil.financeiro.situacaoMoto);
     if (anterior) {
       navigate(`/onboarding/${anterior}`);
     }
   }
 
-  const temAnterior = editando || getPassoAnterior(passo, perfil.financeiro.situacaoMoto) !== null;
+  const temAnterior =
+    editando ||
+    (!(emReset && passo === 'ano') &&
+      getPassoAnterior(passo, perfil.financeiro.situacaoMoto) !== null);
 
   return (
     <OnboardingCtx.Provider value={{ passo, config, irParaProximo, irParaAnterior, temAnterior }}>

@@ -220,6 +220,10 @@ export interface PresetEntry {
 export interface RascunhoPredefinicao {
   sufixo: string;
   presetAtivoAnteriorId: string | null;
+  // Quando presente, o rascunho é um RESET de uma predefinição existente: ao
+  // concluir o onboarding, o COMMIT sobrescreve esta entrada (mesmo presetId e
+  // sufixo) em vez de criar uma nova. Ausente = criação de predefinição nova.
+  presetIdEmReset?: string;
 }
 
 // ──────────────────────────────────────────────
@@ -305,5 +309,5 @@ export type PerfilAction =
   | { type: 'CARREGAR_PERFIL'; presetId: string }
   | { type: 'RENOMEAR_PREDEFINICAO'; presetId: string; sufixo: string }
   | { type: 'DELETAR_PREDEFINICAO'; presetId: string }
-  | { type: 'RESETAR_PERFIL' }
+  | { type: 'RESETAR_PREDEFINICAO_ATIVA' }
   | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario };

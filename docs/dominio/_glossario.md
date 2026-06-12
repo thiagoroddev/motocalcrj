@@ -324,9 +324,9 @@ Switch booleano que ativa/desativa uma categoria no cálculo total. Persistido e
 
 Botão que **apaga apenas o override de um campo específico**, fazendo o cálculo voltar a usar o valor do Preset JSON para aquele item. Não afeta outros campos. (RN-03)
 
-### Apagar Tudo
+### Resetar predefinição
 
-Funcionalidade na tela Perfil que limpa o localStorage e reseta o estado para pré-Onboarding. Action `RESETAR_PERFIL` do reducer.
+Funcionalidade na tela Perfil (substituiu "Apagar Tudo") que reseta **apenas a predefinição ativa** aos dados padrão (mantendo `presetId`, `sufixo` e modelo) e obriga a refazer o onboarding dela; as outras predefinições não são afetadas. Action `RESETAR_PREDEFINICAO_ATIVA` do reducer, que abre um rascunho marcado com `presetIdEmReset`; ao concluir, `COMMIT_ONBOARDING` sobrescreve a entrada existente em vez de criar uma nova. Cancelar o onboarding restaura os dados anteriores. O reset total dos dados locais permanece apenas no escape hatch do ErrorBoundary (`storage.limpar`). (RF-PERF-02, ADR-021)
 
 ### Deletar predefinição
 

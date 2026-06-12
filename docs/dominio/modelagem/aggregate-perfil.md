@@ -56,8 +56,8 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 | `CARREGAR_PERFIL`   | Troca o perfil ativo e atualiza `presetAtivoId`                               |
 | `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico, respeitando unicidade por modelo |
 | `DELETAR_PREDEFINICAO` | Remove uma entrada não ativa; `perfil` e `presetAtivoId` ficam intactos |
+| `RESETAR_PREDEFINICAO_ATIVA` | Zera o perfil ativo p/ `perfilPadrao` (mantém modelo) e abre rascunho de reset; commit sobrescreve a entrada |
 | `IMPORTAR_PERFIL`   | Cria novo preset importado e o torna ativo                                    |
-| `RESETAR_PERFIL`    | Limpa presets e volta para `perfilPadrao`                                     |
 
 **Observacao:** demais actions alteram o `PerfilUsuario` dentro do preset ativo. Quando há rascunho,
 `comPerfil()` atualiza somente o perfil transitório.

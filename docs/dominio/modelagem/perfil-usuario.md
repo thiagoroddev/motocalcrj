@@ -146,7 +146,7 @@ Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver
 | Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`                                 |
 | Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
 | FIPE                    | `SET_FIPE_CACHE`                                                           |
-| Persistência            | `CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `DELETAR_PREDEFINICAO`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL` |
+| Persistência            | `CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `DELETAR_PREDEFINICAO`, `RESETAR_PREDEFINICAO_ATIVA`, `IMPORTAR_PERFIL` |
 
 ---
 

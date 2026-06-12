@@ -169,3 +169,4 @@
 | TASK-BG-031 | Criar e alternar múltiplas predefinições por modelo | [2026-06-12--14h20--TASK-BG-031.md](./2026-06-12--14h20--TASK-BG-031.md) |
 | TASK-RF-6.35 | Deletar predefinição não ativa (diálogo + `DELETAR_PREDEFINICAO`, ativa protegida no reducer, feedback de exclusão) | [2026-06-12--15h35--TASK-RF-6.35.md](./2026-06-12--15h35--TASK-RF-6.35.md) |
 | TASK-TEST-006 | Remover `any` dos testes de onboarding (`PassoModelo`/`PassoMaoDeObra`); factories tipadas, lint do projeto verde | [2026-06-12--16h00--TASK-TEST-006.md](./2026-06-12--16h00--TASK-TEST-006.md) |
+| TASK-RF-6.36 | "Resetar predefinição" (reset da ativa + re-onboarding sobrescrevendo a entrada, modelo bloqueado); remove `RESETAR_PERFIL`; addendum ADR-021 | [2026-06-12--16h55--TASK-RF-6.36.md](./2026-06-12--16h55--TASK-RF-6.36.md) |

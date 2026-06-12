@@ -633,26 +633,96 @@ describe('perfilReducer', () => {
     expect(cancelado.rascunhoPredefinicao).toBeNull();
   });
 
-  it('RESETAR_PERFIL limpa presets e volta ao perfilPadrao', () => {
-    const estadoComPreset: EstadoApp = {
-      perfil: { ...perfilPadrao, onboardingConcluido: true },
-      presets: [
-        {
-          presetId: 'p1',
-          nome: 'pop110i_v1',
-          sufixo: 'v1',
-          criadoEm: '2026-01-01',
-          atualizadoEm: '2026-01-01',
-          perfil: perfilPadrao,
-        },
-      ],
+  describe('RESETAR_PREDEFINICAO_ATIVA', () => {
+    const presetAtivoEntry = {
+      presetId: 'p1',
+      nome: 'pop110i_v1',
+      sufixo: 'v1',
+      criadoEm: '2026-01-01',
+      atualizadoEm: '2026-01-01',
+      perfil: {
+        ...criarPerfilValido({ moto: { kmAtual: 30000 }, financeiro: { internet: 99 } }),
+        onboardingConcluido: true,
+      },
+    };
+    const estadoComAtivo: EstadoApp = {
+      perfil: presetAtivoEntry.perfil,
+      presets: [presetAtivoEntry],
       presetAtivoId: 'p1',
       rascunhoPredefinicao: null,
     };
-    const resultado = perfilReducer(estadoComPreset, { type: 'RESETAR_PERFIL' });
-    expect(resultado.presets).toHaveLength(0);
-    expect(resultado.presetAtivoId).toBeNull();
-    expect(resultado.perfil.onboardingConcluido).toBe(false);
+
+    it('abre um rascunho de reset (presetIdEmReset) e zera o perfil preservando o modelo', () => {
+      const resultado = perfilReducer(estadoComAtivo, { type: 'RESETAR_PREDEFINICAO_ATIVA' });
+
+      expect(resultado.rascunhoPredefinicao).toEqual({
+        sufixo: 'v1',
+        presetAtivoAnteriorId: 'p1',
+        presetIdEmReset: 'p1',
+      });
+      // Perfil zerado para o padrão, mas mantendo o modelo da predefinição ativa.
+      expect(resultado.perfil.onboardingConcluido).toBe(false);
+      expect(resultado.perfil.moto.modelo).toBe('pop110i');
+      expect(resultado.perfil.moto.marca).toBe('Honda');
+      expect(resultado.perfil.financeiro.internet).toBe(0);
+      // A entrada antiga continua intacta em presets (restaurável por cancelamento).
+      expect(resultado.presets).toBe(estadoComAtivo.presets);
+      expect(resultado.presetAtivoId).toBe('p1');
+    });
+
+    it('rejeita reset sem predefinição ativa', () => {
+      const resultado = perfilReducer(estadoVazio, { type: 'RESETAR_PREDEFINICAO_ATIVA' });
+      expect(resultado).toBe(estadoVazio);
+    });
+
+    it('rejeita reset durante um rascunho já aberto', () => {
+      const estadoComRascunho: EstadoApp = {
+        ...estadoComAtivo,
+        rascunhoPredefinicao: { sufixo: 'v2', presetAtivoAnteriorId: 'p1' },
+      };
+      const resultado = perfilReducer(estadoComRascunho, { type: 'RESETAR_PREDEFINICAO_ATIVA' });
+      expect(resultado).toBe(estadoComRascunho);
+    });
+
+    it('COMMIT_ONBOARDING sobrescreve a entrada existente (mesmo id/sufixo/criadoEm), sem duplicar', () => {
+      const estadoEmReset: EstadoApp = {
+        perfil: criarPerfilValido({ financeiro: { internet: 50 } }),
+        presets: [presetAtivoEntry],
+        presetAtivoId: 'p1',
+        rascunhoPredefinicao: { sufixo: 'v1', presetAtivoAnteriorId: 'p1', presetIdEmReset: 'p1' },
+      };
+
+      const resultado = perfilReducer(estadoEmReset, { type: 'COMMIT_ONBOARDING' });
+
+      expect(resultado.presets).toHaveLength(1);
+      expect(resultado.presets[0]).toMatchObject({
+        presetId: 'p1',
+        sufixo: 'v1',
+        nome: 'pop110i_v1',
+        criadoEm: '2026-01-01',
+      });
+      expect(resultado.presets[0].perfil.financeiro.internet).toBe(50);
+      expect(resultado.presets[0].perfil.onboardingConcluido).toBe(true);
+      expect(resultado.presetAtivoId).toBe('p1');
+      expect(resultado.rascunhoPredefinicao).toBeNull();
+    });
+
+    it('CANCELAR_NOVA_PREDEFINICAO durante reset restaura o perfil antigo da entrada', () => {
+      const estadoEmReset: EstadoApp = {
+        perfil: criarPerfilValido({ financeiro: { internet: 50 } }),
+        presets: [presetAtivoEntry],
+        presetAtivoId: 'p1',
+        rascunhoPredefinicao: { sufixo: 'v1', presetAtivoAnteriorId: 'p1', presetIdEmReset: 'p1' },
+      };
+
+      const resultado = perfilReducer(estadoEmReset, { type: 'CANCELAR_NOVA_PREDEFINICAO' });
+
+      expect(resultado.perfil).toBe(presetAtivoEntry.perfil);
+      expect(resultado.perfil.financeiro.internet).toBe(99);
+      expect(resultado.presetAtivoId).toBe('p1');
+      expect(resultado.presets).toEqual([presetAtivoEntry]);
+      expect(resultado.rascunhoPredefinicao).toBeNull();
+    });
   });
 
   describe('DELETAR_PREDEFINICAO', () => {

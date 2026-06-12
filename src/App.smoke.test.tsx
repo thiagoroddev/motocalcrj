@@ -377,6 +377,74 @@ describe('App - smoke UI', () => {
     expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presetAtivo.presetId);
   });
 
+  it('reseta a predefinição ativa e re-onboarda sobre o mesmo preset (sem duplicar)', async () => {
+    const preset = salvarPresetNoStorage(); // Pop 110i, internet 50, presetId 'preset-pop110i'
+
+    renderizarAppEm('/perfil');
+
+    await screen.findByText('Predefinição Atual');
+    fireEvent.click(screen.getByRole('button', { name: 'Resetar predefinição' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Resetar' }));
+
+    // Re-onboarding começa no Ano (modelo preservado) e percorre os passos.
+    await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
+    // O passo de modelo fica bloqueado no reset: não há "Voltar" no Ano, e o
+    // cancelamento é rotulado como reset (não criação).
+    expect(screen.queryByRole('button', { name: 'Voltar' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancelar reset' })).toBeInTheDocument();
+    clicarProximo();
+
+    fireEvent.change(await screen.findByLabelText(/KM atual do hodômetro/i), {
+      target: { value: '33000' },
+    });
+    clicarProximo();
+
+    await screen.findByText('Qual a situação da sua moto?');
+    clicarProximo();
+
+    await screen.findByText('Você tem seguro?');
+    fireEvent.click(screen.getByRole('button', { name: 'Não' }));
+    clicarProximo();
+
+    await screen.findByText('Alimentação no trabalho');
+    clicarProximo();
+
+    await screen.findByText('Plano de Internet');
+    clicarProximo();
+
+    await screen.findByText('Vida útil das peças');
+    clicarProximo();
+
+    await screen.findByText('Valor de mão de obra');
+    clicarProximo();
+
+    await screen.findByText('Últimas manutenções do veículo');
+    clicarProximo();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Concluir configuração' }));
+    await screen.findByText('Custo de operação por km');
+
+    await waitFor(() => {
+      const presets = JSON.parse(
+        localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)!,
+      ) as PresetEntry[];
+      expect(presets).toHaveLength(1);
+      expect(presets[0].perfil.moto.kmAtual).toBe(33000);
+    });
+
+    const presets = JSON.parse(
+      localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)!,
+    ) as PresetEntry[];
+    // Mesma entrada (id/sufixo/criadoEm preservados), sem duplicata.
+    expect(presets[0].presetId).toBe(preset.presetId);
+    expect(presets[0].sufixo).toBe('v1');
+    expect(presets[0].criadoEm).toBe(preset.criadoEm);
+    // Os dados editados foram zerados pelo re-onboarding (internet 50 → 0).
+    expect(presets[0].perfil.financeiro.internet).toBe(0);
+    expect(presets[0].perfil.onboardingConcluido).toBe(true);
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(preset.presetId);
+  });
+
   it('renderiza estimativa a partir de preset salvo', async () => {
     salvarPresetNoStorage();
 
