@@ -2,11 +2,34 @@
 import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { ReactNode } from 'react';
 import { PassoModelo } from './PassoModelo';
 import * as catalogoModelos from '../../../data/catalogoModelos';
+import type { DadosModeloCatalogo } from '../../../data/catalogoModelos';
 import * as usePerfilHook from '../../../hooks/usePerfil';
 import * as FluxoOnboarding from '../FluxoOnboarding';
 import { perfilPadrao } from '../../../context/perfilDefaults';
+
+type PassoLayoutMockProps = {
+  children: ReactNode;
+  aoProximo: () => void;
+  podeContinuar?: boolean;
+  titulo: string;
+};
+
+function criarModeloCatalogo(
+  overrides: Partial<DadosModeloCatalogo> & Pick<DadosModeloCatalogo, 'id' | 'nome'>,
+): DadosModeloCatalogo {
+  return {
+    marca: 'Honda',
+    nomeFipe: overrides.nome,
+    codigoFipe: '000000-0',
+    tabelaFipe: {},
+    consumoKmL: 40,
+    aceitaEtanol: false,
+    ...overrides,
+  };
+}
 
 vi.mock('../../../data/catalogoModelos', () => ({
   getMarcasDisponiveis: vi.fn(() => []),
@@ -22,7 +45,7 @@ vi.mock('../FluxoOnboarding', () => ({
 }));
 
 vi.mock('../PassoLayout', () => ({
-  PassoLayout: ({ children, aoProximo, podeContinuar, titulo }: any) => (
+  PassoLayout: ({ children, aoProximo, podeContinuar, titulo }: PassoLayoutMockProps) => (
     <div data-testid="passo-layout" data-pode-continuar={podeContinuar}>
       <h1>{titulo}</h1>
       {children}
@@ -67,7 +90,10 @@ describe('PassoModelo', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Honda', 'Yamaha']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
       if (marca === 'Honda')
-        return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
+        return [
+          criarModeloCatalogo({ id: 'cg160', nome: 'CG 160' }),
+          criarModeloCatalogo({ id: 'biz125', nome: 'Biz 125' }),
+        ];
       return [];
     });
 
@@ -91,7 +117,8 @@ describe('PassoModelo', () => {
   test('marca com 1 modelo auto-seleciona o modelo', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Shineray']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
-      if (marca === 'Shineray') return [{ id: 'shineray-worker', nome: 'Worker 125' } as any];
+      if (marca === 'Shineray')
+        return [criarModeloCatalogo({ id: 'shineray-worker', nome: 'Worker 125' })];
       return [];
     });
 
@@ -110,9 +137,15 @@ describe('PassoModelo', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Honda', 'Yamaha']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
       if (marca === 'Honda')
-        return [{ id: 'cg160', nome: 'CG 160' } as any, { id: 'biz125', nome: 'Biz 125' } as any];
+        return [
+          criarModeloCatalogo({ id: 'cg160', nome: 'CG 160' }),
+          criarModeloCatalogo({ id: 'biz125', nome: 'Biz 125' }),
+        ];
       if (marca === 'Yamaha')
-        return [{ id: 'fz25', nome: 'Fazer 250' } as any, { id: 'mt03', nome: 'MT-03' } as any];
+        return [
+          criarModeloCatalogo({ id: 'fz25', nome: 'Fazer 250' }),
+          criarModeloCatalogo({ id: 'mt03', nome: 'MT-03' }),
+        ];
       return [];
     });
 
@@ -134,7 +167,7 @@ describe('PassoModelo', () => {
   test('avançar dispara o dispatch gravando moto.marca e moto.modelo', () => {
     vi.mocked(catalogoModelos.getMarcasDisponiveis).mockReturnValue(['Honda']);
     vi.mocked(catalogoModelos.getModelosPorMarca).mockImplementation((marca) => {
-      if (marca === 'Honda') return [{ id: 'cg160', nome: 'CG 160' } as any];
+      if (marca === 'Honda') return [criarModeloCatalogo({ id: 'cg160', nome: 'CG 160' })];
       return [];
     });
 

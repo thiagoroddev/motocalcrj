@@ -168,3 +168,4 @@
 | TASK-BG-030 | Distribuição de Custos: porcentagens com 1 casa decimal em vez de arredondamento inteiro | [2026-06-08--20h03--TASK-BG-030.md](./2026-06-08--20h03--TASK-BG-030.md) |
 | TASK-BG-031 | Criar e alternar múltiplas predefinições por modelo | [2026-06-12--14h20--TASK-BG-031.md](./2026-06-12--14h20--TASK-BG-031.md) |
 | TASK-RF-6.35 | Deletar predefinição não ativa (diálogo + `DELETAR_PREDEFINICAO`, ativa protegida no reducer, feedback de exclusão) | [2026-06-12--15h35--TASK-RF-6.35.md](./2026-06-12--15h35--TASK-RF-6.35.md) |
+| TASK-TEST-006 | Remover `any` dos testes de onboarding (`PassoModelo`/`PassoMaoDeObra`); factories tipadas, lint do projeto verde | [2026-06-12--16h00--TASK-TEST-006.md](./2026-06-12--16h00--TASK-TEST-006.md) |

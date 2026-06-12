@@ -29,14 +29,6 @@ Obedeça essa ordem:
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | TASK-REF-43 | Tornar `IMPORTAR_PERFIL` determinístico e normalizar antes do dispatch | Standard | Importante | Normal | M/M | TASK-RF-7.1 | ADR-010 | `[ ]` | 06/06/26 14:42 |
-| TASK-TEST-006 | Remover `any` dos testes de onboarding (`PassoMaoDeObra.test.tsx`, `PassoModelo.test.tsx`) | Standard | Importante | Normal | P/P | — | — | `[ ]` | 12/06/26 16:25 |
-
-> Débito de lint herdado do branch `concessionaria`: 16 usos de `any` (7 em `PassoMaoDeObra.test.tsx`,
-> 9 em `PassoModelo.test.tsx`) — mocks de `CardServico`/`PassoLayout` e props tipadas como `any`.
-> Substituir por tipos reais (props dos componentes / `ReactNode`) para fechar o `npm run lint` sem
-> `eslint-disable`. Identificado e parcialmente absorvido na TASK-RF-6.35 (que já corrigiu o tsc do
-> `CampoSeguro.test.tsx` e todos os erros de prettier do branch); só os `any` ficaram aqui.
-
 ## Perfil e predefinições
 
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |

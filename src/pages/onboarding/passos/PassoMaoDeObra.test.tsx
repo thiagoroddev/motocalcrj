@@ -2,12 +2,45 @@
 import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { Dispatch, ReactNode } from 'react';
 import { PassoMaoDeObra } from './PassoMaoDeObra';
 import * as usePerfilHook from '../../../hooks/usePerfil';
 import * as repositiorioPresets from '../../../data/repositorioPresets';
 import * as useCustosHook from '../../../hooks/useCustos';
 import * as FluxoOnboarding from '../FluxoOnboarding';
 import { perfilPadrao } from '../../../context/perfilDefaults';
+import type { PerfilAction, ServicoIndependente } from '../../../types/perfil';
+
+type PassoLayoutMockProps = {
+  children: ReactNode;
+  aoProximo: () => void;
+  podeContinuar?: boolean;
+  titulo: string;
+};
+
+type ControleEstimativaMockProps = {
+  ligada: boolean;
+  dispatch: Dispatch<PerfilAction>;
+};
+
+type CardServicoMockProps = {
+  servico: ServicoIndependente;
+};
+
+function criarServico(
+  overrides: Partial<ServicoIndependente> & Pick<ServicoIndependente, 'id'>,
+): ServicoIndependente {
+  return {
+    nome: overrides.id,
+    intervalKm: 10000,
+    precoIndependente: 0,
+    precoTotalAutorizada: 0,
+    incluidoNaRevisaoAutorizada: false,
+    ativo: true,
+    ehExcepcional: false,
+    ...overrides,
+  };
+}
 
 vi.mock('../../../hooks/usePerfil', () => ({
   usePerfil: vi.fn(),
@@ -27,7 +60,7 @@ vi.mock('../FluxoOnboarding', () => ({
 
 // Mock do PassoLayout
 vi.mock('../PassoLayout', () => ({
-  PassoLayout: ({ children, aoProximo, podeContinuar, titulo }: any) => (
+  PassoLayout: ({ children, aoProximo, podeContinuar, titulo }: PassoLayoutMockProps) => (
     <div data-testid="passo-layout" data-pode-continuar={podeContinuar}>
       <h1>{titulo}</h1>
       {children}
@@ -40,8 +73,14 @@ vi.mock('../PassoLayout', () => ({
 
 // Mock ControleEstimativaMaoDeObra
 vi.mock('../../../components/mao-de-obra/ControleEstimativaMaoDeObra', () => ({
-  ControleEstimativaMaoDeObra: ({ ligada, dispatch }: any) => (
-    <button onClick={() => dispatch({ type: 'TOGGLE_ESTIMATIVA', payload: !ligada })}>
+  ControleEstimativaMaoDeObra: ({ ligada, dispatch }: ControleEstimativaMockProps) => (
+    <button
+      onClick={() =>
+        // Ação fabricada só para verificar a fiação onClick → dispatch (não existe
+        // no union real de PerfilAction).
+        dispatch({ type: 'TOGGLE_ESTIMATIVA', payload: !ligada } as unknown as PerfilAction)
+      }
+    >
       Toggle Estimativa: {ligada ? 'Ligada' : 'Desligada'}
     </button>
   ),
@@ -49,13 +88,14 @@ vi.mock('../../../components/mao-de-obra/ControleEstimativaMaoDeObra', () => ({
 
 // Mock CardServico
 vi.mock('../../../components/mao-de-obra/CardServico', () => ({
-  CardServico: ({ servico }: any) => <div data-testid="card-servico">{servico.id}</div>,
+  CardServico: ({ servico }: CardServicoMockProps) => (
+    <div data-testid="card-servico">{servico.id}</div>
+  ),
 }));
 
 describe('PassoMaoDeObra', () => {
   const dispatchMock = vi.fn();
   const irParaProximoMock = vi.fn();
-  const presetMock = { servicosManutencao: [] };
 
   afterEach(() => {
     cleanup();
@@ -83,7 +123,9 @@ describe('PassoMaoDeObra', () => {
       temAnterior: false,
     });
 
-    vi.mocked(repositiorioPresets.obterPreset).mockReturnValue(presetMock as any);
+    // As utils reais (somar/montar/normalizar) aceitam preset opcional; undefined
+    // mantém o teste focado nos serviços vindos do normalizarPerfilMvp mockado.
+    vi.mocked(repositiorioPresets.obterPreset).mockReturnValue(undefined);
   });
 
   test('lista corretamente os serviços avulsos (sem valor oficial) como cards', () => {
@@ -91,23 +133,17 @@ describe('PassoMaoDeObra', () => {
     vi.mocked(useCustosHook.normalizarPerfilMvp).mockReturnValue({
       ...perfilPadrao,
       servicosIndependentes: [
-        {
-          id: 'pneu_dianteiro',
-          nome: 'Pneu Dianteiro',
-          intervalKm: 10000,
-          autorizada: { statusPreco: 'nao_informado', precoPeca: 0, precoMaoDeObra: 0 },
-          generico: { precoPeca: 0, precoMaoDeObra: 0 },
-        },
-        {
+        criarServico({ id: 'pneu_dianteiro', nome: 'Pneu Dianteiro', intervalKm: 10000 }),
+        // incluidoNaRevisaoAutorizada → status 'informado' → não entra na lista de avulsos.
+        criarServico({
           id: 'oleo_motor',
           nome: 'Oleo do Motor',
           intervalKm: 3000,
           incluidoNaRevisaoAutorizada: true,
-          autorizada: { statusPreco: 'informado', precoPeca: 50, precoMaoDeObra: 20 },
-          generico: { precoPeca: 0, precoMaoDeObra: 0 },
-        },
+          precoTotalAutorizada: 70,
+        }),
       ],
-    } as any);
+    });
 
     render(<PassoMaoDeObra />);
 
@@ -122,14 +158,9 @@ describe('PassoMaoDeObra', () => {
     vi.mocked(useCustosHook.normalizarPerfilMvp).mockReturnValue({
       ...perfilPadrao,
       servicosIndependentes: [
-        {
-          id: 'pneu_dianteiro',
-          intervalKm: 10000,
-          autorizada: { statusPreco: 'nao_informado', precoPeca: 0, precoMaoDeObra: 0 },
-          generico: { precoPeca: 0, precoMaoDeObra: 0 },
-        },
+        criarServico({ id: 'pneu_dianteiro', nome: 'Pneu Dianteiro', intervalKm: 10000 }),
       ],
-    } as any);
+    });
 
     const { rerender } = render(<PassoMaoDeObra />);
 
@@ -167,7 +198,7 @@ describe('PassoMaoDeObra', () => {
     vi.mocked(useCustosHook.normalizarPerfilMvp).mockReturnValue({
       ...perfilPadrao,
       servicosIndependentes: [],
-    } as any);
+    });
 
     render(<PassoMaoDeObra />);
 
