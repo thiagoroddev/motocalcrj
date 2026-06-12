@@ -30,7 +30,8 @@ Não pertence ao `PerfilUsuario` - é o **wrapper** com metadados de identidade 
 // src/types/perfil.ts
 export interface PresetEntry {
   presetId: string;     // crypto.randomUUID() gerado em COMMIT_ONBOARDING
-  nome: string;         // ex: "Honda pop110i 2024"
+  nome: string;         // nome técnico derivado, ex: "pop110i_v2"
+  sufixo: string;       // identificação editável e única no mesmo modelo
   criadoEm: string;     // ISO 8601
   atualizadoEm: string; // ISO 8601, atualizado a cada dispatch que toca o perfil
   perfil: PerfilUsuario;
@@ -42,9 +43,9 @@ export interface PresetEntry {
 ### I.3 - Fluxo de Abertura do App
 
 1. `PerfilProvider` (lazy init em `PerfilContext.tsx`) lê do storage via `LocalStoragePerfilStorage`.
-2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId }`.
-3. Valida cada `PresetEntry` completo com `presetEntrySchema`.
-4. Se a chave de ativo estiver ausente mas houver presets válidos, seleciona `presets[0]` como recuperação; se não há preset recuperável OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/1`.
+2. Reconstrói `EstadoApp = { perfil, presets, presetAtivoId, rascunhoPredefinicao: null }`.
+3. Valida cada envelope persistido e normaliza entradas legadas sem `sufixo`.
+4. Se a chave de ativo estiver ausente mas houver presets válidos, seleciona `presets[0]` como recuperação; se não há preset recuperável OU `perfil.onboardingConcluido === false` → `RotaProtegida` redireciona para `/onboarding/modelo`.
 5. Caso contrário, renderiza app com `perfil` ativo.
 
 ---
@@ -188,13 +189,16 @@ Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas 
 
 ```typescript
 export interface EstadoApp {
-  perfil: PerfilUsuario;       // sempre o do preset ativo (ou perfilPadrao se nenhum)
+  perfil: PerfilUsuario;       // ativo ou rascunho transitório do onboarding
   presets: PresetEntry[];
   presetAtivoId: string | null;
+  rascunhoPredefinicao: RascunhoPredefinicao | null;
 }
 ```
 
-O helper interno `comPerfil(novoPerfil)` do reducer mantém `perfil` e `presets[].find(presetAtivoId).perfil` **sempre em sincronia** numa mesma operação (sem janela de inconsistência).
+O helper `comPerfil(novoPerfil)` sincroniza o perfil com a entrada ativa somente quando não há
+`rascunhoPredefinicao`. Durante a criação, o perfil transitório muda em memória e o preset anterior
+permanece intacto.
 
 ---
 
@@ -206,8 +210,10 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 | Action                | Efeito                                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
+| `INICIAR_NOVA_PREDEFINICAO` | Cria um rascunho limpo com modelo e sufixo, preservando `presetAtivoId` como referência ao preset anterior |
+| `CANCELAR_NOVA_PREDEFINICAO` | Descarta o rascunho e restaura integralmente o preset anterior |
 | `SET_ONBOARDING_CAMPO`| Set genérico de campo durante o onboarding (DT-14 - type-safety fraca) |
-| `COMMIT_ONBOARDING`   | Único momento de primeira persistência. Cria `PresetEntry`, deriva `categoriasAtivas` a partir das respostas, ajusta autonomias por modelo do `CATALOGO` |
+| `COMMIT_ONBOARDING`   | Cria e ativa um novo `PresetEntry`, com UUID, sufixo e nome técnico; encerra o rascunho |
 
 ### IV.2 - Rodagem inline (Estimativa)
 
@@ -263,7 +269,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 ### IV.10 - Presets (envelope)
 
-`CARREGAR_PERFIL`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
+`CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `RESETAR_PERFIL`, `IMPORTAR_PERFIL`.
 
 ---
 
@@ -271,7 +277,8 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 `PerfilContext` declara um `useEffect` que sincroniza com `LocalStoragePerfilStorage` a cada mudança em `state.presets` ou `state.presetAtivoId`. O `useRef` inicial evita escrita na primeira montagem (que apenas reidrata do storage).
 
-**INV-PRESET-2:** `PresetEntry` só é gravado após `COMMIT_ONBOARDING`. Actions intermediárias do onboarding (`SET_ONBOARDING_CAMPO`) mutam `state.perfil` mas **não** disparam persistência porque `presetAtivoId` ainda é `null`.
+**INV-PRESET-2:** o rascunho nunca é gravado. Actions intermediárias do onboarding mutam
+`state.perfil`, mas o provider interrompe a persistência enquanto `rascunhoPredefinicao` existe.
 
 ---
 

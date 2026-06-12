@@ -21,6 +21,7 @@ export interface EstadoApp {
   perfil: PerfilUsuario;
   presets: PresetEntry[];
   presetAtivoId: string | null;
+  rascunhoPredefinicao: RascunhoPredefinicao | null;
 }
 ```
 
@@ -37,6 +38,7 @@ Este aggregate garante invariantes que **dependem de mais de um objeto**:
 
 - o preset ativo deve existir na lista de presets
 - a persistencia so ocorre quando ha preset ativo
+- o rascunho de uma nova predefinicao nunca sobrescreve o preset ativo anterior
 - carregar um preset deve atualizar o perfil inteiro em memoria
 - referências relacionais persistidas devem existir no preset canônico da moto
 
@@ -48,12 +50,16 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 
 | Action              | Comportamento                                                                 |
 | ------------------- | ----------------------------------------------------------------------------- |
-| `COMMIT_ONBOARDING` | Cria o primeiro `PresetEntry`, define `presetAtivoId` e habilita persistencia |
+| `INICIAR_NOVA_PREDEFINICAO` | Cria rascunho limpo e preserva a referência ao ativo anterior |
+| `CANCELAR_NOVA_PREDEFINICAO` | Descarta o rascunho e restaura o ativo anterior |
+| `COMMIT_ONBOARDING` | Cria um novo `PresetEntry`, define `presetAtivoId` e encerra o rascunho |
 | `CARREGAR_PERFIL`   | Troca o perfil ativo e atualiza `presetAtivoId`                               |
+| `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico, respeitando unicidade por modelo |
 | `IMPORTAR_PERFIL`   | Cria novo preset importado e o torna ativo                                    |
 | `RESETAR_PERFIL`    | Limpa presets e volta para `perfilPadrao`                                     |
 
-**Observacao:** demais actions alteram o `PerfilUsuario` **dentro** do preset ativo. O helper `comPerfil()` atualiza `preset.atualizadoEm` e substitui `preset.perfil` no array.
+**Observacao:** demais actions alteram o `PerfilUsuario` dentro do preset ativo. Quando há rascunho,
+`comPerfil()` atualiza somente o perfil transitório.
 
 ---
 
@@ -70,9 +76,10 @@ Sem esse aggregate, seria facil ter um `presetAtivoId` apontando para algo inexi
 
 ### INV-AGG-2: Persistencia condicional
 
-**Regra:** so persistir quando `presetAtivoId` existe.
+**Regra:** so persistir quando `presetAtivoId` existe e não há `rascunhoPredefinicao`.
 
-**Onde e protegida:** `useEffect` do `PerfilProvider` retorna se `presetAtivoId` for nulo.
+**Onde e protegida:** `useEffect` do `PerfilProvider` retorna se `presetAtivoId` for nulo ou se há
+rascunho.
 
 ### INV-AGG-3: Estado pre-onboarding e recuperação parcial
 
@@ -96,7 +103,8 @@ transforma dado válido em corrupção.
 ```
 Perfil Local (Aggregate Root)
 ├── presets: PresetEntry[]        ← aggregate-preset.md
-└── presetAtivoId                 ← referencia ao PresetEntry ativo
+├── presetAtivoId                 ← referencia ao PresetEntry ativo
+└── rascunhoPredefinicao          ← metadados transitórios, nunca persistidos
 ```
 
 ---

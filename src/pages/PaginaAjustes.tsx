@@ -17,6 +17,7 @@ import { SecaoUsoDiario } from '../components/ajustes/SecaoUsoDiario';
 import { SecaoFinanceiro } from '../components/ajustes/SecaoFinanceiro';
 import { SecaoSituacaoLegal } from '../components/ajustes/SecaoSituacaoLegal';
 import { CampoResponsabilidadeAluguel } from '../components/ajustes/CampoResponsabilidadeAluguel';
+import { CardIdentificacaoPredefinicao } from '../components/ajustes/CardIdentificacaoPredefinicao';
 
 type LocationStateAjustes = {
   focoSecao?: 'veiculo';
@@ -25,7 +26,7 @@ type LocationStateAjustes = {
 const DURACAO_DESTAQUE_MS = 2000;
 
 export function PaginaAjustes() {
-  const { perfil, dispatch } = usePerfil();
+  const { perfil, presets, presetAtivo, dispatch } = usePerfil();
   const [dialogReset, setDialogReset] = useState(false);
   const location = useLocation();
   const focoSecao = (location.state as LocationStateAjustes | null)?.focoSecao ?? null;
@@ -43,6 +44,14 @@ export function PaginaAjustes() {
   return (
     <>
       <div className="p-4 space-y-3">
+        {presetAtivo && (
+          <CardIdentificacaoPredefinicao
+            key={presetAtivo.presetId}
+            preset={presetAtivo}
+            presets={presets}
+            dispatch={dispatch}
+          />
+        )}
         <div
           ref={refVeiculo}
           className={`rounded-lg transition-shadow${

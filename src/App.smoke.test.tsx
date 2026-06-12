@@ -81,7 +81,8 @@ function criarPerfilValido(motoRevisaoOverrides: MotoRevisaoOverrides = {}): Per
 function criarPreset(perfil = criarPerfilValido()): PresetEntry {
   return {
     presetId: 'preset-pop110i',
-    nome: 'Honda Pop 110i',
+    nome: 'pop110i_v1',
+    sufixo: 'v1',
     criadoEm: '2026-06-01T12:00:00.000Z',
     atualizadoEm: '2026-06-01T12:00:00.000Z',
     perfil,
@@ -141,6 +142,7 @@ function obterValorCategoria(card: HTMLElement): string | null {
 describe('App - smoke UI', () => {
   beforeEach(() => {
     vi.stubGlobal('localStorage', criarLocalStorageFalso());
+    Element.prototype.scrollIntoView = vi.fn();
     window.history.pushState({}, '', '/');
   });
 
@@ -219,6 +221,126 @@ describe('App - smoke UI', () => {
     expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[0].presetId);
   });
 
+  it('cria e alterna predefinições sem perder a configuração anterior', async () => {
+    const perfilAnterior = criarPerfilValido({
+      kmAtual: 98765,
+      kmUltimaRevisao: 96000,
+    });
+    perfilAnterior.trabalho = {
+      ...perfilAnterior.trabalho,
+      kmPorDia: 140,
+      diasPorSemana: 6,
+    };
+    perfilAnterior.financeiro = {
+      ...perfilAnterior.financeiro,
+      internet: 99,
+      alimentacaoDia: 42,
+      combustiveis: {
+        ...perfilAnterior.financeiro.combustiveis,
+        comum: { ...perfilAnterior.financeiro.combustiveis.comum, autonomia: 45 },
+        aditivada: { ...perfilAnterior.financeiro.combustiveis.aditivada, autonomia: 45 },
+      },
+    };
+    const presetAnterior = salvarPresetNoStorage(criarPreset(perfilAnterior));
+
+    renderizarAppEm('/perfil');
+
+    await screen.findByText('Predefinição Atual');
+    fireEvent.click(screen.getByRole('button', { name: 'Criar nova predefinição' }));
+
+    const seletorModelo = await screen.findByLabelText('Modelo');
+    fireEvent.click(seletorModelo);
+    fireEvent.click(await screen.findByRole('option', { name: 'Yamaha: Factor 125i' }));
+    expect(screen.getByLabelText('Sufixo da predefinição')).toHaveValue('v1');
+    fireEvent.click(screen.getByRole('button', { name: 'Criar predefinição' }));
+
+    await screen.findByText('Valor FIPE', {}, { timeout: 2000 });
+    clicarProximo();
+
+    const campoKm = await screen.findByLabelText(/KM atual do hodômetro/i);
+    const campoConsumo = screen.getByLabelText(/Consumo médio - Yamaha Factor 125i/i);
+    expect(campoKm).toHaveValue(null);
+    expect(campoConsumo).toHaveValue(38);
+    fireEvent.change(campoKm, { target: { value: '22000' } });
+    clicarProximo();
+
+    await screen.findByText('Qual a situação da sua moto?');
+    clicarProximo();
+
+    await screen.findByText('Você tem seguro?');
+    fireEvent.click(screen.getByRole('button', { name: 'Não' }));
+    clicarProximo();
+
+    await screen.findByText('Alimentação no trabalho');
+    clicarProximo();
+
+    await screen.findByText('Plano de Internet');
+    clicarProximo();
+
+    await screen.findByText('Vida útil das peças');
+    clicarProximo();
+
+    await screen.findByText('Valor de mão de obra');
+    clicarProximo();
+
+    await screen.findByText('Últimas manutenções do veículo');
+    clicarProximo();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Concluir configuração' }));
+    await screen.findByText('Custo de operação por km');
+
+    await waitFor(() => {
+      const presetsRaw = localStorage.getItem(CHAVES_PERFIL_STORAGE.presets);
+      expect(presetsRaw).not.toBeNull();
+      expect(JSON.parse(presetsRaw!)).toHaveLength(2);
+    });
+
+    const presets = JSON.parse(
+      localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)!,
+    ) as PresetEntry[];
+    expect(presets[0]).toEqual(presetAnterior);
+    expect(presets[1].perfil.moto).toMatchObject({
+      marca: 'Yamaha',
+      modelo: 'factor125i',
+      kmAtual: 22000,
+    });
+    expect(presets[1].perfil.financeiro.combustiveis.comum.autonomia).toBe(38);
+    expect(presets[1].perfil.financeiro.internet).toBe(0);
+    expect(presets[1].perfil.financeiro.alimentacaoDia).toBe(0);
+    expect(presets[1].perfil.trabalho).toMatchObject({
+      kmPorDia: perfilPadrao.trabalho.kmPorDia,
+      diasPorSemana: perfilPadrao.trabalho.diasPorSemana,
+    });
+    expect(presets[1]).toMatchObject({ nome: 'factor125i_v1', sufixo: 'v1' });
+    expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presets[1].presetId);
+
+    fireEvent.click(screen.getByRole('link', { name: 'Abrir perfil' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Alternar predefinição' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Honda: Pop 110i/ }));
+
+    await waitFor(() => {
+      expect(localStorage.getItem(CHAVES_PERFIL_STORAGE.presetAtivo)).toBe(presetAnterior.presetId);
+    });
+    expect(await screen.findByText('Autonomia: 45 km/l')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar predefinição' }));
+    const campoSufixo = await screen.findByLabelText('Sufixo da predefinição');
+    expect(campoSufixo).toHaveValue('v1');
+    fireEvent.change(campoSufixo, { target: { value: 'trabalho' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar sufixo' }));
+
+    await waitFor(() => {
+      const atualizados = JSON.parse(
+        localStorage.getItem(CHAVES_PERFIL_STORAGE.presets)!,
+      ) as PresetEntry[];
+      expect(atualizados[0]).toMatchObject({
+        nome: 'pop110i_trabalho',
+        sufixo: 'trabalho',
+      });
+    });
+    expect(screen.getByText('trabalho')).toBeInTheDocument();
+  });
+
   it('renderiza estimativa a partir de preset salvo', async () => {
     salvarPresetNoStorage();
 
@@ -227,6 +349,15 @@ describe('App - smoke UI', () => {
     await screen.findByText('Custo de operação por km');
     expect(screen.getByText('Custo estimado por ano')).toBeInTheDocument();
     expect(screen.queryByText(/Modelo não encontrado/i)).not.toBeInTheDocument();
+  });
+
+  it('não reabre onboarding parcial para um preset já concluído', async () => {
+    salvarPresetNoStorage();
+
+    renderizarAppEm('/onboarding/ano');
+
+    expect(await screen.findByText('Predefinição Atual')).toBeInTheDocument();
+    expect(window.location.pathname).toBe('/perfil');
   });
 
   it('mostra revisão pendente ao atingir exatamente a próxima revisão prevista', async () => {

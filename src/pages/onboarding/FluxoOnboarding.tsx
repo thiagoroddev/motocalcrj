@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useRef } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {
   parsePasso,
@@ -46,13 +46,20 @@ export function useOnboarding(): OnboardingCtxValue {
 export function FluxoOnboarding() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { perfil } = usePerfil();
+  const { perfil, rascunhoPredefinicao } = usePerfil();
+  const entradaInvalidaNoOnboarding = useRef(
+    perfil.onboardingConcluido && !rascunhoPredefinicao,
+  ).current;
 
   const passo = parsePasso(location.pathname);
   const config = CONFIG_PASSOS[passo] ?? CONFIG_PASSOS['modelo'];
   // Modo edição: o usuário veio da Confirmação via "Editar". Ao salvar, deve
   // voltar direto à Confirmação em vez de percorrer o resto do fluxo (RF-6.31.6).
   const editando = (location.state as { editando?: boolean } | null)?.editando === true;
+
+  if (entradaInvalidaNoOnboarding) {
+    return <Navigate to="/perfil" replace />;
+  }
 
   if (passo === 'confirmacao' && !perfilProntoParaCommit(perfil)) {
     return <Navigate to="/onboarding/modelo" replace />;

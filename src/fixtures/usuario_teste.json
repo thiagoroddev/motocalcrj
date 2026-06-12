@@ -8,7 +8,8 @@
   "estimamoto:v1:presets": [
     {
       "presetId": "preset_trabalho_001",
-      "nome": "Trabalho - Pop 110i",
+      "nome": "pop110i_trabalho",
+      "sufixo": "trabalho",
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
@@ -144,7 +145,8 @@
     },
     {
       "presetId": "preset_pessoal_002",
-      "nome": "Pessoal - Pop 110i",
+      "nome": "pop110i_pessoal",
+      "sufixo": "pessoal",
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {

@@ -13,6 +13,7 @@ const estadoVazio: EstadoApp = {
   perfil: perfilPadrao,
   presets: [],
   presetAtivoId: null,
+  rascunhoPredefinicao: null,
 };
 
 function criarPerfilValido({
@@ -238,6 +239,26 @@ describe('perfilReducer', () => {
     expect(resultado.presetAtivoId).toBeNull();
   });
 
+  it('COMMIT_ONBOARDING não duplica um perfil já concluído fora de rascunho', () => {
+    const perfilConcluido = { ...criarPerfilValido(), onboardingConcluido: true };
+    const preset = {
+      presetId: 'p1',
+      nome: 'pop110i_v1',
+      sufixo: 'v1',
+      criadoEm: '2026-06-01',
+      atualizadoEm: '2026-06-01',
+      perfil: perfilConcluido,
+    };
+    const estado: EstadoApp = {
+      perfil: perfilConcluido,
+      presets: [preset],
+      presetAtivoId: preset.presetId,
+      rascunhoPredefinicao: null,
+    };
+
+    expect(perfilReducer(estado, { type: 'COMMIT_ONBOARDING' })).toBe(estado);
+  });
+
   it('SET_ANO_MOTO muda o ano e preserva a autonomia (consumo é do modelo, não do ano)', () => {
     const estado2024: EstadoApp = {
       ...estadoVazio,
@@ -461,19 +482,172 @@ describe('perfilReducer', () => {
 
   // ── Preset management ─────────────────────────
 
+  it('INICIAR_NOVA_PREDEFINICAO isola o rascunho e preserva o preset anterior', () => {
+    const perfilAnterior: PerfilUsuario = {
+      ...criarPerfilValido({
+        moto: {
+          kmAtual: 98765,
+          kmUltimaRevisao: 96000,
+        },
+        financeiro: {
+          internet: 99,
+          alimentacaoDia: 42,
+          seguro: {
+            valorAnual: 1800,
+            empresa: 'Seguradora anterior',
+            periodicidade: 'anual',
+          },
+          combustiveis: {
+            ...perfilPadrao.financeiro.combustiveis,
+            comum: { ...perfilPadrao.financeiro.combustiveis.comum, autonomia: 45 },
+            aditivada: { ...perfilPadrao.financeiro.combustiveis.aditivada, autonomia: 45 },
+          },
+        },
+      }),
+      onboardingConcluido: true,
+      trabalho: {
+        ...perfilPadrao.trabalho,
+        kmPorDia: 140,
+        diasPorSemana: 6,
+      },
+      pecasOverrides: [
+        {
+          id: 'kit_relacao',
+          precoEditadoOriginal: 500,
+          precoEditadaParalela: null,
+          intervaloKmEditado: 20000,
+        },
+      ],
+    };
+    const presetAnterior = {
+      presetId: 'preset-anterior',
+      nome: 'pop110i_v1',
+      sufixo: 'v1',
+      criadoEm: '2026-06-01T12:00:00.000Z',
+      atualizadoEm: '2026-06-01T12:00:00.000Z',
+      perfil: perfilAnterior,
+    };
+    const estadoComPreset: EstadoApp = {
+      perfil: perfilAnterior,
+      presets: [presetAnterior],
+      presetAtivoId: presetAnterior.presetId,
+      rascunhoPredefinicao: null,
+    };
+
+    let resultado = perfilReducer(estadoComPreset, {
+      type: 'INICIAR_NOVA_PREDEFINICAO',
+      modeloId: 'factor125i',
+      sufixo: 'v1',
+    });
+
+    expect(resultado.perfil).toMatchObject({
+      onboardingConcluido: false,
+      moto: { marca: 'Yamaha', modelo: 'factor125i', kmAtual: 0 },
+    });
+    expect(resultado.presets).toBe(estadoComPreset.presets);
+    expect(resultado.presetAtivoId).toBe(presetAnterior.presetId);
+    expect(resultado.rascunhoPredefinicao).toEqual({
+      sufixo: 'v1',
+      presetAtivoAnteriorId: presetAnterior.presetId,
+    });
+
+    resultado = perfilReducer(resultado, {
+      type: 'SET_ONBOARDING_CAMPO',
+      campo: 'moto',
+      valor: {
+        ...resultado.perfil.moto,
+        marca: 'Yamaha',
+        modelo: 'factor125i',
+        ano: 2024,
+        kmAtual: 22000,
+      },
+    });
+    resultado = perfilReducer(resultado, {
+      type: 'SET_ONBOARDING_CAMPO',
+      campo: 'financeiro',
+      valor: {
+        ...resultado.perfil.financeiro,
+        combustiveis: {
+          ...resultado.perfil.financeiro.combustiveis,
+          comum: { ...resultado.perfil.financeiro.combustiveis.comum, autonomia: 38 },
+          aditivada: { ...resultado.perfil.financeiro.combustiveis.aditivada, autonomia: 38 },
+        },
+      },
+    });
+
+    expect(resultado.presets[0]).toEqual(presetAnterior);
+
+    resultado = perfilReducer(resultado, { type: 'COMMIT_ONBOARDING' });
+
+    expect(resultado.presets).toHaveLength(2);
+    expect(resultado.presets[0]).toEqual(presetAnterior);
+    expect(resultado.presets[1].perfil.moto.modelo).toBe('factor125i');
+    expect(resultado.presets[1].perfil.financeiro.internet).toBe(0);
+    expect(resultado.presets[1].perfil.financeiro.alimentacaoDia).toBe(0);
+    expect(resultado.presets[1].perfil.financeiro.combustiveis.comum.autonomia).toBe(38);
+    expect(resultado.presets[1].perfil.pecasOverrides).toEqual([]);
+    expect(resultado.presets[1]).toMatchObject({
+      nome: 'factor125i_v1',
+      sufixo: 'v1',
+    });
+    expect(resultado.presetAtivoId).toBe(resultado.presets[1].presetId);
+    expect(resultado.rascunhoPredefinicao).toBeNull();
+
+    const reativado = perfilReducer(resultado, {
+      type: 'CARREGAR_PERFIL',
+      presetId: presetAnterior.presetId,
+    });
+
+    expect(reativado.perfil).toEqual(perfilAnterior);
+    expect(reativado.presetAtivoId).toBe(presetAnterior.presetId);
+  });
+
+  it('CANCELAR_NOVA_PREDEFINICAO restaura o preset ativo anterior', () => {
+    const perfilAnterior = { ...criarPerfilValido(), onboardingConcluido: true };
+    const presetAnterior = {
+      presetId: 'preset-anterior',
+      nome: 'pop110i_v1',
+      sufixo: 'v1',
+      criadoEm: '2026-06-01T12:00:00.000Z',
+      atualizadoEm: '2026-06-01T12:00:00.000Z',
+      perfil: perfilAnterior,
+    };
+    const estadoComPreset: EstadoApp = {
+      perfil: perfilAnterior,
+      presets: [presetAnterior],
+      presetAtivoId: presetAnterior.presetId,
+      rascunhoPredefinicao: null,
+    };
+
+    const rascunho = perfilReducer(estadoComPreset, {
+      type: 'INICIAR_NOVA_PREDEFINICAO',
+      modeloId: 'pop110i',
+      sufixo: 'v2',
+    });
+    const alterado = perfilReducer(rascunho, { type: 'SET_KM_ATUAL', valor: 5000 });
+    const cancelado = perfilReducer(alterado, { type: 'CANCELAR_NOVA_PREDEFINICAO' });
+
+    expect(cancelado.perfil).toBe(perfilAnterior);
+    expect(cancelado.presets).toEqual([presetAnterior]);
+    expect(cancelado.presetAtivoId).toBe(presetAnterior.presetId);
+    expect(cancelado.rascunhoPredefinicao).toBeNull();
+  });
+
   it('RESETAR_PERFIL limpa presets e volta ao perfilPadrao', () => {
     const estadoComPreset: EstadoApp = {
       perfil: { ...perfilPadrao, onboardingConcluido: true },
       presets: [
         {
           presetId: 'p1',
-          nome: 'Teste',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
           criadoEm: '2026-01-01',
           atualizadoEm: '2026-01-01',
           perfil: perfilPadrao,
         },
       ],
       presetAtivoId: 'p1',
+      rascunhoPredefinicao: null,
     };
     const resultado = perfilReducer(estadoComPreset, { type: 'RESETAR_PERFIL' });
     expect(resultado.presets).toHaveLength(0);
@@ -488,13 +662,15 @@ describe('perfilReducer', () => {
       presets: [
         {
           presetId: 'p2',
-          nome: 'Pessoal',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
           criadoEm: '2026-01-01',
           atualizadoEm: '2026-01-01',
           perfil: perfilAlternativo,
         },
       ],
       presetAtivoId: null,
+      rascunhoPredefinicao: null,
     };
     const resultado = perfilReducer(estadoInicial, {
       type: 'CARREGAR_PERFIL',
@@ -510,13 +686,15 @@ describe('perfilReducer', () => {
       presets: [
         {
           presetId: 'p1',
-          nome: 'Trabalho',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
           criadoEm: '2026-01-01',
           atualizadoEm: '2026-01-01',
           perfil: { ...perfilPadrao, apelido: 'Trabalho' },
         },
       ],
       presetAtivoId: 'p1',
+      rascunhoPredefinicao: null,
     };
 
     const resultado = perfilReducer(estadoInicial, {
@@ -537,18 +715,85 @@ describe('perfilReducer', () => {
       presets: [
         {
           presetId: 'p-invalido',
-          nome: 'Inválido',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
           criadoEm: '2026-01-01',
           atualizadoEm: '2026-01-01',
           perfil: perfilInvalido,
         },
       ],
       presetAtivoId: null,
+      rascunhoPredefinicao: null,
     };
 
     const resultado = perfilReducer(estadoInicial, {
       type: 'CARREGAR_PERFIL',
       presetId: 'p-invalido',
+    });
+
+    expect(resultado).toBe(estadoInicial);
+  });
+
+  it('RENOMEAR_PREDEFINICAO atualiza sufixo e nome técnico do preset', () => {
+    const perfil = { ...criarPerfilValido(), onboardingConcluido: true };
+    const estadoInicial: EstadoApp = {
+      perfil,
+      presets: [
+        {
+          presetId: 'p1',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
+          criadoEm: '2026-01-01',
+          atualizadoEm: '2026-01-01',
+          perfil,
+        },
+      ],
+      presetAtivoId: 'p1',
+      rascunhoPredefinicao: null,
+    };
+
+    const resultado = perfilReducer(estadoInicial, {
+      type: 'RENOMEAR_PREDEFINICAO',
+      presetId: 'p1',
+      sufixo: 'Trabalho',
+    });
+
+    expect(resultado.presets[0]).toMatchObject({
+      sufixo: 'trabalho',
+      nome: 'pop110i_trabalho',
+    });
+  });
+
+  it('RENOMEAR_PREDEFINICAO rejeita sufixo repetido no mesmo modelo', () => {
+    const perfil = { ...criarPerfilValido(), onboardingConcluido: true };
+    const estadoInicial: EstadoApp = {
+      perfil,
+      presets: [
+        {
+          presetId: 'p1',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
+          criadoEm: '2026-01-01',
+          atualizadoEm: '2026-01-01',
+          perfil,
+        },
+        {
+          presetId: 'p2',
+          nome: 'pop110i_trabalho',
+          sufixo: 'trabalho',
+          criadoEm: '2026-01-02',
+          atualizadoEm: '2026-01-02',
+          perfil,
+        },
+      ],
+      presetAtivoId: 'p1',
+      rascunhoPredefinicao: null,
+    };
+
+    const resultado = perfilReducer(estadoInicial, {
+      type: 'RENOMEAR_PREDEFINICAO',
+      presetId: 'p1',
+      sufixo: 'TRABALHO',
     });
 
     expect(resultado).toBe(estadoInicial);
@@ -972,13 +1217,15 @@ describe('perfilReducer', () => {
       presets: [
         {
           presetId,
-          nome: 'Sync Test',
+          nome: 'pop110i_v1',
+          sufixo: 'v1',
           criadoEm: '2026-01-01',
           atualizadoEm: '2026-01-01',
           perfil: { ...perfilPadrao, trabalho: { ...perfilPadrao.trabalho, kmPorDia: 70 } },
         },
       ],
       presetAtivoId: presetId,
+      rascunhoPredefinicao: null,
     };
     const resultado = perfilReducer(estadoComPreset, { type: 'SET_KM_POR_DIA', valor: 100 });
     expect(resultado.perfil.trabalho.kmPorDia).toBe(100);

@@ -17,13 +17,19 @@ function criarStorageFalso(presets: unknown[], ativoId: string | null): IPerfilS
   };
 }
 
-function presetValido(presetId: string, nome = 'Teste'): PresetEntry {
+function presetValido(presetId: string, sufixo = 'v1'): PresetEntry {
+  const perfil: PerfilUsuario = {
+    ...perfilPadrao,
+    moto: { ...perfilPadrao.moto, marca: 'Honda', modelo: 'pop110i' },
+  };
+
   return {
     presetId,
-    nome,
+    nome: `pop110i_${sufixo}`,
+    sufixo,
     criadoEm: '2026-05-30T00:00:00.000Z',
     atualizadoEm: '2026-05-30T00:00:00.000Z',
-    perfil: perfilPadrao,
+    perfil,
   };
 }
 
@@ -86,20 +92,17 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
 
     expect(estado.presetAtivoId).toBe('p1');
     expect(estado.presets).toHaveLength(1);
-    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(estado.perfil).toEqual(presetValido('p1').perfil);
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
   it('múltiplos presets válidos sem ativo → seleciona presets[0]', () => {
-    const storage = criarStorageFalso(
-      [presetValido('p1', 'Primeiro'), presetValido('p2', 'Segundo')],
-      null,
-    );
+    const storage = criarStorageFalso([presetValido('p1', 'v1'), presetValido('p2', 'v2')], null);
     const estado = criarEstadoInicial(storage);
 
     expect(estado.presetAtivoId).toBe('p1');
     expect(estado.presets).toHaveLength(2);
-    expect(estado.presets[0].nome).toBe('Primeiro');
+    expect(estado.presets[0].nome).toBe('pop110i_v1');
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
@@ -118,7 +121,7 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
 
     expect(estado.presetAtivoId).toBe('p1');
     expect(estado.presets).toHaveLength(1);
-    expect(estado.perfil).toEqual(perfilPadrao);
+    expect(estado.perfil).toEqual(presetValido('p1').perfil);
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
@@ -163,6 +166,23 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
     expect(storage.preservarCorrompido).not.toHaveBeenCalled();
   });
 
+  it('migra presets legados sem sufixo com versões únicas por modelo', () => {
+    const primeiro = presetValido('p1', 'v1');
+    const segundo = presetValido('p2', 'v2');
+    const legadoPrimeiro: Record<string, unknown> = { ...primeiro };
+    const legadoSegundo: Record<string, unknown> = { ...segundo };
+    delete legadoPrimeiro.sufixo;
+    delete legadoSegundo.sufixo;
+    const storage = criarStorageFalso([legadoPrimeiro, legadoSegundo], 'p2');
+
+    const estado = criarEstadoInicial(storage);
+
+    expect(estado.presets.map((preset) => preset.sufixo)).toEqual(['v1', 'v2']);
+    expect(estado.presets.map((preset) => preset.nome)).toEqual(['pop110i_v1', 'pop110i_v2']);
+    expect(estado.presetAtivoId).toBe('p2');
+    expect(storage.salvarPresets).toHaveBeenCalledWith(estado.presets);
+  });
+
   it('preserva referências quando o modelo ainda não possui preset canônico', () => {
     const perfilSemPreset = {
       ...perfilPopComOrfaos('modelo-futuro'),
@@ -172,7 +192,12 @@ describe('criarEstadoInicial - validação + fallback recuperável (ADR-010)', (
         modelo: 'modelo-futuro',
       },
     };
-    const storage = criarStorageFalso([{ ...presetValido('p1'), perfil: perfilSemPreset }], 'p1');
+    const presetSemCatalogo = {
+      ...presetValido('p1'),
+      nome: 'modelo-futuro_v1',
+      perfil: perfilSemPreset,
+    };
+    const storage = criarStorageFalso([presetSemCatalogo], 'p1');
 
     const estado = criarEstadoInicial(storage);
 

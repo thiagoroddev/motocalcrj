@@ -47,6 +47,8 @@ describe('PassoModelo', () => {
       perfil: perfilPadrao,
       presets: [],
       presetAtivoId: null,
+      presetAtivo: null,
+      rascunhoPredefinicao: null,
       temPresetAtivo: false,
       ativarPreset: vi.fn(),
       dispatch: dispatchMock,

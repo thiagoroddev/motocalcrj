@@ -28,14 +28,15 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 - `PerfilReducer` actions que removem Preset cuidam para reposicionar `presetAtivoId`
 - `CARREGAR_PERFIL` recebe apenas `presetId` e o reducer resolve o Preset internamente; id inexistente não altera o estado
 - `criarEstadoInicial` recupera storage parcial selecionando `presets[0]` quando a chave ativa está ausente ou aponta para id inexistente
-- `useEffect` de persistência tem guard: `if (!estado.presetAtivoId) return`
+- `useEffect` de persistência exige `presetAtivoId` e ausência de `rascunhoPredefinicao`
 
 **Como validar:** verificar que toda action que muda `presets` ou `presetAtivoId` mantém a propriedade.
 
 ---
 
 #### INV-PERFIL-2: Persistência Condicional ao Onboarding Completo
-**Regra:** O Perfil só é persistido em `localStorage` quando `presetAtivoId` existe (i.e., onboarding foi completado via `COMMIT_ONBOARDING`).
+**Regra:** O Perfil só é persistido quando `presetAtivoId` existe e não há
+`rascunhoPredefinicao`.
 
 **Por quê:** Dados parciais de onboarding incompleto (Motoboy abandonou no Passo 4) **não devem poluir o storage**. Próxima abertura do app deve mostrar onboarding do zero, não estado bagunçado.
 
@@ -43,12 +44,20 @@ Quando uma invariante é violada, o problema não é "input do usuário ruim" é
 - `useEffect` em `PerfilContext.tsx`:
   ```typescript
   useEffect(() => {
-    if (!estado.presetAtivoId) return  // guard obrigatório
+    if (!estado.presetAtivoId || estado.rascunhoPredefinicao) return
     storageRef.current.salvarPresets(estado.presets)
   }, [estado])
   ```
 
 ⚠️ **Cuidado:** remover esse guard "para simplificar" é violação grave. Foi tomada decisão consciente de domínio.
+
+#### INV-PERFIL-2A: Sufixo único por modelo
+
+**Regra:** predefinições do mesmo `perfil.moto.modelo` não podem compartilhar o mesmo sufixo após
+normalização de caixa e espaços. O limite é 15 caracteres.
+
+**Onde é protegida:** helpers em `src/utils/predefinicoes.ts`, criação, renomeação e normalização da
+fronteira de carga.
 
 ---
 

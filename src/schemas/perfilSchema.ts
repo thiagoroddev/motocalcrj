@@ -232,7 +232,12 @@ export const perfilSchema = z
 export const presetEntrySchema = z.object({
   presetId: z.string(),
   nome: z.string(),
+  sufixo: z.string(),
   criadoEm: z.string(),
   atualizadoEm: z.string(),
   perfil: perfilSchema,
+});
+
+export const presetEntryPersistidoSchema = presetEntrySchema.extend({
+  sufixo: z.string().optional(),
 });

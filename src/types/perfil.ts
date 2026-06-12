@@ -211,9 +211,15 @@ export interface PerfilUsuario {
 export interface PresetEntry {
   presetId: string;
   nome: string;
+  sufixo: string;
   criadoEm: string;
   atualizadoEm: string;
   perfil: PerfilUsuario;
+}
+
+export interface RascunhoPredefinicao {
+  sufixo: string;
+  presetAtivoAnteriorId: string | null;
 }
 
 // ──────────────────────────────────────────────
@@ -222,6 +228,8 @@ export interface PresetEntry {
 
 export type PerfilAction =
   // Onboarding
+  | { type: 'INICIAR_NOVA_PREDEFINICAO'; modeloId: string; sufixo: string }
+  | { type: 'CANCELAR_NOVA_PREDEFINICAO' }
   | { type: 'SET_ONBOARDING_CAMPO'; campo: string; valor: unknown }
   | { type: 'COMMIT_ONBOARDING' }
 
@@ -295,5 +303,6 @@ export type PerfilAction =
 
   // Presets
   | { type: 'CARREGAR_PERFIL'; presetId: string }
+  | { type: 'RENOMEAR_PREDEFINICAO'; presetId: string; sufixo: string }
   | { type: 'RESETAR_PERFIL' }
   | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario };

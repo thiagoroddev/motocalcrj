@@ -8,7 +8,8 @@
 
 ## Conceito no Mundo Real
 
-O PresetEntry e a **pasta de configuracao** de um Motoboy. Cada preset guarda um PerfilUsuario completo e metadados (nome, datas). O app trabalha sempre com **um preset ativo** por vez.
+O PresetEntry e a **pasta de configuracao** do usuario. Cada entrada guarda um PerfilUsuario completo,
+UUID, sufixo e datas. Pode haver varias entradas para o mesmo modelo.
 
 ---
 
@@ -18,6 +19,7 @@ O PresetEntry e a **pasta de configuracao** de um Motoboy. Cada preset guarda um
 export interface PresetEntry {
   presetId: string;
   nome: string;
+  sufixo: string;
   criadoEm: string;
   atualizadoEm: string;
   perfil: PerfilUsuario;
@@ -38,6 +40,7 @@ A identidade e `presetId`. Dois presets com os mesmos dados mas IDs diferentes s
 | ------------------- | ----------------------------------------------- |
 | `COMMIT_ONBOARDING` | Cria o primeiro preset                          |
 | `CARREGAR_PERFIL`   | Troca o preset ativo (carrega perfil)           |
+| `RENOMEAR_PREDEFINICAO` | Edita o sufixo e regenera o nome técnico   |
 | `IMPORTAR_PERFIL`   | Cria preset a partir de arquivo e o torna ativo |
 | `RESETAR_PERFIL`    | Remove todos os presets                         |
 
@@ -53,9 +56,10 @@ A identidade e `presetId`. Dois presets com os mesmos dados mas IDs diferentes s
 
 **Regra:** `criadoEm` e `atualizadoEm` devem estar em formato ISO 8601.
 
-### INV-PRESET-3: nome legivel
+### INV-PRESET-3: sufixo valido e unico por modelo
 
-**Regra:** `nome` nao deve ser vazio (usado na UI para identificacao).
+**Regra:** `sufixo` tem no maximo 15 caracteres e nao se repete no mesmo modelo. `nome` e derivado
+como `<modeloId>_<sufixo>`.
 
 ---
 

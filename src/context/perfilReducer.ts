@@ -3,12 +3,19 @@ import type {
   PresetEntry,
   PerfilAction,
   PecaOverride,
+  RascunhoPredefinicao,
   ServicoIndependente,
 } from '../types/perfil';
 import { perfilSchema } from '../schemas/perfilSchema';
 import { CATALOGO } from '../data/catalogoModelos';
 import { dadosRJ } from '../data/dadosRJ';
 import { perfilProntoParaCommit } from '../utils/onboardingGuards';
+import {
+  gerarNomePredefinicao,
+  normalizarSufixoPredefinicao,
+  obterErroSufixoPredefinicao,
+  sugerirSufixoPredefinicao,
+} from '../utils/predefinicoes';
 import {
   perfilPadrao,
   SERVICOS_INDEPENDENTES_PADRAO,
@@ -20,12 +27,14 @@ export interface EstadoApp {
   perfil: PerfilUsuario;
   presets: PresetEntry[];
   presetAtivoId: string | null;
+  rascunhoPredefinicao: RascunhoPredefinicao | null;
 }
 
 export const estadoPadrao: EstadoApp = {
   perfil: perfilPadrao,
   presets: [],
   presetAtivoId: null,
+  rascunhoPredefinicao: null,
 };
 
 // ──────────────────────────────────────────────
@@ -79,23 +88,71 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     return {
       ...state,
       perfil: novoPerfil,
-      presets: state.presetAtivoId
-        ? state.presets.map((p) =>
-            p.presetId === state.presetAtivoId
-              ? { ...p, perfil: novoPerfil, atualizadoEm: new Date().toISOString() }
-              : p,
-          )
-        : state.presets,
+      presets:
+        state.presetAtivoId && !state.rascunhoPredefinicao
+          ? state.presets.map((p) =>
+              p.presetId === state.presetAtivoId
+                ? { ...p, perfil: novoPerfil, atualizadoEm: new Date().toISOString() }
+                : p,
+            )
+          : state.presets,
     };
   };
 
   switch (action.type) {
     // ── Onboarding ─────────────────────────────
+    case 'INICIAR_NOVA_PREDEFINICAO': {
+      const modelo = CATALOGO[action.modeloId];
+      const sufixo = normalizarSufixoPredefinicao(action.sufixo);
+      const erroSufixo = obterErroSufixoPredefinicao(sufixo, action.modeloId, state.presets);
+
+      if (!modelo || erroSufixo) {
+        return state;
+      }
+
+      return {
+        perfil: {
+          ...perfilPadrao,
+          moto: {
+            ...perfilPadrao.moto,
+            marca: modelo.marca,
+            modelo: modelo.id,
+          },
+        },
+        presets: state.presets,
+        presetAtivoId: state.presetAtivoId,
+        rascunhoPredefinicao: {
+          sufixo,
+          presetAtivoAnteriorId: state.presetAtivoId,
+        },
+      };
+    }
+
+    case 'CANCELAR_NOVA_PREDEFINICAO': {
+      if (!state.rascunhoPredefinicao) {
+        return state;
+      }
+
+      const presetAnterior = state.presets.find(
+        (preset) => preset.presetId === state.rascunhoPredefinicao?.presetAtivoAnteriorId,
+      );
+
+      return {
+        ...state,
+        perfil: presetAnterior?.perfil ?? perfilPadrao,
+        presetAtivoId: presetAnterior?.presetId ?? null,
+        rascunhoPredefinicao: null,
+      };
+    }
+
     case 'SET_ONBOARDING_CAMPO':
       return comPerfil({ ...state.perfil, [action.campo]: action.valor } as PerfilUsuario);
 
     case 'COMMIT_ONBOARDING': {
-      if (!perfilProntoParaCommit(state.perfil)) {
+      if (
+        !perfilProntoParaCommit(state.perfil) ||
+        (state.perfil.onboardingConcluido && !state.rascunhoPredefinicao)
+      ) {
         return state;
       }
 
@@ -141,12 +198,19 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       };
       const agora = new Date().toISOString();
       const novoId = crypto.randomUUID();
-      const nomePreset =
-        novoPerfil.apelido ??
-        `${novoPerfil.moto.marca} ${novoPerfil.moto.modelo} ${novoPerfil.moto.ano}`;
+      const sufixo =
+        state.rascunhoPredefinicao?.sufixo ??
+        sugerirSufixoPredefinicao(novoPerfil.moto.modelo, state.presets);
+      const erroSufixo = obterErroSufixoPredefinicao(sufixo, novoPerfil.moto.modelo, state.presets);
+
+      if (erroSufixo) {
+        return state;
+      }
+
       const novoPreset: PresetEntry = {
         presetId: novoId,
-        nome: nomePreset,
+        nome: gerarNomePredefinicao(novoPerfil.moto.modelo, sufixo),
+        sufixo,
         criadoEm: agora,
         atualizadoEm: agora,
         perfil: novoPerfil,
@@ -155,6 +219,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         perfil: novoPerfil,
         presets: [...state.presets, novoPreset],
         presetAtivoId: novoId,
+        rascunhoPredefinicao: null,
       };
     }
 
@@ -619,11 +684,54 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
 
       const validacao = perfilSchema.safeParse(preset.perfil);
       if (!validacao.success) return state;
-      return { ...state, perfil: preset.perfil, presetAtivoId: preset.presetId };
+      return {
+        ...state,
+        perfil: preset.perfil,
+        presetAtivoId: preset.presetId,
+        rascunhoPredefinicao: null,
+      };
+    }
+
+    case 'RENOMEAR_PREDEFINICAO': {
+      const preset = state.presets.find((item) => item.presetId === action.presetId);
+      if (!preset || state.rascunhoPredefinicao) {
+        return state;
+      }
+
+      const sufixo = normalizarSufixoPredefinicao(action.sufixo);
+      const erroSufixo = obterErroSufixoPredefinicao(
+        sufixo,
+        preset.perfil.moto.modelo,
+        state.presets,
+        preset.presetId,
+      );
+
+      if (erroSufixo) {
+        return state;
+      }
+
+      return {
+        ...state,
+        presets: state.presets.map((item) =>
+          item.presetId === preset.presetId
+            ? {
+                ...item,
+                sufixo,
+                nome: gerarNomePredefinicao(item.perfil.moto.modelo, sufixo),
+                atualizadoEm: new Date().toISOString(),
+              }
+            : item,
+        ),
+      };
     }
 
     case 'RESETAR_PERFIL':
-      return { perfil: perfilPadrao, presets: [], presetAtivoId: null };
+      return {
+        perfil: perfilPadrao,
+        presets: [],
+        presetAtivoId: null,
+        rascunhoPredefinicao: null,
+      };
 
     case 'IMPORTAR_PERFIL': {
       const validacao = perfilSchema.safeParse(action.perfil);
@@ -632,12 +740,11 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
       const agora = new Date().toISOString();
       const id = crypto.randomUUID();
       const perfilImportado = action.perfil;
-      const nome =
-        perfilImportado.apelido ??
-        `${perfilImportado.moto.marca} ${perfilImportado.moto.modelo} importado`;
+      const sufixo = sugerirSufixoPredefinicao(perfilImportado.moto.modelo, state.presets);
       const importado: PresetEntry = {
         presetId: id,
-        nome,
+        nome: gerarNomePredefinicao(perfilImportado.moto.modelo, sufixo),
+        sufixo,
         criadoEm: agora,
         atualizadoEm: agora,
         perfil: perfilImportado,
@@ -646,6 +753,7 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         perfil: perfilImportado,
         presets: [...state.presets, importado],
         presetAtivoId: id,
+        rascunhoPredefinicao: null,
       };
     }
 

@@ -12,18 +12,6 @@ Obedeça essa ordem:
 **Escopo futuro (registrado, não priorizado):** ajuste manual de frequência de troca (ver ADR-006, decisão 8 se implementado, deve gravar override de intervalo, nunca campo de frequência paralelo). Peças rastreáveis no card "Últimas manutenções" vela, filtro de ar, sapatas, bateria, kit embreagem, kit cilindro e retíficas absorvidas pela TASK-RF-6.13 (escopo estendido em 27/05/26 após uso real; kit revisão removido do card pela TASK-RF-6.24).
 
 
-#### TASK-BG-031 - Mudar veículo: onboarding do novo modelo herda dados do preset anterior
-
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/G
-- **Data-hora origem:** 09/06/26 15:28
-- **Dependências:** -
-- **REQ/ADR/DT:** -
-- **Observações:** Na funcionalidade "mudar veículo" (criar/salvar a configuração de outro modelo e alternar entre elas mantendo tudo que foi editado), o onboarding do novo modelo abre **pré-preenchido com os dados do preset/perfil anterior**, contaminando os valores padrão do novo modelo. Esperado: o novo modelo deve **sempre iniciar com os valores padrão do seu próprio preset**, e **sem apagar** a configuração do outro modelo — o usuário volta a ela depois para comparar, sem ter que preencher tudo de novo. Descoberto em uso real; gera estimativa errada para o veículo recém-criado. Cuidar para a correção não vazar no sentido oposto (não sobrescrever/limpar a config salva do outro veículo).
-
 #### Geradas pela Revisão Geral REV-003 08/06/26
 
 
@@ -31,13 +19,26 @@ Obedeça essa ordem:
 
 | ID          | Título                                            | Valor      | Urgência | Esforço | Dependências | Status |
 | ----------- | ------------------------------------------------- | ---------- | -------- | ------- | ------------ | ------ |
-| TASK-RF-7.1 | Export/Import de presets (.json)                  | Importante | Normal   | G       | TASK-RF-6.3  | [ ]    |
+| TASK-RF-7.1 | Exportar/importar predefinições individuais (.json) | Importante | Normal | G | TASK-BG-031 | [ ] |
+
+> Cada arquivo representa uma `PresetEntry`; a importação cria novo UUID e resolve colisões de sufixo
+> sem sobrescrever silenciosamente outra predefinição. Referências: RF-PERF-03, RF-EXP-01 e ADR-021.
 
 ### Refatorações da fase
 
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | TASK-REF-43 | Tornar `IMPORTAR_PERFIL` determinístico e normalizar antes do dispatch | Standard | Importante | Normal | M/M | TASK-RF-7.1 | ADR-010 | `[ ]` | 06/06/26 14:42 |
+
+## Perfil e predefinições
+
+| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TASK-RF-6.35 | Deletar predefinição não ativa | Standard | Importante | Normal | P/M | TASK-BG-031 | RF-PERF-02, ADR-021 | `[ ]` | 12/06/26 13:50 |
+
+> Renomear "Apagar Tudo" para "Deletar predefinição" e abrir um diálogo com as predefinições criadas
+> pelo usuário. A ativa aparece identificada e não pode ser selecionada para exclusão; somente uma
+> predefinição não ativa pode ser removida por vez.
 
 
 ---

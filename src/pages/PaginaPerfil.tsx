@@ -5,6 +5,7 @@ import { usePerfil } from '../hooks/usePerfil';
 import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { NavBar } from '../components/layout/NavBar';
 import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import {
   Dialog,
@@ -15,11 +16,13 @@ import {
   DialogFooter,
 } from '../components/ui/dialog';
 import { getNomeModelo } from '../data/catalogoModelos';
+import { DialogCriarPredefinicao } from '../components/perfil/predefinicoes/DialogCriarPredefinicao';
+import { DialogAlternarPredefinicao } from '../components/perfil/predefinicoes/DialogAlternarPredefinicao';
 
-type DialogAberto = 'apagar' | 'mudarVeiculo' | null;
+type DialogAberto = 'apagar' | 'criarPredefinicao' | 'alternarPredefinicao' | null;
 
 export function PaginaPerfil() {
-  const { perfil, dispatch } = usePerfil();
+  const { perfil, presets, presetAtivo, dispatch } = usePerfil();
   const navigate = useNavigate();
   const [dialog, setDialog] = useState<DialogAberto>(null);
 
@@ -33,9 +36,10 @@ export function PaginaPerfil() {
     navigate('/onboarding/modelo', { replace: true });
   }
 
-  function confirmarMudarVeiculo() {
+  function confirmarCriarPredefinicao(modeloId: string, sufixo: string) {
     setDialog(null);
-    navigate('/onboarding/modelo');
+    dispatch({ type: 'INICIAR_NOVA_PREDEFINICAO', modeloId, sufixo });
+    navigate('/onboarding/ano');
   }
 
   return (
@@ -48,7 +52,14 @@ export function PaginaPerfil() {
           <p className="label-neutro mb-2">Predefinição Atual</p>
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h2 className="text-foreground text-lg font-bold">{nomePreset}</h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-foreground text-lg font-bold">{nomePreset}</h2>
+                {presetAtivo && (
+                  <Badge className="bg-primary/15 text-primary hover:bg-primary/15">
+                    {presetAtivo.sufixo}
+                  </Badge>
+                )}
+              </div>
               <p className="text-muted-foreground text-sm">Ano: {perfil.moto.ano}</p>
               <p className="text-muted-foreground text-sm">Autonomia: {consumo} km/l</p>
             </div>
@@ -70,14 +81,19 @@ export function PaginaPerfil() {
             <Button
               variant="outline"
               className="w-full justify-between"
-              onClick={() => setDialog('mudarVeiculo')}
+              onClick={() => setDialog('criarPredefinicao')}
             >
-              <span>Mudar veículo</span>
+              <span>Criar nova predefinição</span>
               <IcMais />
             </Button>
 
-            <Button variant="outline" className="w-full justify-between opacity-40" disabled>
-              <span>Mudar predefinição</span>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              disabled={presets.length < 2}
+              onClick={() => setDialog('alternarPredefinicao')}
+            >
+              <span>Alternar predefinição</span>
               <IcTrocar />
             </Button>
 
@@ -161,27 +177,16 @@ export function PaginaPerfil() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog: Mudar Veículo */}
-      <Dialog
-        open={dialog === 'mudarVeiculo'}
-        onOpenChange={(aberto) => !aberto && setDialog(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Mudar Veículo</DialogTitle>
-            <DialogDescription>
-              Isso vai iniciar a configuração para um novo veículo. Sua predefinição atual (
-              {nomePreset}) será mantida e você poderá alternar entre as duas depois.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(null)}>
-              Cancelar
-            </Button>
-            <Button onClick={confirmarMudarVeiculo}>Configurar novo veículo</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {dialog === 'criarPredefinicao' && (
+        <DialogCriarPredefinicao
+          onClose={() => setDialog(null)}
+          onConfirmar={confirmarCriarPredefinicao}
+        />
+      )}
+
+      {dialog === 'alternarPredefinicao' && (
+        <DialogAlternarPredefinicao onClose={() => setDialog(null)} />
+      )}
     </div>
   );
 }

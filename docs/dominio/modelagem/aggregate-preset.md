@@ -3,13 +3,14 @@
 > **Status:** Engenharia reversa baseada em código real (`src/types/perfil.ts`).
 > **Tipo:** Aggregate Root raiz do aggregate de dados persistidos.
 > **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `estimamoto:v1:presets`.
-> **Última atualização:** 2026-06-06 (TASK-REF-41.2).
+> **Última atualização:** 2026-06-12 (TASK-BG-031 / ADR-021).
 
 ---
 
 ## Conceito no Mundo Real
 
-O `PresetEntry` é **o envelope de uma "configuração completa de uso" do MotoCalc**. Cada Motoboy pode ter múltiplas configurações salvas (uma para a moto principal, outra para uma reserva, outra para simular cenários) e o app trabalha sempre com **uma delas ativa por vez**.
+O `PresetEntry` é **o envelope de uma configuração completa de uso**. O usuário pode ter múltiplas
+configurações, inclusive mais de uma para o mesmo modelo, e o app trabalha com uma delas ativa por vez.
 
 Pense num PresetEntry como uma "pasta de configuração nomeada". Dentro da pasta vivem **todos os dados** do Motoboy para aquela situação: qual moto é, como ele trabalha, custos financeiros, histórico, ajustes pessoais. Trocar de Preset é como abrir outra pasta com outra realidade do mesmo Motoboy.
 
@@ -34,6 +35,7 @@ Pense num PresetEntry como uma "pasta de configuração nomeada". Dentro da past
 export interface PresetEntry {
   presetId: string;
   nome: string;
+  sufixo: string;
   criadoEm: string;
   atualizadoEm: string;
   perfil: PerfilUsuario;
@@ -43,7 +45,8 @@ export interface PresetEntry {
 | Atributo       | Tipo            | Descrição                                                                        |
 | -------------- | --------------- | -------------------------------------------------------------------------------- |
 | `presetId`     | string          | Identificador único usado em `estimamoto:v1:presetAtivo` para apontar qual está ativo |
-| `nome`         | string          | Nome amigável dado pelo Motoboy ("Honda Pop 2024", "Biz Reserva")                |
+| `nome`         | string          | Nome técnico derivado como `<modeloId>_<sufixo>`                                 |
+| `sufixo`       | string          | Identificação editável, máxima de 15 caracteres e única dentro do mesmo modelo   |
 | `criadoEm`     | string (ISO)    | Data de criação do PresetEntry                                                   |
 | `atualizadoEm` | string (ISO)    | Última modificação                                                               |
 | `perfil`       | `PerfilUsuario` | Conteúdo completo todos os dados do Motoboy                                      |
@@ -67,7 +70,9 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline público inicial. Chaves antigas `motocalc:v5:*` são ignoradas. A versão real do schema vive em `perfil.schemaVersion` dentro de cada `PresetEntry` - atual: `3`. Na carga, o envelope completo é validado sem migração pré-lançamento.
+O namespace atual é `estimamoto:v1:*`. A versão do perfil vive em `perfil.schemaVersion`. O envelope
+aceita, na fronteira de carga, entradas legadas sem `sufixo`; elas recebem versões determinísticas por
+modelo e são regravadas na forma canônica.
 
 ---
 
@@ -77,9 +82,12 @@ O namespace atual é `estimamoto:v1:*`, criado pela TASK-REF-30 como baseline p�
 
 | Action              | Comportamento                                                                        |
 | ------------------- | ------------------------------------------------------------------------------------ |
-| `COMMIT_ONBOARDING` | Cria o primeiro `PresetEntry` ao final do Onboarding e dispara primeira persistência |
+| `INICIAR_NOVA_PREDEFINICAO` | Inicia rascunho isolado sem alterar a entrada ativa |
+| `CANCELAR_NOVA_PREDEFINICAO` | Descarta o rascunho e restaura a entrada anterior |
+| `COMMIT_ONBOARDING` | Cria um novo `PresetEntry` ao final do onboarding |
 | `CARREGAR_PERFIL`   | Carrega um `PresetEntry` existente como ativo (alternar entre Presets)               |
-| `IMPORTAR_PERFIL`   | Substitui o ativo por um perfil importado de arquivo `.json`                         |
+| `RENOMEAR_PREDEFINICAO` | Atualiza sufixo e nome técnico |
+| `IMPORTAR_PERFIL`   | Cria e ativa uma entrada para o perfil importado                                     |
 | `RESETAR_PERFIL`    | "Apagar Tudo" remove todos os Presets do storage                                     |
 
 **As demais Actions do reducer modificam o `PerfilUsuario` dentro do PresetEntry ativo**, atualizando `atualizadoEm` e disparando re-persistência.
@@ -101,7 +109,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 
 - Reducer trata operações de remoção e mantém a consistência
 - `criarEstadoInicial` recupera armazenamento parcial escolhendo `presets[0]` quando a chave ativa está ausente ou aponta para id inexistente
-- `PerfilContext` tem guard `if (!estado.presetAtivoId) return` antes de persistir
+- `PerfilContext` exige ativo e ausência de rascunho antes de persistir
 - `useEffect` de persistência em `PerfilContext.tsx`
 
 ### INV-PRESET-2: Persistência Condicional ao Onboarding Completo
@@ -139,6 +147,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 export interface PresetEntry {
   presetId: string;
   nome: string;
+  sufixo: string;
   criadoEm: string;
   atualizadoEm: string;
   perfil: PerfilUsuario;

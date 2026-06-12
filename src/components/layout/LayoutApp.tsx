@@ -4,6 +4,7 @@ import { getNomeModelo } from '../../data/catalogoModelos';
 import { kmFormatado } from '../../utils/formatters';
 import { NavBar } from './NavBar';
 import { PopupAjuda } from '../PopupAjuda';
+import { Badge } from '../ui/badge';
 import type { ChaveAjuda } from '../../data/conteudoAjuda';
 
 function resolverChaveAjuda(pathname: string): ChaveAjuda {
@@ -14,7 +15,7 @@ function resolverChaveAjuda(pathname: string): ChaveAjuda {
 }
 
 export function LayoutApp() {
-  const { perfil } = usePerfil();
+  const { perfil, presetAtivo } = usePerfil();
   const { pathname } = useLocation();
   const chaveAjuda = resolverChaveAjuda(pathname);
   const nomeModelo = getNomeModelo(perfil.moto.modelo);
@@ -39,9 +40,16 @@ export function LayoutApp() {
             aria-label="Editar perfil e modelo"
             className="block py-1 -my-1 hover:underline underline-offset-2 decoration-muted-foreground/40"
           >
-            <p className="text-foreground text-sm font-semibold truncate">
-              {perfil.moto.marca}: {nomeModelo}
-            </p>
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="truncate text-sm font-semibold text-foreground">
+                {perfil.moto.marca}: {nomeModelo}
+              </span>
+              {presetAtivo && (
+                <Badge className="shrink-0 bg-primary/15 text-primary hover:bg-primary/15">
+                  {presetAtivo.sufixo}
+                </Badge>
+              )}
+            </span>
           </Link>
           <p className="text-muted-foreground/50 text-xs">
             {perfil.moto.ano} -{' '}

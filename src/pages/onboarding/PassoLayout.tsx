@@ -1,6 +1,8 @@
 ﻿import type { ReactNode } from 'react';
 import { Button } from '../../components/ui/button';
 import { useOnboarding } from './FluxoOnboarding';
+import { useNavigate } from 'react-router-dom';
+import { usePerfil } from '../../hooks/usePerfil';
 
 interface Props {
   titulo: string;
@@ -20,16 +22,36 @@ export function PassoLayout({
   children,
 }: Props) {
   const { config, irParaAnterior, temAnterior } = useOnboarding();
+  const { rascunhoPredefinicao, dispatch } = usePerfil();
+  const navigate = useNavigate();
   // Rotas semânticas (ADR-020): cada passo mostra "Próximo"; a Confirmação define
   // seu próprio rótulo via `textoBotao`.
   const labelBotao = textoBotao ?? 'Próximo';
+
+  function cancelarCriacao() {
+    dispatch({ type: 'CANCELAR_NOVA_PREDEFINICAO' });
+    navigate('/perfil', { replace: true });
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col ">
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-1">
           <span className="text-label-sm text-muted-foreground">{config.label}</span>
-          <span className="text-label-sm text-muted-foreground">{config.percentual}%</span>
+          <div className="flex items-center gap-2">
+            {rascunhoPredefinicao && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs text-muted-foreground"
+                onClick={cancelarCriacao}
+              >
+                Cancelar criação
+              </Button>
+            )}
+            <span className="text-label-sm text-muted-foreground">{config.percentual}%</span>
+          </div>
         </div>
         <div className="h-1 bg-muted rounded-full overflow-hidden">
           <div

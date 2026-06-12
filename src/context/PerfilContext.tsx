@@ -2,10 +2,11 @@ import React, { createContext, useContext, useEffect, useReducer, useRef } from 
 import type { PerfilAction } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
-import { presetEntrySchema } from '../schemas/perfilSchema';
+import { presetEntryPersistidoSchema } from '../schemas/perfilSchema';
 import { normalizarPerfilContraPreset } from '../services/normalizarPerfilContraPreset';
 import { obterPreset } from '../data/repositorioPresets';
 import { estadoPadrao, perfilReducer, type EstadoApp } from './perfilReducer';
+import { normalizarPredefinicoesPersistidas } from '../utils/predefinicoes';
 
 // Re-exports preservam a API pública usada pelos consumidores existentes.
 export {
@@ -55,8 +56,10 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
     }
 
     let houveLimpeza = false;
-    const presets = presetsRaw.map((p) => {
-      const validado = presetEntrySchema.parse(p);
+    const validados = presetsRaw.map((p) => presetEntryPersistidoSchema.parse(p));
+    const resultadoNomes = normalizarPredefinicoesPersistidas(validados);
+    houveLimpeza = resultadoNomes.houveAlteracao;
+    const presets = resultadoNomes.presets.map((validado) => {
       const presetCanonico = obterPreset(validado.perfil.moto.modelo);
 
       if (!presetCanonico) {
@@ -81,7 +84,12 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
       }
     }
 
-    return { perfil: preset.perfil, presets, presetAtivoId: preset.presetId };
+    return {
+      perfil: preset.perfil,
+      presets,
+      presetAtivoId: preset.presetId,
+      rascunhoPredefinicao: null,
+    };
   } catch {
     // Dado persistido inválido/corrompido: preserva o blob para diagnóstico e
     // cai para o estado padrão - o app nunca trava (ADR-010, decisão 2).
@@ -97,14 +105,14 @@ export function PerfilProvider({ children, storage }: PerfilProviderProps) {
     criarEstadoInicial(storageRef.current),
   );
 
-  // Persiste apenas após COMMIT_ONBOARDING (presetAtivoId só existe depois do commit)
+  // O rascunho nunca é persistido nem sincronizado com a predefinição anterior.
   const primeiraMontagem = useRef(true);
   useEffect(() => {
     if (primeiraMontagem.current) {
       primeiraMontagem.current = false;
       return;
     }
-    if (!estado.presetAtivoId) {
+    if (!estado.presetAtivoId || estado.rascunhoPredefinicao) {
       return;
     }
     try {

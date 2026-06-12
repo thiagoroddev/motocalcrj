@@ -166,3 +166,4 @@
 | TASK-BG-026 | Melhorias visuais e legendas na seção de Manutenção | [2026-06-08--18h42--TASK-BG-026.md](./2026-06-08--18h42--TASK-BG-026.md) |
 | TASK-BG-029 | Categoria Outros: renomear, bloquear toggles filhos e corrigir Donut < 1% | [2026-06-08--19h45--TASK-BG-029.md](./2026-06-08--19h45--TASK-BG-029.md) |
 | TASK-BG-030 | Distribuição de Custos: porcentagens com 1 casa decimal em vez de arredondamento inteiro | [2026-06-08--20h03--TASK-BG-030.md](./2026-06-08--20h03--TASK-BG-030.md) |
+| TASK-BG-031 | Criar e alternar múltiplas predefinições por modelo | [2026-06-12--14h20--TASK-BG-031.md](./2026-06-12--14h20--TASK-BG-031.md) |
