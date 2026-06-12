@@ -1,3 +1,52 @@
+Aqui está a tabela mestre unificada (Versão 1) estruturada em Markdown para o Obsidian, reunindo todos os componentes, compatibilidades e as respetivas médias de preços da linha Honda:
+
+| Categoria do Item | Grupo / Modelos Confirmados | Preço Médio (R$) |
+| --- | --- | --- |
+| **Óleo do Motor** | Padrão 10W-30 (POP, CG 160, Bros, XRE 190) — *Ref. 1 Litro* | 53,00 |
+| **Óleo do Motor** | CB250F Twister — *Ref. Requisito de 2 Litros* | 106,00 |
+| **Disco Freio Dianteiro** | Grupo Street 160 (CG 160 Fan, CG 160 Titan) | 501,00 |
+| **Disco Freio Dianteiro** | Grupo Trail (NXR160 Bros ESDD, XRE 190 ABS) | 762,00 |
+| **Disco Freio Dianteiro** | CB250F Twister (Exclusivo) | 576,00 |
+| **Pastilha Dianteira** | Grupo Street 160 (CG 160 Fan, CG 160 Titan) | 211,00 |
+| **Pastilha Dianteira** | Grupo Trail (NXR160 Bros ESDD, XRE 190 ABS) | 211,00 |
+| **Pastilha Dianteira** | CB250F Twister (Exclusivo) | 269,00 |
+| **Disco Freio Traseiro** | Grupo Trail (NXR160 Bros ESDD, XRE 190 ABS) | 786,00 |
+| **Disco Freio Traseiro** | CB250F Twister (Exclusivo) | 727,00 |
+| **Pastilha Traseira** | Grupo Trail e Twister (Bros, XRE 190, CB250F) | 222,00 |
+| **Sapata Dianteira** | Grupo Tambor Dianteiro (POP 110i, CG 160 Start) | 89,00 |
+| **Sapata Traseira** | Grupo Tambor Traseiro (POP, Start, Fan, Titan) | 80,00 |
+| **Kit Relação** | POP 110i (Exclusivo - 14/34 dentes) | 230,00 |
+| **Kit Relação** | Linha CG 160 (Start, Fan, Titan - 15/44 dentes) | 307,00 |
+| **Kit Relação** | Linha Trail (Bros 160, XRE 190 - 16/48 dentes) | 314,00 |
+| **Kit Relação** | CB250F Twister (Exclusivo - 13/40 dentes) | 312,00 |
+| **Kit Embreagem** | Grupo 160cc / 190cc (CG 160, Bros 160, XRE 190) | 312,00 |
+| **Kit Embreagem** | POP 110i (Exclusivo) | 305,00 |
+| **Kit Embreagem** | CB250F Twister (Exclusivo) | 1.054,00 |
+| **Caixa de Direção** | Grupo Street 160 (CG 160 Start, Fan, Titan) | 120,00 |
+| **Caixa de Direção** | Grupo Trail (NXR160 Bros, XRE 190 ABS) | 144,00 |
+| **Caixa de Direção** | POP 110i (Exclusivo) | 102,00 |
+| **Caixa de Direção** | CB250F Twister (Exclusivo) | 308,00 |
+| **Kit Cilindro** | Bloco 160cc (CG 160 Start/Fan/Titan, NXR160 Bros) | 563,00 |
+| **Kit Cilindro** | POP 110i (Exclusivo) | 642,19 |
+| **Kit Cilindro** | XRE 190 ABS (Exclusivo) | 668,00 |
+| **Kit Cilindro** | CB250F Twister (Exclusivo) | 797,54 |
+| **Pneu Traseiro** | Medida 90/90-18 (CG 160 Start, CG 160 Fan) | 311,00 |
+| **Pneu Traseiro** | Medida 110/90-17 (NXR160 Bros, XRE 190 ABS) | 492,00 |
+| **Pneu Traseiro** | Medida 80/100-14 (POP 110i - Exclusivo) | 245,00 |
+| **Pneu Traseiro** | Medida 100/80-18 (CG 160 Titan - Exclusivo) | 324,00 |
+| **Pneu Traseiro** | Medida 140/70R17 (CB250F Twister - Exclusivo) | 518,00 |
+| **Pneu Dianteiro** | Medida 80/100-18 (CG 160 Start, Fan, Titan) | 280,00 |
+| **Pneu Dianteiro** | Medida 90/90-19 (NXR160 Bros, XRE 190 ABS) | 398,00 |
+| **Pneu Dianteiro** | Medida 60/100-17 (POP 110i - Exclusivo) | 209,00 |
+| **Pneu Dianteiro** | Medida 110/70R17 (CB250F Twister - Exclusivo) | 392,00 |
+| **Bateria** | Grupo 4Ah DTZ5 (POP, CG 160, Bros 160) | 400,30 |
+| **Bateria** | Grupo 5Ah DTZ6 (XRE 190, CB250F Twister) | 472,60 |
+
+*(Nota: Os modelos POP 110i e CG 160 Start utilizam sistema mecânico de tambor/sapata nos freios dianteiro e traseiro; as versões Fan e Titan utilizam tambor exclusivamente na roda traseira).*
+
+
+---------------------------------------
+
 # Estrutura de Compartilhamento de Peças - Honda
 
 ## Óleo do Motor

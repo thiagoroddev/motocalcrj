@@ -1,3 +1,63 @@
+Segue a tabela em Markdown otimizada para o Obsidian, contendo apenas os agrupamentos/modelos e os respetivos preços médios calculados a partir da sua lista:
+
+| **Categoria do Item**      | **Grupo / Modelos Confirmados**                       | **Preço Médio (R$)** |
+| -------------------------- | ----------------------------------------------------- | -------------------- |
+| **Óleo do Motor**          | Grupo 125/150 (Factor, Fazer 150, Crosser, FZ15)      | 58,00                |
+| **Óleo do Motor**          | Grupo 250 (Fazer 250, FZ25, Lander) — _Ref. 2 Litros_ | 100,00               |
+| **Bateria**                | Grupo XTZ6L (Factor, Fazer 150, Crosser, FZ15)        | 231,00               |
+| **Bateria**                | Grupo XTZ7L / 6Ah (FZ25, Lander 250)                  | 200,00               |
+| **Bateria**                | Fazer 250 2016 (XTZ-DL 6Ah)                           | 226,00               |
+| **Kit Cilindro**           | Grupo 125 (Factor 125)                                | 358,00               |
+| **Kit Cilindro**           | Grupo 150 (Factor 150, Fazer 150, Crosser, FZ15)      | 727,00               |
+| **Kit Cilindro**           | Grupo 250 (Fazer 250, FZ25, Lander)                   | 676,00               |
+| **Kit Embreagem**          | Grupo 125 (Factor 125)                                | 425,00               |
+| **Kit Embreagem**          | Grupo 150 (Factor 150, Fazer 150, Crosser, FZ15)      | 328,00               |
+| **Kit Embreagem**          | Grupo 250 (Fazer 250, FZ25, Lander)                   | 1.469,00             |
+| **Lona de Freio Traseira** | Grupo Tambor (Factor 125/150, Fazer 150)              | 56,00                |
+| **Pneu Dianteiro**         | Grupo 80/100-18 (Factor 125, Factor 150, Fazer 150)   | 280,00               |
+| **Pneu Dianteiro**         | Crosser 150 (Especificação Geral)                     | 2.407,00             |
+| **Pneu Dianteiro**         | Grupo 100/80-17 (FZ15, FZ25, Fazer 250 2016)          | 396,00               |
+| **Pneu Dianteiro**         | Grupo Exclusivo Crosser 150 (90/90-19)                | 309,00               |
+| **Pneu Dianteiro**         | Lander 250 (80/90-21)                                 | 336,00               |
+| **Pneu Traseiro**          | Grupo 90/90-18 (Factor 125, Factor 150)               | 311,00               |
+| **Pneu Traseiro**          | Fazer 150 Exclusivo (100/80-18)                       | 324,00               |
+| **Pneu Traseiro**          | Crosser 150 (110/90-17)                               | 492,00               |
+| **Pneu Traseiro**          | Lander 250 (120/80-18)                                | 532,00               |
+| **Pneu Traseiro**          | Fazer 250 2016 (130/70-17)                            | 532,00               |
+| **Pneu Traseiro**          | FZ15 (140/60-17)                                      | 532,00               |
+| **Pneu Traseiro**          | FZ25 (140/70-17)                                      | 518,00               |
+| **Kit Relação**            | Factor 125 / Factor 150 / Fazer 150                   | 300,00               |
+| **Kit Relação**            | Crosser 150                                           | 281,00               |
+| **Kit Relação**            | FZ15                                                  | 405,00               |
+| **Kit Relação**            | Fazer 250 2016                                        | 334,00               |
+| **Kit Relação**            | FZ25                                                  | 316,00               |
+| **Kit Relação**            | Lander 250                                            | 442,00               |
+| **Disco Freio Dianteiro**  | Factor 125 / Factor 150 / Fazer 150                   | 877,00               |
+| **Disco Freio Dianteiro**  | Crosser 150 / Fazer 250                               | 790,00               |
+| **Disco Freio Dianteiro**  | FZ15 / FZ25                                           | 528,00               |
+| **Disco Freio Dianteiro**  | Lander 250                                            | 935,00               |
+| **Disco Freio Traseiro**   | FZ15 / FZ25                                           | 466,00               |
+| **Disco Freio Traseiro**   | Lander 250 / Crosser 150                              | 708,00               |
+| **Pastilha Dianteira**     | Factor 125 / Factor 150 / Fazer 150                   | 185,00               |
+| **Pastilha Dianteira**     | Crosser 150                                           | 191,00               |
+| **Pastilha Dianteira**     | FZ15                                                  | 212,00               |
+| **Pastilha Dianteira**     | Fazer 250 2016                                        | 185,00               |
+| **Pastilha Dianteira**     | FZ25                                                  | 253,56               |
+| **Pastilha Dianteira**     | Lander 250                                            | 196,00               |
+| **Pastilha Traseira**      | Crosser 150                                           | 234,00               |
+| **Pastilha Traseira**      | FZ15                                                  | 259,00               |
+| **Pastilha Traseira**      | Fazer 250 / FZ25 / Lander 250 / Crosser 150           | 310,00               |
+| **Caixa de Direção**       | Factor 125 / Factor 150 / Fazer 150                   | 208,00               |
+| **Caixa de Direção**       | Crosser 150                                           | 626,00               |
+| **Caixa de Direção**       | FZ15                                                  | 364,00               |
+| **Caixa de Direção**       | Fazer 250 2016                                        | 524,40               |
+| **Caixa de Direção**       | FZ25                                                  | 1.156,40             |
+| **Caixa de Direção**       | Lander 250                                            | 1.165,00             |
+
+
+
+---------------------------------------
+
 Segue a versão corrigida e mais conservadora da sua lista. Removi os agrupamentos que não podem ser confirmados apenas pelos manuais e corrigi os pneus. Baseado nas especificações que você forneceu.
 
 # Agrupamentos Confirmados
