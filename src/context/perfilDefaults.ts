@@ -68,6 +68,10 @@ export const KM_ULTIMA_TROCAS_PADRAO: KmUltimaTrocas = {
   filtroAr: 0,
   sapataFreioDianteiro: 0,
   sapataFreioTraseiro: 0,
+  discoFreioDianteiro: 0,
+  pastilhaFreioDianteiro: 0,
+  discoFreioTraseiro: 0,
+  pastilhaFreioTraseiro: 0,
   bateria: 0,
   kitEmbreagem: 0,
   kitCilindro: 0,
@@ -217,7 +221,7 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     // Serviço extra incompleto (TASK-RF-6.37): a concessionária executa, mas não
     // publica o preço → nasce nao_informado (só M.O., estimada opcionalmente).
     id: 'troca-caixa-direcao',
-    nome: 'Troca da caixa de direção',
+    nome: 'Troca do kit caixa de direção',
     intervalKm: 40000,
     precoIndependente: 80,
     precoTotalAutorizada: 0,

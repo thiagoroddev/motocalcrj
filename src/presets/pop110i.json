@@ -80,7 +80,7 @@
     },
     {
       "id": "kit_relacao",
-      "nome": "Kit relação (corrente + coroa + pinhão)",
+      "nome": "Kit transmissão (corrente + coroa + pinhão)",
       "intervaloKm": 18000,
       "intervaloMeses": 0,
       "precoOriginal": 230,
@@ -177,7 +177,7 @@
     },
     {
       "id": "caixa_direcao",
-      "nome": "Caixa de direção",
+      "nome": "Kit caixa de direção",
       "intervaloKm": 42000,
       "intervaloMeses": 0,
       "precoOriginal": 102,
@@ -654,7 +654,7 @@
     },
     {
       "id": "troca-caixa-direcao",
-      "nome": "Troca da caixa de direção",
+      "nome": "Troca do kit caixa de direção",
       "intervalKm": 42000,
       "precoIndependente": 80,
       "precoTotalAutorizada": 0,

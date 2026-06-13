@@ -29,11 +29,13 @@ import {
   categoriasParaFiltros,
   calcularResultado,
   MAPA_PECA_PARA_SERVICO,
+  chavesKmUltimaTrocaDoPreset,
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import { obterConsumoKmL } from '../data/catalogoModelos';
 import pop110i from '../presets/pop110i.json';
 import factor125i from '../presets/factor125i.json';
+import fz15 from '../presets/fz15.json';
 import { LISTA_PRESETS } from '../data/repositorioPresets';
 import type {
   CategoriaDisplay,
@@ -168,6 +170,10 @@ const kmUltimaTrocasVazio: KmUltimaTrocas = {
   filtroAr: 0,
   sapataFreioDianteiro: 0,
   sapataFreioTraseiro: 0,
+  discoFreioDianteiro: 0,
+  pastilhaFreioDianteiro: 0,
+  discoFreioTraseiro: 0,
+  pastilhaFreioTraseiro: 0,
   bateria: 0,
   kitEmbreagem: 0,
   kitCilindro: 0,
@@ -2426,6 +2432,43 @@ describe('MAPA_PECA_PARA_SERVICO', () => {
 
   it('mapeia oleo_motor para troca-oleo (caminho feliz)', () => {
     expect(MAPA_PECA_PARA_SERVICO['oleo_motor']).toBe('troca-oleo');
+  });
+});
+
+describe('chavesKmUltimaTrocaDoPreset (model-aware — RF-6.39)', () => {
+  it('Pop (tambor diant+tras): só sapata, sem disco/pastilha', () => {
+    const chaves = chavesKmUltimaTrocaDoPreset(pop110i);
+    expect(chaves.has('sapataFreioDianteiro')).toBe(true);
+    expect(chaves.has('sapataFreioTraseiro')).toBe(true);
+    expect(chaves.has('discoFreioDianteiro')).toBe(false);
+    expect(chaves.has('pastilhaFreioTraseiro')).toBe(false);
+  });
+
+  it('Factor 125i (disco diant, tambor tras): disco/pastilha diant + sapata tras', () => {
+    const chaves = chavesKmUltimaTrocaDoPreset(factor125i);
+    expect(chaves.has('discoFreioDianteiro')).toBe(true);
+    expect(chaves.has('pastilhaFreioDianteiro')).toBe(true);
+    expect(chaves.has('sapataFreioTraseiro')).toBe(true);
+    expect(chaves.has('sapataFreioDianteiro')).toBe(false);
+    expect(chaves.has('discoFreioTraseiro')).toBe(false);
+  });
+
+  it('FZ15 (disco diant+tras): disco/pastilha nos dois eixos, sem sapata', () => {
+    const chaves = chavesKmUltimaTrocaDoPreset(fz15);
+    expect(chaves.has('discoFreioDianteiro')).toBe(true);
+    expect(chaves.has('pastilhaFreioDianteiro')).toBe(true);
+    expect(chaves.has('discoFreioTraseiro')).toBe(true);
+    expect(chaves.has('pastilhaFreioTraseiro')).toBe(true);
+    expect(chaves.has('sapataFreioDianteiro')).toBe(false);
+    expect(chaves.has('sapataFreioTraseiro')).toBe(false);
+  });
+
+  it('itens comuns aparecem para todos (óleo, kit relação, caixa de direção, retíficas)', () => {
+    const chaves = chavesKmUltimaTrocaDoPreset(fz15);
+    expect(chaves.has('oleo')).toBe(true);
+    expect(chaves.has('kitRelacao')).toBe(true);
+    expect(chaves.has('caixaDirecao')).toBe(true);
+    expect(chaves.has('retificaCabecote')).toBe(true);
   });
 });
 

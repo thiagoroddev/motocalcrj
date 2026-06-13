@@ -140,6 +140,12 @@ const kmUltimaTrocas = z.object({
   filtroAr: inteiroNaoNegativo,
   sapataFreioDianteiro: inteiroNaoNegativo,
   sapataFreioTraseiro: inteiroNaoNegativo,
+  // Campos novos (TASK-RF-6.39): freio a disco diant+tras ancorável. default 0
+  // preenche predefinições salvas antes da mudança — não-quebrável, sem bump.
+  discoFreioDianteiro: inteiroNaoNegativo.default(0),
+  pastilhaFreioDianteiro: inteiroNaoNegativo.default(0),
+  discoFreioTraseiro: inteiroNaoNegativo.default(0),
+  pastilhaFreioTraseiro: inteiroNaoNegativo.default(0),
   bateria: inteiroNaoNegativo,
   kitEmbreagem: inteiroNaoNegativo,
   kitCilindro: inteiroNaoNegativo,

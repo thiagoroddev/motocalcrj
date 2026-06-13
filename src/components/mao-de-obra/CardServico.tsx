@@ -4,7 +4,10 @@ import { Input } from '@/components/ui/input';
 import { BotaoReset } from '@/components/BotaoReset';
 import { iconePeca } from '../icons/pecas';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
-import { resolverStatusPrecoAutorizada } from '../../utils/statusPrecoAutorizada';
+import {
+  resolverStatusPrecoAutorizada,
+  concessionariaInformaPrecoCompleto,
+} from '../../utils/statusPrecoAutorizada';
 import type { EstimativaMaoDeObraItem } from '../../utils/maoDeObraEstimada';
 import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
 
@@ -47,13 +50,13 @@ export function CardServico({
         ? 0
         : padrao?.precoTotalAutorizada
       : padrao?.precoIndependente;
-  // "Completo" = a concessionária informou o valor cheio (peça + M.O.) no preset.
-  // Esse status nasce do serviço-base e NÃO muda quando o usuário digita ou liga a
-  // estimativa: valor manual/estimado é só mão de obra (a peça vai à parte em
-  // Insumos). Por isso o rótulo deriva de `statusPadrao`, não do valor atual. (BG-032)
+  // "Completo" = a concessionária informou o valor cheio (peça + M.O.) no preset —
+  // só Honda (`concessionariaIncluiPeca`). Yamaha informa só a M.O. (peça à parte),
+  // então é incompleto mesmo com M.O. real. Deriva do serviço-base e NÃO muda quando
+  // o usuário digita/liga a estimativa (valor manual/estimado é só M.O.). (BG-033)
   const rotuloPreco =
     modo === 'autorizada'
-      ? statusPadrao === 'informado'
+      ? padrao != null && concessionariaInformaPrecoCompleto(padrao)
         ? 'Valor Completo (peça + M.O)'
         : 'Valor Incompleto (apenas M.O)'
       : servico.ehExcepcional

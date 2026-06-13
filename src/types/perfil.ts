@@ -126,6 +126,10 @@ export interface KmUltimaTrocas {
   filtroAr: number;
   sapataFreioDianteiro: number;
   sapataFreioTraseiro: number;
+  discoFreioDianteiro: number;
+  pastilhaFreioDianteiro: number;
+  discoFreioTraseiro: number;
+  pastilhaFreioTraseiro: number;
   bateria: number;
   kitEmbreagem: number;
   kitCilindro: number;

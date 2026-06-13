@@ -128,6 +128,10 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   kit_relacao: 'kitRelacao',
   sapata_freio_dianteiro: 'sapataFreioDianteiro',
   sapata_freio_traseiro: 'sapataFreioTraseiro',
+  disco_freio_dianteiro: 'discoFreioDianteiro',
+  pastilha_freio_dianteiro: 'pastilhaFreioDianteiro',
+  disco_freio_traseiro: 'discoFreioTraseiro',
+  pastilha_freio_traseiro: 'pastilhaFreioTraseiro',
   bateria: 'bateria',
   kit_embreagem: 'kitEmbreagem',
   kit_cilindro: 'kitCilindro',
@@ -182,6 +186,28 @@ function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTro
   return pecaAssociada ? MAPA_PECA_PARA_KM_ULTIMA_TROCA[pecaAssociada] : undefined;
 }
 
+/**
+ * Chaves de KmUltimaTrocas que o preset realmente usa (peças + serviços do
+ * modelo). Base da tela "Últimas manutenções" model-aware (RF-6.39): só aparece
+ * o que o modelo possui — ex.: disco/pastilha num modelo a disco; sapata num a
+ * tambor; o freio traseiro segue o tipo do modelo.
+ */
+export function chavesKmUltimaTrocaDoPreset(preset: {
+  pecas: { id: string }[];
+  servicosManutencao?: { id: string }[];
+}): Set<keyof KmUltimaTrocas> {
+  const chaves = new Set<keyof KmUltimaTrocas>();
+  for (const peca of preset.pecas) {
+    const chave = MAPA_PECA_PARA_KM_ULTIMA_TROCA[peca.id];
+    if (chave) chaves.add(chave);
+  }
+  for (const servico of preset.servicosManutencao ?? []) {
+    const chave = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
+    if (chave) chaves.add(chave);
+  }
+  return chaves;
+}
+
 const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   oleo: 0,
   pneuDianteiro: 0,
@@ -191,6 +217,10 @@ const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   filtroAr: 0,
   sapataFreioDianteiro: 0,
   sapataFreioTraseiro: 0,
+  discoFreioDianteiro: 0,
+  pastilhaFreioDianteiro: 0,
+  discoFreioTraseiro: 0,
+  pastilhaFreioTraseiro: 0,
   bateria: 0,
   kitEmbreagem: 0,
   kitCilindro: 0,

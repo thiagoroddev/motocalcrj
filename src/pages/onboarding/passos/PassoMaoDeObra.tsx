@@ -4,7 +4,7 @@ import { PassoLayout } from '../PassoLayout';
 import { obterPreset } from '../../../data/repositorioPresets';
 import { normalizarPerfilMvp } from '../../../hooks/useCustos';
 import { obterServicosManutencaoBase } from '../../../utils/servicosManutencaoPreset';
-import { resolverStatusPrecoAutorizada } from '../../../utils/statusPrecoAutorizada';
+import { concessionariaInformaPrecoCompleto } from '../../../utils/statusPrecoAutorizada';
 import { montarEstimativaMaoDeObra, somarMaoDeObraEfetiva } from '../../../utils/maoDeObraEstimada';
 import { ControleEstimativaMaoDeObra } from '../../../components/mao-de-obra/ControleEstimativaMaoDeObra';
 import { CardServico } from '../../../components/mao-de-obra/CardServico';
@@ -21,15 +21,14 @@ export function PassoMaoDeObra() {
   const perfilMvp = normalizarPerfilMvp(perfil, preset);
   const servicosPadrao = obterServicosManutencaoBase(preset);
 
-  // Avulsos km-driven SEM valor oficial da concessionária (os já editados pelo
-  // usuário continuam na lista). São os serviços que a estimativa completaria.
-  const avulsos = perfilMvp.servicosIndependentes.filter(
-    (s) =>
-      !s.ehExcepcional &&
-      !s.incluidoNaRevisaoAutorizada &&
-      s.intervalKm > 0 &&
-      resolverStatusPrecoAutorizada(s) !== 'informado',
-  );
+  // Avulsos km-driven que NÃO têm preço completo de concessionária (peça + M.O.).
+  // Inclui os Yamaha que informam só a M.O. (incompletos) — o usuário confere/edita
+  // o valor; exclui só os Honda completos. O "completo" deriva do serviço-base. (BG-033)
+  const avulsos = perfilMvp.servicosIndependentes.filter((s) => {
+    if (s.ehExcepcional || s.incluidoNaRevisaoAutorizada || s.intervalKm <= 0) return false;
+    const base = servicosPadrao.find((p) => p.id === s.id) ?? s;
+    return !concessionariaInformaPrecoCompleto(base);
+  });
 
   // Total dinâmico: começa em 0 (tudo sem valor/sem estimativa) e cresce conforme
   // o usuário edita ou liga estimativas (por item ou no toggle global).

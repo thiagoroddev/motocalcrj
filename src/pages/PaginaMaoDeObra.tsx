@@ -14,7 +14,10 @@ import { usePerfil } from '../hooks/usePerfil';
 import { obterPreset } from '../data/repositorioPresets';
 import { normalizarPerfilMvp } from '../hooks/useCustos';
 import { obterServicosManutencaoBase } from '../utils/servicosManutencaoPreset';
-import { resolverStatusPrecoAutorizada } from '../utils/statusPrecoAutorizada';
+import {
+  resolverStatusPrecoAutorizada,
+  concessionariaInformaPrecoCompleto,
+} from '../utils/statusPrecoAutorizada';
 import {
   montarEstimativaMaoDeObra,
   type EstimativaMaoDeObraItem,
@@ -130,12 +133,13 @@ export function PaginaMaoDeObra() {
   const servicosAvulsosAutorizada = servicosNormais.filter(
     (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
   );
-  // "Completo" = a concessionária informa o valor cheio (peça + M.O.) no preset.
-  // O status nasce do serviço-base e não muda com edição/estimativa do usuário
-  // (esses são só M.O.; a peça vai à parte em Insumos). (BG-032)
+  // "Completo" = a concessionária informa o valor cheio (peça + M.O.) no preset —
+  // só Honda (`concessionariaIncluiPeca`). Yamaha informa só a M.O. (peça à parte),
+  // então é incompleto mesmo com M.O. real. O status nasce do serviço-base e não
+  // muda com edição/estimativa do usuário. (BG-032 / corrigido BG-033)
   function ehAvulsoCompleto(s: ServicoIndependente): boolean {
     const base = servicosPadrao.find((p) => p.id === s.id);
-    return base != null && resolverStatusPrecoAutorizada(base) === 'informado';
+    return base != null && concessionariaInformaPrecoCompleto(base);
   }
   const avulsosCompletos = servicosAvulsosAutorizada.filter(ehAvulsoCompleto);
   const avulsosIncompletos = servicosAvulsosAutorizada.filter((s) => !ehAvulsoCompleto(s));

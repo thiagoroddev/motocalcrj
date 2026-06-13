@@ -173,4 +173,22 @@ describe('perfilSchema - validação de runtime', () => {
     const resultado = perfilSchema.parse(antigo);
     expect(resultado.moto.kmUltimaTrocas.caixaDirecao).toBe(0);
   });
+
+  it('preenche disco/pastilha (diant+tras)=0 em dado antigo sem os campos (migração — RF-6.39)', () => {
+    const kmAntigo: Record<string, unknown> = { ...perfilPadrao.moto.kmUltimaTrocas };
+    delete kmAntigo.discoFreioDianteiro;
+    delete kmAntigo.pastilhaFreioDianteiro;
+    delete kmAntigo.discoFreioTraseiro;
+    delete kmAntigo.pastilhaFreioTraseiro;
+    const antigo = {
+      ...perfilPadrao,
+      moto: { ...perfilPadrao.moto, kmUltimaTrocas: kmAntigo },
+    };
+
+    const km = perfilSchema.parse(antigo).moto.kmUltimaTrocas;
+    expect(km.discoFreioDianteiro).toBe(0);
+    expect(km.pastilhaFreioDianteiro).toBe(0);
+    expect(km.discoFreioTraseiro).toBe(0);
+    expect(km.pastilhaFreioTraseiro).toBe(0);
+  });
 });

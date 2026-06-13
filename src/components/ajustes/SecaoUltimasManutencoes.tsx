@@ -9,18 +9,28 @@ import { TituloSecao } from '@/components/TituloSecao';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BotaoReset } from '../BotaoReset';
+import { obterPreset } from '../../data/repositorioPresets';
+import { chavesKmUltimaTrocaDoPreset } from '../../utils/calculos';
 
-const COMPONENTES_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
+// Catálogo curado de itens rastreáveis em "Últimas manutenções", em ordem de
+// exibição. A lista mostrada é filtrada pelo modelo (RF-6.39): só aparece o que
+// o preset usa — freio dianteiro/traseiro segue o tipo do modelo (disco × tambor).
+// Itens só-revisão (vela, filtros) ficam fora de propósito.
+const LABELS_KM_ULTIMA_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'oleo', label: 'Troca de óleo' },
   { key: 'pneuDianteiro', label: 'Pneu dianteiro' },
   { key: 'pneuTraseiro', label: 'Pneu traseiro' },
-  { key: 'kitRelacao', label: 'Kit relação' },
+  { key: 'kitRelacao', label: 'Kit transmissão' },
   { key: 'sapataFreioDianteiro', label: 'Sapata de freio dianteiro' },
+  { key: 'discoFreioDianteiro', label: 'Disco de freio dianteiro' },
+  { key: 'pastilhaFreioDianteiro', label: 'Pastilha de freio dianteira' },
   { key: 'sapataFreioTraseiro', label: 'Sapata de freio traseiro' },
+  { key: 'discoFreioTraseiro', label: 'Disco de freio traseiro' },
+  { key: 'pastilhaFreioTraseiro', label: 'Pastilha de freio traseira' },
   { key: 'bateria', label: 'Bateria' },
   { key: 'kitEmbreagem', label: 'Kit embreagem' },
   { key: 'kitCilindro', label: 'Kit cilindro' },
-  { key: 'caixaDirecao', label: 'Caixa de direção' },
+  { key: 'caixaDirecao', label: 'Kit caixa de direção' },
   { key: 'retificaCabecote', label: 'Retífica de cabeçote' },
   { key: 'retificaCompleta', label: 'Retífica completa' },
 ];
@@ -40,12 +50,19 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
   } | null>(null);
   const kmUltimaRevisao = moto.kmUltimaRevisao ?? 0;
   const podeReplicarKmRevisao = kmUltimaRevisao > 0;
+  // Lista model-aware (RF-6.39): só os itens que o preset do modelo realmente usa
+  // (ex.: disco/pastilha num modelo a disco; sapata num a tambor). Sem preset
+  // (modelo desconhecido), mostra o catálogo completo como fallback seguro.
+  const preset = obterPreset(moto.modelo);
+  const chavesDoModelo = preset ? chavesKmUltimaTrocaDoPreset(preset) : null;
+  const componentes = chavesDoModelo
+    ? LABELS_KM_ULTIMA_TROCA.filter(({ key }) => chavesDoModelo.has(key))
+    : LABELS_KM_ULTIMA_TROCA;
   const temAlteracao =
-    COMPONENTES_TROCA.some(({ key }) => moto.kmUltimaTrocas[key] > 0) ||
-    moto.kmMotorRefeito != null;
+    componentes.some(({ key }) => moto.kmUltimaTrocas[key] > 0) || moto.kmMotorRefeito != null;
 
   function resetar() {
-    COMPONENTES_TROCA.forEach(({ key }) =>
+    componentes.forEach(({ key }) =>
       dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: 0 }),
     );
     dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
@@ -74,7 +91,7 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
           <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
         </div>
         <div className="grid grid-cols-2 gap-x-2 gap-y-4">
-          {COMPONENTES_TROCA.map(({ key, label }) => {
+          {componentes.map(({ key, label }) => {
             const inputId = `${idPrefix}-${key}`;
             const IconePeca = iconePeca(key);
             return (

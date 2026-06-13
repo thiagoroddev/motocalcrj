@@ -516,11 +516,11 @@ describe('App - smoke UI', () => {
     expect(screen.queryByText('Óleo do motor')).not.toBeInTheDocument();
     expect(screen.queryByText('Vela de ignição')).not.toBeInTheDocument();
     expect(screen.queryByText('Filtro de ar (tipo viscoso)')).not.toBeInTheDocument();
-    expect(screen.getByText('Kit relação (corrente + coroa + pinhão)')).toBeInTheDocument();
+    expect(screen.getByText('Kit transmissão (corrente + coroa + pinhão)')).toBeInTheDocument();
     expect(screen.getByText('Pneu dianteiro')).toBeInTheDocument();
     expect(screen.getByText('Pneu traseiro')).toBeInTheDocument();
     expect(
-      within(obterCardPorTexto('Kit relação (corrente + coroa + pinhão)')).getByText(
+      within(obterCardPorTexto('Kit transmissão (corrente + coroa + pinhão)')).getByText(
         'Vida útil: 18.000 km · Alterar na aba M. Obra',
       ),
     ).toBeInTheDocument();
@@ -544,7 +544,7 @@ describe('App - smoke UI', () => {
 
     await screen.findByText('Peças e Pneus');
     expect(
-      within(obterCardPorTexto('Kit relação (corrente + coroa + pinhão)')).getByText(
+      within(obterCardPorTexto('Kit transmissão (corrente + coroa + pinhão)')).getByText(
         'Vida útil: 21.000 km · Alterar na aba M. Obra',
       ),
     ).toBeInTheDocument();
@@ -587,7 +587,7 @@ describe('App - smoke UI', () => {
 
     fireEvent.click(acionadorManutencao);
 
-    const linhaKitRelacao = (await screen.findByText('Kit relação (corrente + coroa + pinhão)'))
+    const linhaKitRelacao = (await screen.findByText('Kit transmissão (corrente + coroa + pinhão)'))
       .parentElement;
     if (!(linhaKitRelacao instanceof HTMLElement)) {
       throw new Error('Linha do Kit relação não encontrada');

@@ -79,12 +79,14 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
 });
 
 describe('CardServico - rótulo Completo/Incompleto (BG-032)', () => {
+  // "Completo" = Honda: informado + concessionariaIncluiPeca (peça + M.O. juntas). (BG-033)
   const servicoCompletoBase: ServicoIndependente = {
     ...servico,
     id: 'pneu_dianteiro',
     nome: 'Pneu dianteiro',
     precoTotalAutorizada: 150,
     statusPrecoAutorizada: 'informado',
+    concessionariaIncluiPeca: true,
   };
 
   it('serviço com valor completo da concessionária no preset: "Valor Completo (peça + M.O)"', () => {
@@ -97,6 +99,25 @@ describe('CardServico - rótulo Completo/Incompleto (BG-032)', () => {
       />,
     );
     expect(screen.getByText('Valor Completo (peça + M.O)')).toBeInTheDocument();
+  });
+
+  it('Yamaha com M.O. informada mas sem peça inclusa: "Valor Incompleto" (BG-033)', () => {
+    const servicoYamahaInformado: ServicoIndependente = {
+      ...servico,
+      precoTotalAutorizada: 220,
+      statusPrecoAutorizada: 'informado',
+      concessionariaIncluiPeca: false,
+    };
+    render(
+      <CardServico
+        servico={servicoYamahaInformado}
+        servicoPadrao={servicoYamahaInformado}
+        dispatch={vi.fn()}
+        modo="autorizada"
+      />,
+    );
+    expect(screen.getByText('Valor Incompleto (apenas M.O)')).toBeInTheDocument();
+    expect(screen.queryByText('Valor Completo (peça + M.O)')).not.toBeInTheDocument();
   });
 
   it('serviço sem valor da concessionária: "Valor Incompleto (apenas M.O)"', () => {
