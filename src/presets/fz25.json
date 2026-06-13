@@ -1,0 +1,797 @@
+{
+  "marca": "Yamaha",
+  "modelo": "Fazer FZ25",
+  "nomeCurto": "FZ25",
+  "nomeFipe": "FZ25 250 FAZER FLEX",
+  "consumoKmL": 30.0,
+  "aceitaEtanol": true,
+  "fatorMaoDeObra": 1.35,
+  "codigoFipe": "827107-0",
+  "tabelaFipe": {
+    "2018": 16922,
+    "2019": 17523,
+    "2020": 18301,
+    "2021": 19097,
+    "2022": 20296,
+    "2023": 21070,
+    "2024": 22412
+  },
+  "_fonte": {
+    "manual": "Yamaha Serviços (revisões periódicas FZ25, revisoes-fz25.md) + manual Fazer FZ25 ABS 2024. Consultados em 12/06/2026.",
+    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela/filtro-ar reusados da família Yamaha (a validar p/ 250). FIPE oficial (jun/2026).",
+    "dataColeta": "2026-06",
+    "anoModelo": {
+      "inicio": 2018,
+      "fim": 2024
+    },
+    "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827107-0. Modelo: FZ25 250 FAZER FLEX.",
+    "consumoNota": "30 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026. Validar com fonte específica.",
+    "fatorMaoDeObraNota": "1.35 pela faixa 250cc (249 cm³), conforme manutencao-estimativas.md §1.4.",
+    "freioNota": "Freio dianteiro E traseiro a DISCO (pastilha/disco diant+tras; sem sapata).",
+    "intervalosNota": "250cc mais robusto (validado pelo humano): partes metálicas acima do baseline 150 — transmissão 30.000, embreagem 50.000, cilindro 130.000, discos 60.000. Atrito (pastilhas) e caixa de direção no baseline.",
+    "pecasNota": "Disco/pastilha (diant+tras), kit relação, embreagem, cilindro, bateria e caixa de direção com preço específico do FZ25/grupo 250. Óleo-filtro/vela (NGK DR8EA)/filtro-ar reusados da família Yamaha — validar para 250.",
+    "fontesLocais": [
+      "docs/dominio/informacoes-modelos-motos/yamaha/fz25/servicos-extras-fz25.md",
+      "docs/dominio/informacoes-modelos-motos/yamaha/fz25/fipe-fz25.md",
+      "docs/dominio/informacoes-modelos-motos/yamaha/fz25/revisoes-fz25.md",
+      "docs/dominio/informacoes-modelos-motos/precos-pecas-yamaha-todosmodelos.md"
+    ]
+  },
+  "pecas": [
+    {
+      "id": "oleo_motor",
+      "nome": "Óleo do motor",
+      "intervaloKm": 5000,
+      "intervaloMeses": 6,
+      "precoOriginal": 100.0,
+      "precoParalela": 100.0,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "intervaloKmNota": "Revisão Yamaha: 5.000 km ou 6 meses.",
+        "precoOriginalNota": "Grupo 250 (Yamalube 20W50, ~2 L): R$ 100 (precos-pecas-yamaha-todosmodelos.md)."
+      }
+    },
+    {
+      "id": "filtro_oleo",
+      "nome": "Filtro de óleo",
+      "intervaloKm": 10000,
+      "intervaloMeses": 0,
+      "precoOriginal": 29.43,
+      "precoParalela": 29.43,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha (validar p/ 250)." }
+    },
+    {
+      "id": "vela_ignicao",
+      "nome": "Vela de ignição",
+      "intervaloKm": 20000,
+      "intervaloMeses": 30,
+      "precoOriginal": 46.27,
+      "precoParalela": 46.27,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": { "precoOriginalNota": "NGK DR8EA — preço reusado da família Yamaha (validar). Substituição programada ~20.000 km (revisoes-fz25.md)." }
+    },
+    {
+      "id": "filtro_ar",
+      "nome": "Filtro de ar (tipo viscoso)",
+      "intervaloKm": 20000,
+      "intervaloMeses": 30,
+      "precoOriginal": 115.0,
+      "precoParalela": 115.0,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha (validar p/ 250). No cronograma FZ25 é limpo; substituição estimada ~20.000 km." }
+    },
+    {
+      "id": "kit_relacao",
+      "nome": "Kit relação (corrente + coroa + pinhão)",
+      "intervaloKm": 30000,
+      "intervaloMeses": 0,
+      "precoOriginal": 316.0,
+      "precoParalela": 316.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "250cc mais robusto: 30.000 km (acima do baseline 150).",
+        "precoOriginalNota": "Kit relação FZ25: R$ 316."
+      }
+    },
+    {
+      "id": "pastilha_freio_dianteiro",
+      "nome": "Pastilha de freio dianteiro",
+      "intervaloKm": 10000,
+      "intervaloMeses": 0,
+      "precoOriginal": 253.56,
+      "precoParalela": 253.56,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": { "precoOriginalNota": "Pastilha dianteira FZ25: R$ 253,56." }
+    },
+    {
+      "id": "disco_freio_dianteiro",
+      "nome": "Disco de freio dianteiro",
+      "intervaloKm": 60000,
+      "intervaloMeses": 0,
+      "precoOriginal": 528.0,
+      "precoParalela": 528.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Disco 250 mais robusto: 60.000 km.",
+        "precoOriginalNota": "Disco dianteiro FZ15/FZ25: R$ 528."
+      }
+    },
+    {
+      "id": "pastilha_freio_traseiro",
+      "nome": "Pastilha de freio traseiro",
+      "intervaloKm": 20000,
+      "intervaloMeses": 0,
+      "precoOriginal": 310.0,
+      "precoParalela": 310.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": { "precoOriginalNota": "Pastilha traseira (grupo Fazer 250/FZ25/Lander): R$ 310. Freio traseiro a DISCO." }
+    },
+    {
+      "id": "disco_freio_traseiro",
+      "nome": "Disco de freio traseiro",
+      "intervaloKm": 60000,
+      "intervaloMeses": 0,
+      "precoOriginal": 466.0,
+      "precoParalela": 466.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Disco 250 mais robusto: 60.000 km.",
+        "precoOriginalNota": "Disco traseiro FZ15/FZ25: R$ 466."
+      }
+    },
+    {
+      "id": "bateria",
+      "nome": "Bateria",
+      "intervaloMeses": 36,
+      "precoOriginal": 200.0,
+      "precoParalela": 200.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": { "precoOriginalNota": "Grupo XTZ7L / 6Ah (FZ25/Lander): R$ 200." }
+    },
+    {
+      "id": "kit_embreagem",
+      "nome": "Kit embreagem (Discos, Platô, Cubo)",
+      "intervaloKm": 50000,
+      "intervaloMeses": 0,
+      "precoOriginal": 1469.0,
+      "precoParalela": 1469.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Embreagem 250 dura mais: 50.000 km.",
+        "precoOriginalNota": "Grupo 250 (Fazer 250/FZ25/Lander): R$ 1.469."
+      }
+    },
+    {
+      "id": "kit_cilindro",
+      "nome": "Kit cilindro (Motor Superior)",
+      "intervaloKm": 130000,
+      "intervaloMeses": 0,
+      "precoOriginal": 676.0,
+      "precoParalela": 676.0,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Motor 250 mais robusto: 130.000 km.",
+        "precoOriginalNota": "Grupo 250: R$ 676."
+      }
+    },
+    {
+      "id": "caixa_direcao",
+      "nome": "Caixa de direção",
+      "intervaloKm": 40000,
+      "intervaloMeses": 0,
+      "precoOriginal": 1156.40,
+      "precoParalela": 1156.40,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "intervaloKmNota": "Sincronizado à revisão Yamaha (×5.000): 40.000 km.",
+        "precoOriginalNota": "Caixa de direção FZ25: R$ 1.156,40."
+      }
+    }
+  ],
+  "pneus": [
+    {
+      "id": "pneu_dianteiro",
+      "posicao": "dianteiro",
+      "vidaUtilKm": 22500,
+      "precoOriginal": 396.0,
+      "precoParalela": 396.0,
+      "_fonte": {
+        "especificacao": "100/80-17 Tubeless",
+        "precoOriginalNota": "Grupo 100/80-17 (FZ15/FZ25/Fazer 250): R$ 396."
+      }
+    },
+    {
+      "id": "pneu_traseiro",
+      "posicao": "traseiro",
+      "vidaUtilKm": 15000,
+      "precoOriginal": 518.0,
+      "precoParalela": 518.0,
+      "_fonte": {
+        "especificacao": "140/70-17 Tubeless",
+        "precoOriginalNota": "Pneu traseiro FZ25 (140/70-17): R$ 518."
+      }
+    }
+  ],
+  "revisaoAutorizada": [
+    {
+      "intervaloKm": 1000,
+      "intervaloMeses": 6,
+      "precoPecas": 330.0,
+      "precoMaoDeObra": 0.0,
+      "precoTotal": 330.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ELEMENTO DO FILTRO DE OLEO CJ",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL DE BORRACHA TAMPA DO FILTRO ÓLEO MAIOR",
+        "ANEL DE BORRACHA TAMPA FILTRO ÓLEO MENOR",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "RODAS",
+            "ROLAMENTOS DA DIREÇÃO",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "SISTEMA DE DIAGNÓSTICO DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra Paga pela YAMAHA" }
+    },
+    {
+      "intervaloKm": 5000,
+      "intervaloMeses": 12,
+      "precoPecas": 228.0,
+      "precoMaoDeObra": 0.0,
+      "precoTotal": 228.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra Paga pela YAMAHA" }
+    },
+    {
+      "intervaloKm": 10000,
+      "intervaloMeses": 18,
+      "precoPecas": 312.0,
+      "precoMaoDeObra": 300.0,
+      "precoTotal": 612.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ELEMENTO DO FILTRO DE OLEO CJ",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL DE BORRACHA TAMPA DO FILTRO ÓLEO MAIOR",
+        "ANEL DE BORRACHA TAMPA FILTRO ÓLEO MENOR",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)" }
+    },
+    {
+      "intervaloKm": 15000,
+      "intervaloMeses": 24,
+      "precoPecas": 202.0,
+      "precoMaoDeObra": 200.0,
+      "precoTotal": 402.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)" }
+    },
+    {
+      "intervaloKm": 20000,
+      "intervaloMeses": 30,
+      "precoPecas": 360.0,
+      "precoMaoDeObra": 300.0,
+      "precoTotal": 660.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ELEMENTO DO FILTRO DE OLEO CJ",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL DE BORRACHA TAMPA DO FILTRO ÓLEO MAIOR",
+        "ANEL DE BORRACHA TAMPA FILTRO ÓLEO MENOR",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "VELA DE IGNICAO (NGK DR8EA)",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "CANISTER DO SISTEMA DE CONTROLE DE EMISSÕES",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)" }
+    },
+    {
+      "intervaloKm": 25000,
+      "intervaloMeses": 36,
+      "precoPecas": 202.0,
+      "precoMaoDeObra": 200.0,
+      "precoTotal": 402.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "VELA DE IGNIÇÃO",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)" }
+    },
+    {
+      "intervaloKm": 30000,
+      "intervaloMeses": 42,
+      "precoPecas": 312.0,
+      "precoMaoDeObra": 300.0,
+      "precoTotal": 612.0,
+      "itensSubstituidos": [
+        "GAXETA DO BUJÃO",
+        "ELEMENTO DO FILTRO DE OLEO CJ",
+        "ANEL DE BORRACHA TAMPA VÁLVULA",
+        "ANEL DE BORRACHA TAMPA DO FILTRO ÓLEO MAIOR",
+        "ANEL DE BORRACHA TAMPA FILTRO ÓLEO MENOR",
+        "ANEL VARETA DE ÓLEO",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MENOR",
+        "YAMALUBE 20W50",
+        "ANEL DE BORRACHA TAMPA SINCRONISMO MAIOR"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "MANGUEIRA DE COMBUSTÍVEL",
+            "SISTEMA DE ESCAPE",
+            "FREIO DIANTEIRO",
+            "FREIO TRASEIRO",
+            "MANGUEIRAS DO FREIO",
+            "RODAS",
+            "PNEUS",
+            "ROLAMENTOS DA RODA",
+            "FIXAÇÕES DO CHASSI",
+            "INTERRUPTOR DO CAVALETE LATERAL",
+            "GARFO DIANTEIRO",
+            "AMORTECEDOR TRASEIRO",
+            "INTERRUPTORES DOS FREIOS DIANTEIRO E TRASEIRO",
+            "LUZES, PISCAS E INTERRUPTORES"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["VÁLVULAS", "INJEÇÃO DE COMBUSTÍVEL", "EMBREAGEM", "CORRENTE DE TRANSMISSÃO"]
+        },
+        { "categoria": "Limpeza", "servicos": ["MANGUEIRA DE VERIFICAÇÃO DO FILTRO DE AR"] },
+        {
+          "categoria": "Lubrificação",
+          "servicos": [
+            "BALANÇA TRASEIRA",
+            "ROLAMENTOS DA DIREÇÃO",
+            "EIXO ARTICULADO DO MANETE DE FREIO DIANTEIRO",
+            "EIXO ARTICULADO DO PEDAL DE FREIO TRASEIRO",
+            "EIXO ARTICULADO DO MANETE DA EMBREAGEM",
+            "EIXO ARTICULADO DO PEDAL DE CÂMBIO",
+            "CAVALETE LATERAL",
+            "CABOS E PEÇAS MÓVEIS",
+            "MANOPLA DO ACELERADOR"
+          ]
+        }
+      ],
+      "_fonte": { "notaMaoDeObra": "Mão de Obra + Peças (Rateio estimado)" }
+    }
+  ],
+  "_notaServicosManutencao": "Yamaha não troca pneus na concessionária (troca-pneu-* excepcionais). Freio traseiro a DISCO (pastilha/disco traseiro). troca-kit-transmissao nao_informado: sem M.O. real de concessionária para 250 (estimável).",
+  "servicosManutencao": [
+    {
+      "id": "troca-oleo",
+      "nome": "Troca de óleo",
+      "intervalKm": 5000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-transmissao",
+      "nome": "Troca kit transmissão",
+      "intervalKm": 30000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-disco-dianteiro",
+      "nome": "Troca disco de freio dianteiro",
+      "intervalKm": 60000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pastilha-dianteira",
+      "nome": "Troca pastilha de freio dianteira",
+      "intervalKm": 10000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-disco-traseiro",
+      "nome": "Troca disco de freio traseiro",
+      "intervalKm": 60000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pastilha-traseira",
+      "nome": "Troca pastilha de freio traseira",
+      "intervalKm": 20000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "concessionariaIncluiPeca": false,
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "revisao-geral",
+      "nome": "Revisão geral (independente)",
+      "intervalKm": 5000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-vela",
+      "nome": "Troca de vela",
+      "intervalKm": 20000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-filtro-ar",
+      "nome": "Troca filtro de ar",
+      "intervalKm": 20000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-bateria",
+      "nome": "Troca de bateria",
+      "intervalKm": 0,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-embreagem",
+      "nome": "Troca kit embreagem",
+      "intervalKm": 50000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-cilindro",
+      "nome": "Troca kit cilindro",
+      "intervalKm": 130000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-caixa-direcao",
+      "nome": "Troca da caixa de direção",
+      "intervalKm": 40000,
+      "precoIndependente": 80,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "retifica-cabecote",
+      "nome": "Retífica de cabeçote",
+      "intervalKm": 100000,
+      "precoIndependente": 900,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "retifica-completa",
+      "nome": "Retífica completa",
+      "intervalKm": 140000,
+      "precoIndependente": 1800,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "troca-pneu-dianteiro",
+      "nome": "Troca de pneu dianteiro (fora da concessionária)",
+      "intervalKm": 22500,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "troca-pneu-traseiro",
+      "nome": "Troca de pneu traseiro (fora da concessionária)",
+      "intervalKm": 15000,
+      "precoIndependente": 0,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    }
+  ]
+}

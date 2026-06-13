@@ -53,9 +53,9 @@ Obedeça essa ordem:
 
 ## Novos modelos Yamaha — habilitar e criar presets
 
-> Geradas pela **TASK-DOM-3** (fase 1 de documentação). Ordem: **RF-6.38 → DOM-4**; **RF-6.39** pode
-> entrar em paralelo/antes da DOM-4 (deixa o freio a disco ancorável em Ajustes).
-> **TASK-RF-6.38 está em `em-andamento.md`** (planejada).
+> Geradas pela **TASK-DOM-3** (fase 1). RF-6.38 **concluída**. **DOM-4 (FZ15, pioneiro a disco) está em
+> `em-andamento.md`**; depois dela, os 250s (DOM-4.2/4.3/4.4) reusam a estrutura. RF-6.39 (Ajustes
+> model-aware + km-âncora) pode entrar em paralelo.
 
 ### TASK-RF-6.39 — "Últimas manutenções" (Ajustes) model-aware + km-âncora de disco/pastilha
 
@@ -76,14 +76,20 @@ Obedeça essa ordem:
 - **Nota:** decidir se a lista derivada vem do preset (`pecas`/serviços com km-âncora) ou de um catálogo
   por tipo de freio — definir no planejamento da tarefa.
 
-### TASK-DOM-4 — Criar presets dos 4 modelos Yamaha novos (fase 2)
+> **Épico DOM-4 concluído:** FZ15 (DOM-4), FZ25 (4.2), Fazer 250 (4.3), Lander 250 (4.4) — 4 presets
+> Yamaha novos a freio traseiro a disco. Resta a **RF-6.39** (Ajustes model-aware + km-âncora de
+> disco/pastilha), que deixa esses freios ancoráveis.
 
-- **Modo:** Standard · **Valor:** Importante · **Urgência:** Normal · **Esforço-H/IA:** M/G
-- **Dependências:** **TASK-DOM-3** (dados) + **TASK-RF-6.38** (freio a disco) · **REQ/ADR:** ADR-019, ADR-021
-- **Escopo:** criar `src/presets/{fz15,fz25,fazerys250,lander250}.json` a partir dos docs preenchidos
-  na DOM-3 (especificações, revisões, `servicos-extras-*`, `fipe-*`, peças do consolidado) e rodar
-  `npm run fipe:update`. Validar que aparecem corretamente no app.
-- **Critério de aceite:** 4 presets válidos (`presetSchema`), descobertos via `import.meta.glob`,
-  com FIPE preenchida; custo estimado coerente nas telas; gates verdes.
+- **Modo:** Standard · **Valor:** Importante · **Urgência:** Normal · **Esforço-H/IA:** M/M cada
+- **Dependências:** **TASK-DOM-4** (FZ15 estreia o padrão a disco + o `MAPA`) · **REQ/ADR:** ADR-019, ADR-021
+- **Escopo:** criar `src/presets/{fz25,fazerys250,lander250}.json` reusando a estrutura do FZ15
+  (freio a disco), com os dados da DOM-3 (`servicos-extras-*`, `fipe-*`, revisões, peças do consolidado)
+  e rodar `npm run fipe:update`. O `MAPA` do freio traseiro a disco já estará no lugar (DOM-4/FZ15).
+- **Parâmetros confirmados (humano):** `fatorMaoDeObra` 1.35 (250cc); intervalos metálicos do 250
+  (transmissão 30.000, embreagem 50.000, cilindro 130.000, discos 60.000 — ver conferência);
+  **consumoKmL:** FZ25 **30**, Fazer 250 **35**, Lander 250 **29** (Lander = pneu trail, vida 20.000/12.000).
+- **Critério de aceite:** cada preset válido (`presetSchema`), no onboarding, custo coerente; gates verdes.
+
+> DOM-4.2 = FZ25 · DOM-4.3 = Fazer 250 (fazerys250) · DOM-4.4 = Lander 250.
 
 ## Documentação

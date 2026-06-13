@@ -40,6 +40,11 @@ describe('estimarMaoDeObra', () => {
     expect(estimarMaoDeObra('troca-caixa-direcao', 'Honda', 1)).toBe(165);
   });
 
+  it('estima o freio traseiro a disco (pastilha 0,5h=55; disco 0,7h=77) — RF-6.38', () => {
+    expect(estimarMaoDeObra('troca-pastilha-traseira', 'Yamaha', 1)).toBeCloseTo(55, 1);
+    expect(estimarMaoDeObra('troca-disco-traseiro', 'Yamaha', 1)).toBeCloseTo(77, 1);
+  });
+
   it('retorna 0 para serviço sem tempário', () => {
     expect(estimarMaoDeObra('servico-desconhecido', 'Honda', 1)).toBe(0);
   });

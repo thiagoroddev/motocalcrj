@@ -15,6 +15,8 @@ const HORAS_POR_SERVICO: Record<string, number> = {
   'troca-bateria': 0.2,
   'troca-pastilha-dianteira': 0.5,
   'troca-disco-dianteiro': 0.7,
+  'troca-pastilha-traseira': 0.5,
+  'troca-disco-traseiro': 0.7,
   'troca-sapata-dianteira': 0.65,
   'troca-sapata-traseira': 0.65,
   'troca-pneu-dianteiro': 0.4,

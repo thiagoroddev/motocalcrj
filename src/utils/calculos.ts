@@ -156,6 +156,8 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   sapata_freio_traseiro: 'troca-sapata-traseira',
   disco_freio_dianteiro: 'troca-disco-dianteiro',
   pastilha_freio_dianteiro: 'troca-pastilha-dianteira',
+  disco_freio_traseiro: 'troca-disco-traseiro',
+  pastilha_freio_traseiro: 'troca-pastilha-traseira',
   bateria: 'troca-bateria',
   kit_embreagem: 'troca-kit-embreagem',
   kit_cilindro: 'troca-kit-cilindro',

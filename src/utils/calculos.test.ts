@@ -34,6 +34,7 @@ import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilCo
 import { obterConsumoKmL } from '../data/catalogoModelos';
 import pop110i from '../presets/pop110i.json';
 import factor125i from '../presets/factor125i.json';
+import { LISTA_PRESETS } from '../data/repositorioPresets';
 import type {
   CategoriaDisplay,
   PerfilUsuario,
@@ -2364,23 +2365,23 @@ describe('TASK-RF-6.13 - retíficas usam kmUltimaTrocas em Imprevistos', () => {
 });
 
 describe('MAPA_PECA_PARA_SERVICO', () => {
+  // Itera TODOS os presets (glob) em vez de hardcode pop110i/factor125i: assim a
+  // guarda anti-órfão cobre automaticamente presets futuros (ex.: freio traseiro a
+  // disco entra na DOM-4 junto do 1º preset que o usa). — RF-6.38
   it('cada serviço apontado existe nos defaults ou no servicosManutencao de algum preset', () => {
     const idsServicos = new Set<string>([
       ...SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id),
-      ...(pop110i.servicosManutencao ?? []).map((s) => s.id),
-      ...(factor125i.servicosManutencao ?? []).map((s) => s.id),
+      ...LISTA_PRESETS.flatMap(({ preset }) => (preset.servicosManutencao ?? []).map((s) => s.id)),
     ]);
     for (const servicoId of Object.values(MAPA_PECA_PARA_SERVICO)) {
       expect(idsServicos.has(servicoId)).toBe(true);
     }
   });
 
-  it('cada peça/pneu apontado existe em algum preset (Pop ou Factor)', () => {
+  it('cada peça/pneu apontado existe em algum preset', () => {
     const idsPecasEPneus = new Set<string>([
-      ...pop110i.pecas.map((p) => p.id),
-      ...pop110i.pneus.map((p) => p.id),
-      ...factor125i.pecas.map((p) => p.id),
-      ...factor125i.pneus.map((p) => p.id),
+      ...LISTA_PRESETS.flatMap(({ preset }) => preset.pecas.map((p) => p.id)),
+      ...LISTA_PRESETS.flatMap(({ preset }) => preset.pneus.map((p) => p.id)),
     ]);
     for (const pecaId of Object.keys(MAPA_PECA_PARA_SERVICO)) {
       expect(idsPecasEPneus.has(pecaId)).toBe(true);
