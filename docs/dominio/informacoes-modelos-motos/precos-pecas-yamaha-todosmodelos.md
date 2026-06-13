@@ -654,7 +654,7 @@ Não possuem:
 - Factor 125, Factor 150, Fazer 150
     
     
-- FZ15 , FZ25
+- FZ15 , FZ25 , fazer 250
 - # Disco Freio Traseiro Yamaha FZ25 Fazer 250 18 a 25 Original ## R$ 391,15
 - https://goparts.com.br/B97F582W00?srsltid=AfmBOoqnjQcTo1-IF8kTl_bURObHbZILek-aO000PfWy7F4l5Xx0bkbS-EY
 - # Disco de Freio Traseiro Fazer 250 FZ 25 FZ 15 YZF R15 Original Yamaha **R$ 541,41**

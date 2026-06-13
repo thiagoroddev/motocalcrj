@@ -2,114 +2,47 @@
 
 ---
 
-## TASK-RF-6.37 — Adicionar item "Caixa de direção" (serviço extra incompleto)
+# TASK-RF-6.38 - Freio traseiro a disco: peça + serviço (camada de dados)
 
-- **Modo:** Standard+ (mexe em schema/contrato e em `calculos.ts`; **sem ADR nova** — segue ADR-014 e `manutencao-estimativas.md`)
-- **REQ/ADR:** ADR-014; `docs/dominio/manutencao-estimativas.md`
-- **Dependências:** —
-- **Início:** 12/06/26
-- **Bloqueia/precede:** a criação dos presets faltantes (Task B) — o contrato precisa nascer com a Caixa de direção antes da produção em massa.
+- **Status:** EM DESENVOLVIMENTO (planejamento — aguardando aprovação para executar)
+- **Modo:** Standard (aditivo; espelha o freio dianteiro a disco já existente)
+- **Valor:** Importante
+- **Urgência:** Normal
+- **Esforço-H/IA:** P/M
+- **Data origem:** 12/06/26 23h05
+- **Data início:** 12/06/26 23h05
+- **Dependências:** -
+- **REQ/ADR/DT:** ADR-014; gerada pela TASK-DOM-3; habilita TASK-DOM-4; complementada por TASK-RF-6.39
+- **Observações:** Os 4 modelos Yamaha novos têm freio traseiro a **disco**; o app só conhece o traseiro a **tambor** (`sapata_freio_traseiro`). Esta tarefa adiciona disco+pastilha traseiros como **peça + serviço**, igual ao freio **dianteiro** a disco que já existe. A **km-âncora em Ajustes + model-aware** fica na **TASK-RF-6.39** (decisão do humano: dividir; disco/pastilha ancoráveis lá).
 
-### Objetivo
+## Contexto técnico (confirmado no código)
 
-Adicionar **"Caixa de direção"** como item de manutenção rastreável, do tipo **serviço extra
-incompleto** (a concessionária não informa o preço; entra **só a mão de obra**, estimada; a **peça** é
-real e vai em Insumos). Aparece nas três telas: **M. Obra** (Serviços Extras → Valor Incompleto),
-**Insumos** (peça com preço/vida útil) e **Ajustes → Últimas manutenções** (km da última troca).
+- **M.Obra, Insumos e Detalhamento já são preset-driven e model-aware:** iteram os serviços/peças do preset → cada item vira card/linha própria automaticamente ([PaginaInsumos.tsx:48](../../src/pages/PaginaInsumos.tsx#L48), [PaginaMaoDeObra.tsx](../../src/pages/PaginaMaoDeObra.tsx), [SecaoManutencao.tsx:119](../../src/components/detalhamento/SecaoManutencao.tsx#L119)). Logo, basta o preset listar `disco_freio_traseiro` + `pastilha_freio_traseiro` para disco e pastilha (diant. e tras.) aparecerem **separados** nessas 3 telas (trocar disco ≠ trocar pastilha).
+- **Freio dianteiro a disco** já existe como peça+serviço (`troca-disco-dianteiro` 0,7h / `troca-pastilha-dianteira` 0,5h), **amortizado** (sem km-âncora). RF-6.38 espelha isso no traseiro.
+- **Ajustes** (`COMPONENTES_TROCA`) é estático e só ancora sapata → tratado na **RF-6.39**, não aqui.
 
-### Modelo de dados (como um item existe hoje)
+## Planejamento
 
-Um item rastreável é composto por:
-1. **Peça** em `preset.pecas[]` (`id`, `nome`, `intervaloKm`, `precoOriginal`, `precoParalela`, `incluidoNaRevisaoAutorizada:false`) → **Insumos**.
-2. **Serviço** em `preset.servicosManutencao[]` (`id`, `nome`, `intervalKm`, `precoIndependente`, `precoTotalAutorizada:0`, `statusPrecoAutorizada:'nao_informado'`, `incluidoNaRevisaoAutorizada:false`, `ehExcepcional:false`) → **M. Obra** (Valor Incompleto).
-3. **Chave em `KmUltimaTrocas`** → **Ajustes → Últimas manutenções**.
-4. **3 mapas** em `calculos.ts` ligando os ids (peça↔km, peça↔serviço) para ancoragem e cálculo.
+**O que muda:**
+- `src/utils/calculos.ts`: em `MAPA_PECA_PARA_SERVICO`, adicionar `disco_freio_traseiro: 'troca-disco-traseiro'` e `pastilha_freio_traseiro: 'troca-pastilha-traseira'`. **Sem** entrada em `MAPA_PECA_PARA_KM_ULTIMA_TROCA` (amortizado, igual ao dianteiro — a âncora vem na RF-6.39).
+- `src/utils/maoDeObraEstimada.ts`: em `HORAS_POR_SERVICO`, `'troca-pastilha-traseira': 0.5` e `'troca-disco-traseiro': 0.7` (espelha o dianteiro).
+- `src/context/perfilDefaults.ts`: adicionar os 2 serviços ao catálogo default `SERVICOS_INDEPENDENTES_PADRAO` (avulsos, `nao_informado`, `ehExcepcional:false`) **na mesma forma** dos serviços de freio dianteiro já presentes — confirmar o padrão exato dos dianteiros ao executar.
+- `src/components/icons/pecas.tsx`: mapear `pastilha_freio_traseiro` / `disco_freio_traseiro` (+ ids de serviço) para os mesmos ícones de freio do dianteiro.
+- **Testes:** `calculos.test.ts` (asserções de `MAPA_PECA_PARA_SERVICO`, como as sapatas); `maoDeObraEstimada.test.ts` (tempário 0,5/0,7 × 110 × fator); ajustar `catalogoPresets.test.ts`/`itensManutencao.test.ts` se referenciarem o conjunto.
 
-### O que muda
+**NÃO muda** (fica para RF-6.39): `types/perfil.ts`, `perfilSchema.ts` (migração), `SecaoUltimasManutencoes.tsx`, `MAPA_PECA_PARA_KM_ULTIMA_TROCA`. **Nem** presets existentes (Pop/Factor são tambor; os 4 Yamaha a disco recebem peça/serviço na DOM-4).
 
-**Contrato + schema (migração):**
-- `src/types/perfil.ts`: `caixaDirecao: number` em `KmUltimaTrocas`.
-- `src/schemas/perfilSchema.ts`: `caixaDirecao: inteiroNaoNegativo` em `kmUltimaTrocas`.
-- `src/context/perfilDefaults.ts`: `caixaDirecao: 0` em `KM_ULTIMA_TROCAS_PADRAO`; novo serviço
-  `troca-caixa-direcao` (avulso incompleto) em `SERVICOS_INDEPENDENTES_PADRAO`.
-- **Migração:** `caixaDirecao` é campo novo obrigatório → resolver a estratégia (ver Decisão 1) para
-  **não zerar predefinições já salvas**.
+**Critérios de aceite:**
+- Um preset com `disco_freio_traseiro` + `pastilha_freio_traseiro` resolve serviço↔peça e M.O. estimada; aparecem como **cards separados** em M.Obra e Insumos e linhas no Detalhamento (amortizado).
+- Modelos a tambor (Pop/Factor) **inalterados**.
+- Gates: `npm run test`, `npx tsc --noEmit`, `npm run lint`, `npm run build` — todos **APROVADO**.
 
-**Dados (4 presets existentes):**
-- `src/presets/{pop110i,factor125i,factor150,fazer150}.json`: nova `pecas[]` `caixa_direcao` (preço
-  original/paralela das docs `precos-pecas-*-todosmodelos.md`, por modelo; `intervaloKm` sincronizado
-  pela regra de `manutencao-estimativas.md` §2) e novo `servicosManutencao[]` `troca-caixa-direcao`
-  (avulso, `nao_informado`, M.O. estimada; `ehExcepcional:false`).
+**Impacto:** `calculos.ts`, `maoDeObraEstimada.ts`, `perfilDefaults.ts`, `pecas.tsx` + testes. Aditivo, baixo risco (espelha padrão existente).
+**Dependências novas:** nenhuma.
 
-**Mapas (`src/utils/calculos.ts`):**
-- `MAPA_PECA_PARA_KM_ULTIMA_TROCA`: `caixa_direcao: 'caixaDirecao'`.
-- `MAPA_PECA_PARA_SERVICO`: `caixa_direcao: 'troca-caixa-direcao'`.
+> **Nota p/ DOM-4:** a M.O. de pastilha/disco nas planilhas `servicos-extras-*` usou 0,8 h genérico; alinhar ao tempário do código (pastilha 0,5 h / disco 0,7 h) ao montar os presets.
 
-**Estimativa de M.O. (`src/utils/maoDeObraEstimada.ts`):**
-- `HORAS_POR_SERVICO`: `'troca-caixa-direcao': <horas>` (ver Decisão 2).
+## Execução
 
-**Ícone (`src/components/icons/pecas.tsx`):**
-- importar um ícone (ex.: `~icons/mdi/steering`) e mapear `caixa_direcao`, `troca-caixa-direcao` e `caixaDirecao`.
-
-**UI (Últimas manutenções):**
-- `src/components/ajustes/SecaoUltimasManutencoes.tsx`: `{ key: 'caixaDirecao', label: 'Caixa de direção' }` em `COMPONENTES_TROCA`.
-- Verificar o passo de onboarding `Passo5Manutencoes` — se enumera campos próprios, incluir lá também.
-- **M. Obra e Insumos surgem automaticamente** via preset (serviço → aba Concessionária/Valor Incompleto; peça → Insumos). Confirmar na implementação.
-
-**Docs:**
-- `docs/dominio/manutencao-estimativas.md`: adicionar Caixa de direção ao tempário (§1.1) e aos intervalos por modelo (§2.1/§2.2).
-- `docs/dominio/informacoes-modelos-motos/como-criar-preset.md`: incluir o item no contrato campo→fonte (para a Task B já nascer com ele).
-- glossário/modelagem, se listarem o conjunto de itens.
-
-**Testes:**
-- `perfilSchema`/`presetSchema`: novo campo aceito; fixtures de `kmUltimaTrocas` literais atualizadas.
-- `calculos`: item aparece em manutenção e ancora por `kmUltimaTrocas.caixaDirecao`.
-- M. Obra: serviço aparece em "Valor Incompleto" (status nao_informado).
-- Migração: dado persistido antigo carrega com `caixaDirecao: 0` sem virar `estadoPadrao`.
-
-### Decisões — resolvidas (humano, 12/06/26)
-
-1. **Migração:** sem usuários reais; caminho **não-quebrável e mínimo** — `caixaDirecao:
-   inteiroNaoNegativo.default(0)` no zod, **sem bump de versão**. O default preenche dados antigos na
-   carga (não zera predefinições) e dispensa framework de migração.
-2. **Horas/intervalo (estimados, ajustáveis):** M.O. **1,5 h** (caixa de direção ≈ serviço moderado;
-   tempário entre sapata 0,65 h e kit transmissão 2,0 h). Intervalo/vida útil sincronizado: **Honda
-   42.000 km (×6.000)**, **Yamaha 40.000 km (×5.000)** — rolamentos de direção duram muito; valor
-   conservador para o anda-e-para do RJ.
-3. **Ids/nomes:** peça `caixa_direcao` ("Caixa de direção"); serviço `troca-caixa-direcao` ("Troca da
-   caixa de direção"); chave `caixaDirecao`.
-4. **Avulso, não excepcional:** serviço prestado pela concessionária, mas sem valor publicado →
-   `ehExcepcional:false`, `incluidoNaRevisaoAutorizada:false`, `statusPrecoAutorizada:'nao_informado'`,
-   `precoTotalAutorizada:0`. Nasce zerado (incompleto) com estimativa **opcional**.
-
-### Preço da peça por modelo (das docs `precos-pecas-*`)
-
-- Pop 110i: **R$ 102** (original). Factor 125i / Factor 150 / Fazer 150: **R$ 208** (original).
-- `precoParalela`: oculto no MVP (Insumos original-only) — adotado = original com nota, na ausência de
-  cotação paralela separada nas docs.
-
-### Critérios de aceite
-
-- Caixa de direção aparece em M. Obra (Valor Incompleto), Insumos (peça com preço/vida útil) e Ajustes
-  (km da última troca), com ícone próprio.
-- M.O. estimada calcula via tempário; status nasce `nao_informado` e permanece incompleto.
-- Predefinições salvas antes da mudança **continuam carregando** (sem virar `estadoPadrao`).
-- Os 4 presets têm a peça com preço real das docs.
-- `manutencao-estimativas.md` e `como-criar-preset.md` refletem o item (verdade primária para a Task B).
-- Suíte, typecheck, lint e validação visual em verde.
-
-### Riscos
-
-- **Migração**: campo novo obrigatório pode zerar dados persistidos se a estratégia falhar — mitigado
-  por teste de carga de dado v3 + normalização.
-- **Cálculo**: esquecer um dos 3 mapas faz o item não ancorar/duplicar — coberto por teste de calculos.
-
-### Gates
-
-- [ ] `npm run test`
-- [ ] `npx tsc --noEmit`
-- [ ] `npm run lint`
-- [ ] `npm run build`
-- [ ] Validação visual
-
----
+- 12/06/26 23h05: Movida de pendentes para em-andamento.
+- 12/06/26 23h15: Humano decidiu **dividir** (RF-6.38 dados / RF-6.39 Ajustes) e que disco/pastilha serão **ancoráveis** (na RF-6.39). Plano da RF-6.38 finalizado (escopo só camada de dados, amortizado). Aguardando aprovação para executar.

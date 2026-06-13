@@ -51,4 +51,39 @@ Obedeça essa ordem:
 
 ---
 
+## Novos modelos Yamaha — habilitar e criar presets
+
+> Geradas pela **TASK-DOM-3** (fase 1 de documentação). Ordem: **RF-6.38 → DOM-4**; **RF-6.39** pode
+> entrar em paralelo/antes da DOM-4 (deixa o freio a disco ancorável em Ajustes).
+> **TASK-RF-6.38 está em `em-andamento.md`** (planejada).
+
+### TASK-RF-6.39 — "Últimas manutenções" (Ajustes) model-aware + km-âncora de disco/pastilha
+
+- **Modo:** Standard+ (mexe em contrato/schema/migração + refatora a tela) · **Valor:** Importante · **Urgência:** Normal
+- **Esforço-H/IA:** M/G · **Dependências:** TASK-RF-6.38 · **REQ/ADR:** ADR-014, ADR-016 (ancorado×amortizado)
+- **Origem:** 12/06/26 (decisão do humano na TASK-RF-6.38). Hoje `COMPONENTES_TROCA`
+  ([SecaoUltimasManutencoes.tsx](../../src/components/ajustes/SecaoUltimasManutencoes.tsx)) é **estático**
+  (mesma lista p/ todo modelo) e só **sapata** tem km-âncora; disco/pastilha são sempre amortizados.
+- **Escopo:** (1) tornar a lista de "Últimas manutenções" **derivada do modelo** (modelo a disco mostra
+  disco+pastilha diant/tras; a tambor mostra sapata diant/tras), em vez da lista fixa. (2) Dar **km-âncora**
+  a disco e pastilha (diant. **e** tras.): novas chaves em `KmUltimaTrocas`
+  (`discoFreioDianteiro`, `pastilhaFreioDianteiro`, `discoFreioTraseiro`, `pastilhaFreioTraseiro`) +
+  `perfilSchema` com `default(0)` (migração não-quebrável) + defaults + entradas em
+  `MAPA_PECA_PARA_KM_ULTIMA_TROCA`. Disco/pastilha passam a ser **ancoráveis** quando o km é informado
+  (como a sapata); permanecem amortizados sem km.
+- **Critério de aceite:** em Ajustes, cada modelo mostra só os freios que possui; informar km de disco
+  ou pastilha (diant/tras) ancora aquele item no Detalhamento; modelos a tambor seguem com sapata; gates verdes.
+- **Nota:** decidir se a lista derivada vem do preset (`pecas`/serviços com km-âncora) ou de um catálogo
+  por tipo de freio — definir no planejamento da tarefa.
+
+### TASK-DOM-4 — Criar presets dos 4 modelos Yamaha novos (fase 2)
+
+- **Modo:** Standard · **Valor:** Importante · **Urgência:** Normal · **Esforço-H/IA:** M/G
+- **Dependências:** **TASK-DOM-3** (dados) + **TASK-RF-6.38** (freio a disco) · **REQ/ADR:** ADR-019, ADR-021
+- **Escopo:** criar `src/presets/{fz15,fz25,fazerys250,lander250}.json` a partir dos docs preenchidos
+  na DOM-3 (especificações, revisões, `servicos-extras-*`, `fipe-*`, peças do consolidado) e rodar
+  `npm run fipe:update`. Validar que aparecem corretamente no app.
+- **Critério de aceite:** 4 presets válidos (`presetSchema`), descobertos via `import.meta.glob`,
+  com FIPE preenchida; custo estimado coerente nas telas; gates verdes.
+
 ## Documentação
