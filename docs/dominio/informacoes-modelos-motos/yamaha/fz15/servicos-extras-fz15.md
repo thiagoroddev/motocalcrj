@@ -39,11 +39,3 @@ Fórmula: **M.O. estimada = horas × R$ 110 × 1.15**. Peça = preço médio **o
 > (informada) e entram via `revisaoAutorizada` — não são "extras". Listados aqui só para referência:
 > óleo 0,5h → ~R$ 63 (R$ 58 peça); vela/filtro 0,3h → ~R$ 38.
 
-## Notas e pendências (para a fase 2)
-
-- **Freio traseiro a disco** → o preset precisa de `pastilha_freio_traseiro` + `disco_freio_traseiro`
-  e dos serviços `troca-pastilha-traseira` / `troca-disco-traseiro`, que **ainda não existem** nos
-  presets atuais (Factor usa tambor/sapata). Exige novos ids + mapas em `calculos.ts` + ícone
-  (mesmo trabalho da caixa de direção na RF-6.37).
-- Vida útil dos itens herdada do baseline Yamaha 125/150 (família Factor/Fazer) — **a validar**.
-- FIPE em [`fipe-fz15.md`](fipe-fz15.md).

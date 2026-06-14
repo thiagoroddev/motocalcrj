@@ -20,7 +20,7 @@
       "fim": 2024
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827124-0. Modelo: FZ15 150 FAZER FLEX.",
-    "consumoNota": "35 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026. Validar com fonte específica.",
+    "consumoNota": "35 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026.",
     "fatorMaoDeObraNota": "1.15 pela faixa 150-180cc (149,3 cm³), conforme manutencao-estimativas.md §1.4.",
     "freioNota": "Freio dianteiro E traseiro a DISCO (sem sapata/tambor). Primeiro preset a estrear pastilha/disco traseiro (TASK-DOM-4 / RF-6.38).",
     "pecasNota": "Disco/pastilha (diant. e tras.), kit relação e caixa de direção com preço específico do FZ15. Óleo/filtros/vela herdados da família Yamaha 125/150.",

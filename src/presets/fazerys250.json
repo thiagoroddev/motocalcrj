@@ -23,18 +23,18 @@
   },
   "_fonte": {
     "manual": "Yamaha Serviços (revisões periódicas Fazer 250, revisoes-fazerys250.md) + manual Fazer YS250 2016. Consultados em 12/06/2026.",
-    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250 + específicos Fazer 250; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela (NGK DR8EA-N)/filtro-ar/filtro-combustível reusados da família Yamaha (a validar). FIPE oficial (jun/2026).",
+    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250 + específicos Fazer 250; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela (NGK DR8EA-N)/filtro-ar/filtro-combustível reusados da família Yamaha. FIPE oficial (jun/2026).",
     "dataColeta": "2026-06",
     "anoModelo": {
       "inicio": 2006,
       "fim": 2017
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827052-0. Modelo: YS 250 FAZER/ FAZER L. EDITION /BLUEFLEX.",
-    "consumoNota": "35 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026. Validar com fonte específica.",
+    "consumoNota": "35 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026.",
     "fatorMaoDeObraNota": "1.35 pela faixa 250cc (249 cm³), conforme manutencao-estimativas.md §1.4.",
     "freioNota": "Freio dianteiro E traseiro a DISCO (pastilha/disco diant+tras; sem sapata).",
     "intervalosNota": "250cc mais robusto: transmissão 30.000, embreagem 50.000, cilindro 130.000, discos 60.000. Atrito e caixa de direção no baseline.",
-    "pecasNota": "Disco diant Fazer 250 R$ 790 (grupo Crosser/Fazer 250); disco tras R$ 466 (mesma média FZ15/FZ25, confirmado pelo humano). Bateria XTZ-DL 6Ah R$ 226. Tem filtro de combustível (revisão 15k/30k). Consumíveis reusados da família — validar.",
+    "pecasNota": "Disco diant Fazer 250 R$ 790 (grupo Crosser/Fazer 250); disco tras R$ 466 (mesma média FZ15/FZ25, confirmado pelo humano). Bateria XTZ-DL 6Ah R$ 226. Tem filtro de combustível (revisão 15k/30k). Consumíveis reusados da família.",
     "fontesLocais": [
       "docs/dominio/informacoes-modelos-motos/yamaha/fazerys250/servicos-extras-fazerys250.md",
       "docs/dominio/informacoes-modelos-motos/yamaha/fazerys250/fipe-fazerys250.md",
@@ -61,7 +61,7 @@
       "precoOriginal": 29.43,
       "precoParalela": 29.43,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha (validar p/ 250)." }
+      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha." }
     },
     {
       "id": "filtro_combustivel",
@@ -81,7 +81,7 @@
       "precoOriginal": 46.27,
       "precoParalela": 46.27,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "NGK DR8EA-N — preço reusado da família Yamaha (validar). Substituída ~10.000 km." }
+      "_fonte": { "precoOriginalNota": "NGK DR8EA-N — preço reusado da família Yamaha. Substituída ~10.000 km." }
     },
     {
       "id": "filtro_ar",
@@ -91,7 +91,7 @@
       "precoOriginal": 115.0,
       "precoParalela": 115.0,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha (validar p/ 250). No cronograma é limpo; substituição estimada ~20.000 km." }
+      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha. No cronograma é limpo; substituição estimada ~20.000 km." }
     },
     {
       "id": "kit_relacao",

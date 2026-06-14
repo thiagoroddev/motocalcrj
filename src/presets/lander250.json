@@ -30,19 +30,19 @@
   },
   "_fonte": {
     "manual": "Yamaha Serviços (revisões periódicas Lander 250, revisoes-lander250.md) + manual Lander XTZ250 2024. Consultados em 12/06/2026.",
-    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250 + específicos Lander; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela (NGK DR8EA-N)/filtro-ar/filtro-combustível reusados da família Yamaha (a validar). FIPE oficial (jun/2026).",
+    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250 + específicos Lander; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela (NGK DR8EA-N)/filtro-ar/filtro-combustível reusados da família Yamaha. FIPE oficial (jun/2026).",
     "dataColeta": "2026-06",
     "anoModelo": {
       "inicio": 2007,
       "fim": 2025
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827059-7. Modelo: XTZ 250 LANDER 249cc/LANDER BLUEFLEX/ABS.",
-    "consumoNota": "29 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026. Validar com fonte específica.",
+    "consumoNota": "29 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026.",
     "fatorMaoDeObraNota": "1.35 pela faixa 250cc (249,5 cm³), conforme manutencao-estimativas.md §1.4.",
     "freioNota": "Freio dianteiro E traseiro a DISCO (pastilha/disco diant+tras; sem sapata).",
-    "tipoNota": "TRAIL: pneu com câmara (aro 21\"/18\", Metzeler Tourance) → vida menor que rua (diant 20.000 / tras 12.000, estimado, a validar). Concessionária não troca pneu (excepcional).",
+    "tipoNota": "TRAIL: pneu com câmara (aro 21\"/18\", Metzeler Tourance) → vida menor que rua (diant 20.000 / tras 12.000, estimado). Concessionária não troca pneu (excepcional).",
     "intervalosNota": "250cc mais robusto: transmissão 30.000, embreagem 50.000, cilindro 130.000, discos 60.000. Atrito e caixa de direção no baseline.",
-    "pecasNota": "Disco diant Lander R$ 935; disco tras 708; caixa de direção 1165 (os mais caros do grupo). Bateria XTZ7L R$ 200. Tem filtro de combustível (revisão 15k/30k). Consumíveis reusados da família — validar.",
+    "pecasNota": "Disco diant Lander R$ 935; disco tras 708; caixa de direção 1165 (os mais caros do grupo). Bateria XTZ7L R$ 200. Tem filtro de combustível (revisão 15k/30k). Consumíveis reusados da família.",
     "fontesLocais": [
       "docs/dominio/informacoes-modelos-motos/yamaha/lander250/servicos-extras-lander250.md",
       "docs/dominio/informacoes-modelos-motos/yamaha/lander250/fipe-lander250.md",
@@ -69,7 +69,7 @@
       "precoOriginal": 29.43,
       "precoParalela": 29.43,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha (validar p/ 250)." }
+      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha." }
     },
     {
       "id": "filtro_combustivel",
@@ -89,7 +89,7 @@
       "precoOriginal": 46.27,
       "precoParalela": 46.27,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "NGK DR8EA-N — preço reusado da família Yamaha (validar). Substituída ~10.000 km." }
+      "_fonte": { "precoOriginalNota": "NGK DR8EA-N — preço reusado da família Yamaha. Substituída ~10.000 km." }
     },
     {
       "id": "filtro_ar",
@@ -99,7 +99,7 @@
       "precoOriginal": 115.0,
       "precoParalela": 115.0,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha (validar p/ 250). No cronograma é limpo; substituição estimada ~20.000 km." }
+      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha. No cronograma é limpo; substituição estimada ~20.000 km." }
     },
     {
       "id": "kit_relacao",
@@ -218,7 +218,7 @@
       "precoParalela": 336.0,
       "_fonte": {
         "especificacao": "80/90-21 com câmara (Metzeler Tourance — trail)",
-        "vidaUtilNota": "Pneu trail: vida estimada menor (20.000 km), a validar.",
+        "vidaUtilNota": "Pneu trail: vida estimada menor (20.000 km).",
         "precoOriginalNota": "Pneu dianteiro Lander 250 (80/90-21): R$ 336."
       }
     },
@@ -230,7 +230,7 @@
       "precoParalela": 532.0,
       "_fonte": {
         "especificacao": "120/80-18 com câmara (Metzeler Tourance — trail)",
-        "vidaUtilNota": "Pneu trail traseiro: vida estimada 12.000 km, a validar.",
+        "vidaUtilNota": "Pneu trail traseiro: vida estimada 12.000 km.",
         "precoOriginalNota": "Pneu traseiro Lander 250 (120/80-18): R$ 532."
       }
     }

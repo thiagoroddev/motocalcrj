@@ -18,18 +18,18 @@
   },
   "_fonte": {
     "manual": "Yamaha Serviços (revisões periódicas FZ25, revisoes-fz25.md) + manual Fazer FZ25 ABS 2024. Consultados em 12/06/2026.",
-    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela/filtro-ar reusados da família Yamaha (a validar p/ 250). FIPE oficial (jun/2026).",
+    "precos": "Peças: médias originais de precos-pecas-yamaha-todosmodelos.md (grupo 250; sem paralela, precoParalela = original). Consumíveis óleo-filtro/vela/filtro-ar reusados da família Yamaha. FIPE oficial (jun/2026).",
     "dataColeta": "2026-06",
     "anoModelo": {
       "inicio": 2018,
       "fim": 2024
     },
     "codigoFipeNota": "Coletado via API Parallelum FIPE em junho de 2026. Código: 827107-0. Modelo: FZ25 250 FAZER FLEX.",
-    "consumoNota": "30 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026. Validar com fonte específica.",
+    "consumoNota": "30 km/L (uso profissional/intenso), informado pelo humano em 13/06/2026.",
     "fatorMaoDeObraNota": "1.35 pela faixa 250cc (249 cm³), conforme manutencao-estimativas.md §1.4.",
     "freioNota": "Freio dianteiro E traseiro a DISCO (pastilha/disco diant+tras; sem sapata).",
     "intervalosNota": "250cc mais robusto (validado pelo humano): partes metálicas acima do baseline 150 — transmissão 30.000, embreagem 50.000, cilindro 130.000, discos 60.000. Atrito (pastilhas) e caixa de direção no baseline.",
-    "pecasNota": "Disco/pastilha (diant+tras), kit relação, embreagem, cilindro, bateria e caixa de direção com preço específico do FZ25/grupo 250. Óleo-filtro/vela (NGK DR8EA)/filtro-ar reusados da família Yamaha — validar para 250.",
+    "pecasNota": "Disco/pastilha (diant+tras), kit relação, embreagem, cilindro, bateria e caixa de direção com preço específico do FZ25/grupo 250. Óleo-filtro/vela (NGK DR8EA)/filtro-ar reusados da família Yamaha.",
     "fontesLocais": [
       "docs/dominio/informacoes-modelos-motos/yamaha/fz25/servicos-extras-fz25.md",
       "docs/dominio/informacoes-modelos-motos/yamaha/fz25/fipe-fz25.md",
@@ -59,7 +59,7 @@
       "precoOriginal": 29.43,
       "precoParalela": 29.43,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha (validar p/ 250)." }
+      "_fonte": { "precoOriginalNota": "Elemento do filtro de óleo CJ — reusado da família Yamaha." }
     },
     {
       "id": "vela_ignicao",
@@ -69,7 +69,7 @@
       "precoOriginal": 46.27,
       "precoParalela": 46.27,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "NGK DR8EA — preço reusado da família Yamaha (validar). Substituição programada ~20.000 km (revisoes-fz25.md)." }
+      "_fonte": { "precoOriginalNota": "NGK DR8EA — preço reusado da família Yamaha. Substituição programada ~20.000 km (revisoes-fz25.md)." }
     },
     {
       "id": "filtro_ar",
@@ -79,7 +79,7 @@
       "precoOriginal": 115.0,
       "precoParalela": 115.0,
       "incluidoNaRevisaoAutorizada": true,
-      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha (validar p/ 250). No cronograma FZ25 é limpo; substituição estimada ~20.000 km." }
+      "_fonte": { "precoOriginalNota": "Reusado da família Yamaha. No cronograma FZ25 é limpo; substituição estimada ~20.000 km." }
     },
     {
       "id": "kit_relacao",
