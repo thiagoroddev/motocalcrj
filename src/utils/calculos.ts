@@ -308,6 +308,30 @@ export interface OpcoesCpkPorPeca {
   servicosIndependentes?: ServicoIndependente[];
 }
 
+/**
+ * Peça coberta por um serviço avulso COMPLETO (Honda): no modo autorizado, se o
+ * serviço associado (`MAPA_PECA_PARA_SERVICO`) está ativo, com preço oficial
+ * `informado` e inclui a peça (`concessionariaIncluiPeca !== false`), a peça já
+ * está no preço completo → não conta/aparece separada (ADR-007/014). Usada pelo
+ * cálculo e pela tela Insumos para manter exibição == custo. (BG-034)
+ */
+export function ehPecaCobertaPorServicoCompleto(
+  pecaId: string,
+  modoRevisao: ModoRevisao,
+  servicosIndependentes: ServicoIndependente[],
+): boolean {
+  if (modoRevisao !== 'autorizadas') return false;
+  const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
+  if (!servicoId) return false;
+  const servico = servicosIndependentes.find((s) => s.id === servicoId);
+  return (
+    !!servico &&
+    servico.ativo &&
+    resolverStatusPrecoAutorizada(servico) === 'informado' &&
+    servico.concessionariaIncluiPeca !== false
+  );
+}
+
 export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca> {
   const {
     preset,
@@ -325,28 +349,11 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
   const kmAnualSeguro = valorNaoNegativo(kmAnual);
 
   // No modo autorizado, pula peças por dois critérios (ADR-006 + ADR-007):
-  //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote
-  //      da concessionária;
-  //  (b) peça associada a um ServicoIndependente com `precoTotalAutorizada > 0`
-  //      e ativo - o serviço cobre peça + M.O. juntos e somar a
-  //      peça aqui duplica o custo.
-  const ehPecaCobertaPorServicoAutorizada = (pecaId: string): boolean => {
-    if (modoRevisao !== 'autorizadas') return false;
-    const servicoId = MAPA_PECA_PARA_SERVICO[pecaId];
-    if (!servicoId) return false;
-    const servico = servicosIndependentes.find((s) => s.id === servicoId);
-    // Pula a peça só quando o preço OFICIAL da concessionária já inclui a peça
-    // (Honda, status `informado`). Yamaha informa só M.O. (`concessionariaIncluiPeca:
-    // false`) → a peça permanece e soma com a M.O. no item. Edição do usuário
-    // (`informado_usuario`) é sempre só M.O. → a peça também permanece e soma
-    // (ADR-014, adendo: editado = M.O. + peça).
-    return (
-      !!servico &&
-      servico.ativo &&
-      resolverStatusPrecoAutorizada(servico) === 'informado' &&
-      servico.concessionariaIncluiPeca !== false
-    );
-  };
+  //  (a) `incluidoNaRevisaoAutorizada` do Preset = peça já vem no pacote da revisão;
+  //  (b) peça coberta por um serviço avulso COMPLETO (Honda) — regra em
+  //      `ehPecaCobertaPorServicoCompleto`, reusada pela tela Insumos (BG-034).
+  const ehPecaCobertaPorServicoAutorizada = (pecaId: string): boolean =>
+    ehPecaCobertaPorServicoCompleto(pecaId, modoRevisao, servicosIndependentes);
   const pecasConsideradas =
     modoRevisao === 'autorizadas'
       ? preset.pecas.filter(

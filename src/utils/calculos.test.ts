@@ -30,6 +30,7 @@ import {
   calcularResultado,
   MAPA_PECA_PARA_SERVICO,
   chavesKmUltimaTrocaDoPreset,
+  ehPecaCobertaPorServicoCompleto,
 } from './calculos';
 import { SERVICOS_INDEPENDENTES_PADRAO, perfilPadrao } from '../context/PerfilContext';
 import { obterConsumoKmL } from '../data/catalogoModelos';
@@ -2469,6 +2470,60 @@ describe('chavesKmUltimaTrocaDoPreset (model-aware — RF-6.39)', () => {
     expect(chaves.has('kitRelacao')).toBe(true);
     expect(chaves.has('caixaDirecao')).toBe(true);
     expect(chaves.has('retificaCabecote')).toBe(true);
+  });
+});
+
+describe('ehPecaCobertaPorServicoCompleto (BG-034)', () => {
+  function servicoCompleto(over: Partial<ServicoIndependente> = {}): ServicoIndependente {
+    return {
+      id: 'troca-kit-transmissao',
+      nome: 'Kit transmissão',
+      intervalKm: 18000,
+      precoIndependente: 0,
+      precoTotalAutorizada: 200,
+      statusPrecoAutorizada: 'informado',
+      concessionariaIncluiPeca: true,
+      incluidoNaRevisaoAutorizada: false,
+      ativo: true,
+      ehExcepcional: false,
+      ...over,
+    };
+  }
+
+  it('Honda completo (informado + inclui peça + ativo) cobre a peça `kit_relacao`', () => {
+    expect(ehPecaCobertaPorServicoCompleto('kit_relacao', 'autorizadas', [servicoCompleto()])).toBe(
+      true,
+    );
+  });
+
+  it('Yamaha (concessionariaIncluiPeca: false) NÃO cobre — peça soma com a M.O.', () => {
+    const s = [servicoCompleto({ concessionariaIncluiPeca: false })];
+    expect(ehPecaCobertaPorServicoCompleto('kit_relacao', 'autorizadas', s)).toBe(false);
+  });
+
+  it('editado pelo usuário (informado_usuario) NÃO cobre — só M.O.', () => {
+    const s = [servicoCompleto({ statusPrecoAutorizada: 'informado_usuario' })];
+    expect(ehPecaCobertaPorServicoCompleto('kit_relacao', 'autorizadas', s)).toBe(false);
+  });
+
+  it('serviço inativo NÃO cobre', () => {
+    expect(
+      ehPecaCobertaPorServicoCompleto('kit_relacao', 'autorizadas', [
+        servicoCompleto({ ativo: false }),
+      ]),
+    ).toBe(false);
+  });
+
+  it('modo independente NÃO cobre (peça sempre aparece)', () => {
+    expect(
+      ehPecaCobertaPorServicoCompleto('kit_relacao', 'independentes', [servicoCompleto()]),
+    ).toBe(false);
+  });
+
+  it('peça sem serviço mapeado NÃO cobre', () => {
+    expect(
+      ehPecaCobertaPorServicoCompleto('peca_inexistente', 'autorizadas', [servicoCompleto()]),
+    ).toBe(false);
   });
 });
 

@@ -7,7 +7,7 @@ import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
 import { TituloSecao } from '@/components/TituloSecao';
-import { resolverServicoPorPeca } from '../utils/calculos';
+import { resolverServicoPorPeca, ehPecaCobertaPorServicoCompleto } from '../utils/calculos';
 import { resolverServicosManutencaoPerfil } from '../utils/servicosManutencaoPreset';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
 
@@ -45,10 +45,16 @@ export function PaginaInsumos() {
     return resolverServicoPorPeca(id, servicosManutencao)?.intervalKm ?? fallback;
   }
 
+  // Peça coberta por serviço avulso completo (Honda) não aparece em Insumos — o
+  // preço completo da concessionária já a inclui (espelha o cálculo, ADR-007). BG-034.
+  const modoRevisao = perfil.perfilManutencao.modoRevisao;
+  const pecaCoberta = (id: string) =>
+    ehPecaCobertaPorServicoCompleto(id, modoRevisao, servicosManutencao);
+
   const itensPecas = preset
     ? [
         ...preset.pecas
-          .filter((p) => !p.incluidoNaRevisaoAutorizada)
+          .filter((p) => !p.incluidoNaRevisaoAutorizada && !pecaCoberta(p.id))
           .map((p) => ({
             id: p.id,
             nome: p.nome,
@@ -56,13 +62,15 @@ export function PaginaInsumos() {
             precoParalela: p.precoParalela,
             intervaloKm: resolverIntervalo(p.id, p.intervaloKm ?? 0),
           })),
-        ...preset.pneus.map((p) => ({
-          id: p.id,
-          nome: `Pneu ${p.posicao}`,
-          precoOriginal: p.precoOriginal,
-          precoParalela: p.precoParalela,
-          intervaloKm: resolverIntervalo(p.id, p.vidaUtilKm),
-        })),
+        ...preset.pneus
+          .filter((p) => !pecaCoberta(p.id))
+          .map((p) => ({
+            id: p.id,
+            nome: `Pneu ${p.posicao}`,
+            precoOriginal: p.precoOriginal,
+            precoParalela: p.precoParalela,
+            intervaloKm: resolverIntervalo(p.id, p.vidaUtilKm),
+          })),
       ]
     : [];
 
