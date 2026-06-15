@@ -1,6 +1,11 @@
 import { useId, useState } from 'react';
 import type { Dispatch } from 'react';
-import type { PerfilUsuario, PerfilAction, KmUltimaTrocas } from '../../types/perfil';
+import type {
+  PerfilUsuario,
+  PerfilAction,
+  KmUltimaTrocas,
+  BateriaConfig,
+} from '../../types/perfil';
 import { Wrench } from 'lucide-react';
 import { DialogConfirmacao } from '../DialogConfirmacao';
 import { IconTrocar } from '../icons';
@@ -9,6 +14,7 @@ import { TituloSecao } from '@/components/TituloSecao';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BotaoReset } from '../BotaoReset';
+import { CardBateria } from './CardBateria';
 import { obterPreset } from '../../data/repositorioPresets';
 import { chavesKmUltimaTrocaDoPreset } from '../../utils/calculos';
 
@@ -35,10 +41,11 @@ const LABELS_KM_ULTIMA_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
 
 interface Props {
   moto: PerfilUsuario['moto'];
+  bateria: BateriaConfig;
   dispatch: Dispatch<PerfilAction>;
 }
 
-export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
+export function SecaoUltimasManutencoes({ moto, bateria, dispatch }: Props) {
   const idPrefix = useId();
   const [replicaPendente, setReplicaPendente] = useState<{
     key: keyof KmUltimaTrocas;
@@ -82,7 +89,7 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
     <>
       <section className="bg-card rounded-lg p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <TituloSecao icone={Wrench}>KM - últimas trocas/manutenções</TituloSecao>
+          <TituloSecao icone={Wrench}>Registro últimas trocas/manutenções</TituloSecao>
           <BotaoReset desabilitado={!temAlteracao} onReset={resetar} />
         </div>
         <div className="grid grid-cols-2 gap-x-2 gap-y-4">
@@ -135,6 +142,9 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
               </div>
             );
           })}
+        </div>
+        <div className="border-t border-border/60 pt-3">
+          <CardBateria bateria={bateria} dispatch={dispatch} />
         </div>
       </section>
       <DialogConfirmacao

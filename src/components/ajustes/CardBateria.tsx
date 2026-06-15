@@ -6,9 +6,12 @@ import { TituloSecao } from '@/components/TituloSecao';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-// Bateria por tempo (TASK-RF-8). Card próprio em Ajustes/onboarding: vida útil em
-// ANOS (2/3/4/5, default 3). O custo é sempre amortizado (valor ÷ vida útil em
-// anos) — a ancoragem por data foi revertida na RF-8.7 (confundia mais que ajudava).
+// Bateria por tempo (TASK-RF-8). Vida útil em ANOS (2/3/4/5, default 3). O custo é
+// sempre amortizado (valor ÷ vida útil em anos) — a ancoragem por data foi
+// revertida na RF-8.7 (confundia mais que ajudava).
+//
+// Bloco embutível (TASK-RF-8.8): não tem chrome de card próprio — é renderizado
+// dentro de `SecaoUltimasManutencoes`, junto dos demais registros.
 const VIDAS_UTEIS: VidaUtilBateriaAnos[] = [2, 3, 4, 5];
 
 interface Props {
@@ -20,7 +23,7 @@ export function CardBateria({ bateria, dispatch }: Props) {
   const idVida = useId();
 
   return (
-    <section className="bg-card rounded-lg p-4 space-y-3">
+    <div className="space-y-3">
       <TituloSecao icone={BatteryCharging}>Bateria</TituloSecao>
       <div className="space-y-1">
         <Label htmlFor={idVida} className="text-xs text-foreground font-medium">
@@ -51,6 +54,6 @@ export function CardBateria({ bateria, dispatch }: Props) {
         A bateria envelhece por tempo. O custo é distribuído pela vida útil (valor ÷{' '}
         {bateria.vidaUtilAnos} anos).
       </p>
-    </section>
+    </div>
   );
 }

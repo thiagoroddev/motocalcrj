@@ -10,10 +10,14 @@ afterEach(() => {
   cleanup();
 });
 
+const bateria = perfilPadrao.perfilManutencao.bateria;
+
 describe('SecaoUltimasManutencoes - validação de domínio', () => {
   it('não despacha km negativo para última troca', () => {
     const dispatch = vi.fn<(action: PerfilAction) => void>();
-    render(<SecaoUltimasManutencoes moto={perfilPadrao.moto} dispatch={dispatch} />);
+    render(
+      <SecaoUltimasManutencoes moto={perfilPadrao.moto} bateria={bateria} dispatch={dispatch} />,
+    );
 
     fireEvent.change(screen.getByLabelText('Troca de óleo'), {
       target: { value: '-100' },
@@ -27,10 +31,23 @@ describe('SecaoUltimasManutencoes - validação de domínio', () => {
     render(
       <SecaoUltimasManutencoes
         moto={{ ...perfilPadrao.moto, kmAtual: 60_000 }}
+        bateria={bateria}
         dispatch={dispatch}
       />,
     );
 
     expect(screen.queryByText(/Retífica/i)).not.toBeInTheDocument();
+  });
+
+  it('usa o título "Registro" e embute o controle da bateria no mesmo card', () => {
+    const dispatch = vi.fn<(action: PerfilAction) => void>();
+    render(
+      <SecaoUltimasManutencoes moto={perfilPadrao.moto} bateria={bateria} dispatch={dispatch} />,
+    );
+
+    expect(screen.getByText('Registro últimas trocas/manutenções')).toBeInTheDocument();
+    expect(screen.queryByText('KM - últimas trocas/manutenções')).not.toBeInTheDocument();
+    expect(screen.getByText('Bateria')).toBeInTheDocument();
+    expect(screen.getByLabelText('Vida útil da bateria em anos')).toBeInTheDocument();
   });
 });
