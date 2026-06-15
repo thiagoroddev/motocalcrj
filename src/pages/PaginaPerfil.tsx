@@ -293,7 +293,7 @@ export function PaginaPerfil() {
             <div className="space-y-1">
               <p className="font-medium text-foreground">Privacidade</p>
               <p>
-                O MotoCalc RJ funciona inteiramente no seu aparelho. Suas predefinições,
+                O MotoCalcRJ funciona inteiramente no seu aparelho. Suas predefinições,
                 quilometragens e preços ficam salvos apenas no navegador deste dispositivo. Nada é
                 enviado para servidores: não há cadastro, coleta de dados pessoais nem rastreadores.
                 Por não possuir banco de dados na nuvem, você é o único responsável por proteger
@@ -304,14 +304,39 @@ export function PaginaPerfil() {
             <div className="space-y-1">
               <p className="font-medium text-foreground">Termos de uso</p>
               <p>
-                O aplicativo tem caráter informativo e não substitui avaliações mecânicas
-                profissionais ou orientações financeiras/contábeis. Os valores apresentados são
-                estimativas médias aproximadas para permitir cálculos mais completos, não constituem
-                aconselhamento financeiro nem possuem dados exatos. Preços e vida útil de peças, mão
-                de obra e tabela FIPE são referências estimadas e podem divergir do praticado na sua
-                região ou concessionária. Os dados de revisões periódicas foram obtidos dos sites
-                oficiais das concessionárias e podem estar desatualizados. Use os resultados por sua
-                conta. Cobertura voltada a motos e custos do Rio de Janeiro (RJ).
+                Este aplicativo tem caráter meramente informativo e não substitui avaliações
+                mecânicas profissionais nem orientações financeiras ou contábeis. Os valores
+                exibidos são estimativas médias aproximadas, fornecidas apenas para viabilizar
+                cálculos mais completos; não constituem aconselhamento financeiro nem representam
+                dados exatos.
+              </p>
+
+              <p>
+                Preços e vida útil de peças, valores de mão de obra e referências da Tabela FIPE são
+                estimativas e podem divergir do que é praticado na sua região ou concessionária. Os
+                dados de revisões periódicas foram extraídos dos sites oficiais das concessionárias
+                e podem estar desatualizados. Por isso, os resultados devem ser utilizados por sua
+                conta e risco. A cobertura é voltada a motocicletas e baseada nos custos praticados
+                no Rio de Janeiro (RJ).
+              </p>
+
+              <p>
+                É responsabilidade do usuário garantir que os valores informados no "Modo
+                Personalizado" como preço de combustível, peças originais ou paralelas e
+                mensalidades de seguro reflitam a realidade da sua região.
+              </p>
+
+              <p>
+                O sistema foi desenvolvido para funcionar de forma offline após o primeiro acesso.
+                Ainda assim, não garantimos disponibilidade ininterrupta do serviço, que pode estar
+                sujeito a atualizações ou a falhas inerentes ao seu navegador ou dispositivo móvel.
+              </p>
+
+              <p>
+                Reservamo-nos o direito de atualizar estes Termos de Uso a qualquer momento, a fim
+                de refletir novas funcionalidades do aplicativo (como futuras integrações de
+                importação e exportação de dados mediante login). A continuidade do uso após as
+                alterações implica a aceitação dos novos termos.
               </p>
             </div>
           </div>

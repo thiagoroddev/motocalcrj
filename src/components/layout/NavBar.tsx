@@ -73,7 +73,9 @@ export function NavBar() {
   const { pathname } = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-muted z-50 safe-bottom">
+    // `max-w-3xl` deve casar com a coluna central em App.tsx (NavBar é `fixed`,
+    // então não herda a largura da coluna — manter os dois em sincronia).
+    <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-3xl -translate-x-1/2 bg-card border-t border-muted safe-bottom">
       <div className="flex h-16">
         {TABS.map((tab) => (
           <NavLink

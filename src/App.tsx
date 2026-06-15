@@ -16,29 +16,33 @@ function App() {
     <ThemeProvider>
       <PerfilProvider>
         <BrowserRouter>
-          <div className="min-h-screen bg-background text-foreground">
-            <Routes>
-              {/* Onboarding - nao protegido */}
-              <Route path="/onboarding/*" element={<FluxoOnboarding />} />
+          {/* Moldura central: no celular ocupa 100% (viewport < 480px); na web
+              vira uma coluna "de celular" centralizada, sem esticar a UI mobile. */}
+          <div className="flex min-h-screen justify-center bg-muted/20">
+            <div className="relative w-full max-w-3xl bg-background text-foreground shadow-2xl">
+              <Routes>
+                {/* Onboarding - nao protegido */}
+                <Route path="/onboarding/*" element={<FluxoOnboarding />} />
 
-              {/* App principal - protegido */}
-              <Route element={<RotaProtegida />}>
-                {/* Rotas com header + NavBar */}
-                <Route element={<LayoutApp />}>
-                  <Route path="/estimativa" element={<PaginaEstimativa />} />
-                  <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
-                  <Route path="/insumos" element={<PaginaInsumos />} />
-                  <Route path="/ajustes" element={<PaginaAjustes />} />
+                {/* App principal - protegido */}
+                <Route element={<RotaProtegida />}>
+                  {/* Rotas com header + NavBar */}
+                  <Route element={<LayoutApp />}>
+                    <Route path="/estimativa" element={<PaginaEstimativa />} />
+                    <Route path="/mao-de-obra" element={<PaginaMaoDeObra />} />
+                    <Route path="/insumos" element={<PaginaInsumos />} />
+                    <Route path="/ajustes" element={<PaginaAjustes />} />
+                  </Route>
+                  {/* Subpáginas com CabecalhoVoltar (header próprio com botão voltar) */}
+                  <Route path="/perfil" element={<PaginaPerfil />} />
+                  <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
                 </Route>
-                {/* Subpáginas com CabecalhoVoltar (header próprio com botão voltar) */}
-                <Route path="/perfil" element={<PaginaPerfil />} />
-                <Route path="/estimativa/detalhamento" element={<PaginaDetalhamento />} />
-              </Route>
 
-              {/* Raiz redireciona para estimativa (RotaProtegida redireciona p/ onboarding se necessario) */}
-              <Route path="/" element={<Navigate to="/estimativa" replace />} />
-              <Route path="*" element={<Navigate to="/estimativa" replace />} />
-            </Routes>
+                {/* Raiz redireciona para estimativa (RotaProtegida redireciona p/ onboarding se necessario) */}
+                <Route path="/" element={<Navigate to="/estimativa" replace />} />
+                <Route path="*" element={<Navigate to="/estimativa" replace />} />
+              </Routes>
+            </div>
           </div>
         </BrowserRouter>
       </PerfilProvider>

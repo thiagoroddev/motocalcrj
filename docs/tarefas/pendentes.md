@@ -12,6 +12,29 @@ Colunas padrão das tabelas: `ID | Título | Modo | Valor | Urgência | Esforço
 
 ## Tarefas Prioritárias (Imediata)
 
+## TASK-RF-10 - Avisos de origem dos dados ("podem estar desatualizados")
+
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 15/06/26 11:58
+- **Dependências:** -
+- **REQ/ADR/DT:** Lançamento web/PWA; complementa o dialog "Privacidade e Termos" (Perfil)
+- **Observações:**
+  - **Motivo:** "ninguém lê os Termos". Cada bloco com dado de origem externa precisa de um aviso curto **ao lado/abaixo do próprio dado** (não só enterrado nos Termos), dizendo de onde veio e que pode estar desatualizado (a maioria não será atualizada periodicamente).
+  - **Formato (a decidir na execução):** recomendação = um componente único e leve (ícone ℹ️/alerta + texto curto) **por seção**, reaproveitando/estendendo o `AjudaInline` (criado na BG-032) para consistência — **não** um card pesado por campo, nem label em todo campo (poluído). 1 linha por seção.
+  - **Locais + microcopy (fontes confirmadas no código):**
+    1. **Onboarding — seletor de ano/FIPE** (`Passo3.tsx`): "Valor FIPE de referência; pode estar desatualizado."
+    2. **Mão de Obra — Revisões da concessionária** (`PaginaMaoDeObra` / cards de revisão): "Valores do site oficial da concessionária; podem estar desatualizados."
+    3. **Insumos — Combustível** (`PaginaInsumos`): "Preço de referência da ANP (gov); pode estar desatualizado." — fonte real: `dados_rj.json` → ANP, Levantamento de Preços (RJ).
+    4. **Insumos — Peças e Pneus** (`PaginaInsumos`): "Preços obtidos de marketplaces; podem estar desatualizados."
+    5. **Documentos — IPVA + Licenciamento** (Estimativa/Detalhamento) — ⚠️ **esquecido na lista original**: "IPVA (SEFAZ-RJ) e licenciamento (DETRAN-RJ); valores anuais, podem estar desatualizados." — fontes em `dados_rj.json`.
+  - **Candidatos opcionais (avaliar na execução, baixa prioridade):** nota de "intervalos de revisão (km/meses) conforme manual do fabricante" e "autonomia (km/L) de referência do fabricante/estimativa". Podem ser dobrados nos avisos 2 e 3 para não poluir.
+  - **Acessibilidade:** ícone com `aria-label`/`title`; texto legível (não só `title` no hover, pra funcionar no toque).
+  - **Sem mudança de cálculo** — é só UI/conteúdo.
+
 ---
 
 ## Normais
