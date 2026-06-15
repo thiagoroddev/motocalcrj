@@ -40,6 +40,38 @@ describe('CardServico (modo autorizada, sem valor informado)', () => {
     expect(input).toHaveAttribute('readonly');
   });
 
+  it('bateria (TASK-RF-8.4): troca "Intervalo (km)" por select de vida útil em anos', () => {
+    const bateria: ServicoIndependente = {
+      id: 'troca-bateria',
+      nome: 'Troca de bateria',
+      intervalKm: 0,
+      precoIndependente: 50,
+      precoTotalAutorizada: 0,
+      statusPrecoAutorizada: 'nao_informado',
+      incluidoNaRevisaoAutorizada: false,
+      ativo: true,
+      ehExcepcional: false,
+    };
+    render(
+      <CardServico
+        servico={bateria}
+        dispatch={vi.fn()}
+        modo="autorizada"
+        vidaUtilBateriaAnos={3}
+      />,
+    );
+
+    expect(screen.getByText('Vida útil')).toBeInTheDocument();
+    expect(screen.queryByText('Intervalo (km)')).not.toBeInTheDocument();
+  });
+
+  it('serviço km-driven mantém "Intervalo (km)" (sem vidaUtilBateriaAnos)', () => {
+    render(<CardServico servico={servico} dispatch={vi.fn()} modo="autorizada" />);
+
+    expect(screen.getByText('Intervalo (km)')).toBeInTheDocument();
+    expect(screen.queryByText('Vida útil')).not.toBeInTheDocument();
+  });
+
   it('com estimativa global ligada (modo Estimado): nota e sem toggle', () => {
     render(
       <CardServico

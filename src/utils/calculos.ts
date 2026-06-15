@@ -132,7 +132,8 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   pastilha_freio_dianteiro: 'pastilhaFreioDianteiro',
   disco_freio_traseiro: 'discoFreioTraseiro',
   pastilha_freio_traseiro: 'pastilhaFreioTraseiro',
-  bateria: 'bateria',
+  // bateria saiu do card "KM - últimas trocas" (TASK-RF-8.2): tem card próprio por
+  // data + vida útil em anos (RF-8.3). Driver temporal, sem âncora em km.
   kit_embreagem: 'kitEmbreagem',
   kit_cilindro: 'kitCilindro',
   caixa_direcao: 'caixaDirecao',

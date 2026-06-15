@@ -3,6 +3,7 @@ import { usePerfil } from '../../../hooks/usePerfil';
 import { useOnboarding } from '../FluxoOnboarding';
 import { PassoLayout } from '../PassoLayout';
 import { SecaoUltimasManutencoes } from '../../../components/ajustes/SecaoUltimasManutencoes';
+import { CardBateria } from '../../../components/ajustes/CardBateria';
 import { Input } from '../../../components/ui/input';
 
 export function Passo5Manutencoes() {
@@ -60,6 +61,11 @@ export function Passo5Manutencoes() {
         </section>
 
         <SecaoUltimasManutencoes moto={perfil.moto} dispatch={dispatch} />
+        <CardBateria
+          bateria={perfil.perfilManutencao.bateria}
+          anoMoto={perfil.moto.ano}
+          dispatch={dispatch}
+        />
       </div>
     </PassoLayout>
   );

@@ -12,6 +12,7 @@ import {
 } from '../components/ui/dialog';
 import { SecaoVeiculo } from '../components/ajustes/SecaoVeiculo';
 import { SecaoUltimasManutencoes } from '../components/ajustes/SecaoUltimasManutencoes';
+import { CardBateria } from '../components/ajustes/CardBateria';
 import { SecaoPreferencias } from '../components/ajustes/SecaoPreferencias';
 import { SecaoUsoDiario } from '../components/ajustes/SecaoUsoDiario';
 import { SecaoFinanceiro } from '../components/ajustes/SecaoFinanceiro';
@@ -61,6 +62,11 @@ export function PaginaAjustes() {
           <SecaoVeiculo moto={perfil.moto} dispatch={dispatch} />
         </div>
         <SecaoUltimasManutencoes moto={perfil.moto} dispatch={dispatch} />
+        <CardBateria
+          bateria={perfil.perfilManutencao.bateria}
+          anoMoto={perfil.moto.ano}
+          dispatch={dispatch}
+        />
         <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />
         <SecaoUsoDiario trabalho={perfil.trabalho} dispatch={dispatch} />
         <SecaoFinanceiro financeiro={perfil.financeiro} dispatch={dispatch} />

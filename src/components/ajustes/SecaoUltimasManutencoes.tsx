@@ -27,7 +27,7 @@ const LABELS_KM_ULTIMA_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'sapataFreioTraseiro', label: 'Sapata de freio traseiro' },
   { key: 'discoFreioTraseiro', label: 'Disco de freio traseiro' },
   { key: 'pastilhaFreioTraseiro', label: 'Pastilha de freio traseira' },
-  { key: 'bateria', label: 'Bateria' },
+  // Bateria saiu daqui (TASK-RF-8.2): card próprio por data + vida útil em anos (RF-8.3).
   { key: 'kitEmbreagem', label: 'Kit embreagem' },
   { key: 'kitCilindro', label: 'Kit cilindro' },
   { key: 'caixaDirecao', label: 'Kit caixa de direção' },

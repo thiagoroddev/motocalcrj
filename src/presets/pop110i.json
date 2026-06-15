@@ -124,8 +124,8 @@
       "id": "bateria",
       "nome": "Bateria",
       "intervaloMeses": 24,
-      "precoOriginal": 329.80,
-      "precoParalela": 163.20,
+      "precoOriginal": 329.8,
+      "precoParalela": 163.2,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloMesesNota": "Driver temporal: bateria envelhece por tempo, não por km. Vida útil típica 18-30 meses em uso urbano RJ. Adotado: 24 meses.",
@@ -139,7 +139,7 @@
       "intervaloKm": 42000,
       "intervaloMeses": 0,
       "precoOriginal": 300.33,
-      "precoParalela": 68.00,
+      "precoParalela": 68.0,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
         "intervaloKmNota": "Referência profissional sincronizada com a revisão: 42.000 km. Pop 110i usa embreagem centrífuga.",
@@ -624,8 +624,9 @@
       "nome": "Troca de bateria",
       "intervalKm": 0,
       "precoIndependente": 50,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
+      "precoTotalAutorizada": 577.74,
+      "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": true,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false

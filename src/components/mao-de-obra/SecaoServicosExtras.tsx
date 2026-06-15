@@ -5,7 +5,7 @@ import { AjudaInline } from '@/components/AjudaInline';
 import { ControleEstimativaMaoDeObra } from './ControleEstimativaMaoDeObra';
 import { ListaServicos } from './ListaServicos';
 import type { EstimativaMaoDeObraItem } from '../../utils/maoDeObraEstimada';
-import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
+import type { ServicoIndependente, PerfilAction, VidaUtilBateriaAnos } from '../../types/perfil';
 
 interface Props {
   avulsosCompletos: ServicoIndependente[];
@@ -25,6 +25,8 @@ interface Props {
   // Conteúdo extra logo abaixo do toggle de estimativa, dentro da subseção
   // "Valor Incompleto" (ex.: card de total no onboarding).
   slotAposToggle?: ReactNode;
+  // Bateria (TASK-RF-8.4): vida útil em anos para o card do `troca-bateria`.
+  vidaUtilBateriaAnos?: VidaUtilBateriaAnos;
 }
 
 // Subseções "Valor Completo (peça + M.O)" e "Valor Incompleto (apenas M.O)" dos
@@ -45,6 +47,7 @@ export function SecaoServicosExtras({
   onRestaurarCompletos,
   onRestaurarIncompletos,
   slotAposToggle,
+  vidaUtilBateriaAnos,
 }: Props) {
   if (avulsosCompletos.length === 0 && avulsosIncompletos.length === 0) return null;
 
@@ -73,6 +76,7 @@ export function SecaoServicosExtras({
             modo="autorizada"
             montarEstimativa={montarEstimativa}
             ocultarIntervalo={ocultarIntervalo}
+            vidaUtilBateriaAnos={vidaUtilBateriaAnos}
           />
         </div>
       )}
@@ -102,6 +106,7 @@ export function SecaoServicosExtras({
             modo="autorizada"
             montarEstimativa={montarEstimativa}
             ocultarIntervalo={ocultarIntervalo}
+            vidaUtilBateriaAnos={vidaUtilBateriaAnos}
           />
         </div>
       )}

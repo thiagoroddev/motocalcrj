@@ -639,8 +639,9 @@
       "nome": "Troca de bateria",
       "intervalKm": 0,
       "precoIndependente": 50,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
+      "precoTotalAutorizada": 563.34,
+      "statusPrecoAutorizada": "informado",
+      "concessionariaIncluiPeca": true,
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false

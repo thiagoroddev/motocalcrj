@@ -66,8 +66,11 @@ export function PaginaMaoDeObra() {
   // Aba Concessionária: serviços avulsos km-driven fora das revisões fixas.
   // Mesmo quando o preço ainda está `nao_informado`, o card aparece para o
   // usuário conseguir preencher o valor da concessionária.
+  // Bateria (TASK-RF-8.4): `troca-bateria` é temporal (intervalKm 0) mas aparece
+  // nos Serviços Extras (completo Honda / incompleto Yamaha) com select de vida
+  // útil em anos no lugar do intervalo em km.
   const servicosAvulsosAutorizada = servicosNormais.filter(
-    (s) => !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
+    (s) => !s.incluidoNaRevisaoAutorizada && (s.intervalKm > 0 || s.id === 'troca-bateria'),
   );
   // "Completo" = a concessionária informa o valor cheio (peça + M.O.) no preset —
   // só Honda (`concessionariaIncluiPeca`). Yamaha informa só a M.O. (peça à parte),
@@ -169,6 +172,7 @@ export function PaginaMaoDeObra() {
                       temOverridesIncompletos={temOverridesIncompletos}
                       onRestaurarCompletos={() => restaurarGrupo(avulsosCompletos)}
                       onRestaurarIncompletos={() => restaurarGrupo(avulsosIncompletos)}
+                      vidaUtilBateriaAnos={perfil.perfilManutencao.bateria.vidaUtilAnos}
                     />
                   </div>
                 )}

@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { Dispatch } from 'react';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { BotaoReset } from '@/components/BotaoReset';
 import { iconePeca } from '../icons/pecas';
 import { SERVICOS_INDEPENDENTES_PADRAO } from '../../context/PerfilContext';
@@ -9,9 +16,11 @@ import {
   concessionariaInformaPrecoCompleto,
 } from '../../utils/statusPrecoAutorizada';
 import type { EstimativaMaoDeObraItem } from '../../utils/maoDeObraEstimada';
-import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
+import type { ServicoIndependente, PerfilAction, VidaUtilBateriaAnos } from '../../types/perfil';
 
 type ModoCard = 'independente' | 'autorizada';
+
+const VIDAS_UTEIS_BATERIA: VidaUtilBateriaAnos[] = [2, 3, 4, 5];
 
 interface Props {
   servico: ServicoIndependente;
@@ -24,6 +33,10 @@ interface Props {
   estimativaMaoDeObra?: EstimativaMaoDeObraItem;
   // Onboarding de M.O. (RF-6.32.1): mostra só o campo de preço, sem o de intervalo.
   ocultarIntervalo?: boolean;
+  // Bateria (TASK-RF-8.4): driver temporal. Quando fornecido e o serviço é
+  // `troca-bateria`, o card troca "Intervalo (km)" por um select de vida útil em
+  // anos (config do usuário). Os demais serviços seguem km.
+  vidaUtilBateriaAnos?: VidaUtilBateriaAnos;
 }
 
 export function CardServico({
@@ -33,6 +46,7 @@ export function CardServico({
   modo = 'independente',
   estimativaMaoDeObra,
   ocultarIntervalo = false,
+  vidaUtilBateriaAnos,
 }: Props) {
   const padrao = servicoPadrao ?? SERVICOS_INDEPENDENTES_PADRAO.find((s) => s.id === servico.id);
   const statusAutorizada = resolverStatusPrecoAutorizada(servico);
@@ -190,20 +204,48 @@ export function CardServico({
               </button>
             ))}
         </div>
-        {!ocultarIntervalo && (
-          <div className="space-y-1">
-            <span className="label-neutro block">Intervalo (km)</span>
-            <Input
-              type="number"
-              className={`rounded-input bg-input min-h-touch text-sm${temOverrideIntervalo ? ' border-primary' : ''}`}
-              value={intervalo}
-              onChange={(e) => setIntervalo(e.target.value)}
-              onBlur={handleBlurIntervalo}
-              min={0}
-              step={500}
-            />
-          </div>
-        )}
+        {!ocultarIntervalo &&
+          (servico.id === 'troca-bateria' && vidaUtilBateriaAnos != null ? (
+            <div className="space-y-1">
+              <span className="label-neutro block">Vida útil</span>
+              <Select
+                value={String(vidaUtilBateriaAnos)}
+                onValueChange={(valor) =>
+                  dispatch({
+                    type: 'SET_BATERIA_VIDA_UTIL',
+                    anos: Number(valor) as VidaUtilBateriaAnos,
+                  })
+                }
+              >
+                <SelectTrigger
+                  className="rounded-input bg-input min-h-touch text-sm"
+                  aria-label="Vida útil da bateria em anos"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {VIDAS_UTEIS_BATERIA.map((anos) => (
+                    <SelectItem key={anos} value={String(anos)}>
+                      {anos} anos
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <span className="label-neutro block">Intervalo (km)</span>
+              <Input
+                type="number"
+                className={`rounded-input bg-input min-h-touch text-sm${temOverrideIntervalo ? ' border-primary' : ''}`}
+                value={intervalo}
+                onChange={(e) => setIntervalo(e.target.value)}
+                onBlur={handleBlurIntervalo}
+                min={0}
+                step={500}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );

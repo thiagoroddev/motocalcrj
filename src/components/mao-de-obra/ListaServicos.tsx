@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { CardServico } from './CardServico';
 import type { EstimativaMaoDeObraItem } from '../../utils/maoDeObraEstimada';
-import type { ServicoIndependente, PerfilAction } from '../../types/perfil';
+import type { ServicoIndependente, PerfilAction, VidaUtilBateriaAnos } from '../../types/perfil';
 
 export function BotaoRestaurarTudo({ onRestaurar }: { onRestaurar: () => void }) {
   const [aberto, setAberto] = useState(false);
@@ -41,6 +41,8 @@ interface PropsListaServicos {
   montarEstimativa?: (servico: ServicoIndependente) => EstimativaMaoDeObraItem;
   // Onboarding (RF-6.32.1): esconde o campo de intervalo dos cards.
   ocultarIntervalo?: boolean;
+  // Bateria (TASK-RF-8.4): vida útil em anos, repassada ao CardServico do `troca-bateria`.
+  vidaUtilBateriaAnos?: VidaUtilBateriaAnos;
 }
 
 export function ListaServicos({
@@ -52,6 +54,7 @@ export function ListaServicos({
   modo = 'independente',
   montarEstimativa,
   ocultarIntervalo = false,
+  vidaUtilBateriaAnos,
 }: PropsListaServicos) {
   return (
     <div className="space-y-2">
@@ -64,6 +67,7 @@ export function ListaServicos({
           modo={modo}
           estimativaMaoDeObra={montarEstimativa?.(s)}
           ocultarIntervalo={ocultarIntervalo}
+          vidaUtilBateriaAnos={vidaUtilBateriaAnos}
         />
       ))}
       {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
