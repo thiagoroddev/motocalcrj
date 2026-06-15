@@ -1,11 +1,11 @@
 {
   "_descricao": "Fixture de teste - simula o conteúdo do localStorage após onboarding completo",
-  "_uso": "Carregado em modo dev por src/main.tsx usando LocalStoragePerfilStorage (estimamoto:v1:*)",
+  "_uso": "Carregado em modo dev por src/main.tsx usando LocalStoragePerfilStorage (estimamoto:v0:*)",
   "_usuario": "João da Silva - motoboy fictício RJ, Pop 110i 2024",
 
-  "estimamoto:v1:presetAtivo": "preset_trabalho_001",
+  "estimamoto:v0:presetAtivo": "preset_trabalho_001",
 
-  "estimamoto:v1:presets": [
+  "estimamoto:v0:presets": [
     {
       "presetId": "preset_trabalho_001",
       "nome": "pop110i_trabalho",
@@ -13,7 +13,7 @@
       "criadoEm": "2026-04-01",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 3,
+        "schemaVersion": 0,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Trabalho - Pop 110i",
@@ -148,7 +148,7 @@
       "criadoEm": "2026-04-10",
       "atualizadoEm": "2026-05-05",
       "perfil": {
-        "schemaVersion": 3,
+        "schemaVersion": 0,
         "userId": null,
         "onboardingConcluido": true,
         "apelido": "Pessoal - Pop 110i",

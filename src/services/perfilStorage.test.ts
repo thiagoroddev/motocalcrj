@@ -25,7 +25,7 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
     expect(storage.getPresetAtivo()).toBeNull();
   });
 
-  it('salva e lê apenas o namespace estimamoto:v1', () => {
+  it('salva e lê apenas o namespace estimamoto:v0', () => {
     const presets = [{ presetId: 'p1' }] as PresetEntry[];
     const storage = new LocalStoragePerfilStorage();
 

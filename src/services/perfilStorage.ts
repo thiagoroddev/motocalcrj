@@ -1,9 +1,9 @@
 import type { PresetEntry } from '../types/perfil';
 
 export const CHAVES_PERFIL_STORAGE = {
-  presets: 'estimamoto:v1:presets',
-  presetAtivo: 'estimamoto:v1:presetAtivo',
-  presetsCorrompidos: 'estimamoto:v1:presets.corrupted',
+  presets: 'estimamoto:v0:presets',
+  presetAtivo: 'estimamoto:v0:presetAtivo',
+  presetsCorrompidos: 'estimamoto:v0:presets.corrupted',
 } as const;
 
 export interface IPerfilStorage {

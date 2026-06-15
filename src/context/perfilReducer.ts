@@ -22,6 +22,7 @@ import {
   PRESETS_GASTOS_PADRAO,
   FILTROS_MANUTENCAO_PADRAO,
 } from './perfilDefaults';
+import { reconstruirEstadoDePresets } from './reconstruirEstado';
 
 export interface EstadoApp {
   perfil: PerfilUsuario;
@@ -785,6 +786,15 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         presetAtivoId: id,
         rascunhoPredefinicao: null,
       };
+    }
+
+    // Restaura um backup completo (TASK-RF-7.2): substitui TODO o estado pelas
+    // predefinições do arquivo. As predefinições já vêm validadas (backupSchema);
+    // aqui só reconciliamos contra o preset canônico e resolvemos o ativo, no
+    // mesmo caminho da carga inicial.
+    case 'RESTAURAR_BACKUP': {
+      if (action.presets.length === 0) return state;
+      return reconstruirEstadoDePresets(action.presets, action.presetAtivoId).estado;
     }
 
     default: {

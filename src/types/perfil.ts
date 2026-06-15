@@ -2,7 +2,9 @@
 // Enums / literais
 // ──────────────────────────────────────────────
 
-export const VERSAO_SCHEMA_ATUAL = 3 as const;
+// Baseline pré-lançamento: schema zerado na versão 0 (TASK-RF-7.2). Sem
+// migração de versões antigas — dado fora desta versão cai no onboarding.
+export const VERSAO_SCHEMA_ATUAL = 0 as const;
 
 export type ModoRevisao = 'autorizadas' | 'independentes';
 export type TipoCombustivel = 'comum' | 'aditivada' | 'etanol';
@@ -240,6 +242,14 @@ export interface PresetEntry {
   perfil: PerfilUsuario;
 }
 
+// Forma de uma PresetEntry como vem da fronteira de persistência/import: o
+// `sufixo` pode estar ausente em dados antigos (a normalização o preenche).
+// Espelha o `presetEntryPersistidoSchema` e o que `normalizarPredefinicoesPersistidas`
+// aceita.
+export type PresetEntryPersistido = Omit<PresetEntry, 'sufixo'> & {
+  sufixo?: string;
+};
+
 export interface RascunhoPredefinicao {
   sufixo: string;
   presetAtivoAnteriorId: string | null;
@@ -333,4 +343,5 @@ export type PerfilAction =
   | { type: 'RENOMEAR_PREDEFINICAO'; presetId: string; sufixo: string }
   | { type: 'DELETAR_PREDEFINICAO'; presetId: string }
   | { type: 'RESETAR_PREDEFINICAO_ATIVA' }
-  | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario };
+  | { type: 'IMPORTAR_PERFIL'; perfil: PerfilUsuario }
+  | { type: 'RESTAURAR_BACKUP'; presets: PresetEntryPersistido[]; presetAtivoId: string | null };

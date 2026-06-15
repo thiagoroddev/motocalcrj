@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { usePerfil } from '../hooks/usePerfil';
 import { CabecalhoVoltar } from '../components/CabecalhoVoltar';
 import { NavBar } from '../components/layout/NavBar';
@@ -17,6 +17,9 @@ import {
 } from '../components/ui/dialog';
 import { getNomeModelo } from '../data/catalogoModelos';
 import { IconAlternar } from '../components/icons';
+import { serializarBackup, parsearBackup, nomeArquivoBackup } from '../services/backup';
+import type { Backup } from '../schemas/backupSchema';
+import { baixarTexto, lerArquivoTexto } from '../utils/arquivo';
 import { DialogCriarPredefinicao } from '../components/perfil/predefinicoes/DialogCriarPredefinicao';
 import { DialogAlternarPredefinicao } from '../components/perfil/predefinicoes/DialogAlternarPredefinicao';
 import { DialogDeletarPredefinicao } from '../components/perfil/predefinicoes/DialogDeletarPredefinicao';
@@ -29,9 +32,13 @@ type DialogAberto =
   | null;
 
 export function PaginaPerfil() {
-  const { perfil, presets, presetAtivo, dispatch } = usePerfil();
+  const { perfil, presets, presetAtivo, presetAtivoId, dispatch } = usePerfil();
   const navigate = useNavigate();
   const [dialog, setDialog] = useState<DialogAberto>(null);
+  const inputBackupRef = useRef<HTMLInputElement>(null);
+  // Backup lido e validado, aguardando confirmação (a restauração é destrutiva).
+  const [backupPendente, setBackupPendente] = useState<Backup | null>(null);
+  const [erroImportacao, setErroImportacao] = useState(false);
 
   const nomeModelo = getNomeModelo(perfil.moto.modelo);
   const tipoComb = perfil.financeiro.tipoGasolinaPreferida;
@@ -47,6 +54,33 @@ export function PaginaPerfil() {
     setDialog(null);
     dispatch({ type: 'INICIAR_NOVA_PREDEFINICAO', modeloId, sufixo });
     navigate('/onboarding/ano');
+  }
+
+  function exportarBackup() {
+    baixarTexto(nomeArquivoBackup(), serializarBackup(presets, presetAtivoId));
+  }
+
+  async function aoSelecionarArquivoBackup(evento: ChangeEvent<HTMLInputElement>) {
+    const arquivo = evento.target.files?.[0];
+    // Limpa o input para permitir reimportar o mesmo arquivo depois.
+    evento.target.value = '';
+    if (!arquivo) return;
+    try {
+      const texto = await lerArquivoTexto(arquivo);
+      setBackupPendente(parsearBackup(texto));
+    } catch {
+      setErroImportacao(true);
+    }
+  }
+
+  function confirmarRestaurarBackup() {
+    if (!backupPendente) return;
+    dispatch({
+      type: 'RESTAURAR_BACKUP',
+      presets: backupPendente.presets,
+      presetAtivoId: backupPendente.presetAtivoId,
+    });
+    setBackupPendente(null);
   }
 
   return (
@@ -136,7 +170,7 @@ export function PaginaPerfil() {
             <p className="text-muted-foreground text-xs mb-2">
               Gere um arquivo de backup com todas as suas configurações e histórico.
             </p>
-            <Button variant="outline" className="w-full gap-2" disabled>
+            <Button variant="outline" className="w-full gap-2" onClick={exportarBackup}>
               <IcBaixar />
               Exportar Backup (.json)
             </Button>
@@ -149,7 +183,18 @@ export function PaginaPerfil() {
             <p className="text-muted-foreground text-xs mb-2">
               Importe seus dados de um arquivo MotoCalc anterior.
             </p>
-            <Button variant="outline" className="w-full gap-2" disabled>
+            <input
+              ref={inputBackupRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={aoSelecionarArquivoBackup}
+            />
+            <Button
+              variant="outline"
+              className="w-full gap-2"
+              onClick={() => inputBackupRef.current?.click()}
+            >
               <IcSubir />
               Importar Backup
             </Button>
@@ -209,6 +254,49 @@ export function PaginaPerfil() {
       {dialog === 'deletarPredefinicao' && (
         <DialogDeletarPredefinicao onClose={() => setDialog(null)} />
       )}
+
+      {/* Dialog: confirmar restauração de backup (substitui todos os dados) */}
+      <Dialog
+        open={backupPendente !== null}
+        onOpenChange={(aberto) => !aberto && setBackupPendente(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Restaurar backup</DialogTitle>
+            <DialogDescription>
+              Isso vai <strong>substituir todas as suas predefinições atuais</strong> pelas{' '}
+              {backupPendente?.presets.length ?? 0} do arquivo. Seus dados atuais serão perdidos.
+              Essa ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBackupPendente(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmarRestaurarBackup}>
+              Substituir e restaurar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: erro de importação */}
+      <Dialog open={erroImportacao} onOpenChange={(aberto) => !aberto && setErroImportacao(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivo inválido</DialogTitle>
+            <DialogDescription>
+              Não foi possível ler este arquivo como um backup do MotoCalc. Verifique se é o arquivo{' '}
+              <code>.json</code> exportado pelo app e tente novamente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setErroImportacao(false)}>
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,10 +1,8 @@
-import type { PresetEntry } from '../types/perfil';
+import type { PresetEntry, PresetEntryPersistido } from '../types/perfil';
 
 export const LIMITE_SUFIXO_PREDEFINICAO = 15;
 
-type PresetEntryLegado = Omit<PresetEntry, 'sufixo'> & {
-  sufixo?: string;
-};
+type PresetEntryLegado = PresetEntryPersistido;
 
 export function normalizarSufixoPredefinicao(sufixo: string): string {
   return sufixo.trim().toLowerCase();

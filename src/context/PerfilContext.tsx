@@ -3,10 +3,8 @@ import type { PerfilAction } from '../types/perfil';
 import { LocalStoragePerfilStorage } from '../services/perfilStorage';
 import type { IPerfilStorage } from '../services/perfilStorage';
 import { presetEntryPersistidoSchema } from '../schemas/perfilSchema';
-import { normalizarPerfilContraPreset } from '../services/normalizarPerfilContraPreset';
-import { obterPreset } from '../data/repositorioPresets';
 import { estadoPadrao, perfilReducer, type EstadoApp } from './perfilReducer';
-import { normalizarPredefinicoesPersistidas } from '../utils/predefinicoes';
+import { reconstruirEstadoDePresets } from './reconstruirEstado';
 
 // Re-exports preservam a API pública usada pelos consumidores existentes.
 export {
@@ -55,41 +53,18 @@ export function criarEstadoInicial(storage: IPerfilStorage): EstadoApp {
       return estadoPadrao;
     }
 
-    let houveLimpeza = false;
     const validados = presetsRaw.map((p) => presetEntryPersistidoSchema.parse(p));
-    const resultadoNomes = normalizarPredefinicoesPersistidas(validados);
-    houveLimpeza = resultadoNomes.houveAlteracao;
-    const presets = resultadoNomes.presets.map((validado) => {
-      const presetCanonico = obterPreset(validado.perfil.moto.modelo);
-
-      if (!presetCanonico) {
-        return validado;
-      }
-
-      const perfilNormalizado = normalizarPerfilContraPreset(validado.perfil, presetCanonico);
-      if (perfilNormalizado === validado.perfil) {
-        return validado;
-      }
-
-      houveLimpeza = true;
-      return { ...validado, perfil: perfilNormalizado };
-    });
-    const preset = presets.find((p) => p.presetId === ativoId) ?? presets[0];
+    const { estado, houveLimpeza } = reconstruirEstadoDePresets(validados, ativoId);
 
     if (houveLimpeza) {
       try {
-        storage.salvarPresets(presets);
+        storage.salvarPresets(estado.presets);
       } catch {
         // Read repair é best-effort e não transforma dado válido em corrupção.
       }
     }
 
-    return {
-      perfil: preset.perfil,
-      presets,
-      presetAtivoId: preset.presetId,
-      rascunhoPredefinicao: null,
-    };
+    return estado;
   } catch {
     // Dado persistido inválido/corrompido: preserva o blob para diagnóstico e
     // cai para o estado padrão - o app nunca trava (ADR-010, decisão 2).
