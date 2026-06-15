@@ -275,34 +275,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
-    case 'TOGGLE_IMPREVISTO_SUGERIDO': {
-      const atual = state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos[action.id] ?? false;
-      const novoValor = !atual;
-
-      // Mutual exclusion kit_cilindro ↔ retifica-completa (TASK-RF-6.14):
-      // ativar retífica completa desativa kit cilindro como peça regular.
-      const filtrosManutencao = state.perfil.configuracaoDisplay.filtrosManutencao;
-      const manutencaoPorPecaAtualizada =
-        action.id === 'retifica-completa' && novoValor
-          ? { ...filtrosManutencao.manutencaoPorPeca, kit_cilindro: false }
-          : filtrosManutencao.manutencaoPorPeca;
-
-      return comPerfil({
-        ...state.perfil,
-        configuracaoDisplay: {
-          ...state.perfil.configuracaoDisplay,
-          imprevistosSugeridosAtivos: {
-            ...state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
-            [action.id]: novoValor,
-          },
-          filtrosManutencao: {
-            ...filtrosManutencao,
-            manutencaoPorPeca: manutencaoPorPecaAtualizada,
-          },
-        },
-      });
-    }
-
     case 'TOGGLE_REVISAO_MANUTENCAO':
       return comPerfil({
         ...state.perfil,
@@ -318,24 +290,11 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
     case 'TOGGLE_MANUTENCAO_POR_PECA': {
       const manutencaoPorPeca =
         state.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca;
-      const ativoAtual = manutencaoPorPeca[action.id] ?? true;
-      const novoEstado = !ativoAtual;
-
-      // Mutual exclusion kit_cilindro ↔ retifica-completa (TASK-RF-6.14):
-      // ativar kit cilindro como peça desativa retífica completa nos imprevistos.
-      const imprevistosAtualizados =
-        action.id === 'kit_cilindro' && novoEstado
-          ? {
-              ...state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
-              'retifica-completa': false,
-            }
-          : state.perfil.configuracaoDisplay.imprevistosSugeridosAtivos;
 
       return comPerfil({
         ...state.perfil,
         configuracaoDisplay: {
           ...state.perfil.configuracaoDisplay,
-          imprevistosSugeridosAtivos: imprevistosAtualizados,
           filtrosManutencao: {
             ...state.perfil.configuracaoDisplay.filtrosManutencao,
             manutencaoPorPeca: alternarFiltroDefaultAtivo(manutencaoPorPeca, action.id),
@@ -652,12 +611,6 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
           ...state.perfil.moto,
           kmUltimaTrocas: { ...state.perfil.moto.kmUltimaTrocas, [action.componente]: action.km },
         },
-      });
-
-    case 'SET_MOTOR_REFEITO':
-      return comPerfil({
-        ...state.perfil,
-        moto: { ...state.perfil.moto, kmMotorRefeito: action.km },
       });
 
     case 'RESETAR_AJUSTES_PADRAO':

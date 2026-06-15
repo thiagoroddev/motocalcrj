@@ -68,20 +68,19 @@ interface ServicoIndependente {
   nome: string;
   intervalKm: number;         // > 0 km-driven; 0 só para temporal conhecido (INV-MANUT-1)
   intervaloKmInformadoUsuario?: boolean; // true = override consciente sobre o preset
-  precoIndependente: number;  // M.O. de oficina independente (era precoMaoDeObra, BG-011).
-                              // Em excepcionais, é o preço ÚNICO peças + M.O. (ADR-007)
+  precoIndependente: number;  // M.O. de oficina independente (era precoMaoDeObra, BG-011)
   precoTotalAutorizada: number;       // preço de concessionária do serviço avulso (ADR-007)
   statusPrecoAutorizada?: StatusPrecoAutorizada; // informado | nao_informado | informado_usuario
   concessionariaIncluiPeca?: boolean; // oficial inclui peça? Honda true / Yamaha false (ADR-014)
   incluidoNaRevisaoAutorizada: boolean; // já no pacote revisaoAutorizada → não soma de novo
   ativo: boolean;             // false = excluído do cálculo periódico
-  ehExcepcional: boolean;     // true = aba Excepcional + Imprevistos, desligado (BG-005)
+  ehExcepcional: boolean;     // true = aba Independente; hoje, pneus Yamaha
 }
 ```
 
 **Cobre:** intervalo + preços (independente e de concessionária) de cada serviço de manutenção. Substituiu o tipo plano `ServicosMaoDeObra`. Os campos de concessionária (`precoTotalAutorizada`, `statusPrecoAutorizada`, `concessionariaIncluiPeca`) entraram nas REF-6.22/32.x para o MVP autorizado.
 
-🔍 **Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (`src/context/perfilDefaults.ts`):** 12 serviços normais (`troca-oleo`, `troca-kit-transmissao`, `troca-pneu-dianteiro`, `troca-pneu-traseiro`, `troca-sapata-dianteira`, `troca-sapata-traseira`, `revisao-geral`, `troca-vela`, `troca-filtro-ar`, `troca-bateria` [temporal, `intervalKm: 0`], `troca-kit-embreagem`, `troca-kit-cilindro`) + 2 retíficas excepcionais (`retifica-cabecote`, `retifica-completa`, `ativo: false`). **Cada preset pode sobrepor** essa lista com `PresetMoto.servicosManutencao` (mesclagem em `resolverServicosManutencaoPerfil`).
+🔍 **Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (`src/context/perfilDefaults.ts`):** 13 serviços normais, incluindo `troca-caixa-direcao`. **Cada preset pode sobrepor** essa lista com `PresetMoto.servicosManutencao` (mesclagem em `resolverServicosManutencaoPerfil`). No MVP, apenas pneus Yamaha são excepcionais e alimentam a aba Independente.
 
 🔍 **Vínculo peça↔serviço (MAPA_PECA_PARA_SERVICO):** `resolverIntervaloPeca` casa peça com serviço por `MAPA_PECA_PARA_SERVICO` (`kit_relacao` ↔ `troca-kit-transmissao`). Permite editar o intervalo em **um lugar só** (aba Mão de Obra) e a aba Insumos espelhar somente leitura. **A vida útil mora no serviço** (convenção ADR-014).
 

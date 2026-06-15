@@ -76,7 +76,7 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
   maoDeObra: {
     titulo: 'Mão de Obra',
     intro:
-      'Aqui você ajusta os valores das revisões de concessionária e dos serviços excepcionais. Esses valores alimentam a categoria Manutenção da estimativa.',
+      'Aqui você ajusta os valores das revisões de concessionária e dos serviços avulsos. Esses valores alimentam a categoria Manutenção da estimativa.',
     secoes: [
       {
         titulo: 'Aba Concessionária',
@@ -84,9 +84,9 @@ export const CONTEUDO_AJUDA: Record<ChaveAjuda, ConteudoAjuda> = {
           'As revisões da tabela da concessionária, por km (1.000, 6.000, 12.000...). Use para conferir ou ajustar os valores publicados/informados pela concessionária.',
       },
       {
-        titulo: 'Aba Excepcional',
+        titulo: 'Aba Independente',
         texto:
-          'Serviços raros e caros, fora da rotina (ex.: retífica de motor). Vêm desligados e você ativa quando precisar.',
+          'Aparece somente quando o modelo tem serviço feito fora da concessionária. Na Yamaha, reúne a mão de obra da troca de pneus em oficina independente.',
       },
       {
         titulo: 'Edição',

@@ -43,7 +43,6 @@ export function PaginaMaoDeObra() {
   const perfilMvp = normalizarPerfilMvp(perfil, preset);
   const servicosPadrao = obterServicosManutencaoBase(preset);
 
-  const abaInicial = normalizarAbaInicial(navState?.abaInicial);
   const destaqueIndex = navState?.destaqueIndex ?? null;
   const refDestaque = useRef<HTMLDivElement | null>(null);
   const [indiceDestacado, setIndiceDestacado] = useState<number | null>(destaqueIndex);
@@ -58,11 +57,12 @@ export function PaginaMaoDeObra() {
 
   const servicosNormais = perfilMvp.servicosIndependentes.filter((s) => !s.ehExcepcional);
   const servicosExcepcionais = perfilMvp.servicosIndependentes.filter((s) => s.ehExcepcional);
-  // Aba Independente: pneu (oficina independente) = avulso incompleto (só M.O., soma
-  // com a peça do Insumos) — vai com estimativa, como os outros avulsos. Retífica =
-  // imprevisto cheio (peça + M.O.). (BG-036)
+  // A aba Independente existe apenas quando o preset tem conteúdo próprio para
+  // ela. Hoje são os pneus Yamaha: M.O. de oficina + peça em Insumos. (BG-036)
   const pneusIndependentes = servicosExcepcionais.filter((s) => SERVICOS_DE_PNEU.has(s.id));
-  const imprevistos = servicosExcepcionais.filter((s) => !SERVICOS_DE_PNEU.has(s.id));
+  const temAbaIndependente = pneusIndependentes.length > 0;
+  const abaInicialRecebida = normalizarAbaInicial(navState?.abaInicial);
+  const abaInicial = temAbaIndependente ? abaInicialRecebida : 'concessionaria';
   // Aba Concessionária: serviços avulsos km-driven fora das revisões fixas.
   // Mesmo quando o preço ainda está `nao_informado`, o card aparece para o
   // usuário conseguir preencher o valor da concessionária.
@@ -80,25 +80,15 @@ export function PaginaMaoDeObra() {
   const avulsosCompletos = servicosAvulsosAutorizada.filter(ehAvulsoCompleto);
   const avulsosIncompletos = servicosAvulsosAutorizada.filter((s) => !ehAvulsoCompleto(s));
   const estimativaLigada = perfil.perfilManutencao.incluirEstimativaMaoDeObra === true;
-  const menorIntervaloExcepcional = servicosExcepcionais.reduce<number | null>(
+  const menorIntervaloIndependente = pneusIndependentes.reduce<number | null>(
     (menor, servico) => (menor === null ? servico.intervalKm : Math.min(menor, servico.intervalKm)),
     null,
   );
-  const deveAlertarExcepcional =
-    menorIntervaloExcepcional !== null && perfil.moto.kmAtual >= menorIntervaloExcepcional;
-  const limiteExcepcionalFormatado = menorIntervaloExcepcional?.toLocaleString('pt-BR') ?? '0';
+  const deveAlertarIndependente =
+    menorIntervaloIndependente !== null && perfil.moto.kmAtual >= menorIntervaloIndependente;
+  const limiteIndependenteFormatado = menorIntervaloIndependente?.toLocaleString('pt-BR') ?? '0';
 
   const temOverridesConcessionaria = perfil.revisaoAutorizadaOverrides.length > 0;
-
-  function servicoDifereDopadraoIndependente(s: ServicoIndependente): boolean {
-    const p = servicosPadrao.find((ps) => ps.id === s.id);
-    if (!p) return false;
-    return (
-      s.precoIndependente !== p.precoIndependente ||
-      s.intervaloKmInformadoUsuario === true ||
-      s.intervalKm !== p.intervalKm
-    );
-  }
 
   function servicoDifereDopadraoAutorizada(s: ServicoIndependente): boolean {
     const p = servicosPadrao.find((ps) => ps.id === s.id);
@@ -112,7 +102,6 @@ export function PaginaMaoDeObra() {
   }
 
   const temOverridesPneus = pneusIndependentes.some(servicoDifereDopadraoAutorizada);
-  const temOverridesImprevistos = imprevistos.some(servicoDifereDopadraoIndependente);
   const temOverridesCompletos = avulsosCompletos.some(servicoDifereDopadraoAutorizada);
   const temOverridesIncompletos = avulsosIncompletos.some(servicoDifereDopadraoAutorizada);
 
@@ -132,10 +121,12 @@ export function PaginaMaoDeObra() {
   return (
     <div className="flex flex-col h-full">
       <Tabs defaultValue={abaInicial} className="flex flex-col flex-1">
-        <TabsList className="grid grid-cols-2 mx-4 mt-4 shrink-0">
-          <TabsTrigger value="concessionaria">Concessionária</TabsTrigger>
-          <TabsTrigger value="excepcional">Independente</TabsTrigger>
-        </TabsList>
+        {temAbaIndependente && (
+          <TabsList className="grid grid-cols-2 mx-4 mt-4 shrink-0">
+            <TabsTrigger value="concessionaria">Concessionária</TabsTrigger>
+            <TabsTrigger value="excepcional">Independente</TabsTrigger>
+          </TabsList>
+        )}
 
         <div className="flex-1 overflow-y-auto">
           <TabsContent value="concessionaria" className="px-4 pb-4 pt-3">
@@ -185,17 +176,17 @@ export function PaginaMaoDeObra() {
             )}
           </TabsContent>
 
-          <TabsContent value="excepcional" className="px-4 pb-4 pt-3">
-            <div className="space-y-4">
-              <TituloSecao icone={TriangleAlert}>Serviços Independentes (oficina)</TituloSecao>
-              {deveAlertarExcepcional && (
-                <div className="rounded-lg border px-4 py-2 bg-warning/10 border-warning/30 text-warning text-sm">
-                  Atenção: sua moto está próxima ou acima de {limiteExcepcionalFormatado} km.
-                  Considere revisar os serviços de oficina independente.
-                </div>
-              )}
+          {temAbaIndependente && (
+            <TabsContent value="excepcional" className="px-4 pb-4 pt-3">
+              <div className="space-y-4">
+                <TituloSecao icone={TriangleAlert}>Serviços Independentes (oficina)</TituloSecao>
+                {deveAlertarIndependente && (
+                  <div className="rounded-lg border px-4 py-2 bg-warning/10 border-warning/30 text-warning text-sm">
+                    Atenção: sua moto está próxima ou acima de {limiteIndependenteFormatado} km.
+                    Considere revisar os serviços de oficina independente.
+                  </div>
+                )}
 
-              {pneusIndependentes.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-sm font-medium text-muted-foreground">
@@ -220,24 +211,9 @@ export function PaginaMaoDeObra() {
                     montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
                   />
                 </div>
-              )}
-
-              {imprevistos.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Imprevistos (peça + mão de obra)
-                  </h3>
-                  <ListaServicos
-                    servicos={imprevistos}
-                    dispatch={dispatch}
-                    servicosPadrao={servicosPadrao}
-                    temOverrides={temOverridesImprevistos}
-                    onRestaurarTudo={() => restaurarGrupo(imprevistos)}
-                  />
-                </div>
-              )}
-            </div>
-          </TabsContent>
+              </div>
+            </TabsContent>
+          )}
         </div>
       </Tabs>
     </div>

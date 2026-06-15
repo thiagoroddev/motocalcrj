@@ -86,7 +86,7 @@ seleciona referências específicas quando o modelo as oferece.
 ### 🎨 `configuracaoDisplay`
 
 **Arquivo:** `bloco-configuracao-display.md`
-**O quê:** controle do que é exibido - quais categorias estão ativas no donut e total, e quais imprevistos sugeridos (retíficas) estão ligados.
+**O quê:** controle do que é exibido - categorias ativas no donut/total e filtros finos de manutenção. O mapa de imprevistos sugeridos permanece apenas por compatibilidade.
 
 ### ✏️ Overrides
 
@@ -139,11 +139,11 @@ Os comportamentos do `PerfilUsuario` são expressos como Actions no reducer (ver
 | ----------------------- | -------------------------------------------------------------------------- |
 | Onboarding              | `SET_ONBOARDING_CAMPO`, `COMMIT_ONBOARDING`                                |
 | Rodagem inline          | `SET_KM_POR_DIA`, `SET_DIAS_POR_SEMANA`, `SET_KM_ATUAL`                    |
-| Display                 | `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO`                           |
+| Display                 | `TOGGLE_CATEGORIA` e filtros finos de manutenção                           |
 | Overrides de peça       | `SET_PECA_OVERRIDE`, `RESET_PECA_OVERRIDE`                                 |
 | Mão de obra e revisão   | `SET_SERVICO_INDEPENDENTE`, `RESET_SERVICOS_INDEPENDENTES`, `SET_REVISAO_AUTORIZADA_OVERRIDE`, `RESET_REVISAO_AUTORIZADA_OVERRIDE` |
 | Financeiro              | `SET_INTERNET`, `SET_SEGURO`, `SET_ALIMENTACAO`, `SET_COMBUSTIVEL`, `SET_TIPO_COMBUSTIVEL_PREFERIDO`, `TOGGLE_GASTO_CUSTOM`, `SET_GASTO_CUSTOM_VALOR` |
-| Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`, `SET_MOTOR_REFEITO`                                 |
+| Manutenção (km âncora)  | `SET_KM_ULTIMA_TROCA`                                                       |
 | Ajustes                 | `SET_ANO_MOTO`, `SET_KM_ULTIMA_REVISAO`, `SET_MODO_REVISAO`, `SET_SITUACAO_MOTO`, `SET_PARCELA`, `SET_ALUGUEL`, `SET_RESPONSABILIDADE_ALUGUEL`, `RESETAR_AJUSTES_PADRAO` |
 | FIPE                    | `SET_FIPE_CACHE`                                                           |
 | Persistência            | `CARREGAR_PERFIL`, `RENOMEAR_PREDEFINICAO`, `DELETAR_PREDEFINICAO`, `RESETAR_PREDEFINICAO_ATIVA`, `IMPORTAR_PERFIL` |

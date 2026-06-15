@@ -22,7 +22,7 @@ describe('SecaoUltimasManutencoes - validação de domínio', () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
-  it('não despacha km negativo para retífica do motor', () => {
+  it('não mostra campos de retífica mesmo com quilometragem alta', () => {
     const dispatch = vi.fn<(action: PerfilAction) => void>();
     render(
       <SecaoUltimasManutencoes
@@ -31,10 +31,6 @@ describe('SecaoUltimasManutencoes - validação de domínio', () => {
       />,
     );
 
-    fireEvent.change(screen.getByLabelText('Retífica do motor (KM)'), {
-      target: { value: '-100' },
-    });
-
-    expect(dispatch).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Retífica/i)).not.toBeInTheDocument();
   });
 });

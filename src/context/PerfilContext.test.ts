@@ -1136,38 +1136,6 @@ describe('perfilReducer', () => {
     expect(resultado.perfil.financeiro.aluguelPeriodicidade).toBeNull();
   });
 
-  // ── TOGGLE_IMPREVISTO_SUGERIDO (TASK-RF-6.11 cleanup) ─
-
-  it('TOGGLE_IMPREVISTO_SUGERIDO ativa o sugerido quando estava desligado', () => {
-    const resultado = perfilReducer(estadoVazio, {
-      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
-      id: 'retifica-cabecote',
-    });
-    expect(
-      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-cabecote'],
-    ).toBe(true);
-  });
-
-  it('TOGGLE_IMPREVISTO_SUGERIDO desativa quando já estava ligado', () => {
-    const estadoComSugeridoLigado: EstadoApp = {
-      ...estadoVazio,
-      perfil: {
-        ...perfilPadrao,
-        configuracaoDisplay: {
-          ...perfilPadrao.configuracaoDisplay,
-          imprevistosSugeridosAtivos: { 'retifica-cabecote': true },
-        },
-      },
-    };
-    const resultado = perfilReducer(estadoComSugeridoLigado, {
-      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
-      id: 'retifica-cabecote',
-    });
-    expect(
-      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-cabecote'],
-    ).toBe(false);
-  });
-
   it('TOGGLE_CATEGORIA com categoria imprevistos inverte o flag persistido', () => {
     const resultado = perfilReducer(estadoVazio, {
       type: 'TOGGLE_CATEGORIA',
@@ -1264,15 +1232,14 @@ describe('perfilReducer', () => {
     );
   });
 
-  it('SERVICOS_INDEPENDENTES_PADRAO usa retíficas no lugar de fazer-motor', () => {
+  it('SERVICOS_INDEPENDENTES_PADRAO mantém kit cilindro sem serviços de retífica', () => {
     const ids = SERVICOS_INDEPENDENTES_PADRAO.map((s) => s.id);
-    const retificas = SERVICOS_INDEPENDENTES_PADRAO.filter((s) => s.ehExcepcional);
 
     expect(ids).not.toContain('fazer-motor');
-    expect(ids).toContain('retifica-cabecote');
-    expect(ids).toContain('retifica-completa');
-    expect(retificas).toHaveLength(2);
-    expect(retificas.every((s) => !s.ativo)).toBe(true);
+    expect(ids).toContain('troca-kit-cilindro');
+    expect(ids).not.toContain('retifica-cabecote');
+    expect(ids).not.toContain('retifica-completa');
+    expect(SERVICOS_INDEPENDENTES_PADRAO.every((s) => !s.ehExcepcional)).toBe(true);
   });
 
   // ── TASK-RF-6.9: gastosCustom como presets editáveis ──
@@ -1415,50 +1382,28 @@ describe('perfilReducer', () => {
     });
   });
 
-  // ── TASK-RF-6.14: mutual exclusion kit_cilindro ↔ retifica-completa ─
-
-  it('TOGGLE_IMPREVISTO_SUGERIDO ativar retifica-completa zera kit_cilindro em manutencaoPorPeca', () => {
-    // Estado inicial: kit_cilindro ativo (default), retifica-completa desativada.
-    const resultado = perfilReducer(estadoVazio, {
-      type: 'TOGGLE_IMPREVISTO_SUGERIDO',
-      id: 'retifica-completa',
-    });
-
-    expect(
-      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-completa'],
-    ).toBe(true);
-    expect(
-      resultado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca['kit_cilindro'],
-    ).toBe(false);
-  });
-
-  it('TOGGLE_MANUTENCAO_POR_PECA reativar kit_cilindro zera retifica-completa em imprevistosSugeridosAtivos', () => {
-    // Cenário: retifica-completa ativa e kit_cilindro desligado explicitamente.
-    const estadoComRetifica: EstadoApp = {
+  it('TOGGLE_MANUTENCAO_POR_PECA alterna kit cilindro sem reescrever estado legado', () => {
+    const estadoComLegado: EstadoApp = {
       ...estadoVazio,
       perfil: {
         ...perfilPadrao,
         configuracaoDisplay: {
           ...perfilPadrao.configuracaoDisplay,
           imprevistosSugeridosAtivos: { 'retifica-completa': true },
-          filtrosManutencao: {
-            ...perfilPadrao.configuracaoDisplay.filtrosManutencao,
-            manutencaoPorPeca: { kit_cilindro: false },
-          },
         },
       },
     };
 
-    const resultado = perfilReducer(estadoComRetifica, {
+    const resultado = perfilReducer(estadoComLegado, {
       type: 'TOGGLE_MANUTENCAO_POR_PECA',
       id: 'kit_cilindro',
     });
 
-    expect(
-      resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos['retifica-completa'],
-    ).toBe(false);
+    expect(resultado.perfil.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({
+      'retifica-completa': true,
+    });
     expect(
       resultado.perfil.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca['kit_cilindro'],
-    ).toBeUndefined();
+    ).toBe(false);
   });
 });

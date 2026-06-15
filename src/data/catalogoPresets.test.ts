@@ -127,6 +127,23 @@ describe('catalogoModelos - presets', () => {
     });
   });
 
+  it('não publica retíficas e reserva serviços excepcionais aos pneus independentes', () => {
+    const idsPneus = new Set(['troca-pneu-dianteiro', 'troca-pneu-traseiro']);
+
+    for (const preset of Object.values(PRESETS)) {
+      const servicos = preset.servicosManutencao ?? [];
+      const ids = servicos.map((servico) => servico.id);
+
+      expect(ids).not.toContain('retifica-cabecote');
+      expect(ids).not.toContain('retifica-completa');
+      expect(
+        servicos
+          .filter((servico) => servico.ehExcepcional)
+          .every((servico) => idsPneus.has(servico.id)),
+      ).toBe(true);
+    }
+  });
+
   it('registra serviços avulsos Honda publicados no site sem duplicar itens de revisão', () => {
     const servicosPop = PRESETS.pop110i.servicosManutencao ?? [];
     const servico = (id: string) => servicosPop.find((item) => item.id === id);

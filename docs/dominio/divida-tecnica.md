@@ -46,7 +46,7 @@ tarefas concluídas.
 | DT-13 | Removida: resolvida | Overrides de revisão autorizada são aplicados no cálculo e nas projeções. |
 | DT-14 | Removida: resolvida no escopo original | `SET_ONBOARDING_CAMPO` só é usado dentro do onboarding e o reducer valida o perfil resultante. |
 | DT-15 | Removida: resolvida | O vínculo peça-serviço usa `MAPA_PECA_PARA_SERVICO`; a TASK-REF-42 eliminou também a inferência de procedência que restava na DT-19. |
-| DT-16 | Removida: resolvida | Serviços excepcionais são excluídos de `revisao.total` e tratados como imprevistos sugeridos. |
+| DT-16 | Removida: resolvida | Retíficas e seu fluxo de imprevistos sugeridos foram retirados do MVP pela ADR-022. |
 | DT-17 | Removida: resolvida | `tw-animate-css` está instalado e importado em `src/index.css`. |
 | DT-18 | Removida: resolvida pela TASK-RF-6.28 | `PerfilUso` eliminado (TASK-REF-41.1/41.2) e o Passo 4 do onboarding passou a expor os cards editáveis de vida útil dos avulsos; a fatia de remoção (TASK-REF-41.3) foi cancelada por retrabalho. |
 | DT-19 | Removida: resolvida pela TASK-REF-42 / ADR-018 | A procedência é explícita; serviço efetivo é canônico e cálculo, Insumos e Detalhamento usam a mesma mesclagem preset/perfil. |

@@ -176,7 +176,6 @@ documentos: {
 | Alimentação           | `calcularCustoAlimentacaoAnual(alimentacaoDia, diasAno)` | `alimentacaoDia × diasAno`               |
 | Financiamento/Aluguel | `calcularCustoFinanciamentoAnual(...)`                   | depende da situação                      |
 | Gastos Custom         | `calcularCustoGastosCustomAnual(gastosCustom)`           | soma de `valorAnual` dos presets ativos  |
-| Imprevistos sugeridos | derivado de `servicosIndependentes` excepcionais         | só entra no total com filtro explícito   |
 
 ### Cálculo de Financiamento/Aluguel
 

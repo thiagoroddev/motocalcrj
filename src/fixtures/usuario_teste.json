@@ -126,9 +126,7 @@
           { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-bateria",         "nome": "Troca de bateria",             "intervalKm": 0,      "precoIndependente": 50,   "precoTotalAutorizada": 567.34, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
           { "id": "troca-kit-embreagem",   "nome": "Troca kit embreagem",          "intervalKm": 40000,  "precoIndependente": 50,   "precoTotalAutorizada": 450.33, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
-          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
-          { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false }
         ],
 
         "revisaoAutorizadaOverrides": [],
@@ -255,9 +253,7 @@
           { "id": "troca-filtro-ar",       "nome": "Troca filtro de ar",           "intervalKm": 6000,   "precoIndependente": 15,   "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": true,  "ativo": true,  "ehExcepcional": false },
           { "id": "troca-bateria",         "nome": "Troca de bateria",             "intervalKm": 0,      "precoIndependente": 50,   "precoTotalAutorizada": 567.34, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
           { "id": "troca-kit-embreagem",   "nome": "Troca kit embreagem",          "intervalKm": 40000,  "precoIndependente": 50,   "precoTotalAutorizada": 450.33, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
-          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false },
-          { "id": "retifica-cabecote",     "nome": "Retífica de cabeçote",         "intervalKm": 80000,  "precoIndependente": 800,  "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  },
-          { "id": "retifica-completa",     "nome": "Retífica completa",            "intervalKm": 120000, "precoIndependente": 1500, "precoTotalAutorizada": 0,      "incluidoNaRevisaoAutorizada": false, "ativo": false, "ehExcepcional": true  }
+          { "id": "troca-kit-cilindro",    "nome": "Troca kit cilindro",           "intervalKm": 100000, "precoIndependente": 50,   "precoTotalAutorizada": 510.83, "incluidoNaRevisaoAutorizada": false, "ativo": true,  "ehExcepcional": false }
         ],
         "revisaoAutorizadaOverrides": [],
         "fipeCache": {

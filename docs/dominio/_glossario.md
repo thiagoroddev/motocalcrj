@@ -75,18 +75,17 @@ interface ServicoIndependente {
   id: string;                 // ex: 'troca-oleo', 'troca-kit-transmissao'
   nome: string;
   intervalKm: number;         // > 0 km-driven; 0 só para temporal conhecido (INV-MANUT-1)
-  precoIndependente: number;  // M.O. de oficina independente. Em excepcionais (retífica),
-                              // é o valor ÚNICO peças + M.O. (ADR-007). (era precoMaoDeObra, BG-011)
+  precoIndependente: number;  // M.O. de oficina independente
   precoTotalAutorizada: number;       // preço da concessionária para o serviço avulso
   statusPrecoAutorizada?: StatusPrecoAutorizada; // informado | nao_informado | informado_usuario
   concessionariaIncluiPeca?: boolean; // o preço oficial inclui a peça? (Honda true / Yamaha false)
   incluidoNaRevisaoAutorizada: boolean; // já vem no pacote revisaoAutorizada (não soma de novo)
   ativo: boolean;             // false = excluído do cálculo periódico
-  ehExcepcional: boolean;     // true = aba Excepcional + sugerido em Imprevistos (desligado)
+  ehExcepcional: boolean;     // true = conteúdo da aba Independente; hoje, pneus Yamaha
 }
 ```
 
-Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (12 serviços normais + 2 retíficas excepcionais; valores genéricos de campo RJ). Cada preset pode sobrepor essa lista com `servicosManutencao` específico do modelo. Serviços com `ehExcepcional: true` (retíficas; pneu na Yamaha) representam custos corretivos/não-executados, ficam na aba Excepcional e aparecem no Detalhamento em Imprevistos como sugestões desligadas por padrão.
+Defaults em `SERVICOS_INDEPENDENTES_PADRAO` (13 serviços normais; valores genéricos de campo RJ). Cada preset pode sobrepor essa lista com `servicosManutencao` específico do modelo. No MVP, `ehExcepcional: true` identifica apenas pneus Yamaha, exibidos na aba Independente.
 
 ### Serviços de Manutenção do Preset (`PresetMoto.servicosManutencao`)
 
@@ -194,7 +193,7 @@ Controle de quais categorias estão **ativas** no cálculo exibido. Vive em `con
 
 ⚠️ **Atenção a uma divergência semântica:** o campo no perfil chama-se `documentacao`, mas a categoria de custo no `FiltrosCategorias` chama-se `documentos`. A função `categoriasParaFiltros()` em `utils/calculos.ts` faz a tradução. Não confundir.
 
-⚠️ **`imprevistos`** (adicionado pela RF-6.9) controla tanto `gastosCustom` (presets Multa/Sinistros/Outros) quanto `imprevistosSugeridos` (retíficas) no mapeamento.
+⚠️ **`imprevistos`** (adicionado pela RF-6.9) controla os `gastosCustom` fechados: Multa, Sinistros e Outros.
 
 Filtros finos de Manutenção vivem em `configuracaoDisplay.filtrosManutencao`:
 
@@ -216,9 +215,9 @@ Estrutura usada **internamente nos cálculos** para decidir quais categorias ent
 2. Tem chave `revisao` separada (vem de `configuracaoDisplay.filtrosManutencao.revisao`)
 3. Tem `manutencaoPorPeca: Record<string, boolean>` para granularidade individual de peças
 4. Tem `revisaoPorServico: Record<string, boolean>` para granularidade individual de serviços de revisão exibidos separadamente
-5. Tem `imprevistosSugeridos: Record<string, boolean>` para sugestões como retífica de cabeçote e retífica completa
+5. Mantém `imprevistosSugeridos: Record<string, boolean>` vazio por compatibilidade de contrato
 
-**Invariante crítica:** em `manutencaoPorPeca` e `revisaoPorServico`, item é **ativo** se valor é `true` ou `undefined`. Apenas `false` explícito desativa. Em `imprevistosSugeridos`, a regra é inversa: apenas `true` explícito ativa; `false` ou `undefined` mantém desligado.
+**Invariante crítica:** em `manutencaoPorPeca` e `revisaoPorServico`, item é **ativo** se valor é `true` ou `undefined`. Apenas `false` explícito desativa. `imprevistosSugeridos` permanece vazio no MVP.
 
 ### Peça
 
@@ -236,7 +235,7 @@ Tratado separadamente das peças no Preset JSON, em `PresetMoto.pneus[]`. Tem: `
 Quilometragem estimada de duração de uma Peça ou Pneu antes de troca. O preset mantém uma única
 referência profissional de fallback: `intervaloKm` para Peças e `vidaUtilKm` para Pneus.
 
-**Fonte canônica do intervalo (convenção ADR-014):** a vida útil / intervalo de troca **mora no serviço** (aba Mão de Obra); **Insumos informa apenas o preço da peça, sem vida útil**. O intervalo realista do serviço é **sincronizado com a revisão fixa da marca mais próxima** (Honda ×6.000, Yamaha ×5.000; empate → arredonda para baixo), porque o avulso é executado junto de uma revisão. Excepcionais (pneu Yamaha, retíficas) usam a vida útil direta. A aba Insumos exibe o intervalo efetivo somente leitura. Prioridade de resolução: override de peça → serviço efetivo → fallback do preset. O preset fornece a base e uma edição consciente vence por `intervaloKmInformadoUsuario` (INV-VIDA-UTIL-1).
+**Fonte canônica do intervalo (convenção ADR-014):** a vida útil / intervalo de troca **mora no serviço** (aba Mão de Obra); **Insumos informa apenas o preço da peça, sem vida útil**. O intervalo realista do serviço é **sincronizado com a revisão fixa da marca mais próxima** (Honda ×6.000, Yamaha ×5.000; empate → arredonda para baixo), porque o avulso é executado junto de uma revisão. Pneus Yamaha usam a vida útil direta. A aba Insumos exibe o intervalo efetivo somente leitura. Prioridade de resolução: override de peça → serviço efetivo → fallback do preset. O preset fornece a base e uma edição consciente vence por `intervaloKmInformadoUsuario` (INV-VIDA-UTIL-1).
 
 **Ciclo de troca e km da última troca (RF-6.7):** quando o Motoboy informa o km da última troca de um item no card "Últimas manutenções" (`moto.kmUltimaTrocas`), o cálculo ancora o ciclo nesse km. `CustoPeca.trocasNoAno` passa a contar as trocas dos próximos 12 meses a partir do ponto real do ciclo, e `custoAnual = trocasNoAno × preço`. Sem o km informado, usa o valor amortizado (`trocasNoAno = kmAnual / intervalo`).
 

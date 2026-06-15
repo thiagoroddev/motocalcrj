@@ -170,7 +170,7 @@
       "precoParalela": 163.31,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 102.000 km. Caminho alternativo à retífica completa.",
+        "intervaloKmNota": "Referência profissional sincronizada com a revisão: 102.000 km.",
         "precoOriginalNota": "Moto Clube Honda (informado pelo usuário 25/05/26).",
         "precoParalelaNota": "Kit paralelo (Shopee, informado pelo usuário 25/05/26)."
       }
@@ -662,28 +662,6 @@
       "incluidoNaRevisaoAutorizada": false,
       "ativo": true,
       "ehExcepcional": false
-    },
-    {
-      "id": "retifica-cabecote",
-      "nome": "Retífica de cabeçote",
-      "intervalKm": 80000,
-      "precoIndependente": 800,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
-    },
-    {
-      "id": "retifica-completa",
-      "nome": "Retífica completa",
-      "intervalKm": 120000,
-      "precoIndependente": 1500,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
     }
   ],
 

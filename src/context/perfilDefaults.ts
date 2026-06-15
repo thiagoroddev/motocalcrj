@@ -18,33 +18,6 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 // Defaults de serviços independentes (campo RJ)
 // ──────────────────────────────────────────────
 
-// Retíficas não existem no modo autorizado - Honda substitui por troca de kit
-// cilindro (ver TASK-RF-6.14). precoTotalAutorizada=0 garante que esses
-// serviços não apareçam na seção autorizada nem nos imprevistos (ADR-007).
-export const SERVICO_RETIFICA_CABECOTE_PADRAO: ServicoIndependente = {
-  id: 'retifica-cabecote',
-  nome: 'Retífica de cabeçote',
-  intervalKm: 80000,
-  precoIndependente: 800,
-  precoTotalAutorizada: 0,
-  statusPrecoAutorizada: 'nao_informado',
-  incluidoNaRevisaoAutorizada: false,
-  ativo: false,
-  ehExcepcional: true,
-};
-
-export const SERVICO_RETIFICA_COMPLETA_PADRAO: ServicoIndependente = {
-  id: 'retifica-completa',
-  nome: 'Retífica completa',
-  intervalKm: 120000,
-  precoIndependente: 1500,
-  precoTotalAutorizada: 0,
-  statusPrecoAutorizada: 'nao_informado',
-  incluidoNaRevisaoAutorizada: false,
-  ativo: false,
-  ehExcepcional: true,
-};
-
 // Presets fixos da seção Imprevistos. Lista fechada - usuário não adiciona
 // nem remove, apenas edita o valorAnual e o toggle (ver ADR-006).
 export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
@@ -230,8 +203,6 @@ export const SERVICOS_INDEPENDENTES_PADRAO: ServicoIndependente[] = [
     ativo: true,
     ehExcepcional: false,
   },
-  SERVICO_RETIFICA_CABECOTE_PADRAO,
-  SERVICO_RETIFICA_COMPLETA_PADRAO,
 ];
 
 // ──────────────────────────────────────────────
@@ -252,6 +223,7 @@ export const perfilPadrao: PerfilUsuario = {
     kmAtual: 0,
     kmUltimaRevisao: null,
     kmUltimaTrocas: KM_ULTIMA_TROCAS_PADRAO,
+    // Compatibilidade com perfis anteriores à ADR-022.
     kmMotorRefeito: null,
   },
 

@@ -1,5 +1,4 @@
 import { useEffect, useState, type Dispatch } from 'react';
-import type { CustoImprevistoSugerido } from '../../types/calculos';
 import type { GastoCustom, PerfilAction } from '../../types/perfil';
 import { Card } from '../ui/card';
 import {
@@ -14,15 +13,10 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { moeda } from '../../utils/formatters';
 import { Toggle } from './Toggle';
-import { BotaoLapisEdicao } from './BotaoLapisEdicao';
 import { TileCategoria } from '../icons/categorias';
 
 type Props = {
   gastosCustom: GastoCustom[];
-  imprevistosSugeridos: [string, CustoImprevistoSugerido][];
-  filtrosImprevistosSugeridos: Record<string, boolean>;
-  onToggleImprevistoSugerido: (id: string) => void;
-  onEditarImprevistoSugerido: (id: string) => void;
   dispatch: Dispatch<PerfilAction>;
   valorTotal: number;
   categoriaAtiva: boolean;
@@ -43,10 +37,6 @@ function parseValor(texto: string): number {
 
 export function SecaoImprevistos({
   gastosCustom,
-  imprevistosSugeridos,
-  filtrosImprevistosSugeridos,
-  onToggleImprevistoSugerido,
-  onEditarImprevistoSugerido,
   dispatch,
   valorTotal,
   categoriaAtiva,
@@ -56,7 +46,6 @@ export function SecaoImprevistos({
   pp,
   pct,
 }: Props) {
-  const [ajudaAberta, setAjudaAberta] = useState(false);
   const [gastoEditando, setGastoEditando] = useState<GastoCustom | null>(null);
   const [valorTemp, setValorTemp] = useState('');
 
@@ -89,31 +78,6 @@ export function SecaoImprevistos({
           <TileCategoria categoriaId="gastosCustom" corClasse="bg-warning/60" />
           <span className="flex-1 text-foreground text-sm font-medium flex items-center gap-1.5">
             Outros
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setAjudaAberta(true);
-              }}
-              aria-label="Como funciona o custo amortizado"
-              className="inline-flex items-center justify-center w-4 h-4 rounded-full text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
-                className="w-3.5 h-3.5"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path
-                  d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
             <span className="ml-0.5 text-[10px] font-normal text-muted-foreground/40">
               {pct(valorTotal, categoriaAtiva)}
             </span>
@@ -149,41 +113,6 @@ export function SecaoImprevistos({
                 </span>
               </div>
             </div>
-            {imprevistosSugeridos.map(([id, imprevisto]) => {
-              const ativo = filtrosImprevistosSugeridos[id] === true;
-              return (
-                <div key={id} className="flex items-center gap-2">
-                  <Toggle
-                    ativo={ativo}
-                    label={`${ativo ? 'Desativar' : 'Ativar'} ${imprevisto.label}`}
-                    inativoPorPai={!categoriaAtiva}
-                    onClick={() => onToggleImprevistoSugerido(id)}
-                  />
-                  <span className="w-8 text-right text-[10px] text-muted-foreground/40 shrink-0 tabular-nums">
-                    {Math.round(imprevisto.intervalKm / 1000)}k
-                  </span>
-                  <span className="flex-1 text-muted-foreground/70 text-xs truncate">
-                    {imprevisto.label}
-                  </span>
-                  <div className="flex flex-col items-end leading-tight">
-                    <span
-                      className={`text-xs font-medium tabular-nums ${ativo ? 'text-foreground' : 'text-muted-foreground/40'}`}
-                    >
-                      {moeda(imprevisto.precoServico)}
-                    </span>
-                    <span
-                      className={`text-[10px] tabular-nums ${ativo ? 'text-muted-foreground/70' : 'text-muted-foreground/30'}`}
-                    >
-                      ≈ {pp(imprevisto.custoAnual)}
-                    </span>
-                  </div>
-                  <BotaoLapisEdicao
-                    onClick={() => onEditarImprevistoSugerido(id)}
-                    ariaLabel={`Editar ${imprevisto.label}`}
-                  />
-                </div>
-              );
-            })}
             {gastosCustom.map((g) => {
               const temValor = g.valorAnual > 0;
               return (
@@ -247,71 +176,14 @@ export function SecaoImprevistos({
                   <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
                 </svg>
                 <p className="text-muted-foreground/40 text-xs leading-relaxed">
-                  Itens sugeridos ficam desligados até você decidir incluir. Cada linha mostra o
-                  preço cheio do serviço e, abaixo, o impacto anual médio (
-                  <button
-                    type="button"
-                    onClick={() => setAjudaAberta(true)}
-                    className="underline hover:text-foreground transition-colors"
-                  >
-                    entenda
-                  </button>
-                  ). Para Multa, Sinistros e Outros, toque no lápis para informar o total acumulado
-                  no ano - esta é a única categoria editável direto aqui.
+                  Para Multa, Sinistros e Outros, toque no lápis para informar o total acumulado no
+                  ano. Esta é a única categoria editável direto aqui.
                 </p>
               </div>
             </div>
           </div>
         )}
       </Card>
-
-      <Dialog open={ajudaAberta} onOpenChange={setAjudaAberta}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Como funciona o custo amortizado</DialogTitle>
-            <DialogDescription>
-              Por que o valor aqui é menor do que o preço configurado em Mão de Obra.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 text-sm text-muted-foreground">
-            <p>
-              Itens como retíficas custam caro, mas acontecem raramente - a cada dezenas de milhares
-              de quilômetros. Se a estimativa anual somasse o preço cheio só no ano em que o serviço
-              acontece, sua média ficaria distorcida.
-            </p>
-            <p>
-              Para evitar isso, o app espalha o custo pela vida útil do serviço. Cada linha mostra
-              dois valores:
-            </p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>
-                <strong className="text-foreground">Valor em destaque (R$ cheio):</strong> o preço
-                do serviço quando ele acontece. É o mesmo valor configurado em Mão de Obra &gt;
-                Excepcional.
-              </li>
-              <li>
-                <strong className="text-foreground">Valor pequeno (≈ R$/período):</strong> o impacto
-                anual médio na sua estimativa, já convertido para o período selecionado (Ano, Mês,
-                Sem, Dia, Hora).
-              </li>
-            </ul>
-            <div className="rounded-md bg-muted/30 p-3 text-xs">
-              <p className="font-medium text-foreground mb-1">Exemplo</p>
-              <p>
-                Retífica de cabeçote a cada 80.000 km, custando R$ 800. Se você roda 18.200 km/ano,
-                ela aconteceria a cada ~4,4 anos. O impacto anual médio é:
-              </p>
-              <p className="mt-1 font-mono text-[11px]">
-                (R$ 800 ÷ 80.000 km) × 18.200 km = R$ 182/ano
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground/70">
-              Ativar o toggle inclui esse valor anual médio (R$ 182) no total da estimativa, não o
-              preço cheio (R$ 800).
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={gastoEditando !== null} onOpenChange={(aberto) => !aberto && fecharEdicao()}>
         <DialogContent>

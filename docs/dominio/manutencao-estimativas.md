@@ -70,7 +70,7 @@ A **vida útil/intervalo mora no serviço** (aba Mão de Obra); Insumos só tem 
 
 - **Honda:** múltiplos de **6.000** km · **Yamaha:** múltiplos de **5.000** km.
 - Empate de distância → arredonda **para baixo**.
-- Excepcionais (a concessionária não executa: pneu na Yamaha, retíficas) **não** sincronizam — usam a vida direta.
+- Excepcionais (atualmente pneus Yamaha, que a concessionária não executa) **não** sincronizam - usam a vida direta.
 
 ### 2.1 Pop 110i — Honda (×6.000)
 

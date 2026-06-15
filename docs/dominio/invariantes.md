@@ -170,9 +170,9 @@ if (filtros.revisaoPorServico[servicoId] === true) {
   // serviços sem entrada explícita ficam de fora!
 }
 
-// ERRADO: para imprevistos sugeridos, undefined não pode ativar custo
+// Campo legado: se reaproveitado no futuro, ausência não pode ativar custo
 if (filtros.imprevistosSugeridos[imprevistoId] !== false) {
-  // retíficas entrariam ligadas por padrão
+  // um custo sugerido entraria ligado por padrão
 }
 ```
 

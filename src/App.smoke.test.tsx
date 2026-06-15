@@ -527,6 +527,40 @@ describe('App - smoke UI', () => {
     expect(screen.getByTestId('lista-insumos-pecas')).toHaveClass('sm:grid-cols-2');
   });
 
+  it('mostra apenas a Concessionária para Honda na tela de Mão de Obra', async () => {
+    salvarPresetNoStorage();
+
+    renderizarAppEm('/mao-de-obra');
+
+    expect(await screen.findByText('Mão de Obra - Concessionária')).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Concessionária' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Independente' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Retífica/i)).not.toBeInTheDocument();
+  });
+
+  it('mantém a aba Independente para os pneus Yamaha', async () => {
+    const perfil = criarPerfilValido();
+    perfil.moto = {
+      ...perfil.moto,
+      marca: 'Yamaha',
+      modelo: 'factor125i',
+    };
+    salvarPresetNoStorage(criarPreset(perfil));
+
+    renderizarAppEm('/mao-de-obra');
+
+    const abaIndependente = await screen.findByRole('tab', { name: 'Independente' });
+    expect(screen.getByRole('tab', { name: 'Concessionária' })).toBeInTheDocument();
+    fireEvent.mouseDown(abaIndependente, { button: 0, ctrlKey: false });
+
+    expect(await screen.findByText('Serviços Independentes (oficina)')).toBeInTheDocument();
+    expect(
+      screen.getByText('Troca de pneu dianteiro (fora da concessionária)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Troca de pneu traseiro (fora da concessionária)')).toBeInTheDocument();
+    expect(screen.queryByText(/Retífica/i)).not.toBeInTheDocument();
+  });
+
   it('preserva em Insumos a vida útil conscientemente editada no serviço', async () => {
     const perfil = criarPerfilValido();
     perfil.servicosIndependentes = perfil.servicosIndependentes.map((servico) =>

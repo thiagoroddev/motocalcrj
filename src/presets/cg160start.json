@@ -167,7 +167,7 @@
       "precoParalela": 563,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "intervaloKmNota": "Referência profissional sincronizada (×6.000): 102.000 km. Caminho alternativo à retífica.",
+        "intervaloKmNota": "Referência profissional sincronizada (×6.000): 102.000 km.",
         "precoOriginalNota": "Bloco 160cc (CG 160 Start/Fan/Titan, Bros). Média R$ 563.",
         "precoParalelaNota": "Sem tier paralela separado; adotado = original."
       }
@@ -673,28 +673,6 @@
       "incluidoNaRevisaoAutorizada": true,
       "ativo": true,
       "ehExcepcional": false
-    },
-    {
-      "id": "retifica-cabecote",
-      "nome": "Retífica de cabeçote",
-      "intervalKm": 80000,
-      "precoIndependente": 800,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
-    },
-    {
-      "id": "retifica-completa",
-      "nome": "Retífica completa",
-      "intervalKm": 120000,
-      "precoIndependente": 1500,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
     }
   ],
 

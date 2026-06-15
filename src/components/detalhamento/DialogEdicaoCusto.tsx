@@ -39,8 +39,7 @@ export type EdicaoAlvo =
   | { tipo: 'preferencias' }
   | { tipo: 'estimativaMaoDeObra' }
   | { tipo: 'pecaComMO'; pecaId: string }
-  | { tipo: 'servicoAutorizada'; servicoId: string }
-  | { tipo: 'servicoExcepcional'; servicoId: string };
+  | { tipo: 'servicoAutorizada'; servicoId: string };
 
 type Props = {
   alvo: EdicaoAlvo | null;
@@ -74,10 +73,6 @@ function tituloDoAlvo(alvo: EdicaoAlvo, perfil: PerfilUsuario): string {
       const pneu = preset?.pneus.find((p) => p.id === alvo.pecaId);
       if (pneu) return pneu.posicao === 'dianteiro' ? 'Pneu dianteiro' : 'Pneu traseiro';
       return 'Editar';
-    }
-    case 'servicoExcepcional': {
-      const servico = perfil.servicosIndependentes.find((s) => s.id === alvo.servicoId);
-      return servico?.nome ?? 'Editar';
     }
     case 'servicoAutorizada': {
       const servico = perfil.servicosIndependentes.find((s) => s.id === alvo.servicoId);
@@ -133,10 +128,6 @@ function ConteudoEdicao({ alvo, perfil, dispatch }: PropsConteudo) {
     return <SecaoPreferencias perfilManutencao={perfil.perfilManutencao} dispatch={dispatch} />;
   if (alvo.tipo === 'estimativaMaoDeObra')
     return <ConteudoEstimativaMaoDeObra perfil={perfil} dispatch={dispatch} />;
-  if (alvo.tipo === 'servicoExcepcional')
-    return (
-      <ConteudoServicoExcepcional servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />
-    );
   if (alvo.tipo === 'servicoAutorizada')
     return (
       <ConteudoServicoAutorizada servicoId={alvo.servicoId} perfil={perfil} dispatch={dispatch} />
@@ -185,36 +176,6 @@ function ConteudoEstimativaMaoDeObra({
       ligada={perfil.perfilManutencao.incluirEstimativaMaoDeObra === true}
       dispatch={dispatch}
     />
-  );
-}
-
-function ConteudoServicoExcepcional({
-  servicoId,
-  perfil,
-  dispatch,
-}: {
-  servicoId: string;
-  perfil: PerfilUsuario;
-  dispatch: Dispatch<PerfilAction>;
-}) {
-  const servico = resolverServicoEfetivo(perfil, servicoId);
-  if (!servico) {
-    return <p className="text-sm text-muted-foreground">Serviço não encontrado.</p>;
-  }
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 px-px">
-        <Wrench className="w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          Mão de obra
-        </span>
-      </div>
-      <CardServico
-        servico={servico}
-        servicoPadrao={resolverServicoBase(perfil, servico.id)}
-        dispatch={dispatch}
-      />
-    </div>
   );
 }
 

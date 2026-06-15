@@ -346,7 +346,7 @@ Não descrever o total como "o que será gasto exatamente em 2026" ou "o gasto e
 - Peças sem km da última troca: custo amortizado.
 - Peças com `kmUltimaTroca > 0`: eventos ancorados na janela projetada.
 - A ausência de âncora não é zero custo; é fallback amortizado.
-- Retíficas e outros excepcionais são desligados por padrão.
+- Retíficas estão fora do MVP; reparo de motor permanece representado pelo kit cilindro.
 - A estimativa de mão de obra nunca pode parecer valor oficial.
 
 Antes de alterar esse domínio, ler `docs/dominio/manutencao-estimativas.md`, `docs/dominio/invariantes.md`, ADR-012 a ADR-016 e os testes associados.
@@ -365,7 +365,7 @@ O cálculo agrega:
 - financiamento ou aluguel;
 - imprevistos.
 
-Revisão é subitem de Manutenção na apresentação, não fatia independente no donut. Filtros de manutenção são default-on, exceto imprevistos sugeridos, que são default-off.
+Revisão é subitem de Manutenção na apresentação, não fatia independente no donut. Filtros de manutenção são default-on. A categoria Outros agrega apenas Multa, Sinistros e Outros.
 
 ---
 

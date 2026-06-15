@@ -11,9 +11,11 @@
 Bloco que controla **o que é exibido** na Estimativa e no Detalhamento. Não armazena valores de cálculo - armazena **preferências de visualização**:
 
 - Quais categorias de custo entram no donut e no total exibido
-- Quais imprevistos sugeridos (retíficas) estão ligados
+- Quais filtros finos de manutenção estão ligados
 
 Após ADR-003 / TASK-REF-18 / REF-19, **não existe mais `modoExibicao` nem `modoOficinDisplay`**. O app opera em modo único - `perfilManutencao.modoRevisao` é a única fonte de "qual modo de revisão" tanto para cálculo quanto para UI.
+
+O campo `imprevistosSugeridosAtivos` continua no perfil apenas para compatibilidade com dados antigos. A ADR-022 removeu os custos sugeridos e sua UI do MVP.
 
 ---
 
@@ -52,7 +54,7 @@ type CategoriaDisplay = {
 
 ⚠️ **Revisão é sub-item de manutenção:** revisão não é categoria independente (RN-27). O toggle de categoria `manutencao` zera todo o bloco no cálculo, mas o toggle fino `filtrosManutencao.revisao` preserva a escolha do usuário para a linha "Revisão Geral".
 
-⚠️ **Sem campo `gastosCustom` próprio em `CategoriaDisplay`:** o toggle visível na UI é `imprevistos` (categoria nova adicionada pela RF-6.9). `categoriasParaFiltros()` traduz `imprevistos` para `gastosCustom: cat.imprevistos` e também para `imprevistosSugeridos` (ver abaixo).
+⚠️ **Sem campo `gastosCustom` próprio em `CategoriaDisplay`:** o toggle visível na UI é `imprevistos` (categoria nova adicionada pela RF-6.9). `categoriasParaFiltros()` traduz `imprevistos` para `gastosCustom: cat.imprevistos`.
 
 ### `imprevistosSugeridosAtivos`
 
@@ -60,7 +62,7 @@ type CategoriaDisplay = {
 imprevistosSugeridosAtivos: Record<string, boolean>;
 ```
 
-Mapa `id → boolean` por serviço excepcional (`retifica-cabecote`, `retifica-completa`). Padrão é `{}` (vazio) - qualquer id sem entrada conta como **desligado**. Apenas `true` explícito ativa o cálculo da retífica no total.
+Mapa legado preservado para leitura de perfis antigos. O padrão e o estado efetivo do MVP são `{}`; não há action, UI ou custo sugerido que o consuma.
 
 ### `filtrosManutencao`
 
@@ -81,7 +83,6 @@ Filtros finos persistidos da seção Manutenção no Detalhamento. `revisao` con
 | Action                       | Comportamento                                                            |
 | ---------------------------- | ------------------------------------------------------------------------ |
 | `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                         |
-| `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`            |
 | `TOGGLE_REVISAO_MANUTENCAO`  | Liga/desliga a linha "Revisão Geral" dentro de Manutenção                |
 | `TOGGLE_MANUTENCAO_POR_PECA` | Liga/desliga uma peça específica em `filtrosManutencao.manutencaoPorPeca` |
 | `TOGGLE_REVISAO_POR_SERVICO` | Liga/desliga um serviço em `filtrosManutencao.revisaoPorServico`         |
@@ -107,7 +108,7 @@ export function categoriasParaFiltros(
     manutencao: cat.manutencao,
     manutencaoPorPeca: filtrosManutencao.manutencaoPorPeca,
     revisaoPorServico: filtrosManutencao.revisaoPorServico,
-    imprevistosSugeridos: imprevistosSugeridosAtivos, // explícito via TOGGLE_IMPREVISTO_SUGERIDO
+    imprevistosSugeridos: imprevistosSugeridosAtivos, // contrato legado; sem provedores no MVP
     combustivel: cat.combustivel,
     internet: cat.internet,
     seguro: cat.seguro,
@@ -123,7 +124,7 @@ export function categoriasParaFiltros(
 1. `documentacao` → `documentos` (nomes diferentes em camadas diferentes)
 2. `manutencao` controla a categoria inteira; `filtrosManutencao.revisao` controla a linha "Revisão Geral"
 3. `imprevistos` controla `gastosCustom` (lista fechada de Multa/Sinistros/Outros)
-4. `imprevistosSugeridos` vem direto de `imprevistosSugeridosAtivos` - retíficas começam desligadas, ativam só com `true` explícito
+4. `imprevistosSugeridos` permanece no contrato interno por compatibilidade, sem custos associados no MVP
 5. `manutencaoPorPeca`/`revisaoPorServico` vêm de `filtrosManutencao` e persistem no perfil
 
 ---
@@ -147,13 +148,13 @@ zero.
 
 **Onde é protegida:** sistema de tipos.
 
-### INV-DISPLAY-3: `imprevistosSugeridosAtivos` é default-off
+### INV-DISPLAY-3: `imprevistosSugeridosAtivos` é legado e inerte
 
-**Regra:** Item de `imprevistosSugeridosAtivos[id]` ativa custo somente quando valor é `true` explícito. `undefined` ou `false` mantém desligado. Inverso de `manutencaoPorPeca` (que é default-on).
+**Regra:** O campo pode ser lido de perfis antigos, mas não possui action nem UI e não gera custos no MVP.
 
-**Por quê:** Retíficas são custos corretivos de alto km - não devem inflar o total exibido por padrão. O Motoboy liga o sugerido quando quer planejar para o evento. (BG-005)
+**Por quê:** A ADR-022 retirou as retíficas da experiência e preservou o shape persistido para evitar uma migration sem benefício.
 
-**Onde é protegida:** lógica de `calcularTotalFiltrado` em `calculos.ts`.
+**Onde é protegida:** defaults vazios, normalização contra o preset e mapa `gastosCustom.detalhes.sugeridos` vazio.
 
 ---
 
@@ -169,7 +170,7 @@ zero.
 
 ### INV-DISPLAY-5: chaves relacionais pertencem ao preset canônico
 
-**Regra:** `imprevistosSugeridosAtivos` aceita somente serviços excepcionais;
+**Regra:** referências legadas em `imprevistosSugeridosAtivos` são filtradas contra o preset;
 `manutencaoPorPeca` aceita somente peças e pneus; `revisaoPorServico` e
 `estimativaMaoDeObraPorServico` aceitam somente serviços do preset, inclusive capacidades ocultas
 ou sem custo.
@@ -185,8 +186,7 @@ são preservados; apenas chaves desconhecidas são removidas.
 PerfilUsuario.configuracaoDisplay
 ├── categoriasAtivas → categoriasParaFiltros() → calcularTotalFiltrado()
 │                      (decide quais categorias entram no total exibido)
-├── imprevistosSugeridosAtivos → categoriasParaFiltros() → filtros.imprevistosSugeridos
-│                                (ativa retíficas no total quando true)
+├── imprevistosSugeridosAtivos → compatibilidade de leitura; sem custo sugerido no MVP
 └── filtrosManutencao → categoriasParaFiltros() → filtros.manutencaoPorPeca/revisaoPorServico
                          (preserva escolhas finas de Manutenção)
 ```
@@ -196,7 +196,6 @@ PerfilUsuario.configuracaoDisplay
 ## Eventos Relacionados
 
 - `CategoriaAlternada` - `TOGGLE_CATEGORIA`. Recalcula total e proporções do donut.
-- `ImprevistoSugeridoAlternado` - `TOGGLE_IMPREVISTO_SUGERIDO`. Liga/desliga uma retífica específica.
 - `FiltroManutencaoAlternado` - `TOGGLE_REVISAO_MANUTENCAO`, `TOGGLE_MANUTENCAO_POR_PECA` ou `TOGGLE_REVISAO_POR_SERVICO`.
 
 ---
@@ -212,11 +211,11 @@ peças, serviços ou Revisão Geral.
 
 ### Toggle de imprevistos controla gastosCustom
 
-Após RF-6.9, `imprevistos` é a categoria que engloba tanto os 3 presets fixos (Multa, Sinistros, Outros) quanto as retíficas sugeridas. Desligar `imprevistos` esconde os dois grupos do total. Imprevistos é a **única categoria editável direto na tela de Detalhamento** (via lápis - RF-6.11).
+Após RF-6.9, `imprevistos` controla os 3 presets fixos: Multa, Sinistros e Outros. É a **única categoria editável direto na tela de Detalhamento** (via lápis - RF-6.11).
 
 ### Sincronização perfil → UI
 
-Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` ou uma action de `filtrosManutencao` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. Performance esperada < 200ms (RNF-04).
+Quando o Motoboy muda um toggle, o reducer dispara `TOGGLE_CATEGORIA` ou uma action de `filtrosManutencao` e atualiza o perfil. Recálculo automático segue via `useMemo` no `useCustos`. Performance esperada < 200ms (RNF-04).
 
 ---
 
@@ -253,6 +252,6 @@ Documentação validada contra:
 - `src/types/perfil.ts` - bloco `configuracaoDisplay` e tipo `CategoriaDisplay`
 - `src/types/calculos.ts` - `FiltrosCategorias`
 - `src/utils/calculos.ts` - `categoriasParaFiltros`
-- `src/context/PerfilContext.tsx` - actions `TOGGLE_CATEGORIA`, `TOGGLE_IMPREVISTO_SUGERIDO` e filtros finos de Manutenção
+- `src/context/perfilReducer.ts` - actions `TOGGLE_CATEGORIA` e filtros finos de Manutenção
 
-**Divergências encontradas:** nenhuma. Documentação atualizada em 25/05/26 (TASK-BG-014) após persistência dos filtros finos de Manutenção.
+**Divergências encontradas:** nenhuma. Documentação atualizada em 14/06/26 pela TASK-REF-45 após remoção das retíficas do MVP.

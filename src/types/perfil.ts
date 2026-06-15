@@ -78,14 +78,11 @@ export interface ServicoIndependente {
   // Presente apenas quando o usuário editou conscientemente a vida útil.
   // Ausente significa que o intervalo-base do preset continua canônico.
   intervaloKmInformadoUsuario?: boolean;
-  // Preço cobrado por oficina independente. Para serviços NORMAIS é só a M.O.
-  // (a peça é precificada à parte nos Insumos). Para serviços EXCEPCIONAIS
-  // (ehExcepcional=true, ex.: retíficas) é o valor ÚNICO peças + M.O., pois a
-  // retífica não é orçada separando peça de mão de obra (ADR-007).
+  // Preço cobrado por oficina independente. É só a M.O.; a peça é precificada
+  // à parte em Insumos.
   precoIndependente: number;
   // Preço total Honda (peça + M.O., como o orçamento da concessionária é
-  // apresentado). 0 = não aplicável (ex.: serviços incluídos no pacote ou
-  // serviços que Honda não executa, como retíficas). ADR-007.
+  // apresentado). 0 = não aplicável ou serviço incluído no pacote. ADR-007.
   precoTotalAutorizada: number;
   // Status do preço total de concessionária para serviços fora do pacote fixo
   // no MVP (ADR-012 / TASK-REF-32.4). Ausente em dados legados pré-MVP.
@@ -134,6 +131,8 @@ export interface KmUltimaTrocas {
   kitEmbreagem: number;
   kitCilindro: number;
   caixaDirecao: number;
+  // Campos legados preservados para carregar perfis anteriores à ADR-022.
+  // Não têm UI nem participação no cálculo do MVP.
   retificaCabecote: number;
   retificaCompleta: number;
 }
@@ -156,6 +155,8 @@ export interface PerfilUsuario {
     kmAtual: number;
     kmUltimaRevisao: number | null;
     kmUltimaTrocas: KmUltimaTrocas;
+    // Campo legado preservado para carregar perfis anteriores à ADR-022.
+    // Não tem action, UI nem participação no cálculo do MVP.
     kmMotorRefeito: number | null;
   };
 
@@ -249,7 +250,6 @@ export type PerfilAction =
 
   // Display
   | { type: 'TOGGLE_CATEGORIA'; categoria: keyof CategoriaDisplay }
-  | { type: 'TOGGLE_IMPREVISTO_SUGERIDO'; id: string }
   | { type: 'TOGGLE_REVISAO_MANUTENCAO' }
   | { type: 'TOGGLE_MANUTENCAO_POR_PECA'; id: string }
   | { type: 'TOGGLE_REVISAO_POR_SERVICO'; id: string }
@@ -292,7 +292,6 @@ export type PerfilAction =
 
   // Histórico de manutenção
   | { type: 'SET_KM_ULTIMA_TROCA'; componente: keyof KmUltimaTrocas; km: number }
-  | { type: 'SET_MOTOR_REFEITO'; km: number | null }
 
   // Ajustes de predefinição
   | { type: 'SET_ANO_MOTO'; ano: number }

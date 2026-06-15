@@ -57,7 +57,7 @@ export function PaginaDetalhamento() {
   const resultado = useCustos();
   const filtros = categoriasParaFiltros(
     perfil.configuracaoDisplay.categoriasAtivas,
-    perfil.configuracaoDisplay.imprevistosSugeridosAtivos,
+    {},
     perfil.configuracaoDisplay.filtrosManutencao,
   );
   const [expandido, setExpandido] = useState<Record<string, boolean>>({});
@@ -98,14 +98,7 @@ export function PaginaDetalhamento() {
   const valoresFiltrados = calcularBreakdownValores(custos, filtros);
   const gran = calcularGranularidades(totalFiltrado, diasAno, kmAnual);
   const totalManutencaoComRevisao = valoresFiltrados.manutencao + valoresFiltrados.revisao;
-  const totalImprevistos = filtros.gastosCustom
-    ? custos.gastosCustom.total +
-      [...custos.gastosCustom.detalhes.sugeridos.entries()].reduce(
-        (soma, [id, imprevisto]) =>
-          filtros.imprevistosSugeridos[id] === true ? soma + imprevisto.custoAnual : soma,
-        0,
-      )
-    : 0;
+  const totalImprevistos = filtros.gastosCustom ? custos.gastosCustom.total : 0;
 
   const pct = (valor: number, ativo: boolean = true) => {
     if (!ativo || totalFiltrado <= 0) return '0%';
@@ -150,10 +143,6 @@ export function PaginaDetalhamento() {
 
   function toggleServicoRevisao(id: string) {
     dispatch({ type: 'TOGGLE_REVISAO_POR_SERVICO', id });
-  }
-
-  function toggleImprevistoSugerido(id: string) {
-    dispatch({ type: 'TOGGLE_IMPREVISTO_SUGERIDO', id });
   }
 
   function toggleCategoriaImprevistos() {
@@ -348,12 +337,6 @@ export function PaginaDetalhamento() {
 
         <SecaoImprevistos
           gastosCustom={perfil.financeiro.gastosCustom}
-          imprevistosSugeridos={[...custos.gastosCustom.detalhes.sugeridos.entries()]}
-          filtrosImprevistosSugeridos={filtros.imprevistosSugeridos}
-          onToggleImprevistoSugerido={toggleImprevistoSugerido}
-          onEditarImprevistoSugerido={(id) =>
-            setEdicao({ tipo: 'servicoExcepcional', servicoId: id })
-          }
           dispatch={dispatch}
           valorTotal={totalImprevistos}
           categoriaAtiva={filtros.gastosCustom}

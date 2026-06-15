@@ -857,28 +857,6 @@
       "ehExcepcional": false
     },
     {
-      "id": "retifica-cabecote",
-      "nome": "Retífica de cabeçote",
-      "intervalKm": 90000,
-      "precoIndependente": 800,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
-    },
-    {
-      "id": "retifica-completa",
-      "nome": "Retífica completa",
-      "intervalKm": 130000,
-      "precoIndependente": 1500,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
-    },
-    {
       "id": "troca-pneu-dianteiro",
       "nome": "Troca de pneu dianteiro (fora da concessionária)",
       "intervalKm": 22500,

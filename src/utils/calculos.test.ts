@@ -540,26 +540,6 @@ describe('calcularDetalhesRevisaoAnual', () => {
       ativo: true,
       ehExcepcional: false,
     },
-    {
-      id: 'retifica-cabecote',
-      nome: 'Retífica de cabeçote',
-      intervalKm: 80000,
-      precoIndependente: 800,
-      precoTotalAutorizada: 0,
-      incluidoNaRevisaoAutorizada: false,
-      ativo: true,
-      ehExcepcional: true,
-    },
-    {
-      id: 'retifica-completa',
-      nome: 'Retífica completa',
-      intervalKm: 120000,
-      precoIndependente: 1500,
-      precoTotalAutorizada: 0,
-      incluidoNaRevisaoAutorizada: false,
-      ativo: true,
-      ehExcepcional: true,
-    },
   ];
 
   it('modo autorizadas: km-based - (ciclo / 36000) × kmAnual', () => {
@@ -580,19 +560,6 @@ describe('calcularDetalhesRevisaoAnual', () => {
       custoCicloCompleto: 3334.62,
     }).total;
     expect(pesado / leve).toBeCloseTo(40000 / 15000, 2);
-  });
-
-  it('modo autorizadas: ignora serviços excepcionais no ciclo da concessionária', () => {
-    const kmAnual = 12000;
-    const custoCiclo = 3334.62;
-    const esperado = (custoCiclo / 36000) * kmAnual;
-
-    expect(
-      calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
-        custoCicloCompleto: custoCiclo,
-        servicosIndependentes: servicosMock,
-      }).total,
-    ).toBeCloseTo(esperado, 2);
   });
 
   it('modo independentes: soma CPK × kmAnual de serviços ativos', () => {
@@ -676,16 +643,6 @@ describe('calcularDetalhesRevisaoAnual', () => {
         ativo: true,
         ehExcepcional: false,
       },
-      {
-        id: 'retifica-completa',
-        nome: 'Retífica completa',
-        intervalKm: 120000,
-        precoIndependente: 1500,
-        precoTotalAutorizada: 0,
-        incluidoNaRevisaoAutorizada: false,
-        ativo: true,
-        ehExcepcional: true,
-      },
     ];
 
     const resultado = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
@@ -704,7 +661,6 @@ describe('calcularDetalhesRevisaoAnual', () => {
     expect(kit?.kmUltimaTroca).toBe(0);
     expect(kit?.kmDasProximasTrocas).toEqual([]);
     expect(resultado.detalhes.servicos.has('troca-oleo')).toBe(false);
-    expect(resultado.detalhes.servicos.has('retifica-completa')).toBe(false);
   });
 
   it('amortiza pelo km do ciclo do preset, não pela constante 36.000 (ADR-016)', () => {
@@ -964,21 +920,21 @@ describe('calcularDetalhesRevisaoAnual', () => {
   it('modo autorizadas: serviço com precoTotalAutorizada=0 não soma', () => {
     const kmAnual = 12000;
     const custoCiclo = 3334.62;
-    const servicosComRetifica: ServicoIndependente[] = [
+    const servicosSemPreco: ServicoIndependente[] = [
       {
-        id: 'retifica-completa',
-        nome: 'Retífica completa',
+        id: 'servico-sem-preco',
+        nome: 'Serviço sem preço',
         intervalKm: 120000,
-        precoIndependente: 1500,
+        precoIndependente: 100,
         precoTotalAutorizada: 0,
         incluidoNaRevisaoAutorizada: false,
         ativo: true,
-        ehExcepcional: false, // mesmo como não-excepcional, valor 0 zera a soma
+        ehExcepcional: false,
       },
     ];
     const total = calcularDetalhesRevisaoAnual('autorizadas', kmAnual, {
       custoCicloCompleto: custoCiclo,
-      servicosIndependentes: servicosComRetifica,
+      servicosIndependentes: servicosSemPreco,
     }).total;
     const esperado = (custoCiclo / 36000) * kmAnual;
     expect(total).toBeCloseTo(esperado, 2);
@@ -1106,21 +1062,7 @@ const custosMock: CustosPorCategoria = {
   gastosCustom: {
     total: 0,
     ativo: false,
-    detalhes: {
-      sugeridos: new Map([
-        [
-          'retifica-cabecote',
-          {
-            id: 'retifica-cabecote',
-            label: 'Retífica de cabeçote',
-            custoAnual: 53,
-            intervalKm: 80000,
-            precoServico: 800,
-            eventosNoAno: 0.2,
-          },
-        ],
-      ]),
-    },
+    detalhes: { sugeridos: new Map() },
   },
 };
 
@@ -1192,19 +1134,6 @@ describe('calcularTotalFiltrado', () => {
         revisaoPorServico: { 'servico-revisao-extra': false },
       }),
     ).toBe(esperado);
-  });
-
-  it('inclui imprevisto sugerido somente quando filtro explícito é true', () => {
-    const esperadoSemRetifica = 600 + 953 + 1500 + 1460 + 600 + 800 + 2496;
-    const esperadoComRetifica = esperadoSemRetifica + 53;
-
-    expect(calcularTotalFiltrado(custosMock, filtrosTudo)).toBe(esperadoSemRetifica);
-    expect(
-      calcularTotalFiltrado(custosMock, {
-        ...filtrosTudo,
-        imprevistosSugeridos: { 'retifica-cabecote': true },
-      }),
-    ).toBe(esperadoComRetifica);
   });
 
   it('undefined em manutencaoPorPeca = peça ativa (convenção padrão)', () => {
@@ -1300,21 +1229,18 @@ describe('categoriasParaFiltros', () => {
     expect(comImprevistos.gastosCustom).toBe(true);
   });
 
-  it('imprevistosSugeridos vem do mapa quando categoria Imprevistos ativa', () => {
+  it('preserva o mapa legado de sugeridos quando categoria Imprevistos está ativa', () => {
     const filtros = categoriasParaFiltros(
       { ...baseCategorias, imprevistos: true },
-      { 'retifica-cabecote': true, 'retifica-completa': false },
+      { legado: true },
     );
-    expect(filtros.imprevistosSugeridos).toEqual({
-      'retifica-cabecote': true,
-      'retifica-completa': false,
-    });
+    expect(filtros.imprevistosSugeridos).toEqual({ legado: true });
   });
 
   it('imprevistosSugeridos zerado quando categoria Imprevistos inativa', () => {
     const filtros = categoriasParaFiltros(
       { ...baseCategorias, imprevistos: false },
-      { 'retifica-cabecote': true },
+      { legado: true },
     );
     expect(filtros.imprevistosSugeridos).toEqual({});
   });
@@ -1711,37 +1637,9 @@ describe('calcularCustosPorCategoria - revisaoAutorizadaOverrides', () => {
     );
   });
 
-  it('retíficas no modo independente: ficam em imprevistos sugeridos e sincronizam com Mão de Obra', () => {
-    // Cenário convertido para modo independente (ADR-007): no autorizado,
-    // retífica tem precoTotalAutorizada=0 e some do mapa de imprevistos
-    // (Honda não executa retífica - substitui por kit cilindro). Coberto por
-    // teste dedicado abaixo.
-    const perfilIndependente = {
-      ...perfilAutorizadas,
-      perfilManutencao: {
-        ...perfilAutorizadas.perfilManutencao,
-        modoRevisao: 'independentes' as const,
-      },
-      servicosIndependentes: perfilAutorizadas.servicosIndependentes.map((servico) =>
-        servico.id === 'retifica-cabecote' ? { ...servico, precoIndependente: 900 } : servico,
-      ),
-    };
-    const resultado = calcularCustosPorCategoria(perfilIndependente, presetMock, dadosRJMock);
-    const kmAnual = calcularKmAnual(
-      perfilPadrao.trabalho.kmPorDia,
-      perfilPadrao.trabalho.diasPorSemana,
-    );
-    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-cabecote');
-
-    expect(resultado.revisao.detalhes.servicos.has('retifica-cabecote')).toBe(false);
-    expect(retifica?.precoServico).toBe(900);
-    expect(retifica?.custoAnual).toBeCloseTo((900 / 80000) * kmAnual, 2);
-  });
-
-  it('retífica no modo autorizado some dos imprevistos (precoTotalAutorizada=0 - Honda não executa)', () => {
+  it('não produz serviços sugeridos no MVP', () => {
     const resultado = calcularCustosPorCategoria(perfilAutorizadas, presetMock, dadosRJMock);
-    expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-cabecote')).toBe(false);
-    expect(resultado.gastosCustom.detalhes.sugeridos.has('retifica-completa')).toBe(false);
+    expect(resultado.gastosCustom.detalhes.sugeridos).toEqual(new Map());
   });
 });
 
@@ -2329,48 +2227,6 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
   });
 });
 
-describe('TASK-RF-6.13 - retíficas usam kmUltimaTrocas em Imprevistos', () => {
-  const dadosRJ: DadosRJ = {
-    ipva: { aliquotaMotos: 0.015, isencaoIdadeMinimaMeses: 0 },
-    licenciamento: { tabela: {} },
-    autonomiaEtanolFatorReducao: 0.78,
-  };
-
-  it('retífica sem km informado mantém custo amortizado', () => {
-    const perfil = {
-      ...perfilPadrao,
-      moto: { ...perfilPadrao.moto, kmAtual: 110000, kmUltimaTrocas: kmUltimaTrocasVazio },
-      trabalho: { ...perfilPadrao.trabalho, kmPorDia: 70, diasPorSemana: 5 },
-      perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
-    };
-
-    const resultado = calcularCustosPorCategoria(perfil, presetPop110i, dadosRJ);
-    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
-
-    expect(retifica?.eventosNoAno).toBeCloseTo(18200 / 120000, 5);
-    expect(retifica?.custoAnual).toBeCloseTo((1500 / 120000) * 18200, 2);
-  });
-
-  it('retífica com km informado usa custo cheio quando a troca cai na janela', () => {
-    const perfil = {
-      ...perfilPadrao,
-      moto: {
-        ...perfilPadrao.moto,
-        kmAtual: 110000,
-        kmUltimaTrocas: { ...kmUltimaTrocasVazio, retificaCompleta: 1 },
-      },
-      trabalho: { ...perfilPadrao.trabalho, kmPorDia: 70, diasPorSemana: 5 },
-      perfilManutencao: { ...perfilPadrao.perfilManutencao, modoRevisao: 'independentes' as const },
-    };
-
-    const resultado = calcularCustosPorCategoria(perfil, presetPop110i, dadosRJ);
-    const retifica = resultado.gastosCustom.detalhes.sugeridos.get('retifica-completa');
-
-    expect(retifica?.eventosNoAno).toBe(1);
-    expect(retifica?.custoAnual).toBeCloseTo(1500, 2);
-  });
-});
-
 describe('MAPA_PECA_PARA_SERVICO', () => {
   // Itera TODOS os presets (glob) em vez de hardcode pop110i/factor125i: assim a
   // guarda anti-órfão cobre automaticamente presets futuros (ex.: freio traseiro a
@@ -2464,12 +2320,12 @@ describe('chavesKmUltimaTrocaDoPreset (model-aware — RF-6.39)', () => {
     expect(chaves.has('sapataFreioTraseiro')).toBe(false);
   });
 
-  it('itens comuns aparecem para todos (óleo, kit relação, caixa de direção, retíficas)', () => {
+  it('itens comuns aparecem para todos (óleo, kit relação e caixa de direção)', () => {
     const chaves = chavesKmUltimaTrocaDoPreset(fz15);
     expect(chaves.has('oleo')).toBe(true);
     expect(chaves.has('kitRelacao')).toBe(true);
     expect(chaves.has('caixaDirecao')).toBe(true);
-    expect(chaves.has('retificaCabecote')).toBe(true);
+    expect(chaves.has('retificaCabecote')).toBe(false);
   });
 
   it('inclui os pneus (de preset.pneus, não de pecas) — BG-036', () => {

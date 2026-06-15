@@ -7,21 +7,27 @@ import { normalizarPerfilContraPreset } from './normalizarPerfilContraPreset';
 const preset = PRESETS.pop110i;
 const idPeca = preset.pecas[0].id;
 const idPneu = preset.pneus[0].id;
-const servicoExcepcionalEncontrado = preset.servicosManutencao?.find(
-  (servico) => servico.ehExcepcional,
-);
 const servicoSemCustoEncontrado = preset.servicosManutencao?.find(
   (servico) => !servico.ehExcepcional && servico.precoTotalAutorizada === 0,
 );
 
-if (!servicoExcepcionalEncontrado || !servicoSemCustoEncontrado) {
+if (!servicoSemCustoEncontrado) {
   throw new Error('Preset de teste sem serviços canônicos suficientes');
 }
 
 // Consts já estreitadas: o guard acima não propaga a narrowing para dentro dos
 // closures abaixo, então fixamos o tipo não-undefined explicitamente.
-const servicoExcepcional: ServicoIndependente = servicoExcepcionalEncontrado;
 const servicoSemCusto: ServicoIndependente = servicoSemCustoEncontrado;
+const servicoRetificaLegado: ServicoIndependente = {
+  id: 'retifica-completa',
+  nome: 'Retífica completa',
+  intervalKm: 120000,
+  precoIndependente: 1500,
+  precoTotalAutorizada: 0,
+  incluidoNaRevisaoAutorizada: false,
+  ativo: true,
+  ehExcepcional: true,
+};
 
 function criarPerfilComReferencias(): PerfilUsuario {
   return {
@@ -31,14 +37,14 @@ function criarPerfilComReferencias(): PerfilUsuario {
       ...perfilPadrao.perfilManutencao,
       estimativaMaoDeObraPorServico: {
         [servicoSemCusto.id]: false,
-        [servicoExcepcional.id]: true,
+        [servicoRetificaLegado.id]: true,
         'servico-orfao': false,
       },
     },
     configuracaoDisplay: {
       ...perfilPadrao.configuracaoDisplay,
       imprevistosSugeridosAtivos: {
-        [servicoExcepcional.id]: false,
+        [servicoRetificaLegado.id]: false,
         [servicoSemCusto.id]: true,
         'servico-orfao': true,
       },
@@ -51,7 +57,7 @@ function criarPerfilComReferencias(): PerfilUsuario {
         },
         revisaoPorServico: {
           [servicoSemCusto.id]: false,
-          [servicoExcepcional.id]: true,
+          [servicoRetificaLegado.id]: true,
           'servico-orfao': false,
         },
       },
@@ -78,8 +84,8 @@ function criarPerfilComReferencias(): PerfilUsuario {
     ],
     servicosIndependentes: [
       servicoSemCusto,
-      { ...servicoExcepcional, id: 'servico-orfao' },
-      servicoExcepcional,
+      { ...servicoRetificaLegado, id: 'servico-orfao' },
+      servicoRetificaLegado,
     ],
     revisaoAutorizadaOverrides: [
       { index: 0, precoPecas: 10, precoMaoDeObra: 20, precoTotal: 30 },
@@ -108,26 +114,21 @@ describe('normalizarPerfilContraPreset', () => {
     expect(normalizado.pecasOverrides.map((override) => override.id)).toEqual([idPeca, idPneu]);
     expect(normalizado.servicosIndependentes.map((servico) => servico.id)).toEqual([
       servicoSemCusto.id,
-      servicoExcepcional.id,
     ]);
     expect(normalizado.revisaoAutorizadaOverrides.map((override) => override.index)).toEqual([
       0,
       preset.revisaoAutorizada.length - 1,
     ]);
-    expect(normalizado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({
-      [servicoExcepcional.id]: false,
-    });
+    expect(normalizado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
     expect(normalizado.configuracaoDisplay.filtrosManutencao.manutencaoPorPeca).toEqual({
       [idPeca]: false,
       [idPneu]: true,
     });
     expect(normalizado.configuracaoDisplay.filtrosManutencao.revisaoPorServico).toEqual({
       [servicoSemCusto.id]: false,
-      [servicoExcepcional.id]: true,
     });
     expect(normalizado.perfilManutencao.estimativaMaoDeObraPorServico).toEqual({
       [servicoSemCusto.id]: false,
-      [servicoExcepcional.id]: true,
     });
   });
 
@@ -140,19 +141,17 @@ describe('normalizarPerfilContraPreset', () => {
 
   it('usa os serviços padrão quando o preset não declara servicosManutencao', () => {
     const servicoPadrao = SERVICOS_INDEPENDENTES_PADRAO[0];
-    const excepcionalPadrao = SERVICOS_INDEPENDENTES_PADRAO.find(
-      (servico) => servico.ehExcepcional,
-    );
-    if (!excepcionalPadrao) {
-      throw new Error('Defaults de teste sem serviço excepcional');
-    }
     const perfil: PerfilUsuario = {
       ...perfilPadrao,
-      servicosIndependentes: [servicoPadrao, { ...servicoPadrao, id: 'servico-orfao' }],
+      servicosIndependentes: [
+        servicoPadrao,
+        servicoRetificaLegado,
+        { ...servicoPadrao, id: 'servico-orfao' },
+      ],
       configuracaoDisplay: {
         ...perfilPadrao.configuracaoDisplay,
         imprevistosSugeridosAtivos: {
-          [excepcionalPadrao.id]: true,
+          [servicoRetificaLegado.id]: true,
           'servico-orfao': true,
         },
       },
@@ -164,8 +163,6 @@ describe('normalizarPerfilContraPreset', () => {
     });
 
     expect(normalizado.servicosIndependentes).toEqual([servicoPadrao]);
-    expect(normalizado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({
-      [excepcionalPadrao.id]: true,
-    });
+    expect(normalizado.configuracaoDisplay.imprevistosSugeridosAtivos).toEqual({});
   });
 });

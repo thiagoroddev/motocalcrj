@@ -80,10 +80,10 @@ export const perfilPadrao: PerfilUsuario = {
       bateria: 0,
       kitEmbreagem: 0,
       kitCilindro: 0,
-      retificaCabecote: 0,
-      retificaCompleta: 0,
+      retificaCabecote: 0, // legado de perfis anteriores à ADR-022
+      retificaCompleta: 0, // legado de perfis anteriores à ADR-022
     },
-    kmMotorRefeito: null,
+    kmMotorRefeito: null, // legado de perfis anteriores à ADR-022
   },
 
   perfilManutencao: {
@@ -136,7 +136,7 @@ export const perfilPadrao: PerfilUsuario = {
       financiamento: false,  // ativada se situacaoMoto !== 'quitada'
       imprevistos:   true,
     },
-    imprevistosSugeridosAtivos: {},  // toggle por id; padrão = false implícito
+    imprevistosSugeridosAtivos: {},  // legado; sem UI ou custo no MVP
     filtrosManutencao: {
       revisao: true,
       manutencaoPorPeca: {},   // default-on; false explícito desativa
@@ -163,21 +163,25 @@ export const PRESETS_GASTOS_PADRAO: GastoCustom[] = [
 ];
 ```
 
-### II.2 - `SERVICOS_INDEPENDENTES_PADRAO` (9 serviços, defaults RJ)
+### II.2 - `SERVICOS_INDEPENDENTES_PADRAO` (13 serviços, defaults RJ)
 
-Definida em `PerfilContext.tsx`. Sete normais (`ativo: true`) e duas retíficas excepcionais (`ehExcepcional: true, ativo: false`). Os excepcionais só aparecem na seção Imprevistos do Detalhamento, desligados por padrão.
+Definida em `perfilDefaults.ts`. Todos os serviços padrão estão ativos e não excepcionais. Cada preset publica sua lista canônica; atualmente apenas pneus Yamaha usam `ehExcepcional: true` para aparecer na aba Independente.
 
-| `id`                    | `nome`                         | `intervalKm` | `precoMaoDeObra` | `ativo` | `ehExcepcional` |
-| ----------------------- | ------------------------------ | ------------ | ---------------- | ------- | --------------- |
-| `troca-oleo`            | Troca de óleo                  | 3000         | 25               | true    | false           |
-| `troca-kit-transmissao` | Troca kit transmissão          | 12000        | 60               | true    | false           |
-| `troca-pneu-dianteiro`  | Troca pneu dianteiro           | 25000        | 30               | true    | false           |
-| `troca-pneu-traseiro`   | Troca pneu traseiro            | 15000        | 30               | true    | false           |
-| `revisao-geral`         | Revisão geral (independente)   | 6000         | 80               | true    | false           |
-| `troca-vela`            | Troca de vela                  | 6000         | 15               | true    | false           |
-| `troca-filtro-ar`       | Troca filtro de ar             | 6000         | 15               | true    | false           |
-| `retifica-cabecote`     | Retífica de cabeçote           | 80000        | 800              | false   | true            |
-| `retifica-completa`     | Retífica completa              | 120000       | 1500             | false   | true            |
+| `id`                    | `nome`                           | `intervalKm` | `precoIndependente` | `ativo` | `ehExcepcional` |
+| ----------------------- | -------------------------------- | ------------ | ------------------- | ------- | --------------- |
+| `troca-oleo`            | Troca de óleo                    | 3000         | 25                  | true    | false           |
+| `troca-kit-transmissao` | Troca kit transmissão            | 12000        | 60                  | true    | false           |
+| `troca-pneu-dianteiro`  | Troca pneu dianteiro             | 25000        | 30                  | true    | false           |
+| `troca-pneu-traseiro`   | Troca pneu traseiro              | 15000        | 30                  | true    | false           |
+| `troca-sapata-dianteira`| Troca sapata de freio dianteira  | 20000        | 40                  | true    | false           |
+| `troca-sapata-traseira` | Troca sapata de freio traseira   | 20000        | 40                  | true    | false           |
+| `revisao-geral`         | Revisão geral (independente)     | 6000         | 400                 | true    | false           |
+| `troca-vela`            | Troca de vela                    | 6000         | 15                  | true    | false           |
+| `troca-filtro-ar`       | Troca filtro de ar               | 6000         | 15                  | true    | false           |
+| `troca-bateria`         | Troca de bateria                 | 0            | 50                  | true    | false           |
+| `troca-kit-embreagem`   | Troca kit embreagem              | 40000        | 50                  | true    | false           |
+| `troca-kit-cilindro`    | Troca kit cilindro               | 100000       | 50                  | true    | false           |
+| `troca-caixa-direcao`   | Troca do kit caixa de direção    | 40000        | 80                  | true    | false           |
 
 > No modo `independentes`, cada `ServicoIndependente.intervalKm` também é a **fonte canônica do intervalo da peça correspondente** (ADR-004 + TASK-REF-12) - `resolverIntervaloPeca` vincula peça e serviço pelo `MAPA_PECA_PARA_SERVICO` em `calculos.ts` (`oleo_motor` ↔ `troca-oleo`).
 
@@ -224,7 +228,6 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 | Action                       | Efeito                                                            |
 | ---------------------------- | ----------------------------------------------------------------- |
 | `TOGGLE_CATEGORIA`           | Liga/desliga uma categoria em `categoriasAtivas`                  |
-| `TOGGLE_IMPREVISTO_SUGERIDO` | Liga/desliga uma retífica em `imprevistosSugeridosAtivos[id]`     |
 
 ### IV.4 - Overrides de peças
 
@@ -258,8 +261,7 @@ Type union em `src/types/perfil.ts`. Reducer em `src/context/PerfilContext.tsx`.
 
 | Action                  | Efeito                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------- |
-| `SET_KM_ULTIMA_TROCA`   | Atualiza `moto.kmUltimaTrocas[componente]` (óleo, pneus, kit relação, bateria, kit embreagem, kit cilindro, retíficas) |
-| `SET_MOTOR_REFEITO`     | Define ou limpa `moto.kmMotorRefeito` (`number \| null`)                        |
+| `SET_KM_ULTIMA_TROCA`   | Atualiza `moto.kmUltimaTrocas[componente]` para peças rastreáveis do preset |
 
 ### IV.9 - Ajustes de predefinição
 

@@ -17,7 +17,6 @@ import type {
   CustoPeca,
   CustoServicoRevisao,
   PendenciaMaoDeObraConcessionaria,
-  CustoImprevistoSugerido,
   CustosPorCategoria,
   FiltrosCategorias,
   ResultadoCalculo,
@@ -138,11 +137,6 @@ const MAPA_PECA_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
   caixa_direcao: 'caixaDirecao',
 };
 
-const MAPA_SERVICO_PARA_KM_ULTIMA_TROCA: Record<string, keyof KmUltimaTrocas> = {
-  'retifica-cabecote': 'retificaCabecote',
-  'retifica-completa': 'retificaCompleta',
-};
-
 // Liga o id de Peça/Pneu do Preset ao id do ServicoIndependente que cobre
 // a mão de obra de troca. Usado também por calcularCpkPorPeca para evitar
 // dupla contagem no modo autorizado (ADR-007): se o serviço associado tem
@@ -170,8 +164,8 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
 
 // Serviços de pneu: na Yamaha são `ehExcepcional` (a concessionária não troca pneu),
 // mas TÊM peça (Insumos). Por isso são tratados como **avulso incompleto** (M.O. de
-// oficina independente + peça, igual ao pneu Honda), não como imprevisto cheio
-// (retífica). Roteamento no cálculo + exibidos na aba "Independente". (BG-036)
+// oficina independente + peça, igual ao pneu Honda). São exibidos na aba
+// "Independente". (BG-036)
 export const SERVICOS_DE_PNEU = new Set(
   Object.entries(MAPA_PECA_PARA_SERVICO)
     .filter(([pecaId]) => pecaId.startsWith('pneu_'))
@@ -187,9 +181,6 @@ export function resolverServicoPorPeca(
 }
 
 function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTrocas | undefined {
-  const chaveServico = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servicoId];
-  if (chaveServico) return chaveServico;
-
   const pecaAssociada = Object.entries(MAPA_PECA_PARA_SERVICO).find(
     ([, idServico]) => idServico === servicoId,
   )?.[0];
@@ -214,10 +205,6 @@ export function chavesKmUltimaTrocaDoPreset(preset: {
     const chave = MAPA_PECA_PARA_KM_ULTIMA_TROCA[item.id];
     if (chave) chaves.add(chave);
   }
-  for (const servico of preset.servicosManutencao ?? []) {
-    const chave = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
-    if (chave) chaves.add(chave);
-  }
   return chaves;
 }
 
@@ -238,6 +225,7 @@ const KM_ULTIMA_TROCAS_VAZIO: KmUltimaTrocas = {
   kitEmbreagem: 0,
   kitCilindro: 0,
   caixaDirecao: 0,
+  // Compatibilidade com perfis anteriores à ADR-022.
   retificaCabecote: 0,
   retificaCompleta: 0,
 };
@@ -518,8 +506,7 @@ export function calcularDetalhesRevisaoAnual(
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
-  // Pneu (excepcional COM peça) entra no fluxo avulso (M.O. + peça); retífica
-  // (excepcional sem peça) fica de fora (vira imprevisto). (BG-036)
+  // Pneu excepcional entra no fluxo avulso: M.O. de oficina + peça em Insumos.
   const servicosNormaisAtivos = servicos.filter(
     (s) => s.ativo && (!s.ehExcepcional || SERVICOS_DE_PNEU.has(s.id)),
   );
@@ -539,7 +526,7 @@ export function calcularDetalhesRevisaoAnual(
     // ADR-007/012: soma serviços fora do pacote fixo apenas quando o preço
     // completo da concessionária foi informado. Se falta M.O., a peça original
     // continua no cálculo por peça e a pendência é exposta ao Detalhamento.
-    // Excepcionais (retíficas) ficam fora aqui - saem por imprevistos sugeridos.
+    // Serviços excepcionais que não são pneus ficam fora do fluxo do MVP.
     const marca = opcoes.marca;
     const fatorMaoDeObra = opcoes.fatorMaoDeObra ?? 1;
     const incluirEstimativa = opcoes.incluirEstimativaMaoDeObra ?? false;
@@ -749,75 +736,6 @@ export function calcularCustoGastosCustomAnual(gastosCustom: GastoCustom[]): num
     .reduce((soma, g) => soma + valorNaoNegativo(g.valorAnual), 0);
 }
 
-function calcularImprevistosSugeridosAnual(
-  servicosIndependentes: ServicoIndependente[],
-  kmAnual: number,
-  modoRevisao: ModoRevisao,
-  kmAtual: number,
-  kmUltimaTrocas: KmUltimaTrocas,
-  opcoesEstimativa: {
-    marca?: string;
-    fatorMaoDeObra?: number;
-    incluirEstimativaMaoDeObra?: boolean;
-    estimativaMaoDeObraPorServico?: Record<string, boolean>;
-  } = {},
-): Map<string, CustoImprevistoSugerido> {
-  // ADR-007/012/013: excepcionais somam só mão de obra - a peça, quando existe
-  // (ex.: pneu), já conta em Insumos. No autorizado usa o valor real informado;
-  // com estimativa opt-in ligada, a falta de valor vira M.O. estimada (~). Sem
-  // valor nem estimativa, o imprevisto some do mapa (ex.: retífica no autorizado).
-  return new Map<string, CustoImprevistoSugerido>(
-    servicosIndependentes
-      .filter(
-        (servico) =>
-          servico.ehExcepcional && !SERVICOS_DE_PNEU.has(servico.id) && servico.intervalKm > 0,
-      )
-      .map((servico): [string, CustoImprevistoSugerido] | null => {
-        const real =
-          modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;
-        let precoSeguro = valorNaoNegativo(real);
-        let maoDeObraEstimada = false;
-        const estimativaLigada =
-          opcoesEstimativa.incluirEstimativaMaoDeObra === true ||
-          opcoesEstimativa.estimativaMaoDeObraPorServico?.[servico.id] === true;
-        if (precoSeguro <= 0 && estimativaLigada) {
-          precoSeguro = estimarMaoDeObra(
-            servico.id,
-            opcoesEstimativa.marca,
-            opcoesEstimativa.fatorMaoDeObra ?? 1,
-          );
-          maoDeObraEstimada = precoSeguro > 0;
-        }
-        if (precoSeguro <= 0) return null;
-
-        const chaveKmUltimaTroca = MAPA_SERVICO_PARA_KM_ULTIMA_TROCA[servico.id];
-        const kmUltimaTroca = chaveKmUltimaTroca
-          ? valorNaoNegativo(kmUltimaTrocas[chaveKmUltimaTroca])
-          : 0;
-        const ciclo = calcularCicloPeca(
-          kmUltimaTroca,
-          servico.intervalKm,
-          valorNaoNegativo(kmAtual),
-          valorNaoNegativo(kmAnual),
-        );
-
-        return [
-          servico.id,
-          {
-            id: servico.id,
-            label: servico.nome,
-            custoAnual: precoSeguro * ciclo.trocasNoAno,
-            intervalKm: servico.intervalKm,
-            precoServico: precoSeguro,
-            eventosNoAno: ciclo.trocasNoAno,
-            maoDeObraEstimada,
-          },
-        ];
-      })
-      .filter((entry): entry is [string, CustoImprevistoSugerido] => entry !== null),
-  );
-}
-
 function calcularTotalImprevistosFiltrado(
   custos: CustosPorCategoria,
   filtros: FiltrosCategorias,
@@ -927,27 +845,6 @@ export function calcularCustosPorCategoria(
     aluguelPeriodicidade: perfil.financeiro.aluguelPeriodicidade,
   });
   const totalGastosCustom = calcularCustoGastosCustomAnual(gastosCustom);
-  const imprevistosSugeridos = new Map<string, CustoImprevistoSugerido>(
-    [
-      ...calcularImprevistosSugeridosAnual(
-        servicosManutencao,
-        kmAnual,
-        perfil.perfilManutencao.modoRevisao,
-        perfil.moto.kmAtual,
-        perfil.moto.kmUltimaTrocas,
-        {
-          marca: preset.marca,
-          fatorMaoDeObra: preset.fatorMaoDeObra,
-          incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
-          estimativaMaoDeObraPorServico: perfil.perfilManutencao.estimativaMaoDeObraPorServico,
-        },
-      ).entries(),
-    ].map(([id, imprevisto]): [string, CustoImprevistoSugerido] => [
-      id,
-      { ...imprevisto, custoAnual: valorNaoNegativo(imprevisto.custoAnual) * fatorMan },
-    ]),
-  );
-
   return {
     documentos: {
       total: calcularCustoDocumentosAnual(ipva, licenciamento) * fatorDoc,
@@ -996,7 +893,9 @@ export function calcularCustosPorCategoria(
     gastosCustom: {
       total: totalGastosCustom,
       ativo: totalGastosCustom > 0,
-      detalhes: { sugeridos: imprevistosSugeridos },
+      // Campo mantido no contrato de saída por compatibilidade. A ADR-022 removeu
+      // do MVP os serviços que o preenchiam.
+      detalhes: { sugeridos: new Map() },
     },
   };
 }
@@ -1166,9 +1065,8 @@ export function categoriasParaFiltros(
     manutencao: cat.manutencao,
     manutencaoPorPeca: filtrosManutencao.manutencaoPorPeca,
     revisaoPorServico: filtrosManutencao.revisaoPorServico,
-    // Categoria Imprevistos respeita o toggle persistido. Dentro dela, cada
-    // sugerido (retífica) e cada gasto custom (Multa/Sinistros/Outros) ainda
-    // precisa estar ativo individualmente - categoria off zera tudo.
+    // Campo legado preservado no filtro interno. Sem serviços sugeridos no MVP,
+    // permanece vazio e a categoria controla apenas Multa/Sinistros/Outros.
     imprevistosSugeridos: cat.imprevistos ? imprevistosSugeridosAtivos : {},
     combustivel: cat.combustivel,
     internet: cat.internet,

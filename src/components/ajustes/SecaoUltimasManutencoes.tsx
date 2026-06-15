@@ -31,8 +31,6 @@ const LABELS_KM_ULTIMA_TROCA: { key: keyof KmUltimaTrocas; label: string }[] = [
   { key: 'kitEmbreagem', label: 'Kit embreagem' },
   { key: 'kitCilindro', label: 'Kit cilindro' },
   { key: 'caixaDirecao', label: 'Kit caixa de direção' },
-  { key: 'retificaCabecote', label: 'Retífica de cabeçote' },
-  { key: 'retificaCompleta', label: 'Retífica completa' },
 ];
 
 interface Props {
@@ -41,7 +39,6 @@ interface Props {
 }
 
 export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
-  const idMotor = useId();
   const idPrefix = useId();
   const [replicaPendente, setReplicaPendente] = useState<{
     key: keyof KmUltimaTrocas;
@@ -58,14 +55,12 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
   const componentes = chavesDoModelo
     ? LABELS_KM_ULTIMA_TROCA.filter(({ key }) => chavesDoModelo.has(key))
     : LABELS_KM_ULTIMA_TROCA;
-  const temAlteracao =
-    componentes.some(({ key }) => moto.kmUltimaTrocas[key] > 0) || moto.kmMotorRefeito != null;
+  const temAlteracao = componentes.some(({ key }) => moto.kmUltimaTrocas[key] > 0);
 
   function resetar() {
     componentes.forEach(({ key }) =>
       dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: 0 }),
     );
-    dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
   }
 
   function aplicarKmUltimaRevisao(key: keyof KmUltimaTrocas) {
@@ -141,32 +136,6 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
             );
           })}
         </div>
-        {moto.kmAtual >= 60_000 && (
-          <div className="space-y-1">
-            <Label htmlFor={idMotor} className="text-xs text-muted-foreground font-normal">
-              Retífica do motor (KM)
-            </Label>
-            <Input
-              id={idMotor}
-              type="number"
-              inputMode="numeric"
-              value={moto.kmMotorRefeito ?? ''}
-              min={0}
-              placeholder="0"
-              onChange={(e) => {
-                const raw = e.target.value;
-                const v = parseInt(raw, 10);
-                if (raw === '') {
-                  dispatch({ type: 'SET_MOTOR_REFEITO', km: null });
-                  return;
-                }
-                if (!isNaN(v) && v >= 0) {
-                  dispatch({ type: 'SET_MOTOR_REFEITO', km: v });
-                }
-              }}
-            />
-          </div>
-        )}
       </section>
       <DialogConfirmacao
         aberto={replicaPendente != null}

@@ -161,7 +161,7 @@
       "precoParalela": 563,
       "incluidoNaRevisaoAutorizada": false,
       "_fonte": {
-        "nota": "Caminho alternativo à retífica. Média de mercado."
+        "nota": "Reparo do conjunto superior do motor. Média de mercado."
       }
     },
     {
@@ -666,28 +666,6 @@
       "incluidoNaRevisaoAutorizada": true,
       "ativo": true,
       "ehExcepcional": false
-    },
-    {
-      "id": "retifica-cabecote",
-      "nome": "Retífica de cabeçote",
-      "intervalKm": 80000,
-      "precoIndependente": 800,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
-    },
-    {
-      "id": "retifica-completa",
-      "nome": "Retífica completa",
-      "intervalKm": 120000,
-      "precoIndependente": 1500,
-      "precoTotalAutorizada": 0,
-      "statusPrecoAutorizada": "nao_informado",
-      "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
-      "ehExcepcional": true
     }
   ],
   "_servicosSemPecas": [

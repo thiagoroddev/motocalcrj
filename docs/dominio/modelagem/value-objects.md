@@ -211,7 +211,7 @@ interface CustoImprevistoSugerido {
 }
 ```
 
-Usado para retíficas (`retifica-cabecote`, `retifica-completa`) em `CustosPorCategoria.gastosCustom.detalhes.sugeridos`.
+Shape legado mantido em `CustosPorCategoria.gastosCustom.detalhes.sugeridos`. A coleção permanece vazia no MVP após a ADR-022.
 
 ### CustosPorCategoria
 

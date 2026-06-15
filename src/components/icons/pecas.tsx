@@ -8,7 +8,6 @@ import IconeSapata from '~icons/mdi/disc';
 import IconeTransmissao from '~icons/mdi/car-shift-pattern';
 import IconeEmbreagem from '~icons/mdi/car-clutch';
 import IconeCilindro from '~icons/mdi/piston';
-import IconeMotor from '~icons/mdi/engine';
 import IconeDirecao from '~icons/mdi/steering';
 import IconeRevisao from '~icons/mdi/car-wrench';
 import IconeGenerico from '~icons/mdi/wrench';
@@ -35,8 +34,6 @@ const ICONES: Record<string, IconePeca> = {
   'troca-kit-embreagem': IconeEmbreagem,
   'troca-kit-cilindro': IconeCilindro,
   'troca-caixa-direcao': IconeDirecao,
-  'retifica-cabecote': IconeMotor,
-  'retifica-completa': IconeMotor,
   'revisao-geral': IconeRevisao,
   // Ids de peça do preset (Insumos - pop110i.json)
   oleo_motor: IconeOleo,
@@ -72,8 +69,6 @@ const ICONES: Record<string, IconePeca> = {
   kitEmbreagem: IconeEmbreagem,
   kitCilindro: IconeCilindro,
   caixaDirecao: IconeDirecao,
-  retificaCabecote: IconeMotor,
-  retificaCompleta: IconeMotor,
 };
 
 // Ícone da peça/serviço pelo id; cai no genérico (chave inglesa) se não mapeado.
