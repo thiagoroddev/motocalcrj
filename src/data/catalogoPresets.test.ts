@@ -114,15 +114,16 @@ describe('catalogoModelos - presets', () => {
     expect(servicosPop.find((servico) => servico.id === 'troca-pneu-traseiro')).toMatchObject({
       statusPrecoAutorizada: 'nao_informado',
     });
-    // Yamaha não troca pneu: entra como excepcional desligado (ADR-013), não como
-    // avulso ativo de concessionária.
+    // Yamaha não troca pneu na concessionária → `ehExcepcional` (aba Independente),
+    // mas ATIVO como avulso incompleto: M.O. de oficina independente + peça (Insumos),
+    // igual ao pneu Honda, só mudando a aba. (BG-036)
     expect(servicosFactor.find((servico) => servico.id === 'troca-pneu-dianteiro')).toMatchObject({
       ehExcepcional: true,
-      ativo: false,
+      ativo: true,
     });
     expect(servicosFactor.find((servico) => servico.id === 'troca-pneu-traseiro')).toMatchObject({
       ehExcepcional: true,
-      ativo: false,
+      ativo: true,
     });
   });
 

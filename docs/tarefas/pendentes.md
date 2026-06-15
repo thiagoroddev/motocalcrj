@@ -25,9 +25,8 @@ _Nenhuma no momento._
 
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
-| TASK-BG-035 | Onboarding (passo "Valor de mão de obra"): mostrar subseções Valor Completo/Incompleto como na aba Mão de Obra | Standard | Importante | Normal | M/M | - | TASK-BG-033, TASK-DOM-5 | `[ ]` | 14/06/26 16:43 |
-
-> **TASK-BG-034** (Insumos: ocultar peça de serviço completo) **concluída** — o flag `concessionariaIncluiPeca` já dirige Insumos + cálculo. Falta **BG-035** para a fase 2 (DOM-6).
+> **TASK-BG-034, BG-035 e BG-036 concluídas** — pré-requisitos de UI/lógica resolvidos. A **TASK-DOM-6**
+> (presets Honda, um por modelo) está liberada.
 | TASK-DOM-6 | Presets dos 5 modelos Honda (fase 2), um por modelo | Standard | Importante | Normal | G/G | TASK-DOM-5, TASK-BG-034, TASK-BG-035 | ADR-019, ADR-014 | `[ ]` | 14/06/26 16:43 |
 
 ### Export/Import e Alertas (Fase 11)

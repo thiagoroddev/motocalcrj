@@ -1,28 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Dispatch } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Store, TriangleAlert, Tag } from 'lucide-react';
+import { Store, TriangleAlert } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { TituloSecao } from '@/components/TituloSecao';
-import { DialogConfirmacao } from '@/components/DialogConfirmacao';
 import { AjudaInline } from '@/components/AjudaInline';
-import { CardServico } from '@/components/mao-de-obra/CardServico';
-import { ControleEstimativaMaoDeObra } from '@/components/mao-de-obra/ControleEstimativaMaoDeObra';
 import { LinhaRevisaoConcessionaria } from '@/components/mao-de-obra/LinhaRevisaoConcessionaria';
+import { ListaServicos, BotaoRestaurarTudo } from '@/components/mao-de-obra/ListaServicos';
+import { SecaoServicosExtras } from '@/components/mao-de-obra/SecaoServicosExtras';
+import { ControleEstimativaMaoDeObra } from '@/components/mao-de-obra/ControleEstimativaMaoDeObra';
 import { usePerfil } from '../hooks/usePerfil';
 import { obterPreset } from '../data/repositorioPresets';
 import { normalizarPerfilMvp } from '../hooks/useCustos';
 import { obterServicosManutencaoBase } from '../utils/servicosManutencaoPreset';
+import { SERVICOS_DE_PNEU } from '../utils/calculos';
 import {
   resolverStatusPrecoAutorizada,
   concessionariaInformaPrecoCompleto,
 } from '../utils/statusPrecoAutorizada';
-import {
-  montarEstimativaMaoDeObra,
-  type EstimativaMaoDeObraItem,
-} from '../utils/maoDeObraEstimada';
-import type { ServicoIndependente, PerfilAction } from '../types/perfil';
+import { montarEstimativaMaoDeObra } from '../utils/maoDeObraEstimada';
+import type { ServicoIndependente } from '../types/perfil';
 
 type AbaMaoDeObra = 'concessionaria' | 'excepcional';
 
@@ -35,71 +31,6 @@ const DURACAO_DESTAQUE_MS = 2000;
 
 function normalizarAbaInicial(abaInicial?: LocationStateMaoDeObra['abaInicial']): AbaMaoDeObra {
   return abaInicial === 'excepcional' ? 'excepcional' : 'concessionaria';
-}
-
-// ── BotaoRestaurarTudo ───────────────────────────────────────
-
-function BotaoRestaurarTudo({ onRestaurar }: { onRestaurar: () => void }) {
-  const [aberto, setAberto] = useState(false);
-  return (
-    <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="w-full text-muted-foreground"
-        onClick={() => setAberto(true)}
-      >
-        Restaurar tudo
-      </Button>
-      <DialogConfirmacao
-        aberto={aberto}
-        onOpenChange={setAberto}
-        onConfirmar={onRestaurar}
-        titulo="Restaurar tudo?"
-        descricao="Todos os valores desta aba voltam ao padrão."
-      />
-    </>
-  );
-}
-
-// ── ListaServicos ────────────────────────────────────────────
-
-interface PropsListaServicos {
-  servicos: ServicoIndependente[];
-  dispatch: Dispatch<PerfilAction>;
-  servicosPadrao: ServicoIndependente[];
-  temOverrides: boolean;
-  onRestaurarTudo: () => void;
-  modo?: 'independente' | 'autorizada';
-  // Quando fornecido, cada card recebe seu bundle de estimativa por-item (A) —
-  // mantém a aba Mão de Obra sincronizada com o popup do Detalhamento.
-  montarEstimativa?: (servico: ServicoIndependente) => EstimativaMaoDeObraItem;
-}
-
-function ListaServicos({
-  servicos,
-  dispatch,
-  servicosPadrao,
-  temOverrides,
-  onRestaurarTudo,
-  modo = 'independente',
-  montarEstimativa,
-}: PropsListaServicos) {
-  return (
-    <div className="space-y-2">
-      {servicos.map((s) => (
-        <CardServico
-          key={s.id}
-          servico={s}
-          servicoPadrao={servicosPadrao.find((padrao) => padrao.id === s.id)}
-          dispatch={dispatch}
-          modo={modo}
-          estimativaMaoDeObra={montarEstimativa?.(s)}
-        />
-      ))}
-      {temOverrides && <BotaoRestaurarTudo onRestaurar={onRestaurarTudo} />}
-    </div>
-  );
 }
 
 // ── PaginaMaoDeObra ──────────────────────────────────────────
@@ -127,6 +58,11 @@ export function PaginaMaoDeObra() {
 
   const servicosNormais = perfilMvp.servicosIndependentes.filter((s) => !s.ehExcepcional);
   const servicosExcepcionais = perfilMvp.servicosIndependentes.filter((s) => s.ehExcepcional);
+  // Aba Independente: pneu (oficina independente) = avulso incompleto (só M.O., soma
+  // com a peça do Insumos) — vai com estimativa, como os outros avulsos. Retífica =
+  // imprevisto cheio (peça + M.O.). (BG-036)
+  const pneusIndependentes = servicosExcepcionais.filter((s) => SERVICOS_DE_PNEU.has(s.id));
+  const imprevistos = servicosExcepcionais.filter((s) => !SERVICOS_DE_PNEU.has(s.id));
   // Aba Concessionária: serviços avulsos km-driven fora das revisões fixas.
   // Mesmo quando o preço ainda está `nao_informado`, o card aparece para o
   // usuário conseguir preencher o valor da concessionária.
@@ -175,7 +111,8 @@ export function PaginaMaoDeObra() {
     );
   }
 
-  const temOverridesExcepcionais = servicosExcepcionais.some(servicoDifereDopadraoIndependente);
+  const temOverridesPneus = pneusIndependentes.some(servicoDifereDopadraoAutorizada);
+  const temOverridesImprevistos = imprevistos.some(servicoDifereDopadraoIndependente);
   const temOverridesCompletos = avulsosCompletos.some(servicoDifereDopadraoAutorizada);
   const temOverridesIncompletos = avulsosIncompletos.some(servicoDifereDopadraoAutorizada);
 
@@ -197,7 +134,7 @@ export function PaginaMaoDeObra() {
       <Tabs defaultValue={abaInicial} className="flex flex-col flex-1">
         <TabsList className="grid grid-cols-2 mx-4 mt-4 shrink-0">
           <TabsTrigger value="concessionaria">Concessionária</TabsTrigger>
-          <TabsTrigger value="excepcional">Excepcional</TabsTrigger>
+          <TabsTrigger value="excepcional">Independente</TabsTrigger>
         </TabsList>
 
         <div className="flex-1 overflow-y-auto">
@@ -229,64 +166,19 @@ export function PaginaMaoDeObra() {
                 )}
 
                 {servicosAvulsosAutorizada.length > 0 && (
-                  <div className="space-y-4 pt-4">
-                    <TituloSecao icone={Tag}>Serviços Extras</TituloSecao>
-
-                    {avulsosCompletos.length > 0 && (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-1.5">
-                          <h3 className="text-sm font-medium text-muted-foreground">
-                            Valor Completo (peça + M.O)
-                          </h3>
-                          <AjudaInline titulo="Valor Completo (peça + M.O)">
-                            A concessionária informa o <strong>valor cheio</strong> deste serviço —
-                            já inclui a peça e a mão de obra. Edite com o{' '}
-                            <strong>preço total</strong> do orçamento da concessionária. Por isso a
-                            peça não aparece separada em Insumos.
-                          </AjudaInline>
-                        </div>
-                        <ListaServicos
-                          servicos={avulsosCompletos}
-                          dispatch={dispatch}
-                          servicosPadrao={servicosPadrao}
-                          temOverrides={temOverridesCompletos}
-                          onRestaurarTudo={() => restaurarGrupo(avulsosCompletos)}
-                          modo="autorizada"
-                          montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
-                        />
-                      </div>
-                    )}
-
-                    {avulsosIncompletos.length > 0 && (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-1.5">
-                          <h3 className="text-sm font-medium text-muted-foreground">
-                            Valor Incompleto (apenas M.O)
-                          </h3>
-                          <AjudaInline titulo="Valor Incompleto (apenas M.O)">
-                            A concessionária <strong>não informa</strong> o preço deste serviço.
-                            Aqui você coloca <strong>apenas a mão de obra</strong> (ou usa a
-                            estimativa ~); a peça é precificada à parte, na aba{' '}
-                            <strong>Insumos</strong>. Por isso edite só o valor da M.O., não o total
-                            com a peça.
-                          </AjudaInline>
-                        </div>
-                        {/* Toggle logo abaixo do título: a estimativa só atinge avulsos sem valor. */}
-                        <ControleEstimativaMaoDeObra
-                          ligada={estimativaLigada}
-                          dispatch={dispatch}
-                        />
-                        <ListaServicos
-                          servicos={avulsosIncompletos}
-                          dispatch={dispatch}
-                          servicosPadrao={servicosPadrao}
-                          temOverrides={temOverridesIncompletos}
-                          onRestaurarTudo={() => restaurarGrupo(avulsosIncompletos)}
-                          modo="autorizada"
-                          montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
-                        />
-                      </div>
-                    )}
+                  <div className="pt-4">
+                    <SecaoServicosExtras
+                      avulsosCompletos={avulsosCompletos}
+                      avulsosIncompletos={avulsosIncompletos}
+                      servicosPadrao={servicosPadrao}
+                      estimativaLigada={estimativaLigada}
+                      dispatch={dispatch}
+                      montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
+                      temOverridesCompletos={temOverridesCompletos}
+                      temOverridesIncompletos={temOverridesIncompletos}
+                      onRestaurarCompletos={() => restaurarGrupo(avulsosCompletos)}
+                      onRestaurarIncompletos={() => restaurarGrupo(avulsosIncompletos)}
+                    />
                   </div>
                 )}
               </div>
@@ -294,21 +186,56 @@ export function PaginaMaoDeObra() {
           </TabsContent>
 
           <TabsContent value="excepcional" className="px-4 pb-4 pt-3">
-            <div className="space-y-2">
-              <TituloSecao icone={TriangleAlert}>Serviços Excepcionais</TituloSecao>
+            <div className="space-y-4">
+              <TituloSecao icone={TriangleAlert}>Serviços Independentes (oficina)</TituloSecao>
               {deveAlertarExcepcional && (
                 <div className="rounded-lg border px-4 py-2 bg-warning/10 border-warning/30 text-warning text-sm">
                   Atenção: sua moto está próxima ou acima de {limiteExcepcionalFormatado} km.
-                  Considere revisar os serviços excepcionais.
+                  Considere revisar os serviços de oficina independente.
                 </div>
               )}
-              <ListaServicos
-                servicos={servicosExcepcionais}
-                dispatch={dispatch}
-                servicosPadrao={servicosPadrao}
-                temOverrides={temOverridesExcepcionais}
-                onRestaurarTudo={() => restaurarGrupo(servicosExcepcionais)}
-              />
+
+              {pneusIndependentes.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Mão de obra (oficina independente)
+                    </h3>
+                    <AjudaInline titulo="Mão de obra (oficina independente)">
+                      O pneu é trocado em <strong>oficina independente</strong> (a concessionária
+                      não faz). Aqui vai <strong>apenas a mão de obra</strong> (ou a estimativa ~);
+                      a peça do pneu é precificada na aba <strong>Insumos</strong> e somada ao
+                      custo.
+                    </AjudaInline>
+                  </div>
+                  {/* Toggle abaixo do título: estimativa só atinge avulsos sem valor. */}
+                  <ControleEstimativaMaoDeObra ligada={estimativaLigada} dispatch={dispatch} />
+                  <ListaServicos
+                    servicos={pneusIndependentes}
+                    dispatch={dispatch}
+                    servicosPadrao={servicosPadrao}
+                    temOverrides={temOverridesPneus}
+                    onRestaurarTudo={() => restaurarGrupo(pneusIndependentes)}
+                    modo="autorizada"
+                    montarEstimativa={(s) => montarEstimativaMaoDeObra(perfil, preset, s.id)}
+                  />
+                </div>
+              )}
+
+              {imprevistos.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    Imprevistos (peça + mão de obra)
+                  </h3>
+                  <ListaServicos
+                    servicos={imprevistos}
+                    dispatch={dispatch}
+                    servicosPadrao={servicosPadrao}
+                    temOverrides={temOverridesImprevistos}
+                    onRestaurarTudo={() => restaurarGrupo(imprevistos)}
+                  />
+                </div>
+              )}
             </div>
           </TabsContent>
         </div>

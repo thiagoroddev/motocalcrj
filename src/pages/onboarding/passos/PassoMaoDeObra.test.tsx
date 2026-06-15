@@ -195,9 +195,13 @@ describe('PassoMaoDeObra', () => {
   });
 
   test('interação do toggle chama o dispatch', () => {
+    // O toggle vive na subseção "Valor Incompleto" (BG-035) → precisa de ao menos
+    // um avulso incompleto para renderizar.
     vi.mocked(useCustosHook.normalizarPerfilMvp).mockReturnValue({
       ...perfilPadrao,
-      servicosIndependentes: [],
+      servicosIndependentes: [
+        criarServico({ id: 'pneu_dianteiro', nome: 'Pneu Dianteiro', intervalKm: 10000 }),
+      ],
     });
 
     render(<PassoMaoDeObra />);

@@ -831,7 +831,7 @@
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
       "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
+      "ativo": true,
       "ehExcepcional": true
     },
     {
@@ -842,7 +842,7 @@
       "precoTotalAutorizada": 0,
       "statusPrecoAutorizada": "nao_informado",
       "incluidoNaRevisaoAutorizada": false,
-      "ativo": false,
+      "ativo": true,
       "ehExcepcional": true
     }
   ]

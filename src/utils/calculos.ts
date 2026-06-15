@@ -168,6 +168,16 @@ export const MAPA_PECA_PARA_SERVICO: Record<string, string> = {
   caixa_direcao: 'troca-caixa-direcao',
 };
 
+// Serviços de pneu: na Yamaha são `ehExcepcional` (a concessionária não troca pneu),
+// mas TÊM peça (Insumos). Por isso são tratados como **avulso incompleto** (M.O. de
+// oficina independente + peça, igual ao pneu Honda), não como imprevisto cheio
+// (retífica). Roteamento no cálculo + exibidos na aba "Independente". (BG-036)
+export const SERVICOS_DE_PNEU = new Set(
+  Object.entries(MAPA_PECA_PARA_SERVICO)
+    .filter(([pecaId]) => pecaId.startsWith('pneu_'))
+    .map(([, servicoId]) => servicoId),
+);
+
 export function resolverServicoPorPeca(
   pecaId: string,
   servicosIndependentes: ServicoIndependente[] = [],
@@ -194,11 +204,14 @@ function resolverChaveKmUltimaTrocaServico(servicoId: string): keyof KmUltimaTro
  */
 export function chavesKmUltimaTrocaDoPreset(preset: {
   pecas: { id: string }[];
+  pneus?: { id: string }[];
   servicosManutencao?: { id: string }[];
 }): Set<keyof KmUltimaTrocas> {
   const chaves = new Set<keyof KmUltimaTrocas>();
-  for (const peca of preset.pecas) {
-    const chave = MAPA_PECA_PARA_KM_ULTIMA_TROCA[peca.id];
+  // Pneus moram em `preset.pneus` (não em `pecas`); sem iterá-los, pneuDianteiro/
+  // pneuTraseiro nunca entram → some de "Últimas manutenções" (BG-036).
+  for (const item of [...preset.pecas, ...(preset.pneus ?? [])]) {
+    const chave = MAPA_PECA_PARA_KM_ULTIMA_TROCA[item.id];
     if (chave) chaves.add(chave);
   }
   for (const servico of preset.servicosManutencao ?? []) {
@@ -505,7 +518,11 @@ export function calcularDetalhesRevisaoAnual(
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
-  const servicosNormaisAtivos = servicos.filter((s) => s.ativo && !s.ehExcepcional);
+  // Pneu (excepcional COM peça) entra no fluxo avulso (M.O. + peça); retífica
+  // (excepcional sem peça) fica de fora (vira imprevisto). (BG-036)
+  const servicosNormaisAtivos = servicos.filter(
+    (s) => s.ativo && (!s.ehExcepcional || SERVICOS_DE_PNEU.has(s.id)),
+  );
   const kmAtual = valorNaoNegativo(opcoes.kmAtual ?? 0);
   const kmAnualSeguro = valorNaoNegativo(kmAnual);
   const kmUltimaTrocas = opcoes.kmUltimaTrocas ?? KM_ULTIMA_TROCAS_VAZIO;
@@ -751,7 +768,10 @@ function calcularImprevistosSugeridosAnual(
   // valor nem estimativa, o imprevisto some do mapa (ex.: retífica no autorizado).
   return new Map<string, CustoImprevistoSugerido>(
     servicosIndependentes
-      .filter((servico) => servico.ehExcepcional && servico.intervalKm > 0)
+      .filter(
+        (servico) =>
+          servico.ehExcepcional && !SERVICOS_DE_PNEU.has(servico.id) && servico.intervalKm > 0,
+      )
       .map((servico): [string, CustoImprevistoSugerido] | null => {
         const real =
           modoRevisao === 'autorizadas' ? servico.precoTotalAutorizada : servico.precoIndependente;

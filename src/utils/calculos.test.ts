@@ -2471,6 +2471,13 @@ describe('chavesKmUltimaTrocaDoPreset (model-aware — RF-6.39)', () => {
     expect(chaves.has('caixaDirecao')).toBe(true);
     expect(chaves.has('retificaCabecote')).toBe(true);
   });
+
+  it('inclui os pneus (de preset.pneus, não de pecas) — BG-036', () => {
+    // Regressão da RF-6.39: pneus moram em `preset.pneus` e sumiam das chaves.
+    const chaves = chavesKmUltimaTrocaDoPreset(fz15);
+    expect(chaves.has('pneuDianteiro')).toBe(true);
+    expect(chaves.has('pneuTraseiro')).toBe(true);
+  });
 });
 
 describe('ehPecaCobertaPorServicoCompleto (BG-034)', () => {

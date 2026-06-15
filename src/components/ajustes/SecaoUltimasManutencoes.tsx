@@ -135,7 +135,7 @@ export function SecaoUltimasManutencoes({ moto, dispatch }: Props) {
                   }
                 >
                   <IconTrocar className="h-3.5 w-3.5 shrink-0" />
-                  <span>Km da última revisão</span>
+                  <span>Clique aqui para usar km da última revisão</span>
                 </button>
               </div>
             );

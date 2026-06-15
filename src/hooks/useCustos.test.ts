@@ -24,7 +24,7 @@ describe('normalizarPerfilMvp', () => {
     expect(normalizarPerfilMvp(perfilPadrao)).toBe(perfilPadrao);
   });
 
-  it('usa a lista de serviços do preset e trata pneus da Yamaha como excepcional', () => {
+  it('usa a lista de serviços do preset e trata pneus da Yamaha como avulso de oficina independente', () => {
     const perfil = {
       ...perfilPadrao,
       moto: {
@@ -42,8 +42,9 @@ describe('normalizarPerfilMvp', () => {
       (servico) => servico.id === 'troca-pneu-dianteiro',
     );
 
-    // Yamaha não troca pneu: excepcional desligado, não avulso de concessionária.
-    expect(pneuDianteiro).toMatchObject({ ehExcepcional: true, ativo: false });
+    // Yamaha: pneu fica `ehExcepcional` (aba Independente) mas ATIVO — M.O. de oficina
+    // independente + peça (Insumos), não imprevisto cheio. (BG-036)
+    expect(pneuDianteiro).toMatchObject({ ehExcepcional: true, ativo: true });
     expect(pneuDianteiro?.intervalKm).toBe(22500);
     expect(kitRelacao?.intervalKm).toBe(25000);
   });
