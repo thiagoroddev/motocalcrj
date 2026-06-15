@@ -29,7 +29,12 @@ type DialogAberto =
   | 'criarPredefinicao'
   | 'alternarPredefinicao'
   | 'deletarPredefinicao'
+  | 'privacidade'
   | null;
+
+// Mantida em sincronia com a "version" do package.json (exibida em Privacidade e
+// Termos). Hardcode evita importar package.json para fora do rootDir do TS.
+const APP_VERSAO = '0.1.0';
 
 export function PaginaPerfil() {
   const { perfil, presets, presetAtivo, presetAtivoId, dispatch } = usePerfil();
@@ -203,14 +208,11 @@ export function PaginaPerfil() {
 
         {/* Configurações Gerais */}
         <div className="bg-card rounded-lg overflow-hidden">
-          <LinhaConfig icone={<IcGlobo />} label="Idioma" valor="Português (Brasil)" />
-          <Separator />
-          <LinhaConfig icone={<IcLua />} label="Aparência" valor="Modo Escuro (Padrão)" />
-          <Separator />
           <LinhaConfig
             icone={<IcCadeado />}
             label="Privacidade e Termos"
-            valor="Versão 2.4.0 (2024)"
+            valor={`Versão ${APP_VERSAO}`}
+            onClick={() => setDialog('privacidade')}
           />
         </div>
       </main>
@@ -280,6 +282,47 @@ export function PaginaPerfil() {
         </DialogContent>
       </Dialog>
 
+      {/* Dialog: Privacidade e Termos */}
+      <Dialog open={dialog === 'privacidade'} onOpenChange={(aberto) => !aberto && setDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Privacidade e Termos</DialogTitle>
+            <DialogDescription>Versão {APP_VERSAO}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">Privacidade</p>
+              <p>
+                O MotoCalc RJ funciona inteiramente no seu aparelho. Suas predefinições,
+                quilometragens e preços ficam salvos apenas no navegador deste dispositivo. Nada é
+                enviado para servidores: não há cadastro, coleta de dados pessoais nem rastreadores.
+                Por não possuir banco de dados na nuvem, você é o único responsável por proteger
+                suas informações exportando seus próprios arquivos de backup (formato .json). O
+                backup é um arquivo <code>.json</code> que só você gera e guarda.
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">Termos de uso</p>
+              <p>
+                O aplicativo tem caráter informativo e não substitui avaliações mecânicas
+                profissionais ou orientações financeiras/contábeis. Os valores apresentados são
+                estimativas médias aproximadas para permitir cálculos mais completos, não constituem
+                aconselhamento financeiro nem possuem dados exatos. Preços e vida útil de peças, mão
+                de obra e tabela FIPE são referências estimadas e podem divergir do praticado na sua
+                região ou concessionária. Os dados de revisões periódicas foram obtidos dos sites
+                oficiais das concessionárias e podem estar desatualizados. Use os resultados por sua
+                conta. Cobertura voltada a motos e custos do Rio de Janeiro (RJ).
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialog(null)}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Dialog: erro de importação */}
       <Dialog open={erroImportacao} onOpenChange={(aberto) => !aberto && setErroImportacao(false)}>
         <DialogContent>
@@ -303,17 +346,41 @@ export function PaginaPerfil() {
 
 // ── Sub-componentes ──────────────────────────────────────────────────────────
 
-function LinhaConfig({ icone, label, valor }: { icone: ReactNode; label: string; valor: string }) {
-  return (
-    <div className="flex items-center gap-4 px-4 py-3">
+function LinhaConfig({
+  icone,
+  label,
+  valor,
+  onClick,
+}: {
+  icone: ReactNode;
+  label: string;
+  valor: string;
+  onClick?: () => void;
+}) {
+  const conteudo = (
+    <>
       <span className="text-muted-foreground flex-shrink-0">{icone}</span>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 text-left">
         <p className="text-foreground text-sm font-medium">{label}</p>
         <p className="text-muted-foreground text-xs">{valor}</p>
       </div>
       <IcChevron />
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex w-full items-center gap-4 px-4 py-3 transition-colors hover:bg-muted/40"
+      >
+        {conteudo}
+      </button>
+    );
+  }
+
+  return <div className="flex items-center gap-4 px-4 py-3">{conteudo}</div>;
 }
 
 // ── Ícones inline ────────────────────────────────────────────────────────────
@@ -431,38 +498,6 @@ function IcSubir() {
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeLinecap="round" />
       <polyline points="17 8 12 3 7 8" />
       <line x1={12} y1={3} x2={12} y2={15} strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IcGlobo() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-4 h-4"
-      aria-hidden="true"
-    >
-      <circle cx={12} cy={12} r={10} />
-      <line x1={2} y1={12} x2={22} y2={12} />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  );
-}
-
-function IcLua() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-4 h-4"
-      aria-hidden="true"
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
