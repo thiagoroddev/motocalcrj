@@ -4,6 +4,7 @@ import { getNomeModelo } from '../../data/catalogoModelos';
 import { kmFormatado } from '../../utils/formatters';
 import { NavBar } from './NavBar';
 import { PopupAjuda } from '../PopupAjuda';
+import { BotaoAlternarPredefinicao } from '../perfil/predefinicoes/BotaoAlternarPredefinicao';
 import { Badge } from '../ui/badge';
 import type { ChaveAjuda } from '../../data/conteudoAjuda';
 
@@ -75,7 +76,10 @@ export function LayoutApp() {
             </span>
           </Link>
         </div>
-        <PopupAjuda chave={chaveAjuda} className="mt-0.5" />
+        <div className="flex flex-col items-center gap-1 mt-0.5 shrink-0">
+          <PopupAjuda chave={chaveAjuda} />
+          <BotaoAlternarPredefinicao />
+        </div>
       </header>
 
       <main className="flex-1 overflow-y-auto pb-20">

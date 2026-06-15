@@ -16,6 +16,7 @@ import {
   DialogFooter,
 } from '../components/ui/dialog';
 import { getNomeModelo } from '../data/catalogoModelos';
+import { IconAlternar } from '../components/icons';
 import { DialogCriarPredefinicao } from '../components/perfil/predefinicoes/DialogCriarPredefinicao';
 import { DialogAlternarPredefinicao } from '../components/perfil/predefinicoes/DialogAlternarPredefinicao';
 import { DialogDeletarPredefinicao } from '../components/perfil/predefinicoes/DialogDeletarPredefinicao';
@@ -100,7 +101,7 @@ export function PaginaPerfil() {
               onClick={() => setDialog('alternarPredefinicao')}
             >
               <span>Alternar predefinição</span>
-              <IcTrocar />
+              <IconAlternar className="w-4 h-4" />
             </Button>
 
             <Button
@@ -257,24 +258,6 @@ function IcMais() {
     >
       <line x1={12} y1={5} x2={12} y2={19} strokeLinecap="round" />
       <line x1={5} y1={12} x2={19} y2={12} strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IcTrocar() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-4 h-4"
-      aria-hidden="true"
-    >
-      <polyline points="17 1 21 5 17 9" />
-      <path d="M3 11V9a4 4 0 0 1 4-4h14" strokeLinecap="round" />
-      <polyline points="7 23 3 19 7 15" />
-      <path d="M21 13v2a4 4 0 0 1-4 4H3" strokeLinecap="round" />
     </svg>
   );
 }
