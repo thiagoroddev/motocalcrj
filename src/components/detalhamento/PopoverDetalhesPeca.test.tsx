@@ -115,4 +115,70 @@ describe('PopoverDetalhesPeca', () => {
     );
     expect(screen.getByText('Manutenções previstas')).toBeInTheDocument();
   });
+
+  it('bateria Honda (serviço completo, sem peça): mostra vida útil em anos, não "12 / 1" (TASK-RF-8.5)', () => {
+    render(
+      <PopoverDetalhesPeca
+        item={itemComposto({
+          id: 'troca-bateria',
+          label: 'Bateria',
+          custoAnual: 192.58,
+          freq: 1 / 3,
+          pecaId: undefined,
+          servicoId: 'troca-bateria',
+          peca: undefined,
+          servico: {
+            ...servico,
+            servicoId: 'troca-bateria',
+            label: 'Troca de bateria',
+            custoAnual: 192.58,
+            intervalKm: 0,
+            precoServico: 577.74,
+            eventosNoAno: 1 / 3,
+          },
+        })}
+        aberto
+        kmAtual={20000}
+        kmAnual={18200}
+        onOpenChange={() => {}}
+      />,
+    );
+
+    expect(screen.getByText('3 anos')).toBeInTheDocument();
+    expect(screen.queryByText(/12 \/ 1/)).not.toBeInTheDocument();
+  });
+
+  it('bateria Yamaha (peça): mostra vida útil em anos, não "36 meses"/"12 / 36" (TASK-RF-8.5)', () => {
+    render(
+      <PopoverDetalhesPeca
+        item={itemComposto({
+          id: 'bateria',
+          label: 'Bateria',
+          custoAnual: 77.26,
+          freq: 1 / 3,
+          pecaId: 'bateria',
+          servicoId: undefined,
+          servico: undefined,
+          status: 'semMaoDeObra',
+          peca: {
+            ...peca,
+            pecaId: 'bateria',
+            label: 'Bateria',
+            intervaloKm: 0,
+            intervaloMeses: 36,
+            preco: 231.78,
+            trocasNoAno: 1 / 3,
+          },
+        })}
+        aberto
+        kmAtual={20000}
+        kmAnual={18200}
+        onOpenChange={() => {}}
+      />,
+    );
+
+    expect(screen.getByText('3 anos')).toBeInTheDocument();
+    expect(screen.queryByText(/36 meses/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/12 \/ 36/)).not.toBeInTheDocument();
+  });
 });

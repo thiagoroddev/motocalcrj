@@ -206,6 +206,7 @@ function ConteudoServicoAutorizada({
         dispatch={dispatch}
         modo="autorizada"
         estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}
+        vidaUtilBateriaAnos={perfil.perfilManutencao.bateria.vidaUtilAnos}
       />
     </div>
   );
@@ -334,6 +335,7 @@ function ConteudoPecaComMO({
             dispatch={dispatch}
             modo="autorizada"
             estimativaMaoDeObra={estimativaDoServico(perfil, servico.id)}
+            vidaUtilBateriaAnos={perfil.perfilManutencao.bateria.vidaUtilAnos}
           />
         </div>
       ) : (

@@ -61,10 +61,23 @@ export function PopoverDetalhesPeca({ item, aberto, kmAtual, kmAnual, onOpenChan
   // se repete a cada evento e é amortizado/projetado abaixo.
   const custoPorTroca = composicao.reduce((soma, parte) => soma + parte.custoPorTroca, 0);
 
-  const intervaloLabel =
-    intervaloKm > 0 ? kmFormatado(intervaloKm) : intervaloMeses ? `${intervaloMeses} meses` : '-';
-  const formulaEventos =
-    intervaloKm > 0
+  // Bateria (TASK-RF-8): driver temporal por vida útil em ANOS (config do usuário),
+  // não por km/meses. Deriva os anos do próprio item (freq = 1 / vidaUtilAnos) para
+  // exibir "N anos" e "1 / N" em vez de "12 / meses" — evita threadar a config aqui.
+  const ehBateria = item?.id === 'bateria' || item?.id === 'troca-bateria';
+  const vidaUtilAnosBateria =
+    ehBateria && quantidadeEventos > 0 ? Math.max(1, Math.round(1 / quantidadeEventos)) : 0;
+
+  const intervaloLabel = ehBateria
+    ? `${vidaUtilAnosBateria} ${vidaUtilAnosBateria === 1 ? 'ano' : 'anos'}`
+    : intervaloKm > 0
+      ? kmFormatado(intervaloKm)
+      : intervaloMeses
+        ? `${intervaloMeses} meses`
+        : '-';
+  const formulaEventos = ehBateria
+    ? `1 / ${vidaUtilAnosBateria} = ≈${numeroDecimal(quantidadeEventos)}x`
+    : intervaloKm > 0
       ? `${kmAnual.toLocaleString('pt-BR')} / ${intervaloKm.toLocaleString('pt-BR')} = ≈${numeroDecimal(quantidadeEventos)}x`
       : `12 / ${intervaloMeses ?? 1} = ≈${numeroDecimal(quantidadeEventos)}x`;
 

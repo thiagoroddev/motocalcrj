@@ -24,7 +24,11 @@ export function PassoMaoDeObra() {
   // Avulsos km-driven, divididos em Completo (Honda: peça + M.O.) e Incompleto
   // (só M.O.) pelo serviço-base — mesmas subseções da aba Mão de Obra. (BG-033/BG-035)
   const avulsos = perfilMvp.servicosIndependentes.filter(
-    (s) => !s.ehExcepcional && !s.incluidoNaRevisaoAutorizada && s.intervalKm > 0,
+    (s) =>
+      !s.ehExcepcional &&
+      !s.incluidoNaRevisaoAutorizada &&
+      // Bateria (TASK-RF-8.5): temporal (intervalKm 0), mas deve aparecer aqui também.
+      (s.intervalKm > 0 || s.id === 'troca-bateria'),
   );
   const ehCompleto = (s: ServicoIndependente) =>
     concessionariaInformaPrecoCompleto(servicosPadrao.find((p) => p.id === s.id) ?? s);
