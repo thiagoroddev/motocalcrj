@@ -26,6 +26,53 @@ describe('SecaoUltimasManutencoes - validação de domínio', () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
+  it('capa o km da última troca ao km atual da moto', () => {
+    const dispatch = vi.fn<(action: PerfilAction) => void>();
+    render(
+      <SecaoUltimasManutencoes
+        moto={{ ...perfilPadrao.moto, kmAtual: 80_000 }}
+        bateria={bateria}
+        dispatch={dispatch}
+      />,
+    );
+
+    const campoOleo = screen.getByLabelText('Troca de óleo');
+
+    // Acima do km atual: capa em 80.000.
+    fireEvent.change(campoOleo, { target: { value: '90000' } });
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_KM_ULTIMA_TROCA',
+      componente: 'oleo',
+      km: 80_000,
+    });
+
+    // Abaixo do km atual: passa intacto.
+    fireEvent.change(campoOleo, { target: { value: '70000' } });
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_KM_ULTIMA_TROCA',
+      componente: 'oleo',
+      km: 70_000,
+    });
+  });
+
+  it('não capa quando o km atual é 0 (não informado)', () => {
+    const dispatch = vi.fn<(action: PerfilAction) => void>();
+    render(
+      <SecaoUltimasManutencoes
+        moto={{ ...perfilPadrao.moto, kmAtual: 0 }}
+        bateria={bateria}
+        dispatch={dispatch}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Troca de óleo'), { target: { value: '50000' } });
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_KM_ULTIMA_TROCA',
+      componente: 'oleo',
+      km: 50_000,
+    });
+  });
+
   it('não mostra campos de retífica mesmo com quilometragem alta', () => {
     const dispatch = vi.fn<(action: PerfilAction) => void>();
     render(

@@ -61,7 +61,7 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
         </div>
         <div className="space-y-1">
           <Label htmlFor={idKmUltimaRevisao} className="text-xs text-muted-foreground font-normal">
-            KM última revisão
+            KM última revisão periódica
           </Label>
           <Input
             id={idKmUltimaRevisao}
@@ -69,6 +69,7 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
             inputMode="numeric"
             value={moto.kmUltimaRevisao ?? ''}
             min={0}
+            max={moto.kmAtual > 0 ? moto.kmAtual : undefined}
             placeholder="-"
             onChange={(e) => {
               const raw = e.target.value;
@@ -78,7 +79,10 @@ export function SecaoVeiculo({ moto, dispatch }: Props) {
                 return;
               }
               if (!isNaN(v) && v >= 0) {
-                dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km: v });
+                // Não dá para ter revisado num km que a moto ainda não atingiu;
+                // capa ao km atual (quando informado), igual ao card de trocas.
+                const km = moto.kmAtual > 0 ? Math.min(v, moto.kmAtual) : v;
+                dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km });
               }
             }}
           />

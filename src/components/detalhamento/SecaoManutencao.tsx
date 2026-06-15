@@ -120,12 +120,28 @@ export function SecaoManutencao({
   const itensVisiveis = itens.filter((item) => item.custoAnual > 0);
   const itensAncorados = itensVisiveis.filter((item) => item.modo === 'ancorado');
   const itensAmortizados = itensVisiveis.filter((item) => item.modo === 'amortizado');
+  // Itens ancorados sem troca na janela de 12 meses: somem da lista (custo 0 no
+  // período, comportamento correto), mas o usuário os configurou de propósito.
+  // Listados no popup "?" dos Ancorados com o km da próxima troca para explicar
+  // por que sumiram. `proximaTrocaKm` só existe em itens com peça (não Honda).
+  const itensAncoradosOcultos = itens.filter(
+    (item) => item.modo === 'ancorado' && item.custoAnual <= 0 && (item.proximaTrocaKm ?? 0) > 0,
+  );
 
   function multiplicadorAmortizado(valor: number): string {
     return `≈${valor.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}×`;
+  }
+
+  // Tempo estimado até a próxima troca, no ritmo de km/ano informado: km que
+  // faltam dividido pela rodagem anual, em meses. Usado na tabela de ancorados
+  // ocultos para dizer "quando", não só "em qual km".
+  function formatarMesesAteTroca(proximaTrocaKm: number): string {
+    if (kmAnual <= 0) return '—';
+    const meses = Math.round((Math.max(0, proximaTrocaKm - kmAtual) / kmAnual) * 12);
+    return `~${meses.toLocaleString('pt-BR')} ${meses === 1 ? 'mês' : 'meses'}`;
   }
 
   function abrirDetalhes(item: ItemManutencaoComposto) {
@@ -367,10 +383,39 @@ export function SecaoManutencao({
                   Quando você informa o km da última troca em Ajustes, o app sabe onde a peça está
                   no ciclo. Por isso consegue contar eventos reais na janela de 12 meses.
                 </p>
-                <p className="rounded-md bg-muted/30 p-3 text-xs">
-                  Exemplo: última troca em 60.000 km, intervalo de 16.000 km e janela até 108.200
-                  km. As próximas trocas caem em 76.000, 92.000 e 108.000 km.
-                </p>
+                {itensAncoradosOcultos.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-medium text-foreground">
+                      Próximas trocas fora do período (12 meses)
+                    </p>
+                    <p className="text-xs">
+                      No seu ritmo de ~{kmAnual.toLocaleString('pt-BR')} km/ano, as próximas trocas
+                      caem assim:
+                    </p>
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-border/60 text-left text-muted-foreground/60">
+                          <th className="py-1 font-medium">Peça</th>
+                          <th className="py-1 text-right font-medium">Próxima troca</th>
+                          <th className="py-1 pl-2 text-right font-medium">Faltam</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {itensAncoradosOcultos.map((item) => (
+                          <tr key={item.id} className="border-b border-border/30 last:border-0">
+                            <td className="py-1 pr-2">{item.label}</td>
+                            <td className="py-1 text-right tabular-nums">
+                              {(item.proximaTrocaKm ?? 0).toLocaleString('pt-BR')} km
+                            </td>
+                            <td className="py-1 pl-2 text-right tabular-nums whitespace-nowrap">
+                              {formatarMesesAteTroca(item.proximaTrocaKm ?? 0)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </>
             ) : (
               <>

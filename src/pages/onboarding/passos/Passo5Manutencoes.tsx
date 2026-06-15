@@ -30,7 +30,7 @@ export function Passo5Manutencoes() {
             </div>
             <div className="flex-1 space-y-1">
               <label htmlFor={idRevisao} className="text-xs text-muted-foreground">
-                KM da última revisão geral
+                KM da última revisão periódica
               </label>
               <Input
                 id={idRevisao}
@@ -38,6 +38,7 @@ export function Passo5Manutencoes() {
                 inputMode="numeric"
                 value={kmUltimaRevisao ?? ''}
                 min={0}
+                max={kmAtual > 0 ? kmAtual : undefined}
                 placeholder="0"
                 onChange={(e) => {
                   const raw = e.target.value;
@@ -47,7 +48,10 @@ export function Passo5Manutencoes() {
                     return;
                   }
                   if (!isNaN(v) && v >= 0) {
-                    dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km: v });
+                    // Capa ao km atual (quando informado): não dá para ter
+                    // revisado num km ainda não atingido.
+                    const km = kmAtual > 0 ? Math.min(v, kmAtual) : v;
+                    dispatch({ type: 'SET_KM_ULTIMA_REVISAO', km });
                   }
                 }}
               />

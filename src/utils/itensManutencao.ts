@@ -32,6 +32,11 @@ export interface ItemManutencaoComposto {
   // Custo anual composto = parte da peça (Insumos) + parte da M.O. (serviço).
   custoAnual: number;
   modo: 'amortizado' | 'ancorado';
+  // Km da próxima troca prevista (da peça). Calculado mesmo quando não há troca
+  // na janela de 12 meses (custoAnual 0), por isso serve para listar os itens
+  // ancorados ocultos e dizer onde a troca cairá. Indefinido em itens só-serviço
+  // (Honda), que não carregam `proximaTrocaKm`.
+  proximaTrocaKm?: number;
   // Eventos/trocas no ano para exibição da frequência (da peça quando existe).
   freq: number;
   status: StatusItemManutencao;
@@ -98,6 +103,7 @@ export function montarItensManutencao(
       label: peca.label,
       custoAnual: peca.custoAnual + (servico?.custoAnual ?? 0),
       modo: peca.modo,
+      proximaTrocaKm: peca.proximaTrocaKm,
       freq: peca.trocasNoAno,
       status,
       pecaEditada: peca.fonte === 'registro',

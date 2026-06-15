@@ -193,4 +193,18 @@ describe('montarItensManutencao', () => {
     expect(itens[0].modo).toBe('ancorado');
     expect(itens[0].freq).toBe(2);
   });
+
+  it('expõe o km da próxima troca da peça (mesmo sem troca no período)', () => {
+    const itens = montarItensManutencao(
+      [
+        [
+          'kit_relacao',
+          peca({ pecaId: 'kit_relacao', modo: 'ancorado', custoAnual: 0, proximaTrocaKm: 100000 }),
+        ],
+      ],
+      [],
+    );
+
+    expect(itens[0].proximaTrocaKm).toBe(100000);
+  });
 });

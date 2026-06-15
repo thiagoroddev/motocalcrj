@@ -54,6 +54,12 @@ export function SecaoUltimasManutencoes({ moto, bateria, dispatch }: Props) {
   } | null>(null);
   const kmUltimaRevisao = moto.kmUltimaRevisao ?? 0;
   const podeReplicarKmRevisao = kmUltimaRevisao > 0;
+  // Não faz sentido ter trocado uma peça num km que a moto ainda não atingiu.
+  // Capamos o registro ao km atual (quando informado) para evitar dado inválido
+  // que distorce o ciclo ancorado. Com kmAtual 0 (não informado) não capamos,
+  // senão travaria toda digitação.
+  const kmAtual = moto.kmAtual;
+  const caparAoKmAtual = (km: number): number => (kmAtual > 0 ? Math.min(km, kmAtual) : km);
   // Lista model-aware (RF-6.39): só os itens que o preset do modelo realmente usa
   // (ex.: disco/pastilha num modelo a disco; sapata num a tambor). Sem preset
   // (modelo desconhecido), mostra o catálogo completo como fallback seguro.
@@ -72,7 +78,7 @@ export function SecaoUltimasManutencoes({ moto, bateria, dispatch }: Props) {
 
   function aplicarKmUltimaRevisao(key: keyof KmUltimaTrocas) {
     if (!podeReplicarKmRevisao) return;
-    dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: kmUltimaRevisao });
+    dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: caparAoKmAtual(kmUltimaRevisao) });
   }
 
   function prepararReplicaKmRevisao(key: keyof KmUltimaTrocas, label: string) {
@@ -111,6 +117,7 @@ export function SecaoUltimasManutencoes({ moto, bateria, dispatch }: Props) {
                   inputMode="numeric"
                   value={moto.kmUltimaTrocas[key] || ''}
                   min={0}
+                  max={kmAtual > 0 ? kmAtual : undefined}
                   placeholder="0"
                   onChange={(e) => {
                     const raw = e.target.value;
@@ -120,7 +127,11 @@ export function SecaoUltimasManutencoes({ moto, bateria, dispatch }: Props) {
                       return;
                     }
                     if (!isNaN(v) && v >= 0) {
-                      dispatch({ type: 'SET_KM_ULTIMA_TROCA', componente: key, km: v });
+                      dispatch({
+                        type: 'SET_KM_ULTIMA_TROCA',
+                        componente: key,
+                        km: caparAoKmAtual(v),
+                      });
                     }
                   }}
                 />

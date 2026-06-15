@@ -87,7 +87,7 @@ export function PassoConfirmacao() {
         <SessaoResumo titulo="Quilometragem" aoEditar={() => editarPasso('km')}>
           <LinhaResumo label="KM atual" valor={`${moto.kmAtual.toLocaleString('pt-BR')} km`} />
           <LinhaResumo
-            label="KM última revisão"
+            label="KM última revisão periódica"
             valor={
               moto.kmUltimaRevisao != null
                 ? `${moto.kmUltimaRevisao.toLocaleString('pt-BR')} km`

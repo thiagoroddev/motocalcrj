@@ -152,6 +152,58 @@ describe('SecaoManutencao', () => {
     expect(onTogglePeca).not.toHaveBeenCalled();
   });
 
+  it('lista no popup "?" dos Ancorados as peças ocultas e o km da próxima troca', async () => {
+    const pecaVisivel: CustoPeca = {
+      ...peca,
+      pecaId: 'pastilhaFreioDianteiro',
+      label: 'Pastilha de freio dianteira',
+      custoAnual: 120,
+      modo: 'ancorado',
+      kmUltimaTroca: 70000,
+      proximaTrocaKm: 82000,
+      trocasNoAno: 2,
+    };
+    const pecaOculta: CustoPeca = {
+      ...peca,
+      pecaId: 'kitRelacao',
+      label: 'Kit transmissão',
+      custoAnual: 0,
+      modo: 'ancorado',
+      kmUltimaTroca: 70000,
+      proximaTrocaKm: 100000,
+      trocasNoAno: 0,
+    };
+    render(
+      <SecaoManutencao
+        {...criarProps({
+          kmAtual: 80000,
+          kmAnual: 18200,
+          pecas: [
+            ['pastilhaFreioDianteiro', pecaVisivel],
+            ['kitRelacao', pecaOculta],
+          ] as [string, CustoPeca][],
+          nomePorPeca: {
+            pastilhaFreioDianteiro: 'Pastilha de freio dianteira',
+            kitRelacao: 'Kit transmissão',
+          },
+        })}
+      />,
+    );
+
+    // O item oculto não aparece na lista (custo 0 no período).
+    expect(screen.queryByText('Kit transmissão')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Entender Ancorados' }));
+
+    expect(
+      await screen.findByText('Próximas trocas fora do período (12 meses)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Kit transmissão')).toBeInTheDocument();
+    expect(screen.getByText('100.000 km')).toBeInTheDocument();
+    // Faltam: (100.000 - 80.000) / 18.200 × 12 ≈ 13 meses.
+    expect(screen.getByText('~13 meses')).toBeInTheDocument();
+  });
+
   it('restaura cor e interação dos subtoggles quando o pai está ligado', () => {
     const onToggleRevisao = vi.fn();
     render(
