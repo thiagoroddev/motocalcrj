@@ -22,8 +22,9 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
 | TASK-RNF-8.1 | Analytics (Umami) — trackEvent centralizado | Standard | Importante | Normal | M/M | - | - | `[ ]` | - |
-| TASK-RNF-8.2 | PWA completo (manifest, service worker, cache) | Standard | Crítico | Normal | G/G | TASK-RNF-8.1 | - | `[ ]` | - |
-| TASK-RNF-8.3 | TWA — publicação na Google Play Store | Standard | Crítico | Normal | G/G | TASK-RNF-8.2 | - | `[ ]` | - |
+| TASK-RNF-8.3 | TWA — publicação na Google Play Store | Standard | Desejável | Normal | G/G | - | - | `[ ]` | - |
+
+> **TASK-RNF-8.2 (PWA) concluída** no lançamento — ver `concluidas/2026-06-15--13h45--TASK-RNF-8.2.md`. PWA entregue sem Umami, então a dependência 8.2→8.1 foi removida; a 8.3 (TWA) já pode ser feita sobre o PWA atual.
 
 ### Qualidade e Polimento (Fase 10)
 

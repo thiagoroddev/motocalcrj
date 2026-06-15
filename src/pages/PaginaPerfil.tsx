@@ -30,6 +30,7 @@ type DialogAberto =
   | 'alternarPredefinicao'
   | 'deletarPredefinicao'
   | 'privacidade'
+  | 'creditos'
   | null;
 
 // Mantida em sincronia com a "version" do package.json (exibida em Privacidade e
@@ -214,6 +215,13 @@ export function PaginaPerfil() {
             valor={`Versão ${APP_VERSAO}`}
             onClick={() => setDialog('privacidade')}
           />
+          <Separator />
+          <LinhaConfig
+            icone={<IcUsuario />}
+            label="Créditos"
+            valor="Thiago Rodrigues · RU 4647621"
+            onClick={() => setDialog('creditos')}
+          />
         </div>
       </main>
 
@@ -339,6 +347,30 @@ export function PaginaPerfil() {
                 alterações implica a aceitação dos novos termos.
               </p>
             </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialog(null)}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Créditos */}
+      <Dialog open={dialog === 'creditos'} onOpenChange={(aberto) => !aberto && setDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Créditos</DialogTitle>
+            <DialogDescription>MotoCalcRJ · Versão {APP_VERSAO}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Desenvolvido por <strong className="text-foreground">Thiago Rodrigues</strong> como
+              trabalho final extensionista para motoboys do Rio de Janeiro.
+            </p>
+            <p>
+              RU: <span className="font-medium text-foreground">4647621</span>
+            </p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(null)}>
@@ -539,6 +571,22 @@ function IcCadeado() {
     >
       <rect x={3} y={11} width={18} height={11} rx={2} ry={2} />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function IcUsuario() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      className="w-4 h-4"
+      aria-hidden="true"
+    >
+      <path d="M20 21a8 8 0 1 0-16 0" strokeLinecap="round" />
+      <circle cx={12} cy={8} r={4} />
     </svg>
   );
 }

@@ -1,0 +1,189 @@
+{
+  "marca": "Honda",
+  "modelo": "Pop 110i",
+  "nomeCurto": "Pop 110i",
+  "consumoKmL": 36.0,
+  "consumoKmLComBau": 33.0,
+  "codigoFipe": "",
+
+  "_fonte": {
+    "manual": "MP Pop110i (2022~2024) D2203-MAN-1290",
+    "precos": "Mercado Livre RJ + Shopee — média de 2 a 3 vendedores com frete para RJ",
+    "dataColeta": "2026-04",
+    "anoModelo": { "inicio": 2022, "fim": 2024 },
+    "codigoFipeNota": "A ser descoberto via BrasilAPI após implementação. GET /api/fipe/motos/v1/{codigoFipe}",
+    "consumoNota": "consumoKmL = sem baú (36 km/L). consumoKmLComBau = com baú/bag (33 km/L). Fonte: manual + telemetria real."
+  },
+
+  "pecas": [
+    {
+      "id": "oleo_motor",
+      "nome": "Óleo do motor",
+      "intervaloKm": 6000,
+      "intervaloKmEntrega": 1250,
+      "intervaloMeses": 12,
+      "precoOriginal": 40,
+      "precoParalela": 23,
+      "_fonte": {
+        "intervaloKmNota": "Manual: trocar a cada 6.000 km ou 1× por ano (o que ocorrer primeiro).",
+        "intervaloKmEntregaNota": "Telemetria real: motoboy urbano troca entre 1.000–1.500 km. Média adotada: 1.250 km.",
+        "precoOriginalNota": "Pro Honda SAE 10W-30 SL JASO MA (1L). Inclui troca (0,8L + serviço mão de obra básica).",
+        "precoParalelaNota": "Mobil Super Moto 10W-30 ou equivalente nacional."
+      }
+    },
+    {
+      "id": "vela_ignicao",
+      "nome": "Vela de ignição",
+      "intervaloKm": 12000,
+      "intervaloKmEntrega": 12000,
+      "intervaloMeses": 0,
+      "precoOriginal": 82,
+      "precoParalela": 29,
+      "_fonte": {
+        "intervaloKmNota": "Manual: verificar a cada 12.000 km; trocar se necessário. Em entrega, substituir preventivamente no intervalo.",
+        "precoOriginalNota": "NGK CPR6EA-9S genuína Honda (código Honda OEM).",
+        "precoParalelaNota": "NGK CPR6EA-9S aftermarket (Mercado Livre / Shopee)."
+      }
+    },
+    {
+      "id": "filtro_ar",
+      "nome": "Filtro de ar (tipo viscoso)",
+      "intervaloKm": 18000,
+      "intervaloKmEntrega": 12000,
+      "intervaloMeses": 0,
+      "precoOriginal": 47,
+      "precoParalela": 19,
+      "_fonte": {
+        "intervaloKmNota": "Manual: trocar a cada 18.000 km. Em uso com poluição urbana: antecipar para 12.000 km.",
+        "intervaloKmEntregaNota": "Dado real: trocado na revisão de 12.000 km pelo usuário.",
+        "precoOriginalNota": "Filtro compatível de marca (ML/Shopee R$45–50, média R$47). Genuíno Honda OEM ≈ R$50–52.",
+        "precoParalelaNota": "Filtro genérico compatível — diversas marcas (ML/Shopee)."
+      }
+    },
+    {
+      "id": "kit_relacao",
+      "nome": "Kit relação (corrente + coroa + pinhão)",
+      "intervaloKm": 15000,
+      "intervaloKmEntrega": 18000,
+      "intervaloMeses": 0,
+      "precoOriginal": 230,
+      "precoParalela": 82,
+      "_fonte": {
+        "intervaloKmNota": "Manual: verificar, ajustar e lubrificar a cada 1.000 km. Troca estimada por pesquisa de campo RJ.",
+        "intervaloKmEntregaNota": "Com lubrificação regular a cada 1.000 km o kit dura 15.000–20.000 km. Mock: 18.000 km.",
+        "precoOriginalNota": "Kit HAMP (Honda Authentic Motorcycle Parts).",
+        "precoParalelaNota": "Kit Riffel ou similar — corrente + coroa + pinhão com retentor O-ring."
+      }
+    },
+    {
+      "id": "sapata_freio_traseiro",
+      "nome": "Sapata de freio traseiro",
+      "intervaloKm": 20000,
+      "intervaloKmEntrega": 12000,
+      "intervaloMeses": 0,
+      "precoOriginal": 91,
+      "precoParalela": 47,
+      "_fonte": {
+        "intervaloKmNota": "Manual: verificar desgaste a cada 6.000 km. Pop 110i usa freio a tambor traseiro.",
+        "intervaloKmEntregaNota": "No anda-e-para urbano RJ o desgaste é acelerado. Estimativa conservadora: 10.000–15.000 km. Mock: 12.000 km.",
+        "precoOriginalNota": "Patim/lona HAMP Nissin (par, dianteiro + traseiro).",
+        "precoParalelaNota": "Lona compatível Cobreq ou similar (par)."
+      }
+    }
+  ],
+
+  "pneus": [
+    {
+      "id": "pneu_dianteiro",
+      "posicao": "dianteiro",
+      "vidaUtilKm": 25000,
+      "precoOriginal": 209,
+      "precoParalela": 130,
+      "_fonte": {
+        "especificacao": "60/100-17 M/C 33L",
+        "vidaUtilNota": "Pneu dianteiro sofre menos tração. Dado real: ~1 ano de uso. Mock: 25.000 km (≈ 1,5× o traseiro).",
+        "precoOriginalNota": "Michelin Street ou Levorin Matrix (60/100-17).",
+        "precoParalelaNota": "Ira Soho, Kenda ou similar."
+      }
+    },
+    {
+      "id": "pneu_traseiro",
+      "posicao": "traseiro",
+      "vidaUtilKm": 16000,
+      "precoOriginal": 245,
+      "precoParalela": 137,
+      "_fonte": {
+        "especificacao": "80/100-14 M/C REINF 49L",
+        "vidaUtilNota": "Dado real de telemetria: durou 16.000 km com baú. Usado como referência principal.",
+        "precoOriginalNota": "Levorin Dakar Evo, Rinaldi BS32 ou Vipal ST300 (80/100-14).",
+        "precoParalelaNota": "Robust Vitesse ou similar."
+      }
+    }
+  ],
+
+  "revisaoAutorizada": [
+    {
+      "intervaloKm": 1000,
+      "intervaloMeses": 6,
+      "precoTotal": 105.94,
+      "_fonte": { "pecas": 105.94, "maoDeObra": 0, "notaMaoDeObra": "Gratuita (subsidiada Honda)" }
+    },
+    {
+      "intervaloKm": 6000,
+      "intervaloMeses": 12,
+      "precoTotal": 248.06,
+      "_fonte": { "pecas": 248.06, "maoDeObra": 0, "notaMaoDeObra": "Gratuita (subsidiada Honda)" }
+    },
+    {
+      "intervaloKm": 12000,
+      "intervaloMeses": 18,
+      "precoTotal": 568.29,
+      "_fonte": { "pecas": 352.29, "maoDeObra": 216.00 }
+    },
+    {
+      "intervaloKm": 18000,
+      "intervaloMeses": 24,
+      "precoTotal": 506.70,
+      "_fonte": { "pecas": 402.70, "maoDeObra": 104.00 }
+    },
+    {
+      "intervaloKm": 24000,
+      "intervaloMeses": 30,
+      "precoTotal": 737.76,
+      "_fonte": { "pecas": 449.76, "maoDeObra": 288.00 }
+    },
+    {
+      "intervaloKm": 30000,
+      "intervaloMeses": 36,
+      "precoTotal": 287.67,
+      "_fonte": { "pecas": 247.67, "maoDeObra": 40.00 }
+    },
+    {
+      "intervaloKm": 36000,
+      "intervaloMeses": 42,
+      "precoTotal": 880.20,
+      "_fonte": { "pecas": 600.20, "maoDeObra": 280.00 }
+    }
+  ],
+
+  "_servicosSemPecas": [
+    {
+      "id": "ajuste_valvulas",
+      "nome": "Ajuste de válvulas",
+      "intervaloKm": 6000,
+      "nota": "Apenas serviço — sem custo de peça. Incluído na mão de obra da revisão."
+    },
+    {
+      "id": "limpeza_filtro_oleo",
+      "nome": "Limpeza da tela e filtro centrífugo de óleo",
+      "intervaloKm": 12000,
+      "nota": "Apenas limpeza — sem troca de peça. Incluído na revisão."
+    },
+    {
+      "id": "ajuste_corrente",
+      "nome": "Verificação, ajuste e lubrificação da corrente",
+      "intervaloKm": 1000,
+      "nota": "Preventivo frequente. Custo mínimo ou zero se feito pelo próprio usuário."
+    }
+  ]
+}
