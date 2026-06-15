@@ -1,0 +1,683 @@
+{
+  "marca": "Honda",
+  "modelo": "CB 250F Twister",
+  "nomeCurto": "CB 250F Twister",
+  "nomeFipe": "CB 250 TWISTER/FLEXONE",
+  "consumoKmL": 30,
+  "aceitaEtanol": true,
+  "fatorMaoDeObra": 1.35,
+  "codigoFipe": "811135-9",
+  "tabelaFipe": {
+    "2016": 15363,
+    "2017": 16400,
+    "2018": 17310,
+    "2019": 17994,
+    "2020": 19199,
+    "2021": 20303,
+    "2022": 20994
+  },
+  "_fonte": {
+    "precos": "precos-pecas-honda-todosmodelos.md + servicos-extras + revisoes (fase 1)",
+    "dataColeta": "2026-06",
+    "anoModelo": {
+      "inicio": 2016,
+      "fim": 2022
+    },
+    "codigoFipeNota": "API Parallelum FIPE jun/2026. Código 811135-9, nomeFipe \"CB 250 TWISTER/FLEXONE\". Geração descontinuada (2016–2022).",
+    "precoParalelaNota": "Sem tier paralela curado na fase 1 → precoParalela = precoOriginal (oculto no MVP, Insumos original-only).",
+    "consumiveisNota": "óleo/vela/filtro/kit_revisao: baseline Honda do Pop 110i onde a fase 1 curou só o oficial completo do serviço (incluidoNaRevisaoAutorizada → pulados no fluxo Honda autorizada).",
+    "oficiaisNota": "Sem valores oficiais da concessionária coletados na fase 1 → todos nao_informado/estimados. Intervalos \"250 mais robusto\". Descontinuada (2016–2022).",
+    "freioNota": "Freio a disco diant.+tras.: pastilha + disco nos dois eixos."
+  },
+  "pecas": [
+    {
+      "id": "oleo_motor",
+      "nome": "Óleo do motor",
+      "intervaloKm": 3000,
+      "intervaloMeses": 12,
+      "precoOriginal": 106,
+      "precoParalela": 106,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "nota": "Pro Honda 10W-30 (2 L). Média de mercado."
+      }
+    },
+    {
+      "id": "vela_ignicao",
+      "nome": "Vela de ignição",
+      "intervaloKm": 6000,
+      "intervaloMeses": 0,
+      "precoOriginal": 82,
+      "precoParalela": 29,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "nota": "Baseline Honda (Pop 110i); fase 1 curou só o oficial completo do serviço."
+      }
+    },
+    {
+      "id": "filtro_ar",
+      "nome": "Filtro de ar",
+      "intervaloKm": 6000,
+      "intervaloMeses": 0,
+      "precoOriginal": 47,
+      "precoParalela": 19,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "nota": "Baseline Honda (Pop 110i); fase 1 curou só o oficial completo do serviço."
+      }
+    },
+    {
+      "id": "kit_relacao",
+      "nome": "Kit transmissão (corrente + coroa + pinhão)",
+      "intervaloKm": 24000,
+      "intervaloMeses": 0,
+      "precoOriginal": 312,
+      "precoParalela": 312,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "pastilha_freio_dianteiro",
+      "nome": "Pastilha de freio dianteira",
+      "intervaloKm": 12000,
+      "intervaloMeses": 0,
+      "precoOriginal": 269,
+      "precoParalela": 269,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Freio dianteiro a disco. Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "disco_freio_dianteiro",
+      "nome": "Disco de freio dianteiro",
+      "intervaloKm": 60000,
+      "intervaloMeses": 0,
+      "precoOriginal": 576,
+      "precoParalela": 576,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Troca por espessura mínima. Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "pastilha_freio_traseiro",
+      "nome": "Pastilha de freio traseira",
+      "intervaloKm": 18000,
+      "intervaloMeses": 0,
+      "precoOriginal": 222,
+      "precoParalela": 222,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Freio traseiro a disco. Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "disco_freio_traseiro",
+      "nome": "Disco de freio traseiro",
+      "intervaloKm": 60000,
+      "intervaloMeses": 0,
+      "precoOriginal": 727,
+      "precoParalela": 727,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Troca por espessura mínima. Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "bateria",
+      "nome": "Bateria",
+      "intervaloMeses": 36,
+      "precoOriginal": 472.6,
+      "precoParalela": 472.6,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "DTZ6 12V 5Ah. Driver temporal ~36 meses. Média de mercado."
+      }
+    },
+    {
+      "id": "kit_embreagem",
+      "nome": "Kit embreagem",
+      "intervaloKm": 48000,
+      "intervaloMeses": 0,
+      "precoOriginal": 1054,
+      "precoParalela": 1054,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Média de mercado; paralela = original."
+      }
+    },
+    {
+      "id": "kit_revisao",
+      "nome": "Kit revisão",
+      "intervaloKm": 6000,
+      "intervaloMeses": 0,
+      "precoOriginal": 152.83,
+      "precoParalela": 102.93,
+      "incluidoNaRevisaoAutorizada": true,
+      "_fonte": {
+        "nota": "Baseline Honda (Pop 110i); coberto pelo pacote revisaoAutorizada."
+      }
+    },
+    {
+      "id": "kit_cilindro",
+      "nome": "Kit cilindro",
+      "intervaloKm": 120000,
+      "intervaloMeses": 0,
+      "precoOriginal": 797.54,
+      "precoParalela": 797.54,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Caminho alternativo à retífica. Média de mercado."
+      }
+    },
+    {
+      "id": "caixa_direcao",
+      "nome": "Kit caixa de direção",
+      "intervaloKm": 42000,
+      "intervaloMeses": 0,
+      "precoOriginal": 308,
+      "precoParalela": 308,
+      "incluidoNaRevisaoAutorizada": false,
+      "_fonte": {
+        "nota": "Média de mercado; paralela = original."
+      }
+    }
+  ],
+  "pneus": [
+    {
+      "id": "pneu_dianteiro",
+      "posicao": "dianteiro",
+      "vidaUtilKm": 24000,
+      "precoOriginal": 392,
+      "precoParalela": 392,
+      "_fonte": {
+        "especificacao": "110/70R17 M/C 54H",
+        "nota": "Vida sincronizada (Honda ×6.000); preço média de mercado (precos-pecas-honda-todosmodelos.md), sem tier paralela separado → = original."
+      }
+    },
+    {
+      "id": "pneu_traseiro",
+      "posicao": "traseiro",
+      "vidaUtilKm": 18000,
+      "precoOriginal": 518,
+      "precoParalela": 518,
+      "_fonte": {
+        "especificacao": "140/70R17 M/C 66H",
+        "nota": "Vida sincronizada (Honda ×6.000); preço média de mercado (precos-pecas-honda-todosmodelos.md), sem tier paralela separado → = original."
+      }
+    }
+  ],
+  "revisaoAutorizada": [
+    {
+      "intervaloKm": 1000,
+      "intervaloMeses": 6,
+      "precoPecas": 311.36,
+      "precoMaoDeObra": 0,
+      "precoTotal": 311.36,
+      "itensSubstituidos": [
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30",
+        "Kit Revisão"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Corrente de Transmissão",
+            "Luzes e buzina",
+            "Interruptor de emergência",
+            "Pneus"
+          ]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 6000,
+      "intervaloMeses": 12,
+      "precoPecas": 132.6,
+      "precoMaoDeObra": 0,
+      "precoTotal": 132.6,
+      "itensSubstituidos": [
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30",
+        "Arruela drenagem"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Pastilhas de freio",
+            "Luzes e buzina",
+            "Embreagem",
+            "Suspensão",
+            "Deslizador da Transmissão",
+            "Pneus"
+          ]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 12000,
+      "intervaloMeses": 18,
+      "precoPecas": 431.38,
+      "precoMaoDeObra": 350,
+      "precoTotal": 781.38,
+      "itensSubstituidos": [
+        "Kit Revisão",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Vela",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Escapamento",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 18000,
+      "intervaloMeses": 24,
+      "precoPecas": 389.13,
+      "precoMaoDeObra": 362.5,
+      "precoTotal": 751.63,
+      "itensSubstituidos": [
+        "Pro Honda fluído da Suspensão Dianteira",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30",
+        "Elemento filtro de ar",
+        "Arruela trava",
+        "Arruela drenagem",
+        "Anel de Vedação",
+        "Pro Honda fluído para freios"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Pastilhas de freio",
+            "Luzes e buzina",
+            "Embreagem",
+            "Suspensão",
+            "Deslizador da Transmissão",
+            "Pneus"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": ["Coluna de Direção"]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 24000,
+      "intervaloMeses": 30,
+      "precoPecas": 875.43,
+      "precoMaoDeObra": 437.5,
+      "precoTotal": 1312.93,
+      "itensSubstituidos": [
+        "Anel de Vedação",
+        "Arruela drenagem",
+        "Borracha de Fixação",
+        "Elemento Filtro de Óleo",
+        "Filtro de combustível",
+        "Junta da tampa do Cabeçote",
+        "Óleo Pro Honda 10w30",
+        "Retentor de Óleo",
+        "Retentor de pó",
+        "Vela de Ignição",
+        "Pro Honda Kit Limpeza e Lubrificação"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Escapamento",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        },
+        {
+          "categoria": "Lubrificação",
+          "servicos": ["Buchas, rolamentos e terminal inferior do amortecedor traseiro"]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 30000,
+      "intervaloMeses": 36,
+      "precoPecas": 132.6,
+      "precoMaoDeObra": 37.5,
+      "precoTotal": 170.1,
+      "itensSubstituidos": [
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30",
+        "Arruela drenagem"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Pastilhas de freio",
+            "Luzes e buzina",
+            "Embreagem",
+            "Suspensão",
+            "Deslizador da Transmissão",
+            "Pneus"
+          ]
+        },
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        }
+      ]
+    },
+    {
+      "intervaloKm": 36000,
+      "intervaloMeses": 42,
+      "precoPecas": 908.23,
+      "precoMaoDeObra": 550,
+      "precoTotal": 1458.23,
+      "itensSubstituidos": [
+        "Filtro de combustível",
+        "Elemento Filtro de Óleo",
+        "Elemento filtro de ar",
+        "Borracha de Fixação",
+        "Arruela trava",
+        "Arruela drenagem",
+        "Anel de Vedação",
+        "Pro Honda fluído da Suspensão Dianteira",
+        "Pro Honda Kit Limpeza e Lubrificação",
+        "Óleo Pro Honda 10w30",
+        "Junta da tampa do Cabeçote",
+        "Coluna de Direção"
+      ],
+      "servicosExecutados": [
+        {
+          "categoria": "Ajuste",
+          "servicos": ["Corrente de Transmissão", "Facho do farol"]
+        },
+        {
+          "categoria": "Limpeza",
+          "servicos": ["Respiro do motor"]
+        },
+        {
+          "categoria": "Verificação",
+          "servicos": [
+            "Transmissão",
+            "Vela",
+            "Folga de Válvulas",
+            "Marcha lenta",
+            "Escapamento",
+            "Freios",
+            "Embreagem",
+            "Suspensão",
+            "Rodas e pneus",
+            "Coluna de Direção"
+          ]
+        }
+      ]
+    }
+  ],
+  "servicosManutencao": [
+    {
+      "id": "troca-oleo",
+      "nome": "Troca de óleo",
+      "intervalKm": 3000,
+      "precoIndependente": 25,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-vela",
+      "nome": "Troca de vela",
+      "intervalKm": 6000,
+      "precoIndependente": 15,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-filtro-ar",
+      "nome": "Troca filtro de ar",
+      "intervalKm": 6000,
+      "precoIndependente": 15,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-transmissao",
+      "nome": "Troca kit transmissão",
+      "intervalKm": 24000,
+      "precoIndependente": 60,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pastilha-dianteira",
+      "nome": "Troca pastilha de freio dianteira",
+      "intervalKm": 12000,
+      "precoIndependente": 50,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-disco-dianteiro",
+      "nome": "Troca disco de freio dianteiro",
+      "intervalKm": 60000,
+      "precoIndependente": 60,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pastilha-traseira",
+      "nome": "Troca pastilha de freio traseira",
+      "intervalKm": 18000,
+      "precoIndependente": 50,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-disco-traseiro",
+      "nome": "Troca disco de freio traseiro",
+      "intervalKm": 60000,
+      "precoIndependente": 60,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pneu-dianteiro",
+      "nome": "Troca pneu dianteiro",
+      "intervalKm": 24000,
+      "precoIndependente": 30,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-pneu-traseiro",
+      "nome": "Troca pneu traseiro",
+      "intervalKm": 18000,
+      "precoIndependente": 30,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-bateria",
+      "nome": "Troca de bateria",
+      "intervalKm": 0,
+      "precoIndependente": 50,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-embreagem",
+      "nome": "Troca kit embreagem",
+      "intervalKm": 48000,
+      "precoIndependente": 50,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-kit-cilindro",
+      "nome": "Troca kit cilindro",
+      "intervalKm": 120000,
+      "precoIndependente": 50,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "troca-caixa-direcao",
+      "nome": "Troca do kit caixa de direção",
+      "intervalKm": 42000,
+      "precoIndependente": 80,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "revisao-geral",
+      "nome": "Revisão geral (independente)",
+      "intervalKm": 6000,
+      "precoIndependente": 400,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "informado",
+      "incluidoNaRevisaoAutorizada": true,
+      "ativo": true,
+      "ehExcepcional": false
+    },
+    {
+      "id": "retifica-cabecote",
+      "nome": "Retífica de cabeçote",
+      "intervalKm": 80000,
+      "precoIndependente": 800,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    },
+    {
+      "id": "retifica-completa",
+      "nome": "Retífica completa",
+      "intervalKm": 120000,
+      "precoIndependente": 1500,
+      "precoTotalAutorizada": 0,
+      "statusPrecoAutorizada": "nao_informado",
+      "incluidoNaRevisaoAutorizada": false,
+      "ativo": false,
+      "ehExcepcional": true
+    }
+  ],
+  "_servicosSemPecas": [
+    {
+      "id": "ajuste_valvulas",
+      "nome": "Ajuste de válvulas",
+      "intervaloKm": 6000,
+      "nota": "Apenas serviço — incluído na M.O. da revisão."
+    },
+    {
+      "id": "ajuste_corrente",
+      "nome": "Verificação, ajuste e lubrificação da corrente",
+      "intervaloKm": 1000,
+      "nota": "Preventivo frequente."
+    }
+  ]
+}
