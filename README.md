@@ -1,7 +1,7 @@
-# EstimaMoto
+# MotoCalcRJ
 
 Aplicação web para motoboys do Rio de Janeiro calcularem o custo operacional real de suas motos.
-Foco inicial: Honda Pop 110i.
+Cobre modelos populares de Honda e Yamaha (ex.: Pop 110i, Factor 125i, Lander 250).
 
 ## O Que Faz
 
@@ -9,10 +9,8 @@ Foco inicial: Honda Pop 110i.
 - Estimativa de custo por km, hora, dia, semana, mês e ano
 - Detalhamento por categoria: combustível, manutenção, revisão, seguro, alimentação e outros custos
 - Edição de presets, preços de peças, mão de obra e últimas manutenções
-- Persistência local no navegador
-
-> PWA/offline completo ainda não está implementado. Esse trabalho está planejado no backlog como
-> `TASK-RNF-8.2`.
+- Persistência local no navegador (nenhum dado sai do aparelho)
+- Instalável como PWA e uso offline após o primeiro acesso (sem depender de loja de apps)
 
 ## Stack
 
@@ -36,6 +34,12 @@ npm run build     # build de produção
 npm run lint      # verificar lint
 npx tsc --noEmit  # verificar tipos
 ```
+
+## Deploy
+
+App client-only (sem backend): o `npm run build` gera a pasta `dist/`, que é servida como site
+estático. Hospedado na Vercel (build automático a partir do repositório; `vercel.json` cuida do
+fallback de rotas SPA). Service worker e manifest do PWA são gerados no build.
 
 ## Documentação
 
