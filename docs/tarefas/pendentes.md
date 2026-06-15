@@ -1,12 +1,10 @@
 # Tarefas Pendentes
 
-Backlog priorizado. Aplicar o template padrão do ciclo ([processos/20-ciclo-tarefa.md](../../.github/agents/geral-robusto/processos/20-ciclo-tarefa.md.md)) ao criar tarefas e ao passá-las para `em-andamento.md`.
+Backlog priorizado. Aplicar o template padrão do ciclo ([processos/20-ciclo-tarefa.md](../../.github/agents/geral-robusto/processos/20-ciclo-tarefa.md)) ao criar tarefas e ao passá-las para `em-andamento.md`.
 
 Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (formato tabela).
 
 > Tarefas concluídas/canceladas **saem deste arquivo** — ficam em `docs/tarefas/concluidas/` (índice em `0-indice-concluidas.md`).
-
-Colunas padrão das tabelas: `ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem`.
 
 ---
 
@@ -16,22 +14,8 @@ Colunas padrão das tabelas: `ID | Título | Modo | Valor | Urgência | Esforço
 
 ## Normais
 
-> **Épico Honda fase 2 concluído:** TASK-DOM-5 (docs) + BG-034/035/036 (UI/lógica) + **TASK-DOM-6** (6 presets:
-> cg160start/fan/titan, bros160, xre190, cb250f) **concluídas**.
 
-> **Épico TASK-RF-8 (bateria por tempo) CONCLUÍDO.** Bateria = config `vidaUtilAnos` (2/3/4/5, default 3),
-> **sempre amortizada** (valor ÷ anos); completo Honda / incompleto Yamaha nos presets + Mão de Obra; popup
-> em anos. A ancoragem por data foi tentada (**RF-8.6**) e **revertida** (**RF-8.7**) — confundia em uso.
-> Partes: RF-8.1 (motor) · 8.2 (presets) · 8.3 (CardBateria) · 8.4 (Serviços Extras) · 8.5 (Detalhamento/onboarding) · 8.6/8.7 (data: tentada e revertida). Addendum ADR-016.
 
-### Export/Import e Alertas (Fase 11)
-
-| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
-| --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
-| TASK-RF-7.1 | Exportar/importar predefinições individuais (.json) | Standard | Importante | Normal | G/G | TASK-BG-031 | RF-PERF-03, RF-EXP-01, ADR-021 | `[ ]` | - |
-| TASK-REF-43 | Tornar `IMPORTAR_PERFIL` determinístico e normalizar antes do dispatch | Standard | Importante | Normal | M/M | TASK-RF-7.1 | ADR-010 | `[ ]` | 06/06/26 14:42 |
-
-> TASK-RF-7.1: cada arquivo representa uma `PresetEntry`; a importação cria novo UUID e resolve colisões de sufixo sem sobrescrever silenciosamente outra predefinição.
 
 ### Analytics, PWA e Play Store (Fases 9 e 13)
 
