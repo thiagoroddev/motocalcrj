@@ -30,7 +30,8 @@ export default defineConfig({
             manifest: {
               name: 'MotoCalcRJ',
               short_name: 'MotoCalcRJ',
-              description: 'Estimativa de custos de manutenção de motos no Rio de Janeiro',
+              description:
+                'Custo operacional real da sua moto no RJ: combustível, manutenção, revisões e documentos.',
               lang: 'pt-BR',
               start_url: '/',
               scope: '/',

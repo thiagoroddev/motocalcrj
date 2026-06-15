@@ -52,6 +52,6 @@ fallback de rotas SPA). Service worker e manifest do PWA são gerados no build.
 | Convenções de código | `docs/arquitetura/convencoes.md` |
 | Design e tokens | `docs/design/tema-tailwind.md` |
 | ADRs(decisões) | `docs/arquitetura/ADR/` |
-| Tarefas e backlog | `docs/tarefas/` | (189 tarefas com todas decisões documentadas)
+| Tarefas e backlog | `docs/tarefas/` | (189 tarefas com todas decisões ratreadas)
 | Glossário do domínio | `docs/dominio/_glossario.md` |
 | Dados de pesquisa | `docs/dominio/informacoes-modelos-motos/` |
