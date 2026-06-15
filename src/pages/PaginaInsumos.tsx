@@ -7,6 +7,7 @@ import { Fuel, Cog } from 'lucide-react';
 import { CardCombustivel } from '@/components/custos-pecas/CardCombustivel';
 import { CardItemPreco } from '@/components/custos-pecas/CardItemPreco';
 import { TituloSecao } from '@/components/TituloSecao';
+import { AvisoFonte } from '@/components/AvisoFonte';
 import { resolverServicoPorPeca, ehPecaCobertaPorServicoCompleto } from '../utils/calculos';
 import { resolverServicosManutencaoPerfil } from '../utils/servicosManutencaoPreset';
 import type { TipoCombustivel, ConfiguracaoCombustivel } from '../types/perfil';
@@ -78,6 +79,9 @@ export function PaginaInsumos() {
     <div className="overflow-y-auto h-full px-4 pb-4 pt-2 space-y-6">
       <section className="space-y-2">
         <TituloSecao icone={Fuel}>Combustível</TituloSecao>
+        <AvisoFonte>
+          Preço de referência da ANP (levantamento do governo para o RJ); pode estar desatualizado.
+        </AvisoFonte>
         {tiposCombustivel.map((tipo) => (
           <CardCombustivel
             key={tipo}
@@ -93,6 +97,7 @@ export function PaginaInsumos() {
       {preset ? (
         <section className="space-y-2">
           <TituloSecao icone={Cog}>Peças e Pneus</TituloSecao>
+          <AvisoFonte>Preços obtidos de marketplaces; podem estar desatualizados.</AvisoFonte>
           <div data-testid="lista-insumos-pecas" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {itensPecas.map((item) => (
               <CardItemPreco

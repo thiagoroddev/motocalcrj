@@ -12,7 +12,8 @@ import {
   converterAnualParaPeriodo,
 } from '../utils/calculos';
 import type { FiltrosCategorias } from '../types/calculos';
-import type { CategoriaDisplay } from '../types/perfil';
+import type { CategoriaDisplay, TipoCombustivel } from '../types/perfil';
+import { AvisoFonte } from '../components/AvisoFonte';
 import { moeda, cpkFormatado } from '../utils/formatters';
 import {
   formatarKm,
@@ -40,6 +41,12 @@ type ChaveFiltroCategoria = keyof Omit<
   FiltrosCategorias,
   'manutencaoPorPeca' | 'revisaoPorServico' | 'imprevistosSugeridos'
 >;
+
+const LABEL_COMBUSTIVEL: Record<TipoCombustivel, string> = {
+  comum: 'Gasolina comum',
+  aditivada: 'Gasolina aditivada',
+  etanol: 'Etanol',
+};
 
 const FILTRO_PARA_CATEGORIA: Partial<Record<ChaveFiltroCategoria, keyof CategoriaDisplay>> = {
   documentos: 'documentacao',
@@ -214,6 +221,9 @@ export function PaginaDetalhamento() {
             valor={cvt(custos.documentos.detalhes.licenciamento)}
           />
           <LinhaDetalheTexto label="Base anual" valor={moeda(custos.documentos.total)} />
+          <AvisoFonte className="px-1 pt-1">
+            IPVA (SEFAZ-RJ) e licenciamento (DETRAN-RJ); valores anuais, podem estar desatualizados.
+          </AvisoFonte>
           <NotaRodape>Custo legal anual rateado pelo período selecionado.</NotaRodape>
         </CategoriaAccordion>
 
@@ -261,6 +271,10 @@ export function PaginaDetalhamento() {
           onToggleAtivo={() => toggleFiltro('combustivel')}
           onToggleExpandido={() => toggleAcordeao('combustivel')}
         >
+          <LinhaDetalheTexto
+            label="Tipo de combustível"
+            valor={LABEL_COMBUSTIVEL[perfil.financeiro.tipoGasolinaPreferida]}
+          />
           <LinhaDetalhe
             label="Custo por km"
             valor={custos.combustivel.detalhes.cpk}

@@ -4,6 +4,7 @@ import { Store, TriangleAlert } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { TituloSecao } from '@/components/TituloSecao';
 import { AjudaInline } from '@/components/AjudaInline';
+import { AvisoFonte } from '@/components/AvisoFonte';
 import { LinhaRevisaoConcessionaria } from '@/components/mao-de-obra/LinhaRevisaoConcessionaria';
 import { ListaServicos, BotaoRestaurarTudo } from '@/components/mao-de-obra/ListaServicos';
 import { SecaoServicosExtras } from '@/components/mao-de-obra/SecaoServicosExtras';
@@ -140,6 +141,10 @@ export function PaginaMaoDeObra() {
             ) : (
               <div className="space-y-2">
                 <TituloSecao icone={Store}>Mão de Obra - Concessionária</TituloSecao>
+                <AvisoFonte>
+                  Valores obtidos dos sites oficiais das concessionárias; podem estar
+                  desatualizados.
+                </AvisoFonte>
                 {preset.revisaoAutorizada.map((revisao, idx) => {
                   const override = perfil.revisaoAutorizadaOverrides.find((o) => o.index === idx);
                   const ehDestacado = indiceDestacado === idx;

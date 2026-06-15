@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../components/ui/select';
+import { AvisoFonte } from '../../../components/AvisoFonte';
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -117,6 +118,9 @@ export function Passo3() {
             Valor FIPE indisponível para {ano}. O IPVA será calculado quando disponível.
           </p>
         )}
+        <AvisoFonte>
+          Valor FIPE de referência e alíquota de IPVA (SEFAZ-RJ); podem estar desatualizados.
+        </AvisoFonte>
       </div>
     </PassoLayout>
   );
