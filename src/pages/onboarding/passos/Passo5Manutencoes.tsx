@@ -61,11 +61,7 @@ export function Passo5Manutencoes() {
         </section>
 
         <SecaoUltimasManutencoes moto={perfil.moto} dispatch={dispatch} />
-        <CardBateria
-          bateria={perfil.perfilManutencao.bateria}
-          anoMoto={perfil.moto.ano}
-          dispatch={dispatch}
-        />
+        <CardBateria bateria={perfil.perfilManutencao.bateria} dispatch={dispatch} />
       </div>
     </PassoLayout>
   );

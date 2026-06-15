@@ -19,9 +19,10 @@ Colunas padrão das tabelas: `ID | Título | Modo | Valor | Urgência | Esforço
 > **Épico Honda fase 2 concluído:** TASK-DOM-5 (docs) + BG-034/035/036 (UI/lógica) + **TASK-DOM-6** (6 presets:
 > cg160start/fan/titan, bros160, xre190, cb250f) **concluídas**.
 
-> **Épico TASK-RF-8 (bateria por tempo) CONCLUÍDO** (XG dividido em 5): **RF-8.1** (motor) + **RF-8.2**
-> (presets + card KM) + **RF-8.3** (`CardBateria`) + **RF-8.4** (Serviços Extras) + **RF-8.5** (Detalhamento
-> em anos + onboarding passo 9). Addendum ADR-016.
+> **Épico TASK-RF-8 (bateria por tempo) CONCLUÍDO.** Bateria = config `vidaUtilAnos` (2/3/4/5, default 3),
+> **sempre amortizada** (valor ÷ anos); completo Honda / incompleto Yamaha nos presets + Mão de Obra; popup
+> em anos. A ancoragem por data foi tentada (**RF-8.6**) e **revertida** (**RF-8.7**) — confundia em uso.
+> Partes: RF-8.1 (motor) · 8.2 (presets) · 8.3 (CardBateria) · 8.4 (Serviços Extras) · 8.5 (Detalhamento/onboarding) · 8.6/8.7 (data: tentada e revertida). Addendum ADR-016.
 
 ### Export/Import e Alertas (Fase 11)
 

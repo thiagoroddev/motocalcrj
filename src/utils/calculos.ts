@@ -338,32 +338,6 @@ export function ehPecaCobertaPorServicoCompleto(
   );
 }
 
-/**
- * Próxima troca da bateria e atraso (meses), a partir da data da última troca
- * ("AAAA-MM") e da vida útil em anos (TASK-RF-8). Sem data → janeiro do ano da
- * moto (idade estimada). Apenas para exibição no Detalhamento — NÃO altera o
- * custo, que é amortizado (valor ÷ vida útil em anos).
- */
-export function proximaTrocaBateria(
-  ultimaTrocaAnoMes: string | null,
-  vidaUtilAnos: number,
-  anoMoto: number,
-  agora: Date = new Date(),
-): { proximaAnoMes: string; atrasoMeses: number } {
-  const [anoStr, mesStr] = (ultimaTrocaAnoMes ?? `${anoMoto}-01`).split('-');
-  const ano = Number.parseInt(anoStr, 10);
-  const mes = Number.parseInt(mesStr ?? '', 10);
-  const anoBase = Number.isFinite(ano) ? ano : anoMoto;
-  const mesBase = Number.isFinite(mes) && mes >= 1 && mes <= 12 ? mes : 1;
-  const vida = Math.max(1, Math.round(vidaUtilAnos));
-  const idxProxima = (anoBase + vida) * 12 + (mesBase - 1); // índice de mês (mês 0-based)
-  const proximaAno = Math.floor(idxProxima / 12);
-  const proximaMes = (idxProxima % 12) + 1;
-  const proximaAnoMes = `${proximaAno}-${String(proximaMes).padStart(2, '0')}`;
-  const idxAgora = agora.getFullYear() * 12 + agora.getMonth();
-  return { proximaAnoMes, atrasoMeses: Math.max(0, idxAgora - idxProxima) };
-}
-
 export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca> {
   const {
     preset,
@@ -424,7 +398,8 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
       // não do km. Sem `proximaTrocaKm` previsível em km.
       proximaTrocaKm = 0;
       // Bateria (TASK-RF-8): amortiza pela vida útil em ANOS da config do usuário,
-      // não pelo `intervaloMeses` do preset (que deixou de governar a bateria).
+      // não pelo `intervaloMeses` do preset. Sempre amortizada (RF-8.7: ancoragem
+      // por data revertida — confundia mais que ajudava).
       const vidaBateriaAnos = vidaUtilBateriaAnos > 0 ? vidaUtilBateriaAnos : 3;
       trocasNoAno = id === 'bateria' ? 1 / vidaBateriaAnos : 12 / intervaloMeses;
       modo = 'amortizado';

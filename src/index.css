@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Ícone do seletor de mês/data visível e clicável no tema escuro (TASK-RF-8.6):
+   o indicador nativo é escuro e some no fundo escuro. */
+input[type='month']::-webkit-calendar-picker-indicator,
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.85);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
 @theme inline {
   /* ── Cores - referenciam variáveis CSS para suporte a temas dinâmicos ── */
   --color-background: var(--background);
