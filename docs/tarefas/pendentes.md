@@ -19,17 +19,7 @@ Colunas padrão das tabelas: `ID | Título | Modo | Valor | Urgência | Esforço
 > **Épico Honda fase 2 concluído:** TASK-DOM-5 (docs) + BG-034/035/036 (UI/lógica) + **TASK-DOM-6** (6 presets:
 > cg160start/fan/titan, bros160, xre190, cb250f) **concluídas**.
 
-### Cálculo e UX (avulsos)
-
-| ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
-| --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
-| TASK-RF-8 | Bateria: valor completo na Mão de Obra + ancoragem por data (card próprio) e vida útil em meses | Standard | Importante | Normal | G/G | - | ADR-014 (completo×incompleto); ADR-016 (ancoragem) | `[ ]` | 14/06/26 21:50 |
-
-> **TASK-RF-8 (bateria), partes:**
-> 1. **Valor completo não aparece em Mão de Obra:** quase todos os Honda têm valor **completo** (peça + M.O.) para a troca de bateria, mas o serviço **não aparece** na tela "Mão de Obra" em nenhum modelo (Honda ou Yamaha). Deve aparecer; e, quando completo, a **peça da bateria não deve aparecer em Insumos nem entrar no cálculo** (hoje sempre entra amortizada como peça — regra BG-034 não está sendo aplicada à bateria).
-> 2. **Ancoragem por data:** a bateria aparece em "Ajustes › KM - últimas trocas", mas preenchê-la **não a ancora** (o app sempre pega a vida em meses ÷ 12 = período). **Remover a bateria do card de KM** e criar **card próprio** que registra a **data da última troca** + **vida útil**.
-> 3. **Vida útil em meses:** card próprio também na tela **Mão de Obra**, com seletor de meses **de 6 em 6** (padrão **24**); no cálculo, esse valor é **÷ 12** para amortizar.
-> Componente de bug embutido (BG-034 não aplicada à bateria) + nova mecânica (data/meses). Manter consistência entre Honda e Yamaha. Coordenar com a DOM-6 (modelagem da bateria nos presets).
+> **TASK-RF-8** (bateria) está **em `em-andamento.md`** (planejamento aguardando aprovação).
 
 ### Export/Import e Alertas (Fase 11)
 

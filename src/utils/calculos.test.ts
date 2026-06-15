@@ -1986,20 +1986,36 @@ describe('TASK-RF-6.14 - bateria com driver temporal', () => {
     ],
   };
 
-  it('bateria com intervaloMeses=24 deriva trocasNoAno do tempo (0,5/ano)', () => {
+  it('bateria amortiza pela vida útil em ANOS da config (TASK-RF-8), não pelo intervaloMeses do preset', () => {
     const resultado = calcularCpkPorPeca({
       preset: presetComBateria,
       perfilPecas: 'paralela',
       modoRevisao: 'independentes',
       kmAtual: 0,
       kmAnual: 30000,
+      vidaUtilBateriaAnos: 3,
     });
     const bateria = resultado.get('bateria')!;
-    expect(bateria.trocasNoAno).toBeCloseTo(0.5, 5);
-    expect(bateria.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
-    expect(bateria.cpk).toBeCloseTo((163.2 * 0.5) / 30000, 6);
+    // 3 anos → 1/3 troca/ano (ignora o intervaloMeses=24 do preset).
+    expect(bateria.trocasNoAno).toBeCloseTo(1 / 3, 5);
+    expect(bateria.custoAnual).toBeCloseTo(163.2 / 3, 2);
+    expect(bateria.cpk).toBeCloseTo(163.2 / 3 / 30000, 6);
     expect(bateria.modo).toBe('amortizado');
-    expect(bateria.intervaloMeses).toBe(24);
+  });
+
+  it('vida útil configurável da bateria muda a amortização (2/4/5 anos)', () => {
+    const trocas = (anos: 2 | 3 | 4 | 5) =>
+      calcularCpkPorPeca({
+        preset: presetComBateria,
+        perfilPecas: 'paralela',
+        modoRevisao: 'independentes',
+        kmAtual: 0,
+        kmAnual: 30000,
+        vidaUtilBateriaAnos: anos,
+      }).get('bateria')!.trocasNoAno;
+    expect(trocas(2)).toBeCloseTo(0.5, 5);
+    expect(trocas(4)).toBeCloseTo(0.25, 5);
+    expect(trocas(5)).toBeCloseTo(0.2, 5);
   });
 
   it('bateria com kmAnual=0 ainda gera custoAnual e cpk=0 (sem divisão por zero)', () => {
@@ -2011,7 +2027,7 @@ describe('TASK-RF-6.14 - bateria com driver temporal', () => {
       kmAnual: 0,
     });
     const bateria = resultado.get('bateria')!;
-    expect(bateria.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
+    expect(bateria.custoAnual).toBeCloseTo(163.2 / 3, 2); // default 3 anos (TASK-RF-8)
     expect(bateria.cpk).toBe(0);
   });
 });
@@ -2221,8 +2237,10 @@ describe('TASK-RF-6.13 - peças novas usam kmUltimaTrocas como âncora', () => {
     });
 
     const bateria = resultado.get('bateria');
-    expect(bateria?.trocasNoAno).toBeCloseTo(0.5, 5);
-    expect(bateria?.custoAnual).toBeCloseTo(163.2 * 0.5, 2);
+    // TASK-RF-8: amortiza por vida útil em anos (default 3), não por km/intervaloMeses;
+    // continua temporal (sem proximaTrocaKm) mesmo com km informado.
+    expect(bateria?.trocasNoAno).toBeCloseTo(1 / 3, 5);
+    expect(bateria?.custoAnual).toBeCloseTo(163.2 / 3, 2);
     expect(bateria?.proximaTrocaKm).toBe(0);
   });
 });

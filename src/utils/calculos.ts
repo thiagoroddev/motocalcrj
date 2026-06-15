@@ -9,6 +9,7 @@ import type {
   ServicoIndependente,
   KmUltimaTrocas,
   FiltrosManutencaoDisplay,
+  BateriaConfig,
 } from '../types/perfil';
 import type {
   PresetMoto,
@@ -307,6 +308,9 @@ export interface OpcoesCpkPorPeca {
   kmUltimaTrocas?: KmUltimaTrocas;
   pecasOverrides?: PecaOverride[];
   servicosIndependentes?: ServicoIndependente[];
+  // Vida útil da bateria em anos (TASK-RF-8). A peça da bateria amortiza por este
+  // valor (config do usuário), não pelo `intervaloMeses` do preset. Default 3.
+  vidaUtilBateriaAnos?: number;
 }
 
 /**
@@ -333,6 +337,32 @@ export function ehPecaCobertaPorServicoCompleto(
   );
 }
 
+/**
+ * Próxima troca da bateria e atraso (meses), a partir da data da última troca
+ * ("AAAA-MM") e da vida útil em anos (TASK-RF-8). Sem data → janeiro do ano da
+ * moto (idade estimada). Apenas para exibição no Detalhamento — NÃO altera o
+ * custo, que é amortizado (valor ÷ vida útil em anos).
+ */
+export function proximaTrocaBateria(
+  ultimaTrocaAnoMes: string | null,
+  vidaUtilAnos: number,
+  anoMoto: number,
+  agora: Date = new Date(),
+): { proximaAnoMes: string; atrasoMeses: number } {
+  const [anoStr, mesStr] = (ultimaTrocaAnoMes ?? `${anoMoto}-01`).split('-');
+  const ano = Number.parseInt(anoStr, 10);
+  const mes = Number.parseInt(mesStr ?? '', 10);
+  const anoBase = Number.isFinite(ano) ? ano : anoMoto;
+  const mesBase = Number.isFinite(mes) && mes >= 1 && mes <= 12 ? mes : 1;
+  const vida = Math.max(1, Math.round(vidaUtilAnos));
+  const idxProxima = (anoBase + vida) * 12 + (mesBase - 1); // índice de mês (mês 0-based)
+  const proximaAno = Math.floor(idxProxima / 12);
+  const proximaMes = (idxProxima % 12) + 1;
+  const proximaAnoMes = `${proximaAno}-${String(proximaMes).padStart(2, '0')}`;
+  const idxAgora = agora.getFullYear() * 12 + agora.getMonth();
+  return { proximaAnoMes, atrasoMeses: Math.max(0, idxAgora - idxProxima) };
+}
+
 export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoPeca> {
   const {
     preset,
@@ -343,6 +373,7 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
     kmUltimaTrocas = KM_ULTIMA_TROCAS_VAZIO,
     pecasOverrides = [],
     servicosIndependentes = [],
+    vidaUtilBateriaAnos = 3,
   } = opcoes;
 
   const resultado = new Map<string, CustoPeca>();
@@ -391,7 +422,10 @@ export function calcularCpkPorPeca(opcoes: OpcoesCpkPorPeca): Map<string, CustoP
       // Peça com driver temporal (ex.: bateria): trocas/ano derivam do tempo,
       // não do km. Sem `proximaTrocaKm` previsível em km.
       proximaTrocaKm = 0;
-      trocasNoAno = 12 / intervaloMeses;
+      // Bateria (TASK-RF-8): amortiza pela vida útil em ANOS da config do usuário,
+      // não pelo `intervaloMeses` do preset (que deixou de governar a bateria).
+      const vidaBateriaAnos = vidaUtilBateriaAnos > 0 ? vidaUtilBateriaAnos : 3;
+      trocasNoAno = id === 'bateria' ? 1 / vidaBateriaAnos : 12 / intervaloMeses;
       modo = 'amortizado';
     } else {
       // km da última troca informado pelo usuário (0 = não informado → ciclo amortizado)
@@ -503,6 +537,9 @@ export function calcularDetalhesRevisaoAnual(
     fatorMaoDeObra?: number;
     incluirEstimativaMaoDeObra?: boolean;
     estimativaMaoDeObraPorServico?: Record<string, boolean>;
+    // Bateria por tempo (TASK-RF-8): M.O./valor completo amortizado por vida útil
+    // em anos (config do usuário). Sem isto, a M.O. da bateria fica de fora.
+    bateria?: BateriaConfig;
   } = {},
 ): CustosPorCategoria['revisao'] {
   const servicos = opcoes.servicosIndependentes ?? [];
@@ -598,6 +635,44 @@ export function calcularDetalhesRevisaoAnual(
       ...servicosInformados.map((s) => montarCustoServico(s, s.precoTotalAutorizada, false)),
       ...servicosEstimados.map((s) => montarCustoServico(s, moEstimada(s), true)),
     ]);
+
+    // Bateria (TASK-RF-8): driver temporal, fora do fluxo km. Custo = valor ÷ vida
+    // útil em anos. Completo (Honda) usa o valor completo — a peça já é pulada do CPK
+    // por `ehPecaCobertaPorServicoCompleto`; incompleto usa só a M.O. (real/estimada) e
+    // a peça soma à parte via `calcularCpkPorPeca`. Vira item fundido no Detalhamento.
+    const servicoBateria = servicosNormaisAtivos.find((s) => s.id === 'troca-bateria');
+    if (opcoes.bateria && servicoBateria) {
+      const vidaAnos = opcoes.bateria.vidaUtilAnos > 0 ? opcoes.bateria.vidaUtilAnos : 3;
+      const estimado = !temPrecoAutorizadaInformado(servicoBateria);
+      const valorBateria = estimado
+        ? moEstimada(servicoBateria)
+        : valorNaoNegativo(servicoBateria.precoTotalAutorizada);
+      if (valorBateria > 0) {
+        detalhesServicos.set('troca-bateria', {
+          servicoId: 'troca-bateria',
+          label: servicoBateria.nome,
+          custoAnual: valorBateria / vidaAnos,
+          intervalKm: 0,
+          precoMaoDeObra: valorBateria,
+          precoServico: valorBateria,
+          statusPrecoAutorizada: resolverStatusPrecoAutorizada(servicoBateria),
+          maoDeObraEstimada: estimado,
+          eventosNoAno: 1 / vidaAnos,
+          ehExcepcional: false,
+          modo: 'amortizado',
+          kmUltimaTroca: 0,
+          kmDasProximasTrocas: [],
+        });
+      } else if (resolverStatusPrecoAutorizada(servicoBateria) === 'nao_informado') {
+        pendenciasMaoDeObra.push({
+          servicoId: 'troca-bateria',
+          label: servicoBateria.nome,
+          intervalKm: 0,
+          statusPrecoAutorizada: 'nao_informado',
+        });
+      }
+    }
+
     const totalServicosForaDoPacote = [...detalhesServicos.values()].reduce(
       (sum, s) => sum + s.custoAnual,
       0,
@@ -625,12 +700,18 @@ export function calcularDetalhesRevisaoAnual(
   // ficam fora do cálculo de revisão - o custo da peça já entra via
   // `calcularCpkPorPeca` no caminho de manutenção. M.O. dessas trocas
   // (~R$ 25/ano para bateria) é débito técnico assumido pela TASK-RF-6.14.
-  const base = servicosNormaisAtivos
+  let base = servicosNormaisAtivos
     .filter((s) => s.intervalKm > 0)
     .reduce(
       (sum, s) => sum + (valorNaoNegativo(s.precoIndependente) / s.intervalKm) * kmAnualSeguro,
       0,
     );
+  // Bateria (TASK-RF-8): temporal, fora do fluxo km. M.O. independente ÷ vida útil (anos).
+  const servicoBateriaIndep = servicosNormaisAtivos.find((s) => s.id === 'troca-bateria');
+  if (opcoes.bateria && servicoBateriaIndep) {
+    const vidaAnos = opcoes.bateria.vidaUtilAnos > 0 ? opcoes.bateria.vidaUtilAnos : 3;
+    base += valorNaoNegativo(servicoBateriaIndep.precoIndependente) / vidaAnos;
+  }
   return {
     total: base,
     detalhes: {
@@ -799,6 +880,7 @@ export function calcularCustosPorCategoria(
     fatorMaoDeObra: preset.fatorMaoDeObra,
     incluirEstimativaMaoDeObra: perfil.perfilManutencao.incluirEstimativaMaoDeObra,
     estimativaMaoDeObraPorServico: perfil.perfilManutencao.estimativaMaoDeObraPorServico,
+    bateria: perfil.perfilManutencao.bateria,
   });
 
   // Manutenção por peça
@@ -809,6 +891,7 @@ export function calcularCustosPorCategoria(
     kmAtual: perfil.moto.kmAtual,
     kmAnual,
     kmUltimaTrocas: perfil.moto.kmUltimaTrocas,
+    vidaUtilBateriaAnos: perfil.perfilManutencao.bateria.vidaUtilAnos,
     pecasOverrides: perfil.pecasOverrides,
     servicosIndependentes: servicosManutencao,
   });

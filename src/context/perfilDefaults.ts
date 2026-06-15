@@ -231,6 +231,8 @@ export const perfilPadrao: PerfilUsuario = {
     perfilPecasGlobal: 'original',
     modoRevisao: 'autorizadas',
     incluirEstimativaMaoDeObra: false,
+    // Bateria por tempo (TASK-RF-8): default 3 anos (= os 13/14 presets a 36 meses).
+    bateria: { ultimaTrocaAnoMes: null, vidaUtilAnos: 3 },
   },
 
   trabalho: {

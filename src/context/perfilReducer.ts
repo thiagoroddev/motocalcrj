@@ -519,6 +519,24 @@ export function perfilReducer(state: EstadoApp, action: PerfilAction): EstadoApp
         },
       });
 
+    case 'SET_BATERIA_ULTIMA_TROCA':
+      return comPerfil({
+        ...state.perfil,
+        perfilManutencao: {
+          ...state.perfil.perfilManutencao,
+          bateria: { ...state.perfil.perfilManutencao.bateria, ultimaTrocaAnoMes: action.anoMes },
+        },
+      });
+
+    case 'SET_BATERIA_VIDA_UTIL':
+      return comPerfil({
+        ...state.perfil,
+        perfilManutencao: {
+          ...state.perfil.perfilManutencao,
+          bateria: { ...state.perfil.perfilManutencao.bateria, vidaUtilAnos: action.anos },
+        },
+      });
+
     case 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO': {
       const atual = state.perfil.perfilManutencao.estimativaMaoDeObraPorServico ?? {};
       return comPerfil({

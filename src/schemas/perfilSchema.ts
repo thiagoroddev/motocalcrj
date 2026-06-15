@@ -156,6 +156,15 @@ const kmUltimaTrocas = z.object({
   retificaCompleta: inteiroNaoNegativo,
 });
 
+// Bateria por tempo (TASK-RF-8). vidaUtilAnos ∈ {2,3,4,5}; data "AAAA-MM" | null.
+const bateriaConfig = z.object({
+  ultimaTrocaAnoMes: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/)
+    .nullable(),
+  vidaUtilAnos: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+});
+
 // Perfil principal
 export const perfilSchema = z
   .object({
@@ -180,6 +189,8 @@ export const perfilSchema = z
       modoRevisao,
       incluirEstimativaMaoDeObra: z.boolean().optional(),
       estimativaMaoDeObraPorServico: z.record(z.string(), z.boolean()).optional(),
+      // Campo novo (TASK-RF-8): default preenche perfis anteriores sem bump de versão.
+      bateria: bateriaConfig.default({ ultimaTrocaAnoMes: null, vidaUtilAnos: 3 }),
     }),
 
     trabalho: z.object({

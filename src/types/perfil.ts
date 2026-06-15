@@ -138,6 +138,20 @@ export interface KmUltimaTrocas {
 }
 
 // ──────────────────────────────────────────────
+// Bateria — driver temporal (TASK-RF-8). Vida útil em ANOS (exibida em anos: 36
+// meses confunde). A data da última troca (AAAA-MM) serve só para idade/próxima
+// troca/atraso no Detalhamento — NÃO altera o custo, que é amortizado:
+// custo anual = valor da troca ÷ vidaUtilAnos.
+// ──────────────────────────────────────────────
+export type VidaUtilBateriaAnos = 2 | 3 | 4 | 5;
+
+export interface BateriaConfig {
+  // "AAAA-MM" da última troca; null = assume janeiro do ano da moto (idade estimada).
+  ultimaTrocaAnoMes: string | null;
+  vidaUtilAnos: VidaUtilBateriaAnos;
+}
+
+// ──────────────────────────────────────────────
 // Perfil principal
 // ──────────────────────────────────────────────
 
@@ -168,6 +182,9 @@ export interface PerfilUsuario {
     // Estimativa por serviço (ADR-014, A): liga a estimativa só para serviços
     // específicos sem valor real. Efetivo = global OU este. Ausente = vazio.
     estimativaMaoDeObraPorServico?: Record<string, boolean>;
+    // Bateria por tempo (TASK-RF-8). Campo novo com default no schema → perfis
+    // anteriores carregam sem bump de versão (mesmo padrão das RF-6.37/6.39).
+    bateria: BateriaConfig;
   };
 
   trabalho: {
@@ -299,6 +316,8 @@ export type PerfilAction =
   | { type: 'SET_MODO_REVISAO'; modo: ModoRevisao }
   | { type: 'SET_INCLUIR_ESTIMATIVA_MAO_DE_OBRA'; valor: boolean }
   | { type: 'TOGGLE_ESTIMATIVA_MAO_DE_OBRA_SERVICO'; id: string }
+  | { type: 'SET_BATERIA_ULTIMA_TROCA'; anoMes: string | null }
+  | { type: 'SET_BATERIA_VIDA_UTIL'; anos: VidaUtilBateriaAnos }
   | { type: 'SET_SITUACAO_MOTO'; situacao: SituacaoMoto }
   | { type: 'SET_PARCELA'; parcelaMensal: number | null; parcelasRestantes: number | null }
   | {
