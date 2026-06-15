@@ -91,6 +91,15 @@ describe('SecaoManutencao', () => {
     expect(screen.getByText(/Próximas revisões/)).toBeInTheDocument();
   });
 
+  it('exibe a legenda dos símbolos de mão de obra', () => {
+    render(<SecaoManutencao {...criarProps()} />);
+
+    expect(screen.getByText(/falta a mão de obra da concessionária/)).toBeInTheDocument();
+    expect(screen.getByText(/mão de obra estimada/)).toBeInTheDocument();
+    expect(screen.getByText(/mão de obra informada por você/)).toBeInTheDocument();
+    expect(screen.getByText('Edit')).toBeInTheDocument();
+  });
+
   it('mostra o aviso de custo parcial quando há pendência de mão de obra', () => {
     render(
       <SecaoManutencao

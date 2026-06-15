@@ -62,7 +62,7 @@ function MarcadorStatus({ status }: { status: StatusItemManutencao }) {
   if (status === 'faltando') {
     return (
       <span
-        className="ml-1 font-semibold text-warning"
+        className="font-semibold text-yellow-500"
         title="Falta o valor de mão de obra da concessionária"
       >
         !
@@ -71,7 +71,7 @@ function MarcadorStatus({ status }: { status: StatusItemManutencao }) {
   }
   if (status === 'estimado') {
     return (
-      <span className="ml-1 text-warning/80" title="Mão de obra estimada (~)">
+      <span className="text-warning/80" title="Mão de obra estimada (~)">
         ~
       </span>
     );
@@ -181,6 +181,8 @@ export function SecaoManutencao({
         </span>
         <span className="flex-1 min-w-0 text-muted-foreground/70 text-xs truncate">
           {item.label}
+        </span>
+        <span className="shrink-0">
           <MarcadorStatus status={item.status} />
         </span>
         {item.status === 'editado' && (
@@ -188,7 +190,7 @@ export function SecaoManutencao({
             className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full shrink-0"
             title="Mão de obra informada por você"
           >
-            M.O.
+            Edit
           </span>
         )}
         {item.pecaEditada && (
@@ -308,6 +310,21 @@ export function SecaoManutencao({
           </div>
           {renderizarGrupoItens('Ancorados', 'ancorado', itensAncorados)}
           {renderizarGrupoItens('Amortizados', 'amortizado', itensAmortizados)}
+          <div className="flex flex-wrap gap-x-3 gap-y-1 px-1 pt-1 text-[10px] text-muted-foreground/50">
+            <span>
+              <span className="font-semibold text-yellow-500">!</span> falta a mão de obra da
+              concessionária
+            </span>
+            <span>
+              <span className="text-warning/80">~</span> mão de obra estimada
+            </span>
+            <span>
+              <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[9px] text-primary">
+                Edit
+              </span>{' '}
+              mão de obra informada por você
+            </span>
+          </div>
         </div>
       </CategoriaAccordion>
 
