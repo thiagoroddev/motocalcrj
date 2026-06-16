@@ -1,7 +1,10 @@
+# Atividade Extensionista - Trabalho Final - RU: 4647621
+
 # MotoCalcRJ
 
-Aplicação web para motoboys do Rio de Janeiro calcularem o custo operacional real de suas motos.
-Cobre modelos populares de Honda e Yamaha (ex.: Pop 110i, Factor 125i, Lander 250).
+Aplicação web PWA que permite acesso offline após primeiro acesso (instalando no dispositivo móvel via browser), destinada aos motoboys e entregadores do Rio de Janeiro. Uma espécia de calculadora que facilita a estimativa aproximada por média, dos diversos custos de se ter uma motocicleta para trabalho em diferentes períodos de tempo, incluindo por quilômetro rodado, sendo altamente editável e adaptável à realidade de cada um.
+
+Cobre modelos populares de Honda e Yamaha (ex.: Pop 110i, Factor 125i, Lander 250), possuindo no momento 14 modelos disponíveis (de 110cc a 250cc).
 
 ## O Que Faz
 
@@ -44,17 +47,17 @@ fallback de rotas SPA). Service worker e manifest do PWA são gerados no build.
 ## Fontes de Dados
 
 Os valores são **referências coletadas de fontes públicas** e podem estar desatualizados (o app
-exibe um aviso de origem ao lado de cada dado). Nenhuma fonte é consultada em tempo de execução — os
+exibe um aviso de origem ao lado de cada dado). Nenhuma fonte é consultada em tempo de execução - os
 dados ficam embutidos nos presets/configuração e são atualizados manualmente.
 
 | Dado | Fonte |
 |---|---|
-| Valor do veículo (FIPE) | **API Parallelum FIPE** (`parallelum.com.br/fipe`) — coletada por script (`scripts/atualizar-fipe-presets.mjs`) e embutida nos presets |
-| Preço de combustível | **ANP** — Levantamento de Preços de Combustíveis (pesquisa semanal), município do Rio de Janeiro |
-| IPVA | **SEFAZ-RJ** — Lei nº 2877/97 e alterações (alíquota de motos) |
-| Licenciamento (CRLV) | **DETRAN-RJ** — valor anual do estado do RJ |
+| Valor do veículo (FIPE) | **API Parallelum FIPE** (`parallelum.com.br/fipe`) - coletada por script (`scripts/atualizar-fipe-presets.mjs`) e embutida nos presets |
+| Preço de combustível | **ANP** - Levantamento de Preços de Combustíveis (pesquisa semanal), município do Rio de Janeiro |
+| IPVA | **SEFAZ-RJ** - Lei nº 2877/97 e alterações (alíquota de motos) |
+| Licenciamento (CRLV) | **DETRAN-RJ** - valor anual do estado do RJ |
 | Revisões e mão de obra (concessionária) | **Sites oficiais das concessionárias** Honda e Yamaha |
-| Preços de peças e pneus | **Marketplaces** — principalmente **Mercado Livre** e **Shopee**; lojas de peças genuínas/OEM (**Tração Motos Yamaha**, **Paulinho Motos**) |
+| Preços de peças e pneus | **Marketplaces** - principalmente **Mercado Livre** e **Shopee**; lojas de peças genuínas/OEM (**Tração Motos Yamaha**, **Paulinho Motos**) |
 
 Os links e capturas de cada coleta ficam versionados em `outros/` e
 `docs/dominio/informacoes-modelos-motos/` (por modelo).
@@ -70,6 +73,8 @@ Os links e capturas de cada coleta ficam versionados em `outros/` e
 | Convenções de código | `docs/arquitetura/convencoes.md` |
 | Design e tokens | `docs/design/tema-tailwind.md` |
 | ADRs(decisões) | `docs/arquitetura/ADR/` |
-| Tarefas e backlog | `docs/tarefas/` | (189 tarefas com todas decisões ratreadas)
+| Tarefas e backlog | `docs/tarefas/` | 
 | Glossário do domínio | `docs/dominio/_glossario.md` |
 | Dados de pesquisa | `docs/dominio/informacoes-modelos-motos/` |
+
+Há mais de 190 tarefas documentadas em arquivos únicos e registradas num índice cronológico datado, onde todas decisões tomadas por mim em cada uma delas estão anotadas e rastreadas entre tarefas e ADRs, tornando todo o raciocínio de desenvolvimento disponível, claro e útil para estudo.

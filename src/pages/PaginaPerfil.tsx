@@ -365,8 +365,10 @@ export function PaginaPerfil() {
           </DialogHeader>
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>
-              Desenvolvido por <strong className="text-foreground">Thiago Rodrigues</strong> como
-              trabalho final extensionista para motoboys do Rio de Janeiro.
+              Desenvolvido por{' '}
+              <strong className="text-foreground">Thiago Rodrigues (RU: 4647621) </strong> como
+              trabalho final de atividade extensionista, destinada aos motoboys e entregadores do
+              município do Rio de Janeiro - RJ.
             </p>
             <p>
               RU: <span className="font-medium text-foreground">4647621</span>
