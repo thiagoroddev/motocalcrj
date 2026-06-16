@@ -14,6 +14,7 @@ import {
 import type { FiltrosCategorias } from '../types/calculos';
 import type { CategoriaDisplay, TipoCombustivel } from '../types/perfil';
 import { AvisoFonte } from '../components/AvisoFonte';
+import { dadosRJ } from '../data/dadosRJ';
 import { moeda, cpkFormatado } from '../utils/formatters';
 import {
   formatarKm,
@@ -126,6 +127,9 @@ export function PaginaDetalhamento() {
       ? 'Inclui estimativas de mão de obra (~) onde a concessionária não informa o valor.'
       : undefined;
   const modoRevisaoLabel = 'Concessionária';
+  // Composição da GRT (licenciamento + emissão CRLV-e) do ano corrente, para
+  // exibir as partes separadas em Documentos. O cálculo usa o total (tabela[ano]).
+  const composicaoGrt = dadosRJ.licenciamento.composicaoGrt?.[String(new Date().getFullYear())];
   const precoCombustivel =
     perfil.financeiro.combustiveis[perfil.financeiro.tipoGasolinaPreferida].preco;
   const kmCombustivelNoPeriodo = cvt(custos.combustivel.detalhes.kmAnual);
@@ -216,10 +220,20 @@ export function PaginaDetalhamento() {
           onToggleExpandido={() => toggleAcordeao('documentos')}
         >
           <LinhaDetalhe label="IPVA" valor={cvt(custos.documentos.detalhes.ipva)} />
-          <LinhaDetalhe
-            label="Licenciamento"
-            valor={cvt(custos.documentos.detalhes.licenciamento)}
-          />
+          {composicaoGrt ? (
+            <>
+              <LinhaDetalhe
+                label="Licenciamento anual"
+                valor={cvt(composicaoGrt.licenciamentoAnual)}
+              />
+              <LinhaDetalhe label="Emissão CRLV-e" valor={cvt(composicaoGrt.emissaoCrlve)} />
+            </>
+          ) : (
+            <LinhaDetalhe
+              label="Licenciamento"
+              valor={cvt(custos.documentos.detalhes.licenciamento)}
+            />
+          )}
           <LinhaDetalheTexto label="Base anual" valor={moeda(custos.documentos.total)} />
           <AvisoFonte className="px-1 pt-1">
             IPVA (SEFAZ-RJ) e licenciamento (DETRAN-RJ); valores anuais, podem estar desatualizados.

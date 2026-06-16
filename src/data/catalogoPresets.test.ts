@@ -24,6 +24,7 @@ describe('catalogoModelos - presets', () => {
       },
       licenciamento: {
         tabela: dadosRJJson.licenciamento.tabela,
+        composicaoGrt: dadosRJJson.licenciamento.composicaoGrt,
       },
       autonomiaEtanolFatorReducao: dadosRJJson.autonomiaEtanolFatorReducao,
     });

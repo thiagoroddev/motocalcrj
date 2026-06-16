@@ -20,10 +20,16 @@
     "tabela": {
       "2024": 206,
       "2025": 206,
-      "2026": 206
+      "2026": 293.71
     },
-    "nota": "Valor fixo por ano. Atualizar em janeiro de cada ano consultando DETRAN-RJ.",
-    "fonte": "DETRAN-RJ 2026",
+    "composicaoGrt": {
+      "2026": {
+        "licenciamentoAnual": 209.78,
+        "emissaoCrlve": 83.93
+      }
+    },
+    "nota": "Taxa fixa por ano, igual para todos os veículos (não é consulta por veículo/RENAVAM). 2026 = GRT do DETRAN-RJ: licenciamento anual R$ 209,78 + emissão do CRLV-e R$ 83,93 = R$ 293,71. Atualizar em janeiro de cada ano. 2024/2025 são históricos e não usados (o cálculo lê o ano corrente).",
+    "fonte": "DETRAN-RJ - Guia de Regularização de Taxas (GRT) 2026",
     "incluiDpvat": false,
     "incluiTaxaEmplacamento": false
   },

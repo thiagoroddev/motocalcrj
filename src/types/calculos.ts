@@ -85,6 +85,7 @@ export interface DadosRJ {
   };
   licenciamento: {
     tabela: Record<string, number>;
+    composicaoGrt?: Record<string, { licenciamentoAnual: number; emissaoCrlve: number }>;
   };
   autonomiaEtanolFatorReducao: number;
 }

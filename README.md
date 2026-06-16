@@ -41,6 +41,24 @@ App client-only (sem backend): o `npm run build` gera a pasta `dist/`, que é se
 estático. Hospedado na Vercel (build automático a partir do repositório; `vercel.json` cuida do
 fallback de rotas SPA). Service worker e manifest do PWA são gerados no build.
 
+## Fontes de Dados
+
+Os valores são **referências coletadas de fontes públicas** e podem estar desatualizados (o app
+exibe um aviso de origem ao lado de cada dado). Nenhuma fonte é consultada em tempo de execução — os
+dados ficam embutidos nos presets/configuração e são atualizados manualmente.
+
+| Dado | Fonte |
+|---|---|
+| Valor do veículo (FIPE) | **API Parallelum FIPE** (`parallelum.com.br/fipe`) — coletada por script (`scripts/atualizar-fipe-presets.mjs`) e embutida nos presets |
+| Preço de combustível | **ANP** — Levantamento de Preços de Combustíveis (pesquisa semanal), município do Rio de Janeiro |
+| IPVA | **SEFAZ-RJ** — Lei nº 2877/97 e alterações (alíquota de motos) |
+| Licenciamento (CRLV) | **DETRAN-RJ** — valor anual do estado do RJ |
+| Revisões e mão de obra (concessionária) | **Sites oficiais das concessionárias** Honda e Yamaha |
+| Preços de peças e pneus | **Marketplaces** — principalmente **Mercado Livre** e **Shopee**; lojas de peças genuínas/OEM (**Tração Motos Yamaha**, **Paulinho Motos**) |
+
+Os links e capturas de cada coleta ficam versionados em `outros/` e
+`docs/dominio/informacoes-modelos-motos/` (por modelo).
+
 ## Documentação
 
 | Assunto | Arquivo |
