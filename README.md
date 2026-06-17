@@ -2,7 +2,7 @@
 
 # MotoCalcRJ
 
-Aplicação web PWA que permite acesso offline após primeiro acesso (instalando no dispositivo móvel via browser), destinada aos motoboys e entregadores do Rio de Janeiro. Uma espécia de calculadora que facilita a estimativa aproximada por média, dos diversos custos de se ter uma motocicleta para trabalho em diferentes períodos de tempo, incluindo por quilômetro rodado, sendo altamente editável e adaptável à realidade de cada um.
+Aplicação web PWA que permite acesso offline após primeiro acesso (instalando no dispositivo móvel via browser), destinada aos motoboys e entregadores do Rio de Janeiro. Uma espécie de calculadora que facilita fazer estimativas aproximadas por média de diversos custos existentes ao se ter uma motocicleta para trabalho, permitindo visualiza-los em diferentes períodos de tempo e também por quilômetro rodado, sendo ainda altamente editável e adaptável à realidade de cada usuário.
 
 Cobre modelos populares de Honda e Yamaha (ex.: Pop 110i, Factor 125i, Lander 250), possuindo no momento 14 modelos disponíveis (de 110cc a 250cc).
 
@@ -77,7 +77,7 @@ Os links e capturas de cada coleta ficam versionados em `outros/` e
 | Glossário do domínio | `docs/dominio/_glossario.md` |
 | Dados de pesquisa | `docs/dominio/informacoes-modelos-motos/` |
 
-Há mais de 190 tarefas documentadas em arquivos únicos e registradas num índice cronológico datado, onde todas decisões tomadas por mim em cada uma delas estão anotadas e rastreadas entre tarefas e ADRs, tornando todo o raciocínio de desenvolvimento disponível, claro e útil para estudo.
+A documentação possui mais de 190 tarefas registradas em arquivos únicos e em índice cronológico datado, onde todas decisões tomadas por mim podem ser rastreadas entre tarefas e ADRs, tornando todo o raciocínio de desenvolvimento disponível, claro e útil para estudo.
 
 ## Licença
 
