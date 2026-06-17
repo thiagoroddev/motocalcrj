@@ -10,6 +10,20 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 ## Tarefas Prioritárias (Imediata)
 
+## TASK-REF-47 - Code-splitting do bundle principal (chunk > 500 kB)
+- **Status:** Pendente
+- **Modo:** Standard
+- **Valor:** Importante
+- **Urgência:** IMEDIATA
+- **Esforço-H/IA:** M/M
+- **Data-hora origem:** 16/06/26 21:05
+- **Dependências:** -
+- **REQ/ADR/DT:** relacionada a TASK-RNF-9.1 (Performance e acessibilidade)
+- **Observações:** O build de produção (commit `3d109db`, deploy Vercel) emite o aviso do Vite "Some chunks are larger than 500 kB after minification". O bundle único `dist/assets/index-*.js` está em **920,74 kB (226,68 kB gzip)** — tudo carregado de uma vez no primeiro acesso. Como é PWA com precache (Workbox, 14 entradas / ~2,5 MB), o tamanho também infla o precache inicial do service worker; depois do 1º acesso o app é offline, então o custo é **só no primeiro carregamento** — mas é justamente o público (motoboys/entregadores em 4G/conexão móvel) que mais sente isso.
+  - **O que fazer:** quebrar o chunk monolítico. Opções combináveis: (1) `build.rollupOptions.output.manualChunks` separando vendors pesados (ex.: `react`/`react-dom`, `react-router-dom`, `@radix-ui/*`, `zod`, `react-minimal-pie-chart`, ícones); (2) `import()` dinâmico em rotas/telas não-iniciais (ex.: Detalhamento, Perfil, dialogs grandes) via `React.lazy` + `Suspense`.
+  - **Critérios de aceite:** nenhum chunk individual acima de ~500 kB (ou `chunkSizeWarningLimit` ajustado *conscientemente* com justificativa, não como mascaramento); build sem o aviso; rotas continuam funcionando (testes verdes, navegação manual entre as 4 abas + Detalhamento/Perfil OK); PWA ainda instala e funciona offline após 1º acesso.
+  - **Cuidado:** o `vite-plugin-pwa` faz precache via `globPatterns` (`**/*.{js,css,...}`) — conferir que os novos chunks lazy entram no precache (ou são revalidados em runtime) para não quebrar o offline. Não "resolver" o aviso só elevando `chunkSizeWarningLimit` sem dividir de fato (anti-padrão: esconder o sintoma).
+
 ---
 
 ## Normais

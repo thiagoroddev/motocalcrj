@@ -78,3 +78,15 @@ Os links e capturas de cada coleta ficam versionados em `outros/` e
 | Dados de pesquisa | `docs/dominio/informacoes-modelos-motos/` |
 
 Há mais de 190 tarefas documentadas em arquivos únicos e registradas num índice cronológico datado, onde todas decisões tomadas por mim em cada uma delas estão anotadas e rastreadas entre tarefas e ADRs, tornando todo o raciocínio de desenvolvimento disponível, claro e útil para estudo.
+
+## Licença
+
+Copyright (c) 2026 Thiago Silva Rodrigues (https://github.com/thiagoroddev). Todos os direitos reservados, exceto os concedidos pela licença.
+
+Este projeto é distribuído sob a **[PolyForm Noncommercial License 1.0.0](./LICENSE.md)** — uma licença *source-available* (código aberto à consulta, **não** open-source no sentido OSI).
+
+**O que é permitido:** usar, estudar, modificar e compartilhar o código para **fins não comerciais** — uso pessoal, pesquisa, estudo, projetos de hobby e por organizações sem fins lucrativos, educacionais ou governamentais.
+
+**O que NÃO é permitido:** qualquer **uso comercial** do código ou de obras derivadas dele, sem autorização expressa e por escrito do autor.
+
+O autor mantém a titularidade integral dos direitos sobre o projeto e reserva-se o direito de explorá-lo comercialmente e de licenciá-lo sob outros termos no futuro. Para licenciamento comercial, entre em contato com o autor.
