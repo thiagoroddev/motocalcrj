@@ -1,6 +1,8 @@
 # Atividade Extensionista - Trabalho Final - RU: 4647621
 
-# MotoCalcRJ
+# MotoCustoRJ
+
+**No ar em: https://motocustorj.vercel.app**
 
 Aplicação web PWA que permite acesso offline após primeiro acesso (instalando no dispositivo móvel via browser), destinada aos motoboys e entregadores do Rio de Janeiro. Uma espécie de calculadora que facilita fazer estimativas aproximadas por média de diversos custos existentes ao se ter uma motocicleta para trabalho, permitindo visualiza-los em diferentes períodos de tempo e também por quilômetro rodado, sendo ainda altamente editável e adaptável à realidade de cada usuário.
 

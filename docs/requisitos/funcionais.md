@@ -1,4 +1,4 @@
-# Requisitos Funcionais - MotoCalc RJ
+# Requisitos Funcionais - MotoCusto RJ
 
 > Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores.
 > IDs dos requisitos: RF-ON-xx, RF-EST-xx, RF-DET-xx, RF-MO-xx, RF-VU-xx, RF-PERF-xx, RF-DOC-xx, RF-CONF-xx, RF-EXP-xx.
@@ -106,7 +106,7 @@
 |---|---|---|
 | RF-CONF-01 | Salvar automaticamente no localStorage a cada dispatch. Fechar/reabrir preserva estado. | ✅ CONCLUÍDO |
 | RF-CONF-02 | Ao reabrir com perfil salvo, carregar estado sem ação do usuário. Onboarding nunca reexibido. | ✅ CONCLUÍDO |
-| RF-EXP-01 | Exportar todos os dados como `motocalc_backup.json`. Download automático. | [ ] PENDENTE |
+| RF-EXP-01 | Exportar todos os dados como `motocusto-backup-AAAA-MM-DD.json`. Download automático. | [ ] PENDENTE |
 | RF-EXP-02 | Importar arquivo `.json` com validação e confirmação. Compatível com o schema atual e migrações públicas suportadas. | [ ] PENDENTE |
 | RF-EXP-03 | Arquivo de export contém `schemaVersion` para migrações. Schema atual: 2 (ver `docs/arquitetura/estado_inicial.md`). | [ ] PENDENTE |
 

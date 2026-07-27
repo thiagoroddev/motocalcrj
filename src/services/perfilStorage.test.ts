@@ -15,9 +15,11 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
     vi.unstubAllGlobals();
   });
 
-  it('ignora chaves antigas motocalc:v5', () => {
+  it('ignora chaves antigas motocalc:v5 e estimamoto:v0', () => {
     localStorage.setItem('motocalc:v5:presets', JSON.stringify([{ legado: true }]));
     localStorage.setItem('motocalc:v5:presetAtivo', 'preset-legado');
+    localStorage.setItem('estimamoto:v0:presets', JSON.stringify([{ legado: true }]));
+    localStorage.setItem('estimamoto:v0:presetAtivo', 'preset-legado');
 
     const storage = new LocalStoragePerfilStorage();
 
@@ -25,7 +27,7 @@ describe('LocalStoragePerfilStorage - namespace pré-lançamento', () => {
     expect(storage.getPresetAtivo()).toBeNull();
   });
 
-  it('salva e lê apenas o namespace estimamoto:v0', () => {
+  it('salva e lê apenas o namespace motocusto:v0', () => {
     const presets = [{ presetId: 'p1' }] as PresetEntry[];
     const storage = new LocalStoragePerfilStorage();
 

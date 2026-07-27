@@ -1,4 +1,4 @@
-# Dívida Técnica do Domínio EstimaMoto
+# Dívida Técnica do Domínio MotoCustoRJ
 
 > **Status:** v17, auditada contra código, testes e ADRs em 07/06/2026.
 > **Propósito:** registrar somente dívidas técnicas vigentes do domínio. Itens resolvidos,
@@ -36,7 +36,7 @@ tarefas concluídas.
 | DT-3 | Removida: não é dívida comprovada | Zod e reducer já validam domínio numérico; o produto é estimador e não há defeito de precisão registrado que justifique Value Objects transversais. |
 | DT-4 | Removida: não é dívida atual | Não há necessidade de event bus, backend ou sincronização. Analytics continua backlog próprio e `analytics.ts` ainda não existe. |
 | DT-5 | Removida: limitação de produto | O catálogo atual deriva de dois presets validados. Cadastro livre está fora do escopo, não é falha da arquitetura vigente. |
-| DT-6 | Removida: resolvida | Storage usa chaves `estimamoto:v1:*`, schema versionado, migração explícita e fallback recuperável. |
+| DT-6 | Removida: resolvida | Storage usa chaves `motocusto:v0:*`, schema versionado, migração explícita e fallback recuperável. |
 | DT-7 | Removida: resolvida | `modoExibicao`, diário e fluxo personalizado foram eliminados pela ADR-003 e tarefas relacionadas. |
 | DT-8 | Removida: resolvida pela TASK-REF-38 | O contrato v2 usa `aluguelValor`; perfis v1 migram antes da validação e a fórmula mensal/semanal foi preservada. |
 | DT-9 | Removida: resolvida | As coleções e actions de histórico/diário citadas pelo item não existem mais. |

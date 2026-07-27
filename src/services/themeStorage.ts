@@ -1,6 +1,6 @@
 export type Tema = 'dark' | 'light';
 
-const CHAVE_TEMA = 'motocalc:tema';
+const CHAVE_TEMA = 'motocusto:tema';
 const TEMA_PADRAO: Tema = 'dark';
 
 function ehTema(valor: string | null): valor is Tema {

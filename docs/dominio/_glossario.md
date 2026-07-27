@@ -1,6 +1,6 @@
-# Glossário do Domínio MotoCalc RJ
+# Glossário do Domínio MotoCusto RJ
 
-> Linguagem Ubíqua do projeto. Toda palavra usada no domínio do MotoCalc tem **uma única definição** que vale para código, documentação, UI e conversas.
+> Linguagem Ubíqua do projeto. Toda palavra usada no domínio do MotoCusto tem **uma única definição** que vale para código, documentação, UI e conversas.
 >
 > Mantido pelo `modelador-dominio`. Atualizado a cada novo conceito.
 >
@@ -45,7 +45,7 @@ Um Motoboy pode ter múltiplos Presets (ex: "Honda Pop 110i da Semana", "Biz Res
 
 ### Preset Ativo
 
-O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `estimamoto:v1:presetAtivo` (apenas o id, não o objeto). O schema atual é o baseline público inicial v1.
+O `PresetEntry` atualmente selecionado. Sempre exatamente um, enquanto houver Presets cadastrados. Persistido no localStorage na chave `motocusto:v0:presetAtivo` (apenas o id, não o objeto). O schema atual é o baseline público inicial v0 (`VERSAO_SCHEMA_ATUAL = 0`).
 
 ### Preset JSON / Preset Técnico
 
@@ -313,7 +313,7 @@ O app é um Progressive Web App: instalável no Android, funciona offline após 
 
 ### Umami
 
-Ferramenta de analytics anônima usada pelo MotoCalc. Sem cookies, compatível com LGPD.
+Ferramenta de analytics anônima usada pelo MotoCusto. Sem cookies, compatível com LGPD.
 
 ### Toggle de Categoria
 

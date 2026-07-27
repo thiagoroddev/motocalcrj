@@ -1,4 +1,4 @@
-# MotoCalc RJ - Estado Inicial e Arquitetura de Persistência
+# MotoCusto RJ - Estado Inicial e Arquitetura de Persistência
 
 > **Status:** Engenharia reversa validada contra código real.
 > **Última atualização:** 2026-06-06 (TASK-REF-41.2).
@@ -17,8 +17,8 @@ Centralizadas em `src/services/perfilStorage.ts` (acesso isolado - INV-PRESET-3)
 
 | Chave                     | Tipo                   | Conteúdo                                        |
 | ------------------------- | ---------------------- | ----------------------------------------------- |
-| `estimamoto:v1:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
-| `estimamoto:v1:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
+| `motocusto:v0:presets`     | `PresetEntry[]` (JSON) | Array com todas as predefinições salvas         |
+| `motocusto:v0:presetAtivo` | `string`               | `presetId` do preset atualmente ativo           |
 
 > **Nota:** a TASK-REF-30 zerou o contrato de storage. Chaves antigas `motocalc:v5:*` são ignoradas; versões diferentes da atual e dados inválidos caem no fallback recuperável.
 

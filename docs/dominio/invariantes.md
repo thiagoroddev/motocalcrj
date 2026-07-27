@@ -1,4 +1,4 @@
-# Invariantes do Domínio MotoCalc
+# Invariantes do Domínio MotoCusto
 
 > **Status:** Documentação por engenharia reversa em 2026-05-09.
 > **Propósito:** Lista centralizada de regras que **nunca podem ser violadas**. Referência para o `tech-lead-revisor` e para qualquer agente que esteja prestes a tomar decisão técnica.

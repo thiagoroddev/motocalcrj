@@ -2,7 +2,7 @@
 
 > **Status:** Engenharia reversa baseada em código real (`src/types/perfil.ts`).
 > **Tipo:** Aggregate Root raiz do aggregate de dados persistidos.
-> **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `estimamoto:v1:presets`.
+> **Implementação:** `interface PresetEntry` em `src/types/perfil.ts`, persistido via `services/perfilStorage.ts` na chave `motocusto:v0:presets`.
 > **Última atualização:** 2026-06-12 (TASK-BG-031 / ADR-021).
 
 ---
@@ -44,7 +44,7 @@ export interface PresetEntry {
 
 | Atributo       | Tipo            | Descrição                                                                        |
 | -------------- | --------------- | -------------------------------------------------------------------------------- |
-| `presetId`     | string          | Identificador único usado em `estimamoto:v1:presetAtivo` para apontar qual está ativo |
+| `presetId`     | string          | Identificador único usado em `motocusto:v0:presetAtivo` para apontar qual está ativo |
 | `nome`         | string          | Nome técnico derivado como `<modeloId>_<sufixo>`                                 |
 | `sufixo`       | string          | Identificação editável, máxima de 15 caracteres e única dentro do mesmo modelo   |
 | `criadoEm`     | string (ISO)    | Data de criação do PresetEntry                                                   |
@@ -61,8 +61,8 @@ export interface PresetEntry {
 
 | Chave                  | Conteúdo                                     |
 | ---------------------- | -------------------------------------------- |
-| `estimamoto:v1:presets`     | Array `PresetEntry[]` em JSON                |
-| `estimamoto:v1:presetAtivo` | String com o `presetId` do PresetEntry ativo |
+| `motocusto:v0:presets`     | Array `PresetEntry[]` em JSON                |
+| `motocusto:v0:presetAtivo` | String com o `presetId` do PresetEntry ativo |
 
 ### Acesso isolado
 
@@ -70,7 +70,7 @@ export interface PresetEntry {
 
 ### Versionamento
 
-O namespace atual é `estimamoto:v1:*`. A versão do perfil vive em `perfil.schemaVersion`. O envelope
+O namespace atual é `motocusto:v0:*`. A versão do perfil vive em `perfil.schemaVersion`. O envelope
 aceita, na fronteira de carga, entradas legadas sem `sufixo`; elas recebem versões determinísticas por
 modelo e são regravadas na forma canônica.
 
@@ -102,7 +102,7 @@ A implementação via reducer é **modelo anêmico clássico em React**. Os comp
 
 ### INV-PRESET-1: Consistência do Preset Ativo
 
-**Regra:** Se a chave `estimamoto:v1:presetAtivo` no localStorage tem valor, então existe um `PresetEntry` em `estimamoto:v1:presets` cujo `presetId` é igual a esse valor.
+**Regra:** Se a chave `motocusto:v0:presetAtivo` no localStorage tem valor, então existe um `PresetEntry` em `motocusto:v0:presets` cujo `presetId` é igual a esse valor.
 
 **Por quê:** Apontar para um Preset que não existe causa tela em branco ou erro ao tentar carregar. Esta é a invariante mais crítica do aggregate.
 
@@ -155,8 +155,8 @@ export interface PresetEntry {
 }
 
 // Uso típico no localStorage:
-// estimamoto:v1:presets    → JSON.stringify(PresetEntry[])
-// estimamoto:v1:presetAtivo → string (presetId)
+// motocusto:v0:presets    → JSON.stringify(PresetEntry[])
+// motocusto:v0:presetAtivo → string (presetId)
 ```
 
 ```typescript
@@ -171,7 +171,7 @@ export interface IPerfilStorage {
 }
 
 export class LocalStoragePerfilStorage implements IPerfilStorage {
-  // implementação real lê/escreve em estimamoto:v1:*
+  // implementação real lê/escreve em motocusto:v0:*
 }
 ```
 

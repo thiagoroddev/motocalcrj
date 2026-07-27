@@ -14,7 +14,7 @@ Há **dois** "presets" no projeto (ver glossário):
 | | `PresetMoto` (este doc) | `PresetEntry` (`entidade-preset.md`) |
 |---|---|---|
 | O que é | Dados técnicos de um **modelo** de moto | **Envelope** de configuração do usuário |
-| Onde vive | `src/presets/*.json` (build) | `localStorage` (`estimamoto:v1:presets`) |
+| Onde vive | `src/presets/*.json` (build) | `localStorage` (`motocusto:v0:presets`) |
 | Mutável? | **Não** (RN-01 / INV-PRESET-2) | Sim (edita o `PerfilUsuario` dentro) |
 | Contém | peças, pneus, revisão, serviços | um `PerfilUsuario` completo |
 
@@ -24,7 +24,7 @@ Este arquivo descreve o **PresetMoto** — a fonte única da verdade técnica do
 
 ## Conceito no Mundo Real
 
-O `PresetMoto` é a **ficha técnico-financeira de um modelo de moto** no MotoCalc: quanto consome, quais peças/pneus usa e por quanto, e como a concessionária faz e cobra as revisões/serviços. É preenchido com dados públicos (manual, site da concessionária, mercado RJ) e serve de base para todos os cálculos quando o usuário não personalizou nada (Overrides).
+O `PresetMoto` é a **ficha técnico-financeira de um modelo de moto** no MotoCusto: quanto consome, quais peças/pneus usa e por quanto, e como a concessionária faz e cobra as revisões/serviços. É preenchido com dados públicos (manual, site da concessionária, mercado RJ) e serve de base para todos os cálculos quando o usuário não personalizou nada (Overrides).
 
 Desde a TASK-REF-31, o **modelo/preset é a fonte única da verdade** — o catálogo (`catalogoModelos.ts`) só aponta para o preset, que carrega os dados.
 

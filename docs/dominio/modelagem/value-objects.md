@@ -5,7 +5,7 @@
 
 ---
 
-## Conceito de Value Object no MotoCalc
+## Conceito de Value Object no MotoCusto
 
 Value Objects sao conceitos do dominio que **nao precisam de identidade**. Eles sao definidos apenas por seus valores e podem ser copiados sem perda de significado. No codigo atual, muitos VOs sao implementados como **interfaces simples** ou objetos anonimos (sem classes), o que e idiomatico em React/TypeScript.
 

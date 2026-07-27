@@ -1,9 +1,9 @@
-# EstimaMoto - Contexto do Projeto para IA
+# MotoCustoRJ - Contexto do Projeto para IA
 
 > **Propósito:** oferecer a visão geral necessária para uma IA entender o produto, localizar as fontes de verdade e trabalhar sem reintroduzir decisões superadas.
 > **Público principal:** agentes de IA. Desenvolvedores também podem usar este documento como mapa.
-> **Última atualização:** 06/06/2026, após ADR-017 e TASK-REF-39; detalhado o script de atualização FIPE (ADR-015).
-> **Nome atual do produto:** EstimaMoto. Documentos históricos e alguns identificadores internos ainda usam MotoCalc RJ; não renomear em massa sem tarefa própria.
+> **Última atualização:** 27/07/2026, após a TASK-CHORE-019 (rename do produto para MotoCustoRJ).
+> **Nome atual do produto:** **MotoCustoRJ** (publicado em https://motocustorj.vercel.app). Substitui os nomes anteriores *MotoCalc RJ* e *EstimaMoto*, que foram aposentados por completo pela TASK-CHORE-019 — inclusive nos identificadores internos: `localStorage` em `motocusto:v0:*` e `motocusto:tema`, `TIPO_BACKUP` = `motocusto-backup`, arquivo exportado `motocusto-backup-AAAA-MM-DD.json`, `package.json` `name` = `motocusto-rj`. **Não há migração dos namespaces antigos** (`motocalc:v5:*`, `estimamoto:v0:*`, `motocalc:tema`): dado gravado por versões anteriores é ignorado e cai no onboarding — decisão do humano, o app antigo saiu do ar. Documentos históricos (`docs/tarefas/concluidas/`, revisões `REV-*`, ADRs, rascunhos em `trash-drafts-ignore/`) preservam os nomes antigos de propósito; não renomear.
 
 ---
 
@@ -27,7 +27,7 @@ Entregadores de moto costumam perceber o gasto com combustível, mas subestimam 
 
 ### 1.2 Solução
 
-O EstimaMoto é uma SPA mobile-first, local-first e orientada inicialmente ao Município e ao Estado do Rio de Janeiro. O app transforma dados da moto e da rotina de trabalho em estimativas de custo:
+O MotoCustoRJ é uma SPA mobile-first, local-first e orientada inicialmente ao Município e ao Estado do Rio de Janeiro. O app transforma dados da moto e da rotina de trabalho em estimativas de custo:
 
 - por quilômetro;
 - por hora;
@@ -202,7 +202,7 @@ Este mapa é intencionalmente estável e não enumera cada componente. Para sabe
 - Aggregate local: `EstadoApp = { perfil, presets, presetAtivoId }`.
 - Envelope persistido: `PresetEntry`, que contém metadados e um `PerfilUsuario`.
 - Schema público atual: `schemaVersion: 2`; perfis v1 são migrados para v2 na carga.
-- Chaves: `estimamoto:v1:presets` e `estimamoto:v1:presetAtivo`.
+- Chaves: `motocusto:v0:presets` e `motocusto:v0:presetAtivo`.
 - Fonte primária: `src/context/PerfilContext.tsx`, `src/context/perfilDefaults.ts`, `src/types/perfil.ts`, `src/schemas/perfilSchema.ts` e `src/services/perfilStorage.ts`.
 - Dados inválidos são rejeitados na fronteira de carga; o app usa fallback recuperável.
 - Após migração e validação, todos os perfis são normalizados contra o preset resolvido por

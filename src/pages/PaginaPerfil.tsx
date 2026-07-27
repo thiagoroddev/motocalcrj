@@ -187,7 +187,7 @@ export function PaginaPerfil() {
           <div>
             <p className="label-neutro mb-1">Restaurar</p>
             <p className="text-muted-foreground text-xs mb-2">
-              Importe seus dados de um arquivo MotoCalc anterior.
+              Importe seus dados de um arquivo MotoCusto anterior.
             </p>
             <input
               ref={inputBackupRef}
@@ -301,7 +301,7 @@ export function PaginaPerfil() {
             <div className="space-y-1">
               <p className="font-medium text-foreground">Privacidade</p>
               <p>
-                O MotoCalcRJ funciona inteiramente no seu aparelho. Suas predefinições,
+                O MotoCustoRJ funciona inteiramente no seu aparelho. Suas predefinições,
                 quilometragens e preços ficam salvos apenas no navegador deste dispositivo. Nada é
                 enviado para servidores: não há cadastro, coleta de dados pessoais nem rastreadores.
                 Por não possuir banco de dados na nuvem, você é o único responsável por proteger
@@ -361,7 +361,7 @@ export function PaginaPerfil() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Créditos</DialogTitle>
-            <DialogDescription>MotoCalcRJ · Versão {APP_VERSAO}</DialogDescription>
+            <DialogDescription>MotoCustoRJ · Versão {APP_VERSAO}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>
@@ -388,8 +388,8 @@ export function PaginaPerfil() {
           <DialogHeader>
             <DialogTitle>Arquivo inválido</DialogTitle>
             <DialogDescription>
-              Não foi possível ler este arquivo como um backup do MotoCalc. Verifique se é o arquivo{' '}
-              <code>.json</code> exportado pelo app e tente novamente.
+              Não foi possível ler este arquivo como um backup do MotoCusto. Verifique se é o
+              arquivo <code>.json</code> exportado pelo app e tente novamente.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

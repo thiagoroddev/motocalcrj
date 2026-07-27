@@ -1,4 +1,4 @@
-# MotoCalc RJ - Visão da Camada de Cálculo
+# MotoCusto RJ - Visão da Camada de Cálculo
 
 > **Propósito:** mapa de alto nível das funções de cálculo, suas assinaturas atuais e o pipeline de orquestração. **Não é referência detalhada de implementação** - para isso, ler diretamente `src/utils/calculos.ts` e `src/types/calculos.ts`.
 > **Última atualização:** 2026-06-06 (TASK-REF-42) - fonte explícita da vida útil.

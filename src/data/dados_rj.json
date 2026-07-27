@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "descricao": "Constantes do Estado do Rio de Janeiro para o MotoCalc RJ",
+    "descricao": "Constantes do Estado do Rio de Janeiro para o MotoCusto RJ",
     "atualizarAnualmente": ["licenciamento", "aliquotaIPVA"],
     "atualizarMensalmente": ["gasolinaComumPadrao"],
     "ultimaAtualizacao": "2026-04"

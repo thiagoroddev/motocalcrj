@@ -12,7 +12,7 @@ import { VERSAO_SCHEMA_ATUAL } from '../types/perfil';
 // fronteira, exatamente como dado de storage corrompido cai no onboarding.
 // ──────────────────────────────────────────────
 
-export const TIPO_BACKUP = 'estimamoto-backup' as const;
+export const TIPO_BACKUP = 'motocusto-backup' as const;
 
 export const backupSchema = z.object({
   tipo: z.literal(TIPO_BACKUP),

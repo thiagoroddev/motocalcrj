@@ -1,4 +1,4 @@
-# Regras de Negócio MotoCalc RJ
+# Regras de Negócio MotoCusto RJ
 
 > Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores.
 > IDs ativos: RN-01 a RN-23 e RN-27. Regras que definem o que é válido no domínio, independente de implementação.

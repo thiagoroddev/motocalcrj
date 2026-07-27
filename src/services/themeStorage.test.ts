@@ -27,7 +27,7 @@ describe('LocalStorageThemeStorage', () => {
 
   it('ignora tema inválido salvo', () => {
     const storage = new LocalStorageThemeStorage();
-    localStorage.setItem('motocalc:tema', 'solarized');
+    localStorage.setItem('motocusto:tema', 'solarized');
 
     expect(storage.carregarTema()).toBe('dark');
   });

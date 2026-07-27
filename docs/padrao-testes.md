@@ -1,5 +1,5 @@
 markdown
-# Protocolo de Testes MotoCalc RJ
+# Protocolo de Testes MotoCusto RJ
 
 > **Padrão mínimo obrigatório** que deve ser seguido ao escrever, atualizar ou rodar testes.
 

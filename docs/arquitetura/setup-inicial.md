@@ -1,4 +1,4 @@
-# Setup - MotoCalc RJ
+# Setup - MotoCusto RJ
 
 > **⚠️ Documento histórico.** Este guia descreve o setup inicial do projeto (Tailwind v3, `tailwind.config.cjs`, postcss). A stack foi migrada - veja o estado atual em `docs/contexto-projeto-ai.md`. Este arquivo é mantido como registro, não como referência operacional.
 

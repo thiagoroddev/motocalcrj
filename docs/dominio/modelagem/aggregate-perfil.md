@@ -8,7 +8,7 @@
 
 ## Conceito no Mundo Real
 
-O MotoCalc guarda **um conjunto de presets** e **qual deles esta ativo**. Este conjunto e o que o Motoboy enxerga como "meus perfis". Trocar o preset ativo muda imediatamente os calculos e a tela. Apagar tudo remove todos os presets e retorna ao estado pre-onboarding.
+O MotoCusto guarda **um conjunto de presets** e **qual deles esta ativo**. Este conjunto e o que o Motoboy enxerga como "meus perfis". Trocar o preset ativo muda imediatamente os calculos e a tela. Apagar tudo remove todos os presets e retorna ao estado pre-onboarding.
 
 ---
 
@@ -27,8 +27,8 @@ export interface EstadoApp {
 
 Persistencia em duas chaves:
 
-- `estimamoto:v1:presets` → `PresetEntry[]`
-- `estimamoto:v1:presetAtivo` → `string | null`
+- `motocusto:v0:presets` → `PresetEntry[]`
+- `motocusto:v0:presetAtivo` → `string | null`
 
 ---
 

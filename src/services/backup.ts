@@ -26,5 +26,5 @@ export function parsearBackup(texto: string): Backup {
 
 export function nomeArquivoBackup(agora: Date = new Date()): string {
   const data = agora.toISOString().slice(0, 10);
-  return `estimamoto-backup-${data}.json`;
+  return `motocusto-backup-${data}.json`;
 }

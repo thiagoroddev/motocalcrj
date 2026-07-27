@@ -50,7 +50,7 @@ describe('backup', () => {
 
   it('nomeArquivoBackup usa a data ISO (AAAA-MM-DD)', () => {
     expect(nomeArquivoBackup(new Date('2026-06-15T10:00:00Z'))).toBe(
-      'estimamoto-backup-2026-06-15.json',
+      'motocusto-backup-2026-06-15.json',
     );
   });
 });

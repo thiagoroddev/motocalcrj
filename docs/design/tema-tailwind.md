@@ -1,6 +1,6 @@
 # Configuracao global CSS (Tailwind)
 
-Este documento define a configuracao global de CSS para o tema do MotoCalc RJ e o mapa de cores do projeto.
+Este documento define a configuracao global de CSS para o tema do MotoCusto RJ e o mapa de cores do projeto.
 
 ## Arquivo global (src/index.css)
 

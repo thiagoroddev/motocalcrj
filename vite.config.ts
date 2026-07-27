@@ -28,8 +28,8 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon-32x32.png', 'apple-touch-icon.png'],
             manifest: {
-              name: 'MotoCalcRJ',
-              short_name: 'MotoCalcRJ',
+              name: 'MotoCustoRJ',
+              short_name: 'MotoCustoRJ',
               description:
                 'Custo operacional real da sua moto no RJ: combustível, manutenção, revisões e documentos.',
               lang: 'pt-BR',

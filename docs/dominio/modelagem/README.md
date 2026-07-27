@@ -1,4 +1,4 @@
-# docs/dominio Modelagem de Dominio MotoCalc
+# docs/dominio Modelagem de Dominio MotoCusto
 
 > Ponto de entrada da modelagem de dominio do projeto. Mantido pelo agente `modelador-dominio`.
 
@@ -6,7 +6,7 @@
 
 ## O Que Vive Aqui
 
-Esta pasta contem **a modelagem conceitual** do MotoCalc o "mundo do motoboy" expresso em entidades, value objects, aggregates, eventos e invariantes **validada contra o codigo real**.
+Esta pasta contem **a modelagem conceitual** do MotoCusto o "mundo do motoboy" expresso em entidades, value objects, aggregates, eventos e invariantes **validada contra o codigo real**.
 
 **Nao e documentacao de codigo.** Para isso, veja `contexto-base.instructions.md`.
 

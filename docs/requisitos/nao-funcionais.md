@@ -1,4 +1,4 @@
-# Requisitos Não Funcionais - MotoCalc RJ
+# Requisitos Não Funcionais - MotoCusto RJ
 
 > Documento operacional derivado da especificação consolidada em 09/05/2026 e atualizado pelas ADRs e tarefas posteriores. Agrupa desempenho, usabilidade, arquitetura, analytics, PWA, distribuição e stack.
 > IDs: RNF-01 a RNF-12, RNF-COMP-01 a 06, RNF-ANA-01 a 03, RNF-PWA-01 a 05, RNF-TWA-01 a 06, RNF-LR-01 a 06, RNF-STACK-01 a 04.
@@ -70,7 +70,7 @@ Eventos de **Engajamento**: `pwa_instalado`, `app_atualizado`.
 | RNF-PWA-01 | `manifest.json` válido com ícones 192px/512px maskable. | Lighthouse PWA Score ≥ 90. | [ ] PENDENTE |
 | RNF-PWA-02 | Service Worker registrado via `vite-plugin-pwa` com `CacheFirst` para assets estáticos. Sem chamadas de API em runtime (FIPE é hardcoded no preset — ADR-015). | App funcional offline após primeiro carregamento. | [ ] PENDENTE |
 | RNF-PWA-03 | App servido obrigatoriamente via HTTPS. | Netlify/Vercel fornecem HTTPS automaticamente. | [ ] PENDENTE |
-| RNF-PWA-04 | Banner "Instalar MotoCalc" na primeira visita. | Evento `beforeinstallprompt` capturado. | [ ] PENDENTE |
+| RNF-PWA-04 | Banner "Instalar MotoCusto" na primeira visita. | Evento `beforeinstallprompt` capturado. | [ ] PENDENTE |
 | RNF-PWA-05 | App funcional em standalone (sem barra do browser) no Android. | Testado em Android 10+ com Chrome. | [ ] PENDENTE |
 
 ---
