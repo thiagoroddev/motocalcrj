@@ -57,9 +57,27 @@ manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';
 frame-ancestors 'none'
 ```
 
+- **20:05:** Branch `csp-headers` publicada. `curl -I` na **produção** (baseline, antes de qualquer
+  merge) revelou um erro da análise original e evitou uma regressão:
+  - A produção **já serve** `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+    — injetado pela **plataforma Vercel**, não pelo repositório. A análise de 28/07 afirmou "sem
+    HSTS" porque foi escrita lendo o `vercel.json` em vez de medir a resposta servida.
+  - Pior: o valor que eu havia escrito (`max-age=31536000; includeSubDomains`) **substituiria** o da
+    plataforma e o **rebaixaria** — de 2 anos para 1, perdendo o `preload`. Corrigido para
+    `max-age=63072000; includeSubDomains; preload`, igualando o comportamento atual.
+  - Estado real medido: **1 de 6** headers presentes. Faltam CSP, `X-Frame-Options`,
+    `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy`.
+  - Correção propagada para `docs/analise-melhorias-agente.md` (A5, tabela do §5 e mock do `doctor`).
+  - **Aprendizado imediato:** ler arquivo de configuração ≠ verificar comportamento servido. O
+    critério do portão de lançamento foi reescrito para **medir a resposta HTTP**, não inspecionar o
+    `vercel.json`.
+
 ## Testes
 
 - Medições de superfície (acima) feitas contra o `dist/` do build da RNF-016.
-- `curl -I` no preview: **pendente** — aguardando URL do deploy.
+- `curl -I` na produção (baseline): **APROVADO como medição** — 1 de 6 headers (HSTS da plataforma).
+- `curl -I` no preview: **pendente** — aguardando URL do deploy (o `gh` não está instalado nesta
+  máquina e o padrão de URL do preview não foi adivinhado: 404 em
+  `motocustorj-git-csp-headers-thiagoroddev` e `estima-calc-git-csp-headers-thiagoroddev`).
 - Varredura de violações no console: **pendente** — humano navegando o preview.
 - Nota securityheaders.com: **pendente**.
