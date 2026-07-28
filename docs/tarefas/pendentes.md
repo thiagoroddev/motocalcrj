@@ -12,25 +12,12 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 > **Bloco de lançamento (origem: [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md), 28/07/26).** O app está publicado e é vitrine
 > pública do projeto. As tarefas abaixo cobrem o que hoje está **quebrado, exposto ou ausente** no
-> repositório e no deploy. Ordem recomendada: `CHORE-020` → `RNF-016` → `RNF-015` → `CHORE-021` →
-> `DOC-020` → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e `TASK-RNF-9.2` (QA final,
-> Crítico) continuam abertas **depois** do lançamento — devem ser fechadas junto deste bloco.
-
-## TASK-RNF-016 - Auto-hospedar a fonte Inter (remove CDN do Google do caminho crítico)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data-hora origem:** 28/07/26 18:30
-- **Dependências:** -
-- **REQ/ADR/DT:** bloqueia TASK-RNF-015 (CSP); relacionada a TASK-RNF-9.1
-- **Observações:** [`index.html`](../../index.html) linhas 9-11 carregam a Inter de `fonts.googleapis.com` / `fonts.gstatic.com`. Isso **contradiz três afirmações públicas do próprio projeto** e é o tipo de inconsistência que um revisor técnico nota de imediato:
-  - **Contradiz "offline-first":** o README e a ADR de arquitetura afirmam "nenhuma API em runtime" e "funciona offline em 4G ruim". A fonte é uma requisição externa bloqueante de render no primeiro acesso — exatamente no cenário de conexão ruim do público-alvo (motoboys em 4G).
-  - **Contradiz "local-first por privacidade":** o README justifica a ausência de backend por privacidade, mas toda visita entrega IP e User-Agent ao Google antes de a primeira tela pintar. Servir Google Fonts por CDN já foi considerado violação de GDPR na Alemanha (LG München, 2022); o argumento vale para a LGPD.
-  - **Bloqueia a CSP restritiva** da `TASK-RNF-015` — mantê-la exigiria abrir `style-src`/`font-src` para domínios do Google.
-  - **O que fazer:** instalar a fonte como pacote (`@fontsource/inter` ou `@fontsource-variable/inter`), importar no CSS/entry, remover as 3 tags do `index.html`. Manter apenas os pesos realmente usados (400/500/600/700 hoje) em `woff2`. Conferir que os arquivos entram no precache do Workbox (`globPatterns` do `vite-plugin-pwa`) para valer offline de verdade.
-  - **Critérios de aceite:** nenhuma requisição a domínio externo no carregamento (validar na aba Network do DevTools com "3rd-party" e no modo offline); tipografia visualmente idêntica; `npm run verify` verde; fonte disponível offline após o 1º acesso.
+> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → **`RNF-015`** →
+> `CHORE-021` → `DOC-020` → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
+> `TASK-RNF-9.2` (QA final, Crítico) continuam abertas **depois** do lançamento — devem ser fechadas
+> junto deste bloco.
+>
+> **Concluídas:** `TASK-CHORE-020` (28/07 19h10) e `TASK-RNF-016` (28/07 19h40).
 
 ## TASK-RNF-015 - Headers de segurança no deploy (CSP, HSTS, X-Frame-Options)
 - **Status:** Pendente
@@ -39,7 +26,7 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 - **Urgência:** IMEDIATA
 - **Esforço-H/IA:** P/M
 - **Data-hora origem:** 28/07/26 18:30
-- **Dependências:** TASK-RNF-016 (fonte auto-hospedada simplifica a CSP)
+- **Dependências:** ✅ TASK-RNF-016 concluída — a fonte é same-origin, então a CSP pode usar `font-src 'self'` e `style-src` sem exceção para domínio do Google
 - **REQ/ADR/DT:** `padroes/18` §6 e §7, `checklists/41` §8
 - **Observações:** O [`vercel.json`](../../vercel.json) tem **apenas** `rewrites` — **nenhum** dos 5 headers de segurança que `padroes/18` §7 e `checklists/41` §8 detalham item por item. O app está público sem CSP, sem HSTS, sem proteção a clickjacking. É a checagem que qualquer ferramenta automática (securityheaders.com, Lighthouse "Best Practices", Mozilla Observatory) reprova em segundos — e é o tipo de item que um recrutador técnico verifica sem abrir o código.
   - **O que fazer:** adicionar bloco `headers` no `vercel.json` com `Content-Security-Policy`, `Strict-Transport-Security` (`max-age=31536000; includeSubDomains`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` e `Permissions-Policy` (negando geolocation/camera/microphone, que o app não usa). Proposta de CSP pronta em [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md) §5.

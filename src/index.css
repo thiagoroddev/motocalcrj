@@ -1,6 +1,26 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Inter auto-hospedada (TASK-RNF-016). Antes vinha do CDN do Google, o que
+   contradizia o "offline-first" (requisição externa bloqueante no 1º acesso) e
+   o "local-first por privacidade" (entregava IP do usuário ao Google antes da
+   primeira tela pintar). Só o subset `latin`: o range abaixo cobre U+0000-00FF,
+   onde estão todos os diacríticos do português — os outros 6 subsets do pacote
+   (cirílico, grego, vietnamita, latin-ext) somariam ~166 kB ao precache do PWA
+   sem nenhum caractere que este app exiba. Arquivo variável: um único woff2
+   cobre os pesos 400/500/600/700 usados na UI. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Ícone do seletor de mês/data visível e clicável no tema escuro (TASK-RF-8.6):
@@ -40,7 +60,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
   --color-cyan: var(--cyan);
 
   /* ── Tipografia ── */
-  --font-sans: Inter, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
   --text-label-sm: 0.75rem;
   --text-label-sm--line-height: 1rem;
   --text-label-sm--letter-spacing: 0.05em;
