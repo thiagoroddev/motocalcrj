@@ -56,11 +56,9 @@ O fluxo principal inclui:
 - manutenção do MVP orientada a concessionária/autorizada;
 - sinalização explícita de valores oficiais, editados, estimados ou ausentes;
 - persistência local validada em runtime;
-- duas motos cadastradas:
-  - Honda Pop 110i;
-  - Yamaha Factor 125i.
+- 14 modelos cadastrados (Honda e Yamaha, de 110cc a 250cc). Os dois primeiros, e ainda os mais bem documentados, são a Honda Pop 110i e a Yamaha Factor 125i.
 
-O cadastro de modelos é data-driven por `src/presets/*.json`. Não escrever no texto ou na UI que existem cinco modelos: essa era uma intenção antiga e não corresponde ao produto atual.
+O cadastro de modelos é data-driven por `src/presets/*.json` — **essa pasta é a fonte de verdade da contagem**. Não escrever número de modelos no texto ou na UI sem conferir os arquivos: já houve intenção antiga de "cinco modelos" que nunca correspondeu ao produto.
 
 ### 1.5 Fora do escopo atual
 
@@ -81,7 +79,7 @@ Esta tabela substitui a antiga priorização MoSCoW do monólito de requisitos. 
 
 | Prioridade | Direção |
 |---|---|
-| Essencial no V1 | Estimativa confiável e explicável; onboarding; presets e overrides; persistência local; cálculo por granularidade; transparência de manutenção; duas motos estáveis. |
+| Essencial no V1 | Estimativa confiável e explicável; onboarding; presets e overrides; persistência local; cálculo por granularidade; transparência de manutenção; catálogo de modelos estável. |
 | Próximas frentes | Export/import, analytics, PWA/offline completo, acessibilidade/performance, QA e distribuição TWA/Play Store. |
 | Evolução possível | Comparação entre motos, retorno do modo independente, peças paralelas e alertas mais avançados. |
 | Fora do V1 | Login, sync remoto, backend, preços em tempo real, push e iOS App Store. |
