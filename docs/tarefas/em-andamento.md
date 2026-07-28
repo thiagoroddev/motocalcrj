@@ -72,12 +72,48 @@ frame-ancestors 'none'
     critério do portão de lançamento foi reescrito para **medir a resposta HTTP**, não inspecionar o
     `vercel.json`.
 
+- **20:10:** **Varredura do humano no preview: 4 tipos de violação.** Triagem separou ruído de achado
+  real:
+
+  | Violação | Origem | Veredito |
+  |---|---|---|
+  | `manifest-src` — manifest redirecionado para `vercel.com/sso-api` | Proteção do preview | **Ruído** — não existe em produção |
+  | `script-src` — `vercel.live/_next-live/feedback/feedback.js` | Widget de feedback que a Vercel injeta **só em preview** | **Ruído** |
+  | `default-src` — framing de `https://vercel.live/` | Toolbar da Vercel no preview | **Ruído** |
+  | `script-src` / `'unsafe-eval'` — **~27 ocorrências em `index-*.js:60-61`** | **Nosso bundle** | **Achado real** |
+
+- **20:12:** Rastreado o `unsafe-eval` até a origem. `grep "new Function"` no bundle **não achava
+  nada** — porque o código faz `const o=Function; ... return new o(...)`, aliasando o construtor.
+  A linha 60 termina em internos do **Zod** (`$ZodCheckOverwrite`, `class V_`), e a 61 é o
+  `compile()` do gerador de código do Zod: **o Zod v4 compila cada schema numa função otimizada via
+  construtor `Function`**, que é `eval` para efeito de CSP.
+- **20:13:** O Zod prevê exatamente este cenário. `$ZodConfig.jitless` está documentado no fonte como
+  *"Disable JIT schema compilation. Useful in environments that disallow `eval`"*. Há inclusive um
+  comentário em `util.ts:365` explicando que sob `jitless` ele **pula até a sonda** (`new F("")`
+  dentro de `try/catch`), porque CSP estrita reporta a violação mesmo com o erro capturado — o que
+  explica parte das 27 ocorrências.
+- **20:14:** Aplicado `config({ jitless: true })` no topo de `src/main.tsx`, antes do primeiro
+  `parse`. **Decisão:** manter `script-src 'self'` sem `'unsafe-eval'` e abrir mão do JIT, em vez do
+  contrário. Liberar `'unsafe-eval'` esvaziaria a principal proteção da política inteira; o custo é
+  validação mais lenta, irrelevante num app que valida perfil ao carregar e ao salvar, não em laço
+  quente. Confirmado no bundle: `jitless:!0`.
+- **20:15:** Descartada a alternativa sugerida pelo próprio Zod (pré-popular
+  `globalThis.__zod_globalConfig` num **inline script**): isso violaria `script-src 'self'`, ou seja,
+  a "solução" exigiria afrouxar a política que se está tentando manter forte.
+
 ## Testes
 
 - Medições de superfície (acima) feitas contra o `dist/` do build da RNF-016.
 - `curl -I` na produção (baseline): **APROVADO como medição** — 1 de 6 headers (HSTS da plataforma).
-- `curl -I` no preview: **pendente** — aguardando URL do deploy (o `gh` não está instalado nesta
-  máquina e o padrão de URL do preview não foi adivinhado: 404 em
-  `motocustorj-git-csp-headers-thiagoroddev` e `estima-calc-git-csp-headers-thiagoroddev`).
+- Preview publicado: `motocustorj-git-csp-headers-thiagoroddevs-projects.vercel.app`, build do commit
+  `0c64a76`, status Ready.
+- `curl -I` no preview: **NÃO EXECUTÁVEL** — o preview tem **Vercel Authentication** ligada (padrão da
+  plataforma): responde `302` para `vercel.com/sso-api` a qualquer requisição não autenticada. Não é
+  problema da configuração; é proteção do preview. Consequência: `curl` anônimo e securityheaders.com
+  não conseguem inspecionar o preview. A verificação por comando fica para a produção, depois do
+  merge — onde não há SSO.
+- Varredura de violações da CSP no console: **pendente** — humano navegando o preview autenticado no
+  navegador. É a checagem que realmente importa nesta fase (a CSP está em Report-Only, então ela
+  relata sem bloquear).
 - Varredura de violações no console: **pendente** — humano navegando o preview.
 - Nota securityheaders.com: **pendente**.
