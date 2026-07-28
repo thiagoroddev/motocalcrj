@@ -374,8 +374,8 @@ diz **não**.
 | 9 | `LICENSE`, `README`, política de privacidade presentes | existência + link no app | parcial |
 
 **Regra:** `npm run gate:lancamento` verde é pré-condição de deploy em produção. Item desligado exige
-uma linha no arquivo de exceções com **motivo, responsável e data de revisão** — desligar fica mais
-caro do que corrigir, que é o incentivo correto.
+uma entrada no **Registro de Riscos Aceitos** (§11) com **motivo, responsável e data de revisão** —
+desligar fica mais caro do que corrigir, que é o incentivo correto.
 
 Aplicado hoje, este portão teria bloqueado o lançamento em **5 dos 9 itens**. Não é crítica ao que já
 foi feito: é a demonstração de que o portão pega exatamente o que a prosa não pegou.
@@ -477,6 +477,8 @@ inegociável — e, diferente da versão atual, ela é **verificável por tercei
 | Elevar limite em vez de resolver (`chunkSizeWarningLimit`, `audit --audit-level` frouxo, `eslint-disable` amplo) | Apaga o sinal e mantém o problema | Corrigir, ou registrar exceção datada com responsável |
 | Escrever regra nova sem comando que a verifique | Cria a ilusão de controle; produz 0 execuções | Toda regra nasce com gate ou nasce como "recomendação", explicitamente |
 | Revisar na mesma sessão que implementou | Propaga o viés que gerou o erro | Agente auditor com contexto limpo |
+| Aceitar risco de segurança "no chat" | Sem prazo e sem responsável, exceção temporária vira permanente e ninguém percebe | Entrada em `riscos-aceitos.md` com data de revisão (§11) |
+| Silenciar advisory com allowlist sem data | Vira ruído permanente; ninguém revisita | Prazo máximo de 90 dias, renovação com nova avaliação |
 | Documentar link/arquivo sem verificar que resolve | Doc tóxica; quebra o carregamento modular | `lint:docs` no CI |
 
 ### 7.3 Resolver a ambiguidade entre os dois pacotes
@@ -510,7 +512,7 @@ atual + 1: CHORE 019, TEST 006, RNF 014, DOC 019).
 | 3 | CI GitHub Actions com os gates bloqueantes | `TASK-CHORE-021` | Strict | M/M | **A1 (agente juiz e réu)** |
 | 4 | Corrigir integridade do pacote: `.md.md`, 504 links, frontmatter, acento, versão | `TASK-CHORE-022` | Standard | M/G | A4 |
 | 5 | `scripts/check-docs.mjs` + `lint:docs` no CI | `TASK-CHORE-023` | Standard | P/M | Reincidência de A4 |
-| 6 | `gate:lancamento` + orçamento de bundle | `TASK-CHORE-024` | Strict | M/G | A5 |
+| 6 | `gate:lancamento` + orçamento de bundle + leitura do Registro de Riscos Aceitos (§11) | `TASK-CHORE-024` | Strict | M/G | A5 |
 | 7 | Agente Auditor + regra "não revisar na sessão que implementou" | `TASK-DOC-020` | Strict | P/M | **A2 (auto-aprovação)** |
 | 8 | 4ª regra inegociável + novos anti-padrões + reescrita do 41 | `TASK-DOC-021` | Strict | M/M | A6 |
 | 9 | `npm run doctor` | `TASK-CHORE-025` | Standard | M/G | Falta de feedback contínuo |
@@ -557,12 +559,149 @@ Para colar no topo do núcleo, ou em qualquer projeto novo:
 > 4. **Sem evidência, é `NÃO EXECUTADO`.** Nunca `APROVADO`. Saída do comando ou link do run — ou nada.
 > 5. **Publicar é consequência de um gate verde, não um ato de vontade.** Se o portão não passa, não vai
 >    a público — inclusive (e principalmente) quando você tem certeza de que está tudo bem.
-> 6. **Desligar um gate custa mais que corrigi-lo.** Exceção exige motivo, responsável e data de
->    revisão, por escrito.
+> 6. **Desligar um gate custa mais que corrigi-lo.** Exceção vive em `docs/seguranca/riscos-aceitos.md`
+>    (§11), com evidência, responsável nominal, tarefa de saída e data de revisão de no máximo 90 dias.
+>    O gate lê esse arquivo: **exceção vencida reprova mais alto que o problema original.**
 > 7. **O projeto informa o que falta, você não pergunta.** Relatório gerado a cada push, com veredito
 >    binário no fim.
 > 8. **Gate padrão vem ligado.** Segurança, dependências, orçamento de bundle e acessibilidade não são
 >    "fase 10". São o commit zero.
+
+---
+
+## 11. Registro de Riscos Aceitos (o artefato que faltava)
+
+O §5 e o §10 mandam registrar exceções "com motivo, responsável e data" — e não diziam **onde**. Sem
+lugar definido, "registrar" vira "comentar no chat", que é o mesmo que não registrar. O pacote atual
+também não tem esse artefato: o registro mais próximo é `docs/dominio/divida-tecnica.md`, que serve a
+outro propósito e não é lido por nenhum comando.
+
+| | Dívida Técnica (`DT-NN`) | Risco Aceito (`RA-NNN`) |
+|---|---|---|
+| Registra | solução interna frágil que custa caro depois | vulnerabilidade **conhecida** que se decidiu não corrigir agora |
+| Efeito prático | prioriza refactor | **destrava um gate que está reprovando** |
+| Prazo | gatilho (evento que pode nunca ocorrer) | **data de revisão obrigatória** (sempre chega) |
+| Quem decide | quem faz a engenharia | dono do projeto, **nominalmente** |
+| Formato | prosa | **legível por máquina** — o gate lê o arquivo |
+
+São coisas diferentes e por isso ficam em arquivos diferentes. Misturar as duas faz o risco de
+segurança herdar o prazo indefinido da dívida técnica — que é exatamente como exceção "temporária"
+vira permanente.
+
+### 11.1 O arquivo
+
+**`docs/seguranca/riscos-aceitos.md`** — uma entrada por risco, em bloco YAML dentro do markdown.
+
+A escolha do formato não é estética: se o registro fosse só prosa, esta seção estaria cometendo o
+erro que o §1 deste documento denuncia — criar mais texto que ninguém executa. O bloco YAML permite
+que `gate:lancamento` **leia o registro e decida**; o markdown ao redor mantém o arquivo legível por
+humanos. Uma fonte só, sem risco de divergência entre a versão bonita e a versão real.
+
+```yaml
+id: RA-001
+titulo: react-router RSC Mode CSRF Bypass não alcançável em SPA sem servidor
+advisory: GHSA-qwww-vcr4-c8h2
+pacote: react-router
+faixa_afetada: '>=7.12.0 <8.3.0'
+versao_instalada: 7.18.1
+severidade: high
+tipo: producao          # producao | dev | build
+decisao: aceito         # aceito | mitigado-parcial
+justificativa: >
+  A vulnerabilidade é do modo RSC (React Server Components / server actions).
+  O app é SPA puro, sem servidor: usa <BrowserRouter> + <Routes> (API declarativa).
+  Não existe caminho de código que alcance o trecho vulnerável.
+evidencia: |
+  grep -rn "createBrowserRouter\|RouterProvider\|loader=\|action=\|useFetcher" src/
+  # → 0 ocorrências (verificado em 28/07/26)
+aceito_por: Thiago Silva Rodrigues
+data_aceite: 2026-07-28
+data_revisao: 2026-10-26          # obrigatório, máx. 90 dias
+tarefa_de_saida: TASK-CHORE-025
+condicao_de_encerramento: >
+  Migração para react-router >= 8.3.0, OU adoção de data router / server
+  actions no projeto — o que vier primeiro. A segunda hipótese invalida a
+  justificativa imediatamente e torna a correção urgente.
+```
+
+O campo **`evidencia`** é o que separa um registro auditável de uma opinião: ele guarda o comando que
+qualquer pessoa pode rodar para conferir a justificativa. Sem ele, "não se aplica" é só uma
+afirmação — e afirmação sem verificação é o hábito que produziu a CVE em produção.
+
+### 11.2 Quando criar uma entrada
+
+Só quando um gate está reprovando **e** o bloqueio cai num destes casos:
+
+| Caso | Exemplo real |
+|---|---|
+| Não alcançável nesta arquitetura | `RA-001` — advisory de RSC num app sem servidor |
+| Não chega ao usuário (dev/build-time) | as 12 da cadeia do eslint e do `vite-plugin-pwa` |
+| Correção exige mudança major que precisa de planejamento próprio | react-router v8 dentro de uma tarefa `P/P` |
+
+**Nunca criar entrada para:**
+
+- vulnerabilidade **alcançável** em produção — isso se corrige, não se registra;
+- "depois eu vejo" sem análise (entrada sem `evidencia` e sem `condicao_de_encerramento` é inválida);
+- fechar tarefa mais rápido — se o risco apareceu no meio da tarefa, ele é da tarefa;
+- qualquer risco sem **`tarefa_de_saida`**. Aceitar sem caminho de saída não é decisão, é desistência.
+
+### 11.3 Quando revisar (obrigatório)
+
+1. **Na `data_revisao`** — o gate força; não depende de alguém lembrar.
+2. **Quando a arquitetura muda de um jeito que possa tornar o risco alcançável.** Concreto: no dia em
+   que este projeto adotar `createBrowserRouter`, loaders ou actions, a justificativa do `RA-001`
+   deixa de valer **na hora** — e o risco vira urgente sem nenhum advisory novo ter sido publicado.
+   Por isso a `condicao_de_encerramento` descreve as duas saídas, não só a boa.
+3. **Quando sai correção sem major** — a razão de existir da entrada evaporou.
+4. **Antes de qualquer lançamento** — o portão relê o registro inteiro, não confia no que passou antes.
+
+### 11.4 Quando encerrar
+
+A entrada **muda de seção, nunca é apagada**: vai para `## Encerrados` com a data e o desfecho
+(`corrigido` / `deixou de aplicar` / `virou dívida técnica DT-NN`). O histórico é a trilha de
+auditoria — apagar destrói a única prova de que a decisão foi consciente, que é justamente o que o
+registro existe para provar.
+
+### 11.5 Prazos e renovação
+
+- **Máximo 90 dias.** Renovar exige **nova avaliação escrita** — reconferir a evidência e atualizar a
+  data. Copiar-colar a justificativa anterior não é renovação, é abandono com aparência de processo.
+- **Vencer não gera aviso: gera reprovação do gate.** Exceção vencida é tratada como mais grave que o
+  advisory original, porque significa que o processo de revisão parou de funcionar.
+- **Renovou 3 vezes seguidas?** Não é mais exceção temporária. Ou vira tarefa priorizada de verdade,
+  ou vira `DT-NN` com o risco assumido explicitamente no domínio.
+
+### 11.6 Como o gate usa o arquivo (é isto que faz a regra existir)
+
+`scripts/gate-lancamento.mjs` passa a cruzar a saída do `npm audit` com o registro:
+
+| Situação | Resultado |
+|---|---|
+| Advisory HIGH em produção **sem** entrada no registro | **Reprova** |
+| Advisory coberto por entrada válida e dentro do prazo | Passa, e **imprime** o `RA-NNN` no relatório |
+| Entrada **vencida** | **Reprova** — mais alto que o advisory original |
+| Entrada sem `tarefa_de_saida` ou sem `evidencia` | **Reprova** (registro inválido) |
+| Entrada cuja `tarefa_de_saida` já foi concluída | **Reprova** — a saída aconteceu, a exceção não deveria existir |
+
+E os outros dois consumidores:
+
+- **CI:** avisa quando alguma entrada vence em menos de 14 dias — tempo de agir antes de virar bloqueio.
+- **`npm run doctor`:** lista as entradas ativas com a data de vencimento, no relatório de saúde do §6.
+
+O relatório passa a dizer *"1 risco aceito, vence em 12 dias (RA-001 → TASK-CHORE-025)"* em vez de
+esconder o assunto atrás de um número zerado. **Risco visível com prazo é gestão; risco invisível é
+sorte.**
+
+### 11.7 Quem aceita
+
+**O humano, nominalmente.** A IA pode (e deve) **propor** a entrada com a análise e a evidência
+prontas — foi o que aconteceu na `TASK-CHORE-020`, onde a análise do advisory de RSC ficou pronta e a
+decisão foi levada ao dono do projeto. Mas o campo `aceito_por` recebe o nome de uma pessoa.
+
+> Um agente que pode se conceder as próprias exceções não tem gate — tem sugestão.
+
+É o mesmo princípio do §4 (quem escreve não aprova) aplicado a risco: quem produziu o código não
+decide sozinho qual risco dele é tolerável.
 
 ---
 
