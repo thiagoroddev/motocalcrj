@@ -154,9 +154,20 @@ Continuam **pendentes** no backlog:
 - `TASK-RNF-9.2` — **Revisão final e QA** (Crítico, "Todas as anteriores")
 - `TASK-REF-47` — bundle único de **920 kB** (226 kB gzip), marcada IMEDIATA
 
-E o `vercel.json` tem exatamente uma linha útil (`rewrites`): **nenhum header de segurança**. Sem CSP,
-sem HSTS, sem `X-Frame-Options`, sem `Referrer-Policy` — apesar de o módulo 18 dedicar duas seções
-inteiras (§6 e §7) ao assunto e o checklist 41 listar os cinco headers, item por item.
+E o `vercel.json` tem exatamente uma linha útil (`rewrites`): **nenhum header de segurança
+configurado pelo projeto**. Medindo a resposta real da produção (`curl -I`), o único que chega ao
+usuário é `Strict-Transport-Security`, e por padrão da plataforma — a Vercel o injeta sozinha
+(`max-age=63072000; includeSubDomains; preload`), sem nenhum mérito do repositório. Continuam
+ausentes **CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` e
+`Permissions-Policy`** — apesar de o módulo 18 dedicar duas seções inteiras (§6 e §7) ao assunto e o
+checklist 41 listar os cinco headers, item por item.
+
+> Detalhe que vale a pena registrar: a primeira versão desta análise afirmou "sem HSTS", porque foi
+> escrita lendo o `vercel.json` em vez de medir a resposta servida. O erro só apareceu quando a
+> `TASK-RNF-015` rodou `curl -I` — e a configuração que eu ia aplicar teria **rebaixado** o header
+> da plataforma de 2 anos para 1, removendo o `preload`. É a própria tese deste documento se
+> aplicando a ele mesmo: **ler o arquivo de configuração não é o mesmo que verificar o
+> comportamento.**
 
 **Por que importa:** este é literalmente o cenário do enunciado — projeto publicado com a tarefa "QA
 final" ainda aberta. E note o detalhe agravante: o público-alvo são motoboys em conexão móvel, e o
@@ -365,7 +376,7 @@ diz **não**.
 |---|---|---|:---:|
 | 1 | `npm run verify` verde | executa | ✅ |
 | 2 | Zero vuln. HIGH/CRITICAL em dependência de produção | `npm audit --json` filtrado | ❌ **HIGH em react-router** |
-| 3 | Headers de segurança configurados | valida `vercel.json` (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy) | ❌ nenhum |
+| 3 | Headers de segurança configurados | **mede a resposta servida** (`curl -I`), não o `vercel.json` — CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | ❌ 1 de 6 (só o HSTS que a Vercel injeta) |
 | 4 | Nenhum chunk acima do orçamento | lê `dist/assets/*.js` | ❌ 920 kB |
 | 5 | Lighthouse ≥ metas (Perf/A11y/Best Practices/SEO) | `lighthouse-ci` contra o preview | ❌ nunca rodado |
 | 6 | Zero segredo no bundle | varre `dist/` por padrões de chave/token | — |
@@ -424,7 +435,7 @@ SAÚDE DO PROJETO — 28/07/2026
 
 SEGURANÇA
   ✗ 1 vulnerabilidade HIGH em dependência de produção (react-router)
-  ✗ Headers de segurança ausentes no deploy (0 de 5)
+  ✗ Headers de segurança: 1 de 6 (só HSTS, injetado pela plataforma)
   ✓ Nenhum segredo detectado no bundle
   ✓ Nenhum console.log com dado sensível (0 ocorrências em src/)
   ✓ localStorage isolado em services/ (perfilStorage, themeStorage, backup)
