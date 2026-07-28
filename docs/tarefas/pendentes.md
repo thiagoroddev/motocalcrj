@@ -12,27 +12,13 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 > **Bloco de lançamento (origem: [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md), 28/07/26).** O app está publicado e é vitrine
 > pública do projeto. As tarefas abaixo cobrem o que hoje está **quebrado, exposto ou ausente** no
-> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → **`RNF-015`** →
-> `CHORE-021` → `DOC-020` → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
+> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ →
+> **`CHORE-021`** → `DOC-020` → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
 > `TASK-RNF-9.2` (QA final, Crítico) continuam abertas **depois** do lançamento — devem ser fechadas
 > junto deste bloco.
 >
-> **Concluídas:** `TASK-CHORE-020` (28/07 19h10) e `TASK-RNF-016` (28/07 19h40).
-
-## TASK-RNF-015 - Headers de segurança no deploy (CSP, HSTS, X-Frame-Options)
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/M
-- **Data-hora origem:** 28/07/26 18:30
-- **Dependências:** ✅ TASK-RNF-016 concluída — a fonte é same-origin, então a CSP pode usar `font-src 'self'` e `style-src` sem exceção para domínio do Google
-- **REQ/ADR/DT:** `padroes/18` §6 e §7, `checklists/41` §8
-- **Observações:** O [`vercel.json`](../../vercel.json) tem **apenas** `rewrites` — **nenhum** dos 5 headers de segurança que `padroes/18` §7 e `checklists/41` §8 detalham item por item. O app está público sem CSP, sem HSTS, sem proteção a clickjacking. É a checagem que qualquer ferramenta automática (securityheaders.com, Lighthouse "Best Practices", Mozilla Observatory) reprova em segundos — e é o tipo de item que um recrutador técnico verifica sem abrir o código.
-  - **O que fazer:** adicionar bloco `headers` no `vercel.json` com `Content-Security-Policy`, `Strict-Transport-Security` (`max-age=31536000; includeSubDomains`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` e `Permissions-Policy` (negando geolocation/camera/microphone, que o app não usa). Proposta de CSP pronta em [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md) §5.
-  - **Como fazer sem quebrar o app:** publicar **primeiro** como `Content-Security-Policy-Report-Only`, navegar o app inteiro, ler as violações no console e só então virar para o header bloqueante — é o que `padroes/18` §6.4 recomenda.
-  - **Critérios de aceite:** os 6 headers presentes na resposta de produção (`curl -I https://motocustorj.vercel.app`); app 100% funcional com CSP **bloqueante** (onboarding, 4 abas, Detalhamento, Perfil, dialogs, PWA instalável e offline); nota A ou A+ em securityheaders.com; evidência (saída do `curl` + print da nota) anexada na tarefa.
-  - **Cuidado:** Tailwind v4 injeta estilos inline — provavelmente exigirá `'unsafe-inline'` em `style-src` (aceitável e comum; registrar a justificativa). O service worker do PWA pode exigir `worker-src 'self'`. **Não** afrouxar `script-src` para resolver erro sem entender a causa.
+> **Concluídas:** `TASK-CHORE-020` (28/07 19h10), `TASK-RNF-016` (28/07 19h40) e `TASK-RNF-015`
+> (28/07 20h40).
 
 ## TASK-CHORE-021 - CI no GitHub Actions + badge de status no README
 - **Status:** Pendente
