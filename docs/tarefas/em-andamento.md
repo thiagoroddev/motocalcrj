@@ -101,6 +101,24 @@ frame-ancestors 'none'
   `globalThis.__zod_globalConfig` num **inline script**): isso violaria `script-src 'self'`, ou seja,
   a "solução" exigiria afrouxar a política que se está tentando manter forte.
 
+- **20:20:** Segunda varredura no preview: as violações de `unsafe-eval` **deixaram de ser atribuídas
+  ao nosso bundle** e viraram um bloco sem atribuição de origem — padrão de script de terceira
+  origem. Hipótese: era o `feedback.js` do `vercel.live`, que em Report-Only carrega e executa
+  normalmente. **Hipótese não aceita como prova** — montado teste em ambiente limpo para decidir.
+- **20:23:** **Teste de sala limpa.** Servido o `dist/` por um servidor Node local
+  (`scratchpad/servir-com-csp.mjs`) com os mesmos 6 headers do `vercel.json`, porém com a CSP em
+  modo **BLOQUEANTE**. Duas vantagens sobre o preview: (1) nenhum script da Vercel participa, então
+  qualquer violação é inequivocamente nossa; (2) sendo bloqueante, se o Zod ainda precisasse de
+  `eval` a validação **lançaria** e o app quebraria — Report-Only não provaria isso.
+  Confirmado por `curl` que o servidor entrega o bundle novo (`index-baYNF9z2.js`) e a CSP
+  bloqueante.
+- **20:26:** **Resultado: console limpo e app funcional com CSP bloqueante.** A única mensagem no
+  console foi `Unchecked runtime.lastError: Could not establish connection` — erro de **extensão do
+  navegador**, não do app. As duas hipóteses ficaram provadas: o `jitless` eliminou o `eval` do Zod,
+  e as 28 violações restantes no preview eram de fato infraestrutura da Vercel.
+- **20:28:** CSP virada de `Content-Security-Policy-Report-Only` para `Content-Security-Policy`
+  (bloqueante) no `vercel.json`.
+
 ## Testes
 
 - Medições de superfície (acima) feitas contra o `dist/` do build da RNF-016.
