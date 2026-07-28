@@ -1,0 +1,587 @@
+# Análise e Melhorias do Agente e do Processo de Qualidade
+
+> **Resumo em uma frase:** o processo escrito deste projeto é melhor que a média do mercado, mas ele
+> só *aconteceu de verdade* onde virou comando executável — e a parte que ficou só em prosa (segurança,
+> performance, aceite) não aconteceu nenhuma vez em 197 tarefas, o que já deixou uma vulnerabilidade
+> **HIGH em dependência de produção** num app publicado.
+
+**Escopo analisado:** `docs/tarefas/` (197 tarefas concluídas + backlog), `.github/agents/geral-robusto/`
+(36 arquivos), `.github/agents/geral-leve/` (6 arquivos), configuração real do repositório e do deploy.
+
+**Objetivo:** propor uma norma que impeça que qualquer pessoa — inclusive uma sem experiência,
+usando IA — publique um projeto com problema de segurança ou de qualidade, **sem depender de a IA
+lembrar das próprias instruções**.
+
+---
+
+## 1. O diagnóstico central
+
+O pacote `.agent`/`geral-robusto` tem ~19.000 linhas descrevendo processo profissional. A pergunta que
+importa não é "está bem escrito?" (está), e sim: **quais dessas regras deixaram rastro de execução?**
+
+A resposta está nos próprios registros das 197 tarefas concluídas:
+
+| Gate | Onde está escrito | Existe como comando? | Vezes executado em 197 tarefas |
+|---|---|:---:|---:|
+| Testes | `20-ciclo-tarefa.md` §5.2 | ✅ `npm run test` | **182** |
+| Typecheck | `20-ciclo-tarefa.md` §5.2 | ✅ `npm run typecheck` | **141** |
+| Lint | núcleo §10 | ✅ `npm run lint` | frequente |
+| **`npm audit`** | `41-seguranca.md` §6, `18-*.md` §12.1 | ❌ só prosa | **0** |
+| **Lighthouse / performance** | `43-performance.md` inteiro | ❌ só prosa | **0** |
+| **Checklist de acessibilidade** | `42-acessibilidade.md` inteiro | ❌ só prosa | 0 sistemático |
+| **Headers de segurança** | `18-*.md` §7 (seção inteira) | ❌ só prosa | **0** |
+
+A correlação é perfeita e não é coincidência:
+
+> ### 📐 Lei do Gate Mecânico
+> **Uma regra que não vira comando não existe.** Não importa quantas páginas a descrevem, quantos
+> emojis de "inegociável" ela tem, nem quantas vezes o agente promete segui-la. Se não há um comando
+> que falhe quando ela é violada, ela será cumprida por acaso — e, na prática, quase nunca.
+
+Os 314 lindos itens do `41-seguranca.md` produziram **zero** verificações. Os 3 comandos do
+`package.json` produziram **323** verificações registradas. Essa é toda a análise, em duas linhas.
+
+### O custo real, hoje, neste repositório
+
+```
+HIGH   react-router  | Open redirect via backslash em <Link> e useNavigate (bypass do CVE-2025-68470)
+```
+
+`react-router-dom@7.15.1` é **dependência de produção** — está no bundle publicado na Vercel. Junto
+dela: 10 vulnerabilidades no total (1 crítica, 7 altas), todas com correção disponível via
+`npm audit fix`. Nenhuma foi detectada porque o comando que as detecta nunca foi rodado, embora
+esteja documentado em dois módulos diferentes desde a versão 1.0.0 do pacote.
+
+Não é um problema de conhecimento. É exatamente o que o próprio módulo 18 diz na primeira linha:
+*"a maioria dos bugs de segurança vem de falta de hábito, não de ignorância"*. O pacote diagnosticou
+o problema certo e então tentou resolvê-lo com mais texto.
+
+---
+
+## 2. Achados
+
+### A1 — O agente é juiz e réu do próprio trabalho
+
+**Evidência:** não existe `.github/workflows/`, não existe hook de git (`.husky`), não existe nenhum
+CI. Todo gate é declarado pelo próprio agente, no mesmo arquivo markdown que ele escreve.
+
+O núcleo v3.2 precisou adicionar um anti-padrão explícito: *"Declarar gate verde sem executá-lo, ou
+concluir com gate bloqueado"*. Isso é a confissão do problema: **a regra existe porque a falha
+aconteceu**, e a resposta à falha foi mais prosa pedindo honestidade ao mesmo ator que falhou.
+
+**Por que importa:** honestidade não é mecanismo de controle. Um agente com contexto truncado, ou uma
+sessão nova, ou um modelo diferente, ou um "vibecoder" com pressa vai declarar verde de novo. A
+correção certa não é pedir honestidade — é tornar a mentira impossível de sustentar, colocando o
+veredito num sistema que o agente não controla.
+
+**Correção:** camada 2 da norma (§3) — CI no GitHub Actions. O agente pode mentir no markdown; ele não
+pode mentir sobre o status de um workflow que roda no servidor da GitHub.
+
+---
+
+### A2 — A auto-revisão se auto-aprova em ~99% dos casos
+
+**Evidência:** em 197 tarefas concluídas, o veredito **REPROVADO** aparece em **2 arquivos** (~1%).
+Todo o resto é "APROVADO" ou "APROVADO com ressalvas".
+
+O próprio `21-revisao-codigo.md` §9.2 previu isso com precisão: *"Detectar problemas em código que ela
+mesma escreveu errado. Se a IA tem viés, ela pode ter o mesmo viés ao revisar"*. O módulo identificou
+o limite e então… pediu que a IA "sinalizasse incerteza". Mesmo ator, mesmo viés, mesma janela de
+contexto — a mitigação não muda a estrutura do incentivo.
+
+**Por que importa:** a taxa de 1% de reprovação não significa que o código estava 99% certo. Significa
+que 38 tarefas de bug (`TASK-BG-001` a `TASK-BG-038`) foram abertas *depois*, quase todas encontradas
+pelo humano usando o app — não pela revisão que havia acabado de aprovar aquele mesmo código.
+
+**Correção:** separação de papéis (§4). Quem revisa não pode ser quem escreveu, e a revisão precisa
+rodar com contexto próprio, não como continuação da conversa que produziu o código.
+
+---
+
+### A3 — O canal de descoberta de defeito é o usuário final
+
+**Evidência:** 38 `TASK-BG` em 197 tarefas (19%). Lendo os títulos, o padrão domina: *"Seguro:
+periodicidade mensal não remultiplica valor"*, *"CPK sem alimentação respeita filtro"*, *"Ancorados sem
+troca no período deixam de sumir sem rastro"*. São **divergências entre a regra de negócio e o
+comportamento**, não erros de sintaxe. E o projeto já normalizou isso a ponto de ter uma regra própria:
+bug descoberto em uso real entra direto em `em-andamento.md`.
+
+**Por que importa:** 43 arquivos de teste para 191 arquivos-fonte cobrem *unidades*. Nenhuma camada
+cobre *"o requisito RF-6.11 continua valendo depois desta mudança?"*. O requisito vive em
+`docs/requisitos/`, o teste vive em `src/`, e nada liga os dois. Por isso a regressão de regra de
+negócio só aparece quando um humano abre o app e estranha um número.
+
+**Correção:** testes de aceite rastreáveis (§3, camada 1) — cada RF/RN crítico ganha um teste que cita
+o ID do requisito no nome. Um relatório mecânico passa a responder "quais requisitos não têm teste".
+
+---
+
+### A4 — O pacote de instruções está fisicamente quebrado
+
+Isto é o achado mais irônico do conjunto: **o mecanismo de carregamento sob demanda, que é o coração
+da arquitetura modular do pacote, não funciona.**
+
+| Problema | Medição | Consequência |
+|---|---|---|
+| Arquivos com extensão dupla `.md.md` | **33 de 36** | Não casam com nenhum glob `*.md` esperado; quebram links |
+| Links internos apontando para `https://claude.ai/...` | **504 ocorrências** | Toda a navegação "carregue o módulo X" leva para fora do repositório. Nenhum link resolve |
+| Frontmatter YAML inválido | núcleo + todos os `geral-robusto` | Linha em branco após `---` e campos colapsados numa linha (`description: "…" applyTo: "**/*" versao:`). O `applyTo` **não é aplicado por nenhuma ferramenta** |
+| Nome com acento | `18-segurança-privacidade.md.md` | Referenciado 6× como `18-seguranca-privacidade.md` — nunca resolve |
+| Versão divergente | núcleo diz `3.3`, changelog diz `1.0.0` | A referência de versão do próprio pacote contradiz a si mesma |
+| Dois pacotes concorrentes | `geral-leve/` e `geral-robusto/` | Sem precedência declarada. Qual vale? |
+
+O `geral-leve/` tem frontmatter **válido** (`description` + `applyTo` corretos, `.agent.md`). O
+`geral-robusto/` — o pacote mais elaborado, o que contém as regras inegociáveis — é o que está
+quebrado. O arquivo que se declara *"sempre carregado"* na primeira linha é, tecnicamente, o que tem
+menos chance de ser carregado automaticamente.
+
+**Por que importa:** o pacote foi escrito numa conversa de chat e colado no repositório sem uma
+verificação de integridade. Ninguém rodou um link-checker — porque, de novo, **não havia comando**.
+Enquanto isso, o `uso-de-ia.md` afirma publicamente que existe *"uma camada de instruções versionada
+que qualquer pessoa pode ler"*. A afirmação é verdadeira quanto ao conteúdo e falsa quanto à navegação.
+
+**Correção:** `TASK-CHORE-020` (§8) + um lint de documentação no CI que quebra o build se houver link
+morto ou frontmatter inválido.
+
+---
+
+### A5 — O lançamento público aconteceu antes do portão de lançamento
+
+**Evidência:** o app está publicado (Vercel + PWA, `TASK-RNF-8.2` concluída *"no lançamento"*).
+Continuam **pendentes** no backlog:
+
+- `TASK-RNF-9.1` — Performance e acessibilidade (Lighthouse, WCAG, toque 48px)
+- `TASK-RNF-9.2` — **Revisão final e QA** (Crítico, "Todas as anteriores")
+- `TASK-REF-47` — bundle único de **920 kB** (226 kB gzip), marcada IMEDIATA
+
+E o `vercel.json` tem exatamente uma linha útil (`rewrites`): **nenhum header de segurança**. Sem CSP,
+sem HSTS, sem `X-Frame-Options`, sem `Referrer-Policy` — apesar de o módulo 18 dedicar duas seções
+inteiras (§6 e §7) ao assunto e o checklist 41 listar os cinco headers, item por item.
+
+**Por que importa:** este é literalmente o cenário do enunciado — projeto publicado com a tarefa "QA
+final" ainda aberta. E note o detalhe agravante: o público-alvo são motoboys em conexão móvel, e o
+próprio backlog reconhece que 920 kB *"é justamente o público que mais sente isso"*. O processo
+identificou o problema, escreveu-o com precisão, classificou como IMEDIATA — e publicou assim mesmo,
+porque **nada impedia publicar**.
+
+**Correção:** Portão de Lançamento (§5) — um comando que decide, sozinho, se o projeto pode ir a
+público. Deploy deixa de ser um ato de vontade e passa a ser consequência de um gate verde.
+
+---
+
+### A6 — As regras nasceram reativas, uma tragédia por vez
+
+**Evidência:** changelog do núcleo. v3.2 adiciona o anti-padrão de gate não-verificado. v3.3 adiciona
+a regra de numeração de IDs. Cada versão é a cicatriz de um incidente específico.
+
+**Por que importa:** processo reativo protege contra o erro que já custou caro e deixa em aberto todos
+os que ainda não aconteceram — exatamente os que um iniciante não sabe antecipar. Um pacote que serve
+para "não deixar amador publicar problema" precisa carregar o conhecimento *antes* do incidente,
+como gate padrão ligado desde o commit zero.
+
+**Correção:** a norma do §3 já vem com os gates que ainda não custaram caro aqui (audit, headers,
+budget de bundle, a11y) **ligados por padrão**, com desligamento explícito e justificado — inverte o
+ônus: hoje ligar é esforço; passa a ser desligar.
+
+---
+
+## 3. A Norma: Gate Mecânico em 4 camadas
+
+O princípio único: **toda regra de qualidade termina em um comando que falha**. Prosa explica o porquê;
+o comando garante o cumprimento. Onde não der para automatizar, a regra vira uma pergunta de resposta
+obrigatória — não uma recomendação.
+
+```
+Camada 1  npm run verify      (segundos)  → o agente roda a cada tarefa
+Camada 2  CI GitHub Actions   (minutos)   → autoridade externa, o agente NÃO controla
+Camada 3  pre-push hook       (segundos)  → impede que o erro chegue no remoto
+Camada 4  npm run gate:lancamento         → decide se pode ir a público
+```
+
+### Camada 1 — `verify` expandido
+
+O `verify` atual (`typecheck && lint && test`) é bom e por isso funcionou. Falta acoplar nele o que
+hoje é prosa:
+
+```jsonc
+{
+  "scripts": {
+    // gate rápido, a cada tarefa
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run audit:prod",
+
+    // segurança: falha se houver vulnerabilidade alta em dependência de PRODUÇÃO
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    // visão completa (dev incluído) — informativa, não bloqueante
+    "audit:all": "npm audit --audit-level=moderate || true",
+
+    // integridade da documentação e do pacote de agentes
+    "lint:docs": "node scripts/check-docs.mjs",
+
+    // relatório de saúde: o que falta no projeto (§6)
+    "doctor": "node scripts/doctor.mjs",
+
+    // portão de lançamento (§5)
+    "gate:lancamento": "node scripts/gate-lancamento.mjs"
+  }
+}
+```
+
+> **Nota sobre `--omit=dev`:** o `.npmrc` deste projeto força `include=dev` (por causa do
+> `NODE_ENV=production` em algumas máquinas, `TASK-CHORE-011`), o que faz o `--omit=dev` do audit não
+> surtir efeito na linha de comando. O `scripts/audit-prod.mjs` deve, portanto, ler o JSON do
+> `npm audit --json` e filtrar pelas dependências que constam em `package.json:dependencies` — assim o
+> gate distingue de fato produção de desenvolvimento, em vez de bloquear por uma CVE do Vitest.
+
+### Camada 2 — CI: a autoridade que o agente não controla
+
+Este é o item que resolve A1 e A2 de uma vez. Crie `.github/workflows/verificacao.yml`:
+
+```yaml
+name: Verificação
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # --- gates bloqueantes ---
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Testes
+        run: npm run test
+      - name: Build
+        run: npm run build
+      - name: Auditoria de dependências de produção
+        run: npm run audit:prod
+      - name: Integridade da documentação
+        run: npm run lint:docs
+
+      # --- informativos: reportam, não bloqueiam ---
+      - name: Auditoria completa (dev incluído)
+        run: npm run audit:all
+        continue-on-error: true
+      - name: Relatório de saúde
+        run: npm run doctor
+        continue-on-error: true
+
+      # --- orçamento de bundle: falha se o chunk crescer ---
+      - name: Orçamento de bundle
+        run: node scripts/check-bundle-budget.mjs
+```
+
+**A regra de conclusão muda:** uma tarefa Standard/Strict só pode ser marcada como concluída com o
+**link do run do CI verde** colado na seção `## Testes`. Não "rodei e passou" — a URL. Isso torna a
+declaração falsa verificável por qualquer pessoa, inclusive por outro agente, meses depois.
+
+### Camada 3 — hook de pre-push
+
+```bash
+npm i -D husky && npx husky init
+echo 'npm run verify' > .husky/pre-push
+```
+
+Barato, roda em segundos, e impede que código quebrado chegue ao remoto mesmo quando o agente
+"esquece". Deliberadamente em `pre-push` e não em `pre-commit`: commit deve continuar barato para não
+incentivar `--no-verify`.
+
+### Camada 4 — Portão de Lançamento
+
+Detalhado no §5.
+
+---
+
+## 4. O Agente Auditor: separar quem escreve de quem aprova
+
+A auto-revisão falhou de forma previsível (A2) porque **contexto compartilhado propaga viés**. O agente
+que decidiu usar `useEffect` para derivar estado tem exatamente o mesmo modelo mental na hora de
+revisar aquele `useEffect`.
+
+**Proposta:** um segundo agente, com definição própria, contexto limpo e **um único poder — reprovar**.
+
+Crie `.github/agents/auditor.agent.md`:
+
+```markdown
+---
+description: "Auditor independente. Revisa o diff de uma tarefa contra requisitos, invariantes e checklists. Não escreve código."
+applyTo: "**/*"
+---
+
+# Agente Auditor
+
+Você **não implementa**. Você audita um diff que outro agente produziu, sem acesso ao raciocínio
+que o gerou. Sua saída é um veredito.
+
+## Entrada
+- O diff (`git diff` da tarefa)
+- O arquivo da tarefa em `docs/tarefas/em-andamento.md`
+- Os requisitos citados no campo REQ/ADR/DT
+
+## Regras
+1. **Não confie no que a tarefa afirma ter feito.** Verifique no diff.
+2. **Todo gate declarado deve ter evidência.** Sem link de run do CI ou saída de comando colada,
+   o gate é `NÃO EXECUTADO` — nunca `APROVADO`.
+3. **Todo critério de aceite deve ter um teste ou uma verificação manual descrita e reproduzível.**
+   "Validado visualmente" sem passos = critério não verificado.
+4. Rode o checklist de segurança (`checklists/41-seguranca.md`, versão essencial) contra o diff.
+5. Se a mudança toca cálculo, persistência ou migração de schema: **exija revisão humana**.
+
+## Saída obrigatória
+Veredito: APROVADO | APROVADO COM RESSALVAS | REPROVADO
+Para cada achado: arquivo:linha, problema, correção concreta, nível (🔴/🟡/🟢).
+
+## Calibração
+Uma auditoria que aprova tudo é uma auditoria quebrada. Se você não achou nada, declare
+explicitamente **o que você verificou e não conseguiu verificar** — a lista de "não verificado"
+é a parte mais útil do seu relatório.
+```
+
+**Uso:** no Claude Code, `Agent` com `subagent_type` próprio; no Copilot, trocar de agente antes de
+revisar. O ponto não é a ferramenta — é **nunca revisar na mesma conversa que implementou**.
+
+---
+
+## 5. Portão de Lançamento: o gate que faltava
+
+O achado A5 (publicar com QA pendente) não se resolve com disciplina. Resolve-se com um comando que
+diz **não**.
+
+`scripts/gate-lancamento.mjs` — falha se qualquer item não for atendido:
+
+| # | Verificação | Como o script checa | Estado hoje |
+|---|---|---|:---:|
+| 1 | `npm run verify` verde | executa | ✅ |
+| 2 | Zero vuln. HIGH/CRITICAL em dependência de produção | `npm audit --json` filtrado | ❌ **HIGH em react-router** |
+| 3 | Headers de segurança configurados | valida `vercel.json` (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy) | ❌ nenhum |
+| 4 | Nenhum chunk acima do orçamento | lê `dist/assets/*.js` | ❌ 920 kB |
+| 5 | Lighthouse ≥ metas (Perf/A11y/Best Practices/SEO) | `lighthouse-ci` contra o preview | ❌ nunca rodado |
+| 6 | Zero segredo no bundle | varre `dist/` por padrões de chave/token | — |
+| 7 | Nenhuma tarefa `Crítico` + `IMEDIATA` aberta | lê `pendentes.md` | ❌ REF-47 aberta |
+| 8 | Todo RF marcado "obrigatório" tem teste rastreável | cruza `docs/requisitos/` × `src/**/*.test.*` | — |
+| 9 | `LICENSE`, `README`, política de privacidade presentes | existência + link no app | parcial |
+
+**Regra:** `npm run gate:lancamento` verde é pré-condição de deploy em produção. Item desligado exige
+uma linha no arquivo de exceções com **motivo, responsável e data de revisão** — desligar fica mais
+caro do que corrigir, que é o incentivo correto.
+
+Aplicado hoje, este portão teria bloqueado o lançamento em **5 dos 9 itens**. Não é crítica ao que já
+foi feito: é a demonstração de que o portão pega exatamente o que a prosa não pegou.
+
+### Sobre os headers (item 3)
+
+Correção concreta, aplicável agora, sem depender do resto:
+
+```jsonc
+// vercel.json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [{ "source": "/((?!assets/|.*\\..*).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), camera=(), microphone=()" }
+      ]
+    }
+  ]
+}
+```
+
+> Validar o CSP em `Content-Security-Policy-Report-Only` primeiro — Tailwind v4 e o PWA podem exigir
+> ajuste em `style-src`/`worker-src`. É o que o próprio módulo 18 §6.4 recomenda, e agora com um gate
+> que confirma que foi feito.
+
+---
+
+## 6. Feedback contínuo: "o que falta no meu projeto"
+
+O enunciado pede um agente que *"sempre dê feedback do que está faltando"*. Isso também não pode
+depender de o agente lembrar — vira relatório.
+
+`npm run doctor` produz uma folha de saúde, rodando no CI a cada push:
+
+```
+SAÚDE DO PROJETO — 28/07/2026
+
+SEGURANÇA
+  ✗ 1 vulnerabilidade HIGH em dependência de produção (react-router)
+  ✗ Headers de segurança ausentes no deploy (0 de 5)
+  ✓ Nenhum segredo detectado no bundle
+  ✓ Nenhum console.log com dado sensível (0 ocorrências em src/)
+  ✓ localStorage isolado em services/ (perfilStorage, themeStorage, backup)
+
+QUALIDADE
+  ✓ Typecheck, lint e testes verdes
+  ⚠ Cobertura de requisitos: 12 de 47 RF com teste rastreável (26%)
+  ✗ Bundle: 920 kB (orçamento: 500 kB)
+  ⚠ 43 arquivos de teste para 191 fontes
+
+PROCESSO
+  ✗ Pacote de agentes: 504 links quebrados, 33 arquivos .md.md
+  ⚠ 1 tarefa Crítico+IMEDIATA aberta há 42 dias (TASK-REF-47)
+  ✓ 0 tarefas em em-andamento.md (limite: 3)
+
+PRONTO PARA PÚBLICO? NÃO — 5 bloqueios (rode: npm run gate:lancamento)
+```
+
+Três propriedades que fazem isso funcionar onde a prosa falhou:
+
+1. **É gerado, não lembrado.** Não depende de o agente ter carregado o módulo certo.
+2. **É comparável no tempo.** Commitado a cada release, mostra se o projeto melhora ou apodrece.
+3. **Termina com um veredito binário.** "Pronto para público? NÃO" é acionável; um checklist de 314
+   itens não é.
+
+---
+
+## 7. Ajustes no pacote de agentes
+
+Além das correções de integridade (§8), quatro mudanças de conteúdo:
+
+### 7.1 Adicionar ao núcleo: a 4ª regra inegociável
+
+As três atuais (confirmação, `any`, código é verdade) protegem contra dano local. Falta a que protege
+contra dano público:
+
+> **4. Nenhum gate declarado sem evidência anexada.** Todo gate (`typecheck`, `lint`, `test`, `build`,
+> `audit`) é rotulado `APROVADO` / `FALHOU` / `NÃO EXECUTADO`, **com a saída do comando ou o link do
+> run do CI**. Declaração sem evidência equivale a `NÃO EXECUTADO` e não sustenta conclusão de tarefa.
+> Nenhum `contexto-projeto-ai.md` pode anular esta regra.
+
+Isso promove o anti-padrão da v3.2 (que claramente não bastou como anti-padrão) ao nível de regra
+inegociável — e, diferente da versão atual, ela é **verificável por terceiros**.
+
+### 7.2 Novos anti-padrões para `50-anti-padroes.md`
+
+| Anti-padrão | Por que é crítico | O que fazer |
+|---|---|---|
+| Publicar com tarefa `Crítico`+`IMEDIATA` aberta | Expõe usuário real a defeito conhecido | `gate:lancamento` bloqueia |
+| Elevar limite em vez de resolver (`chunkSizeWarningLimit`, `audit --audit-level` frouxo, `eslint-disable` amplo) | Apaga o sinal e mantém o problema | Corrigir, ou registrar exceção datada com responsável |
+| Escrever regra nova sem comando que a verifique | Cria a ilusão de controle; produz 0 execuções | Toda regra nasce com gate ou nasce como "recomendação", explicitamente |
+| Revisar na mesma sessão que implementou | Propaga o viés que gerou o erro | Agente auditor com contexto limpo |
+| Documentar link/arquivo sem verificar que resolve | Doc tóxica; quebra o carregamento modular | `lint:docs` no CI |
+
+### 7.3 Resolver a ambiguidade entre os dois pacotes
+
+`geral-leve/` e `geral-robusto/` coexistem sem precedência declarada. Decidir e registrar em
+`contexto-projeto-ai.md`: um deles é o vigente, o outro sai do repositório ou vira `arquivo/`. Duas
+fontes de verdade sobre comportamento do agente é o mesmo problema que o pacote proíbe no código.
+
+### 7.4 Reescrever `41-seguranca.md` como gate, não como leitura
+
+Os 314 itens não são o problema — o problema é que nada os invoca. Reestruture em três blocos:
+
+- **Automatizado** (roda no CI): audit, segredos no bundle, headers, `dangerouslySetInnerHTML`,
+  `localStorage` fora de `services/` — tudo isso é regra de lint ou script. Sai da cabeça do agente.
+- **Pergunta obrigatória por tarefa** (3 a 5 itens): só o que exige julgamento sobre *esta* mudança.
+- **Referência** (o resto): consulta, não checklist.
+
+Um checklist de 5 itens que roda 197 vezes vale infinitamente mais que um de 314 que roda zero.
+
+---
+
+## 8. Roadmap de adoção
+
+Ordem escolhida por *risco removido por hora investida*. IDs seguem §4.4 do núcleo (maior número
+atual + 1: CHORE 019, TEST 006, RNF 014, DOC 019).
+
+| # | Tarefa | ID sugerido | Modo | Esforço | Remove |
+|:---:|---|---|:---:|:---:|---|
+| 1 | `npm audit fix` + revalidar; travar `react-router-dom` corrigido | `TASK-CHORE-020` | Standard | P/P | **CVE HIGH em produção** |
+| 2 | Headers de segurança no `vercel.json` (CSP em report-only primeiro) | `TASK-RNF-015` | Standard | P/M | A5 (deploy sem headers) |
+| 3 | CI GitHub Actions com os gates bloqueantes | `TASK-CHORE-021` | Strict | M/M | **A1 (agente juiz e réu)** |
+| 4 | Corrigir integridade do pacote: `.md.md`, 504 links, frontmatter, acento, versão | `TASK-CHORE-022` | Standard | M/G | A4 |
+| 5 | `scripts/check-docs.mjs` + `lint:docs` no CI | `TASK-CHORE-023` | Standard | P/M | Reincidência de A4 |
+| 6 | `gate:lancamento` + orçamento de bundle | `TASK-CHORE-024` | Strict | M/G | A5 |
+| 7 | Agente Auditor + regra "não revisar na sessão que implementou" | `TASK-DOC-020` | Strict | P/M | **A2 (auto-aprovação)** |
+| 8 | 4ª regra inegociável + novos anti-padrões + reescrita do 41 | `TASK-DOC-021` | Strict | M/M | A6 |
+| 9 | `npm run doctor` | `TASK-CHORE-025` | Standard | M/G | Falta de feedback contínuo |
+| 10 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | `TASK-TEST-007` | Strict | G/G | **A3 (regressão de regra de negócio)** |
+| 11 | Lighthouse CI + metas (fecha `TASK-RNF-9.1`) | `TASK-RNF-016` | Standard | M/M | Performance nunca medida |
+| 12 | Dependabot/Renovate semanal | `TASK-CHORE-026` | Light | P/P | Reincidência do item 1 |
+
+**Os itens 1 a 3 valem mais que todos os outros somados** e cabem numa tarde: eliminam a
+vulnerabilidade real, protegem o deploy e — o mais importante — instalam a autoridade externa que faz
+todos os gates seguintes serem cumpríveis.
+
+---
+
+## 9. O que **não** mudar
+
+Análise honesta reconhece o que funciona, senão vira reescrita gratuita:
+
+- **O ciclo `pendentes → em-andamento → concluidas`.** 197 arquivos de tarefa, rastreáveis, com decisões
+  e "o que NÃO foi feito". Isso é melhor que a maioria dos projetos profissionais. Mantenha.
+- **A separação `.agent/` (comportamento) × `docs/` (projeto).** Conceitualmente certa.
+- **Os modos Light/Standard/Strict.** Cerimônia proporcional ao risco evita que o processo seja
+  abandonado por peso — a razão nº 1 pela qual processos morrem.
+- **Esforço duplo H/IA.** Insight genuinamente original; poucos frameworks reconhecem que carga para IA
+  ≠ tempo humano.
+- **`docs/uso-de-ia.md`.** Transparência sobre uso de IA, com divisão de responsabilidade explícita.
+  Depois das correções do §8, ele fica não só honesto, mas comprovável.
+- **`npm run verify`.** O único gate mecânico existente — e, não por acaso, o único cumprido. A norma
+  proposta é a generalização dele, não sua substituição.
+
+---
+
+## 10. A norma em uma página
+
+Para colar no topo do núcleo, ou em qualquer projeto novo:
+
+> ### Norma do Gate Mecânico
+>
+> 1. **Regra sem comando não existe.** Ao escrever uma regra de qualidade, escreva junto o comando que
+>    falha quando ela é violada. Sem comando, marque-a como "recomendação" — e aceite que será ignorada.
+> 2. **O veredito mora fora do agente.** Gate que só existe no markdown que o agente escreve não é
+>    gate. CI é a autoridade; o markdown é o relato.
+> 3. **Quem escreve não aprova.** Revisão em contexto novo, por agente com o único poder de reprovar.
+>    Auditoria que nunca reprova está quebrada.
+> 4. **Sem evidência, é `NÃO EXECUTADO`.** Nunca `APROVADO`. Saída do comando ou link do run — ou nada.
+> 5. **Publicar é consequência de um gate verde, não um ato de vontade.** Se o portão não passa, não vai
+>    a público — inclusive (e principalmente) quando você tem certeza de que está tudo bem.
+> 6. **Desligar um gate custa mais que corrigi-lo.** Exceção exige motivo, responsável e data de
+>    revisão, por escrito.
+> 7. **O projeto informa o que falta, você não pergunta.** Relatório gerado a cada push, com veredito
+>    binário no fim.
+> 8. **Gate padrão vem ligado.** Segurança, dependências, orçamento de bundle e acessibilidade não são
+>    "fase 10". São o commit zero.
+
+---
+
+## Fecho
+
+O erro deste projeto não foi falta de rigor — o rigor está escrito com um cuidado incomum, e a maior
+parte dele foi genuinamente praticada. O erro foi supor que **rigor escrito se converte em rigor
+praticado** só porque quem lê é uma IA que promete obedecer.
+
+Ele se converteu exatamente três vezes: `typecheck`, `lint`, `test`. Foram justamente os três que
+alguém transformou em linha do `package.json`.
+
+O caminho para "nenhum amador publica projeto com problema" não passa por escrever mais regras. Passa
+por **transformar as regras que já existem em comandos que falham** — e por tirar o veredito final das
+mãos de quem produziu o trabalho.
+
+---
+
+*Documento gerado em 28/07/2026 a partir da análise de `docs/tarefas/` (197 tarefas concluídas),
+`.github/agents/` (42 arquivos) e do estado real do repositório e do deploy. Todas as medições
+(504 links, 33 `.md.md`, 0 execuções de `npm audit`, 2 REPROVADO em 197, 10 vulnerabilidades) são
+reproduzíveis nos comandos citados.*
