@@ -28,18 +28,16 @@
 > detalhamento por categoria, edição e PWA offline — e em uso no endereço acima.
 > Desenvolvido entre maio e julho de 2026.
 
-<!--
-  TODO(autor): inserir aqui 2-4 capturas reais do app (celular) para dar rosto ao projeto.
-  Sugestão: Onboarding · Estimativa (home) · Detalhamento por categoria · Edição de peças.
-  Salvar em docs/design/screenshots/ e usar:
+<p align="center">
+  <img src="docs/design/screenshots/onboarding.png" width="24%" alt="Onboarding: seleção de marca e modelo, passo 1 de 10">
+  <img src="docs/design/screenshots/estimativa.png" width="24%" alt="Estimativa: custo por km, hora, dia, semana e mês">
+  <img src="docs/design/screenshots/detalhamento.png" width="24%" alt="Detalhamento: custo anual por categoria, com percentuais">
+  <img src="docs/design/screenshots/insumos.png" width="24%" alt="Insumos: preços de combustível, peças e pneus, editáveis">
+</p>
 
-  <p align="center">
-    <img src="docs/design/screenshots/onboarding.png" width="24%">
-    <img src="docs/design/screenshots/estimativa.png" width="24%">
-    <img src="docs/design/screenshots/detalhamento.png" width="24%">
-    <img src="docs/design/screenshots/edicao.png" width="24%">
-  </p>
--->
+<p align="center">
+  <sub>Onboarding · Estimativa · Detalhamento por categoria · Insumos editáveis</sub>
+</p>
 
 ## O problema
 

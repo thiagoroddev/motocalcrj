@@ -12,26 +12,13 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 > **Bloco de lançamento (origem: [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md), 28/07/26).** O app está publicado e é vitrine
 > pública do projeto. As tarefas abaixo cobrem o que hoje está **quebrado, exposto ou ausente** no
-> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ → ~~`CHORE-021`~~ →
-> **`DOC-020`** → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
+> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ → ~~`CHORE-021`~~ → ~~`DOC-020`~~ →
+> **`REF-47`**. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
 > `TASK-RNF-9.2` (QA final, Crítico) continuam abertas **depois** do lançamento — devem ser fechadas
 > junto deste bloco.
 >
 > **Concluídas:** `TASK-CHORE-020` (28/07 19h10), `TASK-RNF-016` (28/07 19h40) e `TASK-RNF-015`
-> (28/07 20h40) e `TASK-CHORE-021` (28/07 21h25).
-
-## TASK-DOC-020 - Capturas de tela no README (remover o `TODO(autor)`)
-- **Status:** Pendente
-- **Modo:** Light
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** P/P
-- **Data-hora origem:** 28/07/26 18:30
-- **Dependências:** -
-- **REQ/ADR/DT:** -
-- **Observações:** O [`README.md`](../../README.md) tem um bloco `<!-- TODO(autor): inserir aqui 2-4 capturas reais do app -->` com o scaffold pronto e **nenhuma imagem**. Duas consequências: (1) o projeto é um app visual apresentado sem um único screenshot — quem avalia precisa clicar no deploy para saber com o que se parece, e muitos não clicam; (2) um `TODO` no README é a primeira coisa visível no arquivo bruto do repositório.
-  - **O que fazer:** capturar 4 telas reais em viewport de celular (sugestão já no comentário: Onboarding · Estimativa · Detalhamento · Edição), salvar em `docs/design/screenshots/`, substituir o comentário pelo bloco `<p align="center">` já escrito ali. Usar dados plausíveis e **nenhum dado pessoal real** nas capturas.
-  - **Critérios de aceite:** 4 imagens no repositório, renderizando no README pelo GitHub; comentário `TODO(autor)` removido; peso total das imagens razoável (otimizar PNG/WebP).
+> (28/07 20h40), `TASK-CHORE-021` (28/07 21h25) e `TASK-DOC-020` (28/07 22h35).
 
 ## TASK-REF-47 - Code-splitting do bundle principal (chunk > 500 kB)
 - **Status:** Pendente
