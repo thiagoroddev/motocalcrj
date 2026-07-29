@@ -25,9 +25,10 @@ _Nenhuma tarefa Imediata aberta._
 > | `TASK-DOC-020` (22h35) | 4 capturas reais no README |
 > | `TASK-REF-47` (23h00) | Code-splitting: maior chunk 921 → 320 kB |
 >
-> **Ainda abertas e ligadas a este bloco:** `TASK-RNF-9.1` (Lighthouse/WCAG — única fonte de medição
-> de performance do projeto, nunca rodada) e `TASK-RNF-9.2` (QA final, `Crítico`, nunca feita).
-> Fechá-las é o que encerra de fato o assunto lançamento.
+> | `TASK-RNF-9.1` (29/07) | Lighthouse: acessibilidade 86 → **100**, best practices 96 → **100** |
+>
+> **Ainda aberta e ligada a este bloco:** `TASK-RNF-9.2` (QA final, `Crítico`, nunca feita).
+> Fechá-la é o que encerra de fato o assunto lançamento.
 
 ---
 
@@ -49,12 +50,15 @@ _Nenhuma tarefa Imediata aberta._
 
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
-| TASK-RNF-9.1 | Performance e acessibilidade (Lighthouse, WCAG, toque 48px) | Standard | Importante | Normal | G/G | TASK-REF-47, TASK-RNF-016 | - | `[ ]` | - |
 | TASK-RNF-9.2 | Revisão final e QA (testes manuais, fluxo completo) | Standard | Crítico | Normal | G/G | Todas as anteriores | - | `[ ]` | - |
 
-> ⚠️ **Estas duas continuam abertas com o app já publicado.** A `9.2` é `Crítico` e nunca foi feita;
-> a `9.1` é a única fonte de medição de performance/acessibilidade do projeto (Lighthouse **nunca**
-> foi rodado — 0 menções em 197 tarefas). Fechá-las é o que encerra de fato o bloco de lançamento.
+> ⚠️ **A `9.2` continua aberta com o app já publicado** — é `Crítico` e nunca foi feita.
+>
+> A `9.1` foi concluída em 29/07: primeiro Lighthouse do projeto, com acessibilidade e best practices
+> em 100. A revisão dela deixou duas observações para a `TASK-CHORE-024`: auditar **múltiplas rotas**
+> (a medição cobre só a tela inicial) e fixar as metas atingidas como **orçamento** que reprova em
+> regressão — sem isso, esses números se degradam sem ninguém notar, que é exatamente o que aconteceu
+> entre a criação do `43-performance.md` e hoje.
 
 ### Higiene de repositório e portão de lançamento (origem: análise de 28/07/26)
 
