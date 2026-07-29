@@ -10,29 +10,24 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 ## Tarefas Prioritárias (Imediata)
 
-> **Bloco de lançamento (origem: [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md), 28/07/26).** O app está publicado e é vitrine
-> pública do projeto. As tarefas abaixo cobrem o que hoje está **quebrado, exposto ou ausente** no
-> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ → ~~`CHORE-021`~~ → ~~`DOC-020`~~ →
-> **`REF-47`**. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
-> `TASK-RNF-9.2` (QA final, Crítico) continuam abertas **depois** do lançamento — devem ser fechadas
-> junto deste bloco.
->
-> **Concluídas:** `TASK-CHORE-020` (28/07 19h10), `TASK-RNF-016` (28/07 19h40) e `TASK-RNF-015`
-> (28/07 20h40), `TASK-CHORE-021` (28/07 21h25) e `TASK-DOC-020` (28/07 22h35).
+_Nenhuma tarefa Imediata aberta._
 
-## TASK-REF-47 - Code-splitting do bundle principal (chunk > 500 kB)
-- **Status:** Pendente
-- **Modo:** Standard
-- **Valor:** Importante
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 16/06/26 21:05
-- **Dependências:** -
-- **REQ/ADR/DT:** relacionada a TASK-RNF-9.1 (Performance e acessibilidade)
-- **Observações:** O build de produção (commit `3d109db`, deploy Vercel) emite o aviso do Vite "Some chunks are larger than 500 kB after minification". O bundle único `dist/assets/index-*.js` está em **920,74 kB (226,68 kB gzip)** — tudo carregado de uma vez no primeiro acesso. Como é PWA com precache (Workbox, 14 entradas / ~2,5 MB), o tamanho também infla o precache inicial do service worker; depois do 1º acesso o app é offline, então o custo é **só no primeiro carregamento** — mas é justamente o público (motoboys/entregadores em 4G/conexão móvel) que mais sente isso.
-  - **O que fazer:** quebrar o chunk monolítico. Opções combináveis: (1) `build.rollupOptions.output.manualChunks` separando vendors pesados (ex.: `react`/`react-dom`, `react-router-dom`, `@radix-ui/*`, `zod`, `react-minimal-pie-chart`, ícones); (2) `import()` dinâmico em rotas/telas não-iniciais (ex.: Detalhamento, Perfil, dialogs grandes) via `React.lazy` + `Suspense`.
-  - **Critérios de aceite:** nenhum chunk individual acima de ~500 kB (ou `chunkSizeWarningLimit` ajustado *conscientemente* com justificativa, não como mascaramento); build sem o aviso; rotas continuam funcionando (testes verdes, navegação manual entre as 4 abas + Detalhamento/Perfil OK); PWA ainda instala e funciona offline após 1º acesso.
-  - **Cuidado:** o `vite-plugin-pwa` faz precache via `globPatterns` (`**/*.{js,css,...}`) — conferir que os novos chunks lazy entram no precache (ou são revalidados em runtime) para não quebrar o offline. Não "resolver" o aviso só elevando `chunkSizeWarningLimit` sem dividir de fato (anti-padrão: esconder o sintoma).
+> ✅ **Bloco de lançamento concluído em 28/07/26** (origem:
+> [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md)). As seis tarefas cobriam o
+> que estava **quebrado, exposto ou ausente** no repositório e no deploy de um app já publicado:
+>
+> | Tarefa | Entregou |
+> |---|---|
+> | `TASK-CHORE-020` (19h10) | 10 vulnerabilidades corrigidas, incluindo CVE HIGH de produção |
+> | `TASK-RNF-016` (19h40) | Fonte auto-hospedada — zero requisição a terceiros |
+> | `TASK-RNF-015` (20h40) | 6 headers de segurança, CSP bloqueante, **A+** no securityheaders.com |
+> | `TASK-CHORE-021` (21h25) | CI no GitHub Actions, com o gate provado (verde → vermelho → verde) |
+> | `TASK-DOC-020` (22h35) | 4 capturas reais no README |
+> | `TASK-REF-47` (23h00) | Code-splitting: maior chunk 921 → 320 kB |
+>
+> **Ainda abertas e ligadas a este bloco:** `TASK-RNF-9.1` (Lighthouse/WCAG — única fonte de medição
+> de performance do projeto, nunca rodada) e `TASK-RNF-9.2` (QA final, `Crítico`, nunca feita).
+> Fechá-las é o que encerra de fato o assunto lançamento.
 
 ---
 
@@ -70,6 +65,7 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 | TASK-CHORE-024 | `npm run gate:lancamento` — portão mecânico pré-deploy | Standard | Importante | Normal | M/G | TASK-CHORE-021 | - | `[ ]` | 28/07/26 18:30 |
 | TASK-TEST-007 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | Strict | Importante | Normal | G/G | - | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-025 | Avaliar react-router v8 e advisories de tooling (eslint, vite-plugin-pwa/workbox) | Strict | Importante | Normal | M/G | - | gerada pela TASK-CHORE-020 | `[ ]` | 28/07/26 19:00 |
+| TASK-REF-48 | Carregar presets sob demanda (~345 kB de JSON hoje no chunk inicial) | Strict | Importante | Normal | G/G | - | gerada pela TASK-REF-47 | `[ ]` | 28/07/26 23:00 |
 
 **Detalhamento:**
 
@@ -113,6 +109,25 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
     entregue na `TASK-RNF-8.2`. Não fazer sem avaliar.
   - **Nunca resolver isto com `npm audit fix --force`** sem ler o que ele faz: no estado de 28/07/26
     ele aplicaria os dois downgrades acima.
+
+- **TASK-REF-48** — gerada pela `TASK-REF-47`, que fez o code-splitting e mediu onde o peso realmente
+  estava. Depois do split, o chunk inicial ainda tem **320 kB**, e a maior parte disso são os
+  **345 kB de JSON dos 16 presets**: `src/data/repositorioPresets.ts` faz
+  `import.meta.glob('../presets/*.json', { eager: true })` e ainda **valida os 16 com Zod na
+  inicialização** — quando o usuário usa **um**. É o maior ganho de performance restante do projeto
+  (quase metade da carga inicial) e o que mais afeta o público em 4G.
+  - **Por que não foi feito na REF-47:** `obterPreset()` é API **síncrona** consumida pelo reducer,
+    por `criarEstadoInicial` e pelo motor de cálculo (`calculos.ts`). Torná-la assíncrona é
+    refatoração da camada de domínio, na área que já gerou 38 `TASK-BG`. Exige análise de impacto
+    própria — não pode ser efeito colateral de uma tarefa de build.
+  - **O que investigar:** separar **metadados** (marca, modelo, anos — necessários no seletor do
+    onboarding) do **corpo pesado** (FIPE por ano, peças, revisões, vida útil), carregando só o
+    segundo sob demanda. Avaliar se a validação Zod pode sair da inicialização e acontecer no
+    carregamento de cada preset — isso tiraria o `vendor-zod` (72 kB) do caminho crítico também.
+  - **Cuidado:** `normalizarPerfilContraPreset` reconcilia o perfil persistido contra o preset
+    canônico a cada cálculo; qualquer assincronia aqui muda o contrato de inicialização do estado.
+    Os 466 testes existentes são a rede de proteção — nenhum deles pode ser afrouxado para "fazer
+    passar".
 
 - **TASK-TEST-007** — os 466 testes cobrem unidades, mas nada liga `docs/requisitos/` a `src/**`.
   Por isso as 38 `TASK-BG` foram, na maioria, divergências de regra de negócio encontradas pelo

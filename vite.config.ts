@@ -55,6 +55,25 @@ export default defineConfig({
           }),
         ]),
   ],
+  // Code-splitting (TASK-REF-47). Antes era um chunk único de 921 kB baixado de
+  // uma vez no primeiro acesso — caro justamente para o público do app, que está
+  // em 4G. Os grupos abaixo são separados por *estabilidade de cache*: vendor
+  // muda a cada poucos meses, código do app muda toda semana, então quem volta
+  // ao app rebaixa só o que mudou de fato.
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('react-dom') || id.includes('/scheduler/')) return 'vendor-react-dom';
+          if (id.includes('react-router')) return 'vendor-router';
+          if (id.includes('/zod/')) return 'vendor-zod';
+          if (id.includes('@radix-ui') || id.includes('@floating-ui')) return 'vendor-radix';
+          return 'vendor';
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': '/src',
