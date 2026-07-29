@@ -11,7 +11,7 @@
   <img alt="Status" src="https://img.shields.io/badge/status-concluído%20e%20no%20ar-16a34a?style=flat-square">
   <img alt="Stack" src="https://img.shields.io/badge/React%2019-Vite%206-61dafb?style=flat-square">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square">
-  <img alt="Testes" src="https://img.shields.io/badge/testes-466%20passando-16a34a?style=flat-square">
+  <a href="https://github.com/thiagoroddev/motocustorj/actions/workflows/verificacao.yml"><img alt="Verificação" src="https://github.com/thiagoroddev/motocustorj/actions/workflows/verificacao.yml/badge.svg"></a>
   <a href="./LICENSE.md"><img alt="Licença" src="https://img.shields.io/badge/licença-PolyForm%20Noncommercial-blue?style=flat-square"></a>
 </p>
 
