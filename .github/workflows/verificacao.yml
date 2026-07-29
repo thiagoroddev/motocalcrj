@@ -1,0 +1,61 @@
+name: Verificação
+
+# Autoridade externa sobre os gates do projeto (TASK-CHORE-021, achado A1 da
+# análise de 28/07/26). Antes disto, `typecheck`/`lint`/`test`/`build` eram
+# declarados pelo próprio agente no mesmo markdown que ele escrevia — em 197
+# tarefas concluídas não havia como um terceiro conferir. O status deste
+# workflow não é controlado por ninguém dentro do repositório.
+
+on:
+  # Todas as branches: o gate precisa valer também no trabalho de preview
+  # (ex.: `csp-headers`), não só na branch de produção. Sem `pull_request`
+  # de propósito — projeto solo, evita run duplicado no mesmo commit.
+  push:
+    branches: ['**']
+
+jobs:
+  gates:
+    name: Gates de qualidade
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # LTS. A máquina de desenvolvimento roda uma versão mais nova; a
+          # divergência é proposital — ambiente limpo pega suposição de máquina.
+          node-version: 22
+          cache: npm
+
+      # `npm ci` (não `install`): instala exatamente o lockfile e falha se ele
+      # divergir do package.json. O `.npmrc` do projeto força `include=dev`,
+      # garantindo as devDependencies mesmo com NODE_ENV=production.
+      - name: Instalar dependências
+        run: npm ci
+
+      # ── Bloqueantes ────────────────────────────────────────────────────────
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      # ── Informativa ────────────────────────────────────────────────────────
+      # Reporta, não reprova. Hoje `react-router` tem advisory HIGH e é
+      # dependência de produção — bloquear aqui deixaria o CI vermelho desde o
+      # primeiro run, e CI vermelho por padrão ensina a ignorar CI.
+      #
+      # Vira BLOQUEANTE na TASK-CHORE-024, junto com o Registro de Riscos
+      # Aceitos (`docs/seguranca/riscos-aceitos.md`), que é o que permite
+      # distinguir "advisory analisado, inalcançável, com prazo e responsável"
+      # de "ninguém olhou". Ver TASK-CHORE-025 para a saída do caso atual.
+      - name: Auditoria de dependências (informativa)
+        run: npm audit
+        continue-on-error: true
