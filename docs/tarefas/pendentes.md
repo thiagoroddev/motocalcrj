@@ -12,28 +12,13 @@ Ordem: **Prioritárias (Imediata)** no topo (formato bloco) → **Normais** (for
 
 > **Bloco de lançamento (origem: [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md), 28/07/26).** O app está publicado e é vitrine
 > pública do projeto. As tarefas abaixo cobrem o que hoje está **quebrado, exposto ou ausente** no
-> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ →
-> **`CHORE-021`** → `DOC-020` → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
+> repositório e no deploy. Ordem recomendada: ~~`CHORE-020`~~ → ~~`RNF-016`~~ → ~~`RNF-015`~~ → ~~`CHORE-021`~~ →
+> **`DOC-020`** → `REF-47`. As pré-existentes `TASK-RNF-9.1` (Lighthouse/WCAG) e
 > `TASK-RNF-9.2` (QA final, Crítico) continuam abertas **depois** do lançamento — devem ser fechadas
 > junto deste bloco.
 >
 > **Concluídas:** `TASK-CHORE-020` (28/07 19h10), `TASK-RNF-016` (28/07 19h40) e `TASK-RNF-015`
-> (28/07 20h40).
-
-## TASK-CHORE-021 - CI no GitHub Actions + badge de status no README
-- **Status:** Pendente
-- **Modo:** Strict
-- **Valor:** Crítico
-- **Urgência:** IMEDIATA
-- **Esforço-H/IA:** M/M
-- **Data-hora origem:** 28/07/26 18:30
-- **Dependências:** TASK-CHORE-020 (entrar no CI já verde)
-- **REQ/ADR/DT:** `01-nucleo` §5 (anti-padrão de gate não-verificado)
-- **Observações:** O repositório **não tem CI nem hook de git**: todo gate (`typecheck`, `lint`, `test`, `build`) é declarado pelo próprio agente, no mesmo markdown que ele escreve. Para quem avalia o projeto de fora, não existe nenhuma prova independente de que os 466 testes passam — e é justamente essa ausência que permitiu que `npm audit` ficasse 197 tarefas sem rodar.
-  - **O que fazer:** criar `.github/workflows/verificacao.yml` rodando em todo push/PR: `npm ci` → `typecheck` → `lint` → `test` → `build` → auditoria de dependências de produção. YAML pronto em [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md) §3. Adicionar o badge do workflow no topo do README (ao lado dos badges atuais) — troca "466 testes" declarado por **verificável**.
-  - **Opcional no mesmo escopo:** `husky` com `pre-push` rodando `npm run verify` (2 comandos, evita push quebrado).
-  - **Critérios de aceite:** workflow verde no GitHub; badge no README apontando para o workflow real; um commit de teste com erro proposital **reprova** o CI (provar que o gate morde, não só que existe); link do run verde anexado na tarefa.
-  - **Ganho de processo:** a partir daqui, concluir tarefa Standard/Strict passa a exigir **link do run do CI**, não a frase "gate verde".
+> (28/07 20h40) e `TASK-CHORE-021` (28/07 21h25).
 
 ## TASK-DOC-020 - Capturas de tela no README (remover o `TODO(autor)`)
 - **Status:** Pendente
