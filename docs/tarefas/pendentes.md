@@ -55,10 +55,10 @@ _Nenhuma tarefa Imediata aberta._
 > ⚠️ **A `9.2` continua aberta com o app já publicado** — é `Crítico` e nunca foi feita.
 >
 > A `9.1` foi concluída em 29/07: primeiro Lighthouse do projeto, com acessibilidade e best practices
-> em 100. A revisão dela deixou duas observações para a `TASK-CHORE-024`: auditar **múltiplas rotas**
-> (a medição cobre só a tela inicial) e fixar as metas atingidas como **orçamento** que reprova em
-> regressão — sem isso, esses números se degradam sem ninguém notar, que é exatamente o que aconteceu
-> entre a criação do `43-performance.md` e hoje.
+> em 100. Das duas observações que ela deixou para a `TASK-CHORE-024`, uma foi atendida — as metas
+> viraram **orçamento que reprova em regressão** (`scripts/gate-lancamento.mjs`) — e a outra fica como
+> limite conhecido: o portão lê **um** relatório, então a medição continua cobrindo só a rota inicial.
+> Auditar as 6 rotas exige orquestrar 6 execuções e definir meta por rota.
 
 ### Higiene de repositório e portão de lançamento (origem: análise de 28/07/26)
 
@@ -66,10 +66,10 @@ _Nenhuma tarefa Imediata aberta._
 | --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
 | TASK-CHORE-022 | Dependabot semanal para dependências e GitHub Actions | Light | Importante | Normal | P/P | TASK-CHORE-021 | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-023 | Corrigir integridade de `.github/agents/`: 33 arquivos `.md.md`, 504 links mortos, frontmatter inválido | Standard | Importante | Normal | M/G | - | - | `[ ]` | 28/07/26 18:30 |
-| TASK-CHORE-024 | `npm run gate:lancamento` — portão mecânico pré-deploy | Standard | Importante | Normal | M/G | TASK-CHORE-021 | - | `[ ]` | 28/07/26 18:30 |
 | TASK-TEST-007 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | Strict | Importante | Normal | G/G | - | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-025 | Avaliar react-router v8 e advisories de tooling (eslint, vite-plugin-pwa/workbox) | Strict | Importante | Normal | M/G | - | gerada pela TASK-CHORE-020 | `[ ]` | 28/07/26 19:00 |
 | TASK-REF-48 | Carregar presets sob demanda (~345 kB de JSON hoje no chunk inicial) | Strict | Importante | Normal | G/G | - | gerada pela TASK-REF-47 | `[ ]` | 28/07/26 23:00 |
+| TASK-CHORE-027 | Fazer o portão de lançamento rodar sozinho (workflow de release + branch protection) | Standard | Importante | Normal | P/M | TASK-CHORE-024 | gerada pela TASK-CHORE-024 | `[ ]` | 29/07/26 18:00 |
 
 **Detalhamento:**
 
@@ -89,11 +89,16 @@ _Nenhuma tarefa Imediata aberta._
   interno resolvendo para caminho relativo do repositório, frontmatter válido, versão única,
   precedência entre os dois pacotes registrada em `contexto-projeto-ai.md`.
 
-- **TASK-CHORE-024** — script que decide, sozinho, se o projeto pode ir a público: `verify` verde +
-  zero vulnerabilidade alta em produção + headers presentes + nenhum chunk acima do orçamento +
-  metas de Lighthouse + nenhuma tarefa `Crítico`+`IMEDIATA` aberta. Especificação em
-  [`docs/analise-melhorias-agente.md`](../analise-melhorias-agente.md) §5. Aplicado ao estado de
-  28/07/26, bloquearia em 5 dos 9 itens — que é exatamente o ponto.
+- **TASK-CHORE-027** — gerada pela revisão da `TASK-CHORE-024`. O portão existe, funciona e tem
+  reprovação provada em 5 cenários — mas **depende de alguém digitar `npm run gate:lancamento`** antes
+  de publicar. Enquanto isso, ele é ferramenta disponível, não impedimento: reduz o achado A5 da
+  análise sem eliminá-lo. Duas frentes:
+  - **Workflow de release** que invoca o portão (em tag ou `workflow_dispatch`), em vez de rodá-lo a
+    cada push — ele executa `verify`, consulta a produção e lê o Lighthouse, então em todo push seria
+    lento e mediria a produção **antiga**, não a do commit.
+  - **Branch protection** em `motocustorj` exigindo o check "Gates de qualidade". É configuração na
+    web do GitHub (Settings → Branches → Add branch ruleset), não código — hoje um push com CI
+    vermelho ainda entra.
 
 - **TASK-CHORE-025** — gerada pela `TASK-CHORE-020`, que corrigiu as 10 vulnerabilidades originais mas
   esbarrou numa leva nova de advisories publicada no mesmo dia, toda exigindo **major**. Três grupos,

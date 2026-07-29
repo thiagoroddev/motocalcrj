@@ -5,3 +5,6 @@ dist
 .env.*.local
 .obsidian
 *.pdf
+
+# Relatórios gerados (Lighthouse do gate:lancamento) — artefato, não fonte
+relatorios

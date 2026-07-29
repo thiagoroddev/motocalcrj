@@ -47,15 +47,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      # ── Informativa ────────────────────────────────────────────────────────
-      # Reporta, não reprova. Hoje `react-router` tem advisory HIGH e é
-      # dependência de produção — bloquear aqui deixaria o CI vermelho desde o
-      # primeiro run, e CI vermelho por padrão ensina a ignorar CI.
+      # Auditoria de dependências de PRODUÇÃO, agora BLOQUEANTE (TASK-CHORE-024).
       #
-      # Vira BLOQUEANTE na TASK-CHORE-024, junto com o Registro de Riscos
-      # Aceitos (`docs/seguranca/riscos-aceitos.md`), que é o que permite
-      # distinguir "advisory analisado, inalcançável, com prazo e responsável"
-      # de "ninguém olhou". Ver TASK-CHORE-025 para a saída do caso atual.
-      - name: Auditoria de dependências (informativa)
-        run: npm audit
-        continue-on-error: true
+      # Entrou informativa na TASK-CHORE-021 porque `react-router` tem advisory
+      # HIGH em dependência de produção e o CI nasceria vermelho. O que faltava
+      # era o `docs/seguranca/riscos-aceitos.md`: com ele, o script distingue
+      # "advisory analisado, inalcançável, com prazo e responsável" de "ninguém
+      # olhou" — e só o segundo caso reprova.
+      #
+      # Também reprova quando um risco aceito VENCE, que é o mecanismo que
+      # impede exceção temporária de virar permanente.
+      - name: Auditoria de dependências de produção
+        run: npm run audit:prod
