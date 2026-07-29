@@ -480,6 +480,51 @@ contra dano público:
 Isso promove o anti-padrão da v3.2 (que claramente não bastou como anti-padrão) ao nível de regra
 inegociável — e, diferente da versão atual, ela é **verificável por terceiros**.
 
+### 7.1.1 O método: link do run como critério de conclusão
+
+A regra do §7.1 exige evidência. Este é o **formato** dessa evidência, em ordem de preferência:
+
+| Preferência | Forma | Quando |
+|:---:|---|---|
+| 1ª | **URL do run do CI** | Sempre que houver CI (o caso normal) |
+| 2ª | Saída do comando colada | Sem CI, ou gate que o CI não cobre (ex.: `curl -I` em produção) |
+| 3ª | `NÃO EXECUTADO` + motivo | Quando não deu para rodar — **nunca** `APROVADO` |
+
+A URL vai na seção `## Testes` do arquivo da tarefa, junto do commit a que se refere:
+
+```markdown
+## Testes
+- CI: https://github.com/<org>/<repo>/actions/runs/30410499828 (`success`, `head_sha` c001457)
+```
+
+**Por que o link, e não a saída colada.** Os dois parecem equivalentes — os dois "provam" que rodou.
+Não são:
+
+1. **A saída colada é digitável.** Um agente pode escrever `466 passed` sem ter rodado nada, e o
+   texto fica idêntico ao de uma execução real. A URL aponta para um registro que ele não consegue
+   forjar nem editar.
+2. **O veredito mora fora do repositório.** Quem produziu o trabalho não controla o servidor que
+   emitiu o resultado. É a mesma lógica do §4 (quem escreve não aprova), aplicada à evidência.
+3. **O link amarra a evidência a um commit.** O run carrega o `head_sha`. Saída colada não diz
+   *contra qual versão do código* aquilo passou — e "os testes passaram" numa versão que não é a
+   entregue é exatamente o tipo de verdade parcial que engana sem mentir.
+4. **O link mostra o que *não* rodou.** A página do run lista **todas** as etapas com seus status.
+   Saída colada mostra só o que o autor escolheu mostrar: se o `lint` foi pulado, o texto de
+   `npm run test` não denuncia. Evidência seletiva é o modo mais comum de um gate parecer verde.
+5. **Sobrevive ao tempo e à conversa.** Seis meses depois, sem acesso à sessão que produziu o
+   código, a URL ainda resolve. O bloco de texto no markdown só tem o valor da confiança em quem o
+   colou — que é precisamente o que este documento inteiro tenta parar de exigir.
+
+**Corolário prático:** um gate que o CI cobre e não tem link na tarefa deve ser tratado como
+`NÃO EXECUTADO`, mesmo que haja saída colada. Não porque se presuma má-fé, mas porque a forma mais
+forte de prova estava disponível e não foi usada — e essa é justamente a decisão que a regra existe
+para eliminar.
+
+> **Exemplo real neste repositório:** a `TASK-CHORE-021` registra quatro URLs — o run verde, o run
+> **vermelho** provocado por um erro de tipo proposital, o verde de novo após a correção, e o verde
+> do merge. Sem os links, "o CI reprova quando deve" seria uma afirmação sobre o futuro. Com eles, é
+> um fato que qualquer pessoa reproduz em dois cliques.
+
 ### 7.2 Novos anti-padrões para `50-anti-padroes.md`
 
 | Anti-padrão | Por que é crítico | O que fazer |
@@ -488,6 +533,7 @@ inegociável — e, diferente da versão atual, ela é **verificável por tercei
 | Elevar limite em vez de resolver (`chunkSizeWarningLimit`, `audit --audit-level` frouxo, `eslint-disable` amplo) | Apaga o sinal e mantém o problema | Corrigir, ou registrar exceção datada com responsável |
 | Escrever regra nova sem comando que a verifique | Cria a ilusão de controle; produz 0 execuções | Toda regra nasce com gate ou nasce como "recomendação", explicitamente |
 | Revisar na mesma sessão que implementou | Propaga o viés que gerou o erro | Agente auditor com contexto limpo |
+| Colar saída de comando quando havia link de run disponível | Evidência digitável e seletiva: não amarra a um commit nem revela a etapa que foi pulada | Link do run (§7.1.1); saída colada só sem CI |
 | Aceitar risco de segurança "no chat" | Sem prazo e sem responsável, exceção temporária vira permanente e ninguém percebe | Entrada em `riscos-aceitos.md` com data de revisão (§11) |
 | Silenciar advisory com allowlist sem data | Vira ruído permanente; ninguém revisita | Prazo máximo de 90 dias, renovação com nova avaliação |
 | Documentar link/arquivo sem verificar que resolve | Doc tóxica; quebra o carregamento modular | `lint:docs` no CI |
@@ -567,7 +613,9 @@ Para colar no topo do núcleo, ou em qualquer projeto novo:
 >    gate. CI é a autoridade; o markdown é o relato.
 > 3. **Quem escreve não aprova.** Revisão em contexto novo, por agente com o único poder de reprovar.
 >    Auditoria que nunca reprova está quebrada.
-> 4. **Sem evidência, é `NÃO EXECUTADO`.** Nunca `APROVADO`. Saída do comando ou link do run — ou nada.
+> 4. **Sem evidência, é `NÃO EXECUTADO`.** Nunca `APROVADO`. A evidência preferida é o **link do run
+>    do CI** (§7.1.1) — ele amarra o resultado a um commit, mostra as etapas que *não* rodaram e não
+>    pode ser digitado. Saída colada serve só onde não há CI.
 > 5. **Publicar é consequência de um gate verde, não um ato de vontade.** Se o portão não passa, não vai
 >    a público — inclusive (e principalmente) quando você tem certeza de que está tudo bem.
 > 6. **Desligar um gate custa mais que corrigi-lo.** Exceção vive em `docs/seguranca/riscos-aceitos.md`
