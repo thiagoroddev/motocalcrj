@@ -52,7 +52,7 @@ export function LayoutApp() {
               )}
             </span>
           </Link>
-          <p className="text-muted-foreground/50 text-xs">
+          <p className="text-muted-foreground/70 text-xs">
             {perfil.moto.ano} -{' '}
             <Link
               to="/insumos"

@@ -108,7 +108,7 @@ export function Passo3() {
                 </span>
               </div>
             ) : (
-              <p className="text-muted-foreground/50 text-xs px-1">
+              <p className="text-muted-foreground/70 text-xs px-1">
                 Moto com mais de 15 anos - isenta de IPVA no RJ.
               </p>
             )}

@@ -56,7 +56,7 @@ export function Passo7() {
     }`;
 
   const inputClassName =
-    'min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
+    'min-h-touch bg-card rounded-input border-muted text-foreground px-4 placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0';
 
   return (
     <PassoLayout

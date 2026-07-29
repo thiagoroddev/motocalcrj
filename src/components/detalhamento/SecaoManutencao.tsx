@@ -326,7 +326,7 @@ export function SecaoManutencao({
           </div>
           {renderizarGrupoItens('Ancorados', 'ancorado', itensAncorados)}
           {renderizarGrupoItens('Amortizados', 'amortizado', itensAmortizados)}
-          <div className="flex flex-wrap gap-x-3 gap-y-1 px-1 pt-1 text-[10px] text-muted-foreground/50">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 px-1 pt-1 text-[10px] text-muted-foreground/70">
             <span>
               <span className="font-semibold text-yellow-500">!</span> falta a mão de obra da
               concessionária

@@ -86,7 +86,7 @@ export function NavBar() {
               return `flex-1 flex flex-col items-center justify-center gap-0.5 text-[9px] font-medium tracking-wider transition-colors ${
                 ativo
                   ? 'bg-primary text-foreground'
-                  : 'text-muted-foreground/50 hover:text-muted-foreground'
+                  : 'text-muted-foreground/70 hover:text-muted-foreground'
               }`;
             }}
           >

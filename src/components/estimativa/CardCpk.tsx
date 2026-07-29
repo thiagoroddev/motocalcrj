@@ -15,7 +15,7 @@ export function CardCpk({ porKm, porKmSemAlimentacao }: PropsCardCpk) {
       </p>
       <p className="text-foreground font-bold text-3xl">{cpkFormatado(porKm)}</p>
       {porKmSemAlimentacao !== undefined && (
-        <p className="text-muted-foreground/50 text-xs mt-1">
+        <p className="text-muted-foreground/70 text-xs mt-1">
           Sem alimentação: {cpkFormatado(porKmSemAlimentacao)}
         </p>
       )}

@@ -129,7 +129,7 @@ export function CardItemPreco({
       </div>
 
       {mostrarDicaAbaMO && (
-        <p className="text-[10px] text-muted-foreground/50 leading-tight">
+        <p className="text-[10px] text-muted-foreground/70 leading-tight">
           Vida útil: {intervaloKm.toLocaleString('pt-BR')} km · Alterar na aba M. Obra
         </p>
       )}

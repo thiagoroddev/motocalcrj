@@ -94,7 +94,7 @@ export function PassoModelo() {
         )}
       </div>
 
-      <p className="text-muted-foreground/50 text-xs mt-6 text-center">
+      <p className="text-muted-foreground/70 text-xs mt-6 text-center">
         Mais modelos serão adicionados em breve
       </p>
     </PassoLayout>
