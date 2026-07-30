@@ -93,6 +93,19 @@ _Nenhuma tarefa Imediata aberta._
     `useFetcher` têm **zero** ocorrências no `src/`. Avaliar a migração v7→v8 pelo guia oficial,
     revalidando as 15 telas que importam o router (rotas aninhadas, `RotaProtegida` e o `Routes`
     aninhado do onboarding são os pontos de risco).
+    - **Dados novos do alerta do Dependabot (29/07/26, alerta #1):** CVSS 4.0 **7,1 (High)**, follow-up
+      do **CVE-2026-22030**. O GitHub **corrobora a justificativa do RA-001** com as próprias palavras:
+      *"This only affects your application if you are using the unstable RSC APIs"*.
+    - **O Dependabot NÃO consegue corrigir sozinho.** `react-router-dom@7.18.1` exige
+      `react-router@7.18.1` e o patch só existe em `8.3.0`, então o caminho de atualização tentaria
+      degradar o `react-router-dom` para `0.0.0`. Confirma que a saída passa por **subir o
+      `react-router-dom` para v8** — daí o modo `Strict`.
+    - **Alternativa a investigar antes de assumir a migração inteira:** o alerta sugere um
+      `overrides` no `package.json` fixando o `react-router` numa versão não vulnerável compatível.
+      Provavelmente **inviável** (o `-dom` 7.18.1 exige o `react-router` 7.18.1 exato, e não há versão
+      corrigida na faixa 7.x), mas custa pouco confirmar — e se funcionasse, encerraria o RA-001 sem
+      migração major. Não usar `overrides` sem rodar a suíte inteira: forçar versão fora do que o
+      pacote declara é exatamente o tipo de mudança que quebra em runtime, não em build.
   - **eslint / eslint-plugin-import / minimatch / brace-expansion** (6 advisories) — só ferramenta de
     lint, não chega ao usuário. A "correção" sugerida pela npm inclui `eslint@10` (major) e um
     **downgrade** de `eslint-plugin-import` para 1.14.0.
