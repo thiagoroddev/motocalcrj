@@ -59,6 +59,13 @@ justificativa: >
 evidencia: |
   grep -rn "createBrowserRouter\|RouterProvider\|loader=\|action=\|useFetcher" src/
   # -> 0 ocorrencias (verificado em 29/07/26)
+  #
+  # CORROBORACAO INDEPENDENTE (29/07/26): o proprio alerta do Dependabot no
+  # repositorio (Security > Dependabot alerts #1) declara:
+  #   "This only affects your application if you are using the unstable RSC APIs"
+  # Ou seja, a justificativa acima nao e interpretacao nossa do advisory - e o
+  # que a fonte do advisory afirma. CVSS 4.0: 7.1 (High), follow-up do
+  # CVE-2026-22030.
 aceito_por: Thiago Silva Rodrigues
 data_aceite: 2026-07-29
 data_revisao: 2026-10-27
@@ -67,7 +74,10 @@ condicao_de_encerramento: >
   Migracao para react-router >= 8.3.0, OU adocao de data router / server actions
   no projeto - o que vier primeiro. A segunda hipotese invalida a justificativa
   imediatamente e torna a correcao urgente, sem nenhum advisory novo ter sido
-  publicado.
+  publicado. O Dependabot NAO consegue corrigir sozinho: react-router-dom@7.18.1
+  exige react-router@7.18.1 e o patch so existe em 8.3.0, entao o caminho de
+  atualizacao tentaria degradar o react-router-dom para 0.0.0. A saida passa por
+  subir o react-router-dom para v8.
 ```
 
 ---
