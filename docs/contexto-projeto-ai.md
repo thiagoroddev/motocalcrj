@@ -476,14 +476,14 @@ que o toggle está de fato ativo. Melhor que silêncio.
 
 <!-- gate:plataforma — formato lido por scripts/gate-lancamento.mjs. Não renomear as chaves. -->
 
-- **Última conferência:** 2026-07-29
-- **Conferido por:** (pendente)
+- **Última conferência:** 2026-07-30
+- **Conferido por:** Thiago Silva Rodrigues
 
-| Item | Onde | Status |
-| --- | --- | --- |
-| Branch protection em `motocustorj` exigindo o check "Gates de qualidade" | Settings → Branches → Add branch ruleset | a confirmar |
-| Dependabot alerts | Settings → Code security | a confirmar |
-| Dependabot security updates | Settings → Code security | a confirmar |
+| Item | Onde | Status | Evidência |
+| --- | --- | --- | --- |
+| Branch protection em `motocustorj` exigindo o check "Gates de qualidade" | Settings → Rules → Rulesets ("Proteção de motocustorj", `Active`) | ligado | PR #7 (30/07): merge só liberou depois do check `Gates de qualidade` verde |
+| Dependabot alerts | Settings → Code security | ligado | Alerta #1 aberto no repositório (react-router, `GHSA-qwww-vcr4-c8h2`) |
+| Dependabot security updates | Settings → Advanced Security | ligado | Conferido na tela em 30/07: o botão exibe *Disable*, ou seja, o recurso está habilitado (o botão mostra a ação, não o estado) |
 
 Valores válidos de status: `ligado`, `a confirmar`, `desligado`. Para `desligado`, escrever o motivo na
 mesma linha — desligar item de segurança é decisão, e decisão sem motivo registrado é esquecimento.
