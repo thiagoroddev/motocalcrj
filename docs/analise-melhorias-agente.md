@@ -111,8 +111,9 @@ cobre *"o requisito RF-6.11 continua valendo depois desta mudança?"*. O requisi
 `docs/requisitos/`, o teste vive em `src/`, e nada liga os dois. Por isso a regressão de regra de
 negócio só aparece quando um humano abre o app e estranha um número.
 
-**Correção:** testes de aceite rastreáveis (§3, camada 1) — cada RF/RN crítico ganha um teste que cita
-o ID do requisito no nome. Um relatório mecânico passa a responder "quais requisitos não têm teste".
+**Correção:** rastreabilidade requisito ↔ teste — cada RF/RN de cálculo, dinheiro ou persistência ganha
+um teste que cita o ID do requisito no nome, e um script passa a responder "quais requisitos não têm
+teste". Especificação, medição e o porquê de a prática ser desconhecida no ecossistema web: **§7.5**.
 
 ---
 
@@ -465,7 +466,7 @@ Três propriedades que fazem isso funcionar onde a prosa falhou:
 
 ## 7. Ajustes no pacote de agentes
 
-Além das correções de integridade (§8), quatro mudanças de conteúdo:
+Além das correções de integridade (§8), seis mudanças de conteúdo:
 
 ### 7.1 Adicionar ao núcleo: a 4ª regra inegociável
 
@@ -555,6 +556,162 @@ Os 314 itens não são o problema — o problema é que nada os invoca. Reestrut
 
 Um checklist de 5 itens que roda 197 vezes vale infinitamente mais que um de 314 que roda zero.
 
+### 7.5 Rastreabilidade requisito ↔ teste em `padroes/15-testes.md`
+
+O achado **A3** (o usuário é o canal de descoberta de defeito) tem uma causa mecânica que o módulo de
+testes não cobre: **requisito e teste não se conhecem**. Medido neste projeto:
+
+| | |
+|---|---:|
+| Requisitos documentados (IDs em tabela) | **116** |
+| Arquivos de teste | 43 |
+| Arquivos de teste que citam algum ID de requisito | **7** |
+| Dos 10 primeiros requisitos amostrados, com teste que os cite | **0** |
+
+Os dois lados existem e são bem escritos. Nada os liga.
+
+#### Por que isto não vem de graça com a ferramenta
+
+Vale registrar, porque quem for aplicar esta norma provavelmente nunca ouviu falar da prática:
+
+- **Test runner é ferramenta, não metodologia.** Vitest, Jest e afins documentam a API (`describe`,
+  `it`, `expect`, mocks, coverage). Rastreabilidade é processo, uma camada acima — nenhum runner tem
+  opinião sobre isso.
+- **A métrica popular é a errada para o problema.** Ferramentas medem **cobertura de código**
+  (quantas linhas executaram). Ninguém entrega **cobertura de requisito**, porque o runner não tem
+  como saber quais são — eles vivem num documento que ele nunca lê. *Cobertura de código responde
+  "quanto do meu código foi tocado"; rastreabilidade responde "quanto do que eu prometi está
+  garantido".*
+- **A prática vem de software regulado**, onde é obrigação legal: aviação (DO-178C), dispositivos
+  médicos (IEC 62304), automotivo (ISO 26262). A *matriz de rastreabilidade* é entregável de
+  auditoria. Também vive em QA corporativo (Jira+Xray, Azure DevOps, TestRail), que existe em boa
+  parte para ligar caso de teste a requisito. Daí um analista de QA conhecer o termo e um dev de
+  front nunca ter ouvido.
+- **Tem um pré-requisito que quase ninguém cumpre:** só dá para rastrear se os requisitos existirem
+  como documento. A maioria dos projetos web não tem — a prática seria vazia. Onde existem, ela é
+  quase gratuita.
+
+#### As três consequências práticas de não ter
+
+1. **A cobertura de requisitos é opinião, não número.** Para saber se `RF-ON-03` tem teste, alguém
+   lê 43 arquivos e julga. Julgamento não vira relatório; relatório que não existe não vira gate.
+   É a Lei do Gate Mecânico (§1) aplicada a testes.
+2. **O teste descreve a função; o requisito descreve a promessa.** Um teste real deste projeto —
+   `it('usa multiplicação direta por 52 (canônico)')` — prova que a função multiplica por 52, não que
+   52 seja a regra certa. Se alguém decidir que são 48 semanas, o teste quebra e o reflexo é
+   *consertar o teste*: ninguém é obrigado a abrir o documento e conferir se a regra mudou ou se a
+   promessa foi rompida.
+3. **Peças corretas somam comportamento errado.** `TASK-BG-003` deste projeto: *"cálculo por peça
+   exclui itens cobertos pela revisão da concessionária (corrige dupla contagem)"*. Cada função
+   estava certa e testada; o **invariante** ("item coberto pelo pacote não pode ser contado também
+   individualmente") não existia como teste em lugar nenhum. Repetido 38 vezes, é o A3.
+
+#### A regra para o pacote
+
+> **Teste que guarda requisito documentado cita o ID do requisito no nome.**
+>
+> ```js
+> // antes
+> it('usa multiplicação direta por 52 (canônico)', ...)
+> // depois
+> it('RN-14: km anual = diasSemana × 52, não 365', ...)
+> ```
+>
+> **Escopo:** requisitos de **cálculo, dinheiro e persistência** — onde o erro é silencioso e só
+> aparece quando alguém estranha um número na tela. Requisito cosmético de UI (barra de progresso)
+> fica fora: custo alto de teste, risco baixo.
+>
+> **A parte mecânica:** um script extrai os IDs de `docs/requisitos/` e dos nomes de teste e reporta
+> a diferença. Sem o script, esta regra é mais uma recomendação — e vira zero execuções, como todas
+> as outras que este documento cataloga.
+
+#### O que isto não resolve
+
+Rastreabilidade não melhora teste ruim. Um teste raso com `RF-XX` no nome continua raso — passa a
+mentir de forma auditável. Ela torna a **ausência** visível, não a qualidade boa.
+
+### 7.6 As três lições de segurança que só apareceram na execução
+
+As seções anteriores foram escritas **antes** de executar o bloco de lançamento. Executá-lo produziu
+três achados que nenhuma delas previa — e os três são norma, não detalhe deste projeto.
+
+#### 1. Configuração de plataforma: a categoria que a Lei do Gate Mecânico não alcança
+
+Três itens de segurança deste projeto **moram fora do repositório** e **nenhum script consegue
+verificar sem credencial** (a API do GitHub responde `401` sem token):
+
+| Item | Onde vive |
+|---|---|
+| Dependabot **alerts** ("saiu CVE que te afeta") | Settings → Code security |
+| Dependabot **security updates** (PR que corrige) | Settings → Code security |
+| **Branch protection** (CI impedir merge, não só informar) | Settings → Branches |
+
+Isso é o **limite** da §1: aqui a regra genuinamente não vira comando. E o efeito colateral é pior que
+o item em si — vira conhecimento que existe só na cabeça de quem clicou. Ninguém que herde o projeto
+descobre que estão ligados, nem que deveriam estar.
+
+> **Norma:** onde a regra não pode virar comando, ela vira **registro auditável** — uma seção
+> "Configuração de plataforma" no `contexto-projeto-ai.md`, listando cada item, quem ligou e quando.
+> E o portão passa a exigir **a existência e a data do registro**, que é a única coisa verificável
+> por máquina.
+>
+> Não é tão bom quanto um gate de verdade. É honesto sobre não ser.
+
+**Sinal de alerta correlato:** toda tarefa cuja conclusão depende de clicar em painel de terceiro
+deve dizer isso no enunciado. A `TASK-CHORE-022` prometia resolver "nada avisa quando sai CVE" com um
+arquivo YAML — e o arquivo **não faz isso**. Criar o YAML cumpriria o texto da tarefa e deixaria o
+problema intacto.
+
+#### 2. Console limpo não é ausência de problema
+
+Sequência real deste projeto, em duas tarefas:
+
+1. A `TASK-RNF-015` ativou CSP bloqueante. A validação foi manual: humano navegou o app com o console
+   aberto, **console limpo**, conclusão "está tudo certo".
+2. A `TASK-RNF-9.1` rodou Lighthouse e encontrou uma **violação de CSP em toda carga de página** —
+   causada por um defeito da própria RNF-015.
+
+Por que o console não mostrou: a biblioteca (Zod) tentava `eval`, a CSP bloqueava, e a exceção era
+**capturada em `try/catch`**. Sem erro no console. A violação ia para o **painel Issues** do Chrome,
+que ninguém abre.
+
+> **Norma:** "console limpo" e "validado visualmente" **não são evidência** para gate de segurança.
+> Só valem como evidência as ferramentas que leem o painel Issues — na prática, a auditoria
+> `inspector-issues` do Lighthouse. Validação humana continua indispensável para *comportamento*; ela
+> apenas não certifica *ausência de violação*.
+
+Este é o caso mais desconfortável do conjunto: a validação manual foi honesta, cuidadosa, e chegou à
+conclusão errada. Não foi falta de rigor — foi rigor aplicado ao instrumento errado.
+
+#### 3. "Zero origem externa" é um gate de uma linha que ninguém escreve
+
+O `index.html` deste projeto carregava a fonte de `fonts.googleapis.com`. Isso falsificava **três
+afirmações públicas** do próprio README, por cerca de dois meses:
+
+- "offline-first" — era requisição externa bloqueante de render
+- "nenhuma API em runtime" — havia
+- "local-first por privacidade" (a justificativa declarada para não ter backend) — entregava IP do
+  usuário a um terceiro antes da primeira tela pintar
+
+O comando que provaria a afirmação falsa:
+
+```bash
+grep -rl "googleapis\|gstatic" dist/     # 1 segundo
+```
+
+> **Norma:** toda afirmação de arquitetura que o projeto faz em público — "offline-first", "sem
+> terceiros", "local-first", "sem telemetria" — precisa de **um comando correspondente no portão**.
+> Afirmação sem comando é marketing, e envelhece mal: ninguém mentiu, só ninguém conferiu.
+
+#### Nota: CSP também é ferramenta de diagnóstico
+
+Vale registrar porque contraria a intuição. A CSP entrou como **defesa** (limitar dano de dependência
+comprometida) e, no caminho, **revelou** que uma dependência de produção executa `eval` para compilar
+schemas — informação que nenhum teste, lint ou typecheck deste projeto entregaria, e que o `grep` não
+achava porque o código aliasa o construtor (`const o = Function`).
+
+Política restritiva não só protege: ela **mede** o que o seu bundle realmente faz.
+
 ---
 
 ## 8. Roadmap de adoção
@@ -573,7 +730,7 @@ atual + 1: CHORE 019, TEST 006, RNF 014, DOC 019).
 | 7 | Agente Auditor + regra "não revisar na sessão que implementou" | `TASK-DOC-020` | Strict | P/M | **A2 (auto-aprovação)** |
 | 8 | 4ª regra inegociável + novos anti-padrões + reescrita do 41 | `TASK-DOC-021` | Strict | M/M | A6 |
 | 9 | `npm run doctor` | `TASK-CHORE-025` | Standard | M/G | Falta de feedback contínuo |
-| 10 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | `TASK-TEST-007` | Strict | G/G | **A3 (regressão de regra de negócio)** |
+| 10 | Testes de aceite rastreáveis por requisito, conforme §7.5 (RF de cálculo/dinheiro/persistência → teste que cita o ID + script que reporta a diferença) | `TASK-TEST-007` | Strict | G/G | **A3 (regressão de regra de negócio)** |
 | 11 | Lighthouse CI + metas (fecha `TASK-RNF-9.1`) | `TASK-RNF-016` | Standard | M/M | Performance nunca medida |
 | 12 | Dependabot/Renovate semanal | `TASK-CHORE-026` | Light | P/P | Reincidência do item 1 |
 

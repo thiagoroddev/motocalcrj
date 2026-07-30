@@ -1,0 +1,74 @@
+# Dependabot (TASK-CHORE-022).
+#
+# Por que existe: a TASK-CHORE-020 nasceu porque ninguém olhou para as
+# dependências durante 197 tarefas — até uma CVE HIGH aparecer no bundle
+# publicado. A TASK-CHORE-024 fez o CI BLOQUEAR nesse caso, mas bloquear é
+# reativo: só dispara quando alguém faz push. Se o repositório ficar um mês
+# parado, ninguém descobre nada.
+#
+#   O CI é a tranca. Este arquivo é o alarme.
+#
+# ATENÇÃO — este arquivo cobre só metade do problema. São três mecanismos:
+#   1. version updates  ("saiu versão nova")        -> este arquivo
+#   2. Dependabot alerts ("saiu CVE que te afeta")   -> Settings > Code security
+#   3. security updates  (PR que corrige a CVE)      -> Settings > Code security
+# Os itens 2 e 3 são configuração na web do GitHub, não código. Sem eles, o
+# aviso de CVE — que é a motivação desta tarefa — não acontece.
+
+version: 2
+
+updates:
+  # ── Dependências npm ───────────────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      # Segunda de manhã: PR no começo da semana, não na sexta à noite.
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    commit-message:
+      # O projeto não usa conventional commits (mensagens são frases em
+      # português com ID de tarefa). `deps` é curto e sinaliza commit de
+      # máquina, sem fingir um padrão que o repo não segue.
+      prefix: deps
+
+    # Agrupamento por tipo de dependência, espelhando a distinção que o
+    # scripts/audit-prod.mjs já faz: bump que vai para o bundle do usuário
+    # merece revisão diferente de bump de ferramenta de desenvolvimento.
+    #
+    # Majors ficam DE FORA dos grupos de propósito — cada um vira PR
+    # individual, porque major exige ler changelog. É também o material que a
+    # TASK-CHORE-025 precisa (react-router 8, eslint 10), e o PR do
+    # react-router 8.x é a saída do RA-001 (vence em 27/10/2026).
+    groups:
+      producao:
+        applies-to: version-updates
+        dependency-type: production
+        update-types:
+          - patch
+          - minor
+      desenvolvimento:
+        applies-to: version-updates
+        dependency-type: development
+        update-types:
+          - patch
+          - minor
+
+  # ── Actions do próprio CI ──────────────────────────────────────────────────
+  # São 2 usos hoje (actions/checkout, actions/setup-node). Risco baixo e
+  # volume mínimo, então um grupo só — segmentar aqui seria cerimônia sem ganho.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    commit-message:
+      prefix: deps
+    groups:
+      actions:
+        patterns:
+          - '*'

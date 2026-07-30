@@ -64,7 +64,6 @@ _Nenhuma tarefa Imediata aberta._
 
 | ID | Título | Modo | Valor | Urgência | Esforço-H/IA | Dependências | REQ/ADR/DT | Status | Data origem |
 | --- | --- | :---: | :---: | :---: | :---: | --- | --- | :---: | --- |
-| TASK-CHORE-022 | Dependabot semanal para dependências e GitHub Actions | Light | Importante | Normal | P/P | TASK-CHORE-021 | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-023 | Corrigir integridade de `.github/agents/`: 33 arquivos `.md.md`, 504 links mortos, frontmatter inválido | Standard | Importante | Normal | M/G | - | - | `[ ]` | 28/07/26 18:30 |
 | TASK-TEST-007 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | Strict | Importante | Normal | G/G | - | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-025 | Avaliar react-router v8 e advisories de tooling (eslint, vite-plugin-pwa/workbox) | Strict | Importante | Normal | M/G | - | gerada pela TASK-CHORE-020 | `[ ]` | 28/07/26 19:00 |
@@ -72,10 +71,6 @@ _Nenhuma tarefa Imediata aberta._
 | TASK-CHORE-027 | Fazer o portão de lançamento rodar sozinho (workflow de release + branch protection) | Standard | Importante | Normal | P/M | TASK-CHORE-024 | gerada pela TASK-CHORE-024 | `[ ]` | 29/07/26 18:00 |
 
 **Detalhamento:**
-
-- **TASK-CHORE-022** — hoje nada avisa quando sai CVE nova; a `TASK-CHORE-020` existe justamente
-  porque ninguém olhou por 197 tarefas. Criar `.github/dependabot.yml` com ecossistemas `npm` e
-  `github-actions`, frequência semanal, PRs agrupados por patch/minor para não virar ruído.
 
 - **TASK-CHORE-023** — o `README` e o [`docs/uso-de-ia.md`](../uso-de-ia.md) apontam publicamente para
   `.github/agents/` como prova do processo de engenharia, mas a pasta está fisicamente quebrada:
@@ -99,6 +94,11 @@ _Nenhuma tarefa Imediata aberta._
   - **Branch protection** em `motocustorj` exigindo o check "Gates de qualidade". É configuração na
     web do GitHub (Settings → Branches → Add branch ruleset), não código — hoje um push com CI
     vermelho ainda entra.
+  - **Registrar as configurações de plataforma** (observação vinda da revisão da `TASK-CHORE-022`).
+    Já são **três** itens de qualidade que moram fora do repositório e nenhum script do projeto
+    consegue verificar sem token: branch protection, **Dependabot alerts** e **Dependabot security
+    updates**. Sem um registro único — em `contexto-projeto-ai.md` — isso vira conhecimento que existe
+    só na cabeça de quem clicou, e o portão de lançamento nunca saberá que eles existem.
 
 - **TASK-CHORE-025** — gerada pela `TASK-CHORE-020`, que corrigiu as 10 vulnerabilidades originais mas
   esbarrou numa leva nova de advisories publicada no mesmo dia, toda exigindo **major**. Três grupos,
