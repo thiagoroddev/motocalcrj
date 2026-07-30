@@ -68,7 +68,6 @@ _Nenhuma tarefa Imediata aberta._
 | TASK-TEST-007 | Testes de aceite rastreáveis por requisito (RF crítico → teste que cita o ID) | Strict | Importante | Normal | G/G | - | - | `[ ]` | 28/07/26 18:30 |
 | TASK-CHORE-025 | Avaliar react-router v8 e advisories de tooling (eslint, vite-plugin-pwa/workbox) | Strict | Importante | Normal | M/G | - | gerada pela TASK-CHORE-020 | `[ ]` | 28/07/26 19:00 |
 | TASK-REF-48 | Carregar presets sob demanda (~345 kB de JSON hoje no chunk inicial) | Strict | Importante | Normal | G/G | - | gerada pela TASK-REF-47 | `[ ]` | 28/07/26 23:00 |
-| TASK-CHORE-027 | Fazer o portão de lançamento rodar sozinho (workflow de release + branch protection) | Standard | Importante | Normal | P/M | TASK-CHORE-024 | gerada pela TASK-CHORE-024 | `[ ]` | 29/07/26 18:00 |
 
 **Detalhamento:**
 
@@ -83,22 +82,6 @@ _Nenhuma tarefa Imediata aberta._
   do agente acontece em outro projeto. Critério de aceite: extensões `.md` corretas, todo link
   interno resolvendo para caminho relativo do repositório, frontmatter válido, versão única,
   precedência entre os dois pacotes registrada em `contexto-projeto-ai.md`.
-
-- **TASK-CHORE-027** — gerada pela revisão da `TASK-CHORE-024`. O portão existe, funciona e tem
-  reprovação provada em 5 cenários — mas **depende de alguém digitar `npm run gate:lancamento`** antes
-  de publicar. Enquanto isso, ele é ferramenta disponível, não impedimento: reduz o achado A5 da
-  análise sem eliminá-lo. Duas frentes:
-  - **Workflow de release** que invoca o portão (em tag ou `workflow_dispatch`), em vez de rodá-lo a
-    cada push — ele executa `verify`, consulta a produção e lê o Lighthouse, então em todo push seria
-    lento e mediria a produção **antiga**, não a do commit.
-  - **Branch protection** em `motocustorj` exigindo o check "Gates de qualidade". É configuração na
-    web do GitHub (Settings → Branches → Add branch ruleset), não código — hoje um push com CI
-    vermelho ainda entra.
-  - **Registrar as configurações de plataforma** (observação vinda da revisão da `TASK-CHORE-022`).
-    Já são **três** itens de qualidade que moram fora do repositório e nenhum script do projeto
-    consegue verificar sem token: branch protection, **Dependabot alerts** e **Dependabot security
-    updates**. Sem um registro único — em `contexto-projeto-ai.md` — isso vira conhecimento que existe
-    só na cabeça de quem clicou, e o portão de lançamento nunca saberá que eles existem.
 
 - **TASK-CHORE-025** — gerada pela `TASK-CHORE-020`, que corrigiu as 10 vulnerabilidades originais mas
   esbarrou numa leva nova de advisories publicada no mesmo dia, toda exigindo **major**. Três grupos,

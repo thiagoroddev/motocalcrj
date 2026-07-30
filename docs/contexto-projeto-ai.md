@@ -434,10 +434,23 @@ O status detalhado deve ser consultado nas tarefas e no código. Não repetir co
 ## 10. Comandos de Verificação
 
 ```bash
-npx tsc --noEmit
-npm run lint
-npm run test
+npm run verify           # typecheck + lint + testes — gate local, roda offline
 npm run build
+```
+
+Gates que dependem de rede (CI e pré-lançamento):
+
+```bash
+npm run audit:prod       # vulnerabilidades de PRODUÇÃO, ciente dos riscos aceitos
+npm run gate:lancamento  # pode ir a público? 9 itens; exige relatorios/lighthouse.json
+```
+
+`audit:prod` também roda **bloqueante** no CI. O `gate:lancamento` é pré-deploy e consome um
+relatório do Lighthouse gerado antes:
+
+```bash
+npx -y lighthouse https://motocustorj.vercel.app/ --output=json \
+  --output-path=relatorios/lighthouse.json --chrome-flags="--headless=new" --quiet
 ```
 
 Para FIPE:
@@ -451,7 +464,33 @@ npm run fipe:update
 
 ---
 
-## 11. Índice de Documentos Ativos
+## 11. Configuração de Plataforma (fora do repositório)
+
+Estes itens de qualidade **não vivem no código** e **nenhum script do projeto consegue verificá-los**:
+a API do GitHub exige token autenticado para consultá-los. É o limite da regra "toda regra vira
+comando" — e, sem este registro, viram conhecimento que existe só na cabeça de quem clicou.
+
+O `gate:lancamento` lê esta seção e reprova se a data de conferência passar de **90 dias** ou se algum
+item não estiver `ligado`. É verificação **fraca de propósito**: atesta que alguém olhou e quando, não
+que o toggle está de fato ativo. Melhor que silêncio.
+
+<!-- gate:plataforma — formato lido por scripts/gate-lancamento.mjs. Não renomear as chaves. -->
+
+- **Última conferência:** 2026-07-29
+- **Conferido por:** (pendente)
+
+| Item | Onde | Status |
+| --- | --- | --- |
+| Branch protection em `motocustorj` exigindo o check "Gates de qualidade" | Settings → Branches → Add branch ruleset | a confirmar |
+| Dependabot alerts | Settings → Code security | a confirmar |
+| Dependabot security updates | Settings → Code security | a confirmar |
+
+Valores válidos de status: `ligado`, `a confirmar`, `desligado`. Para `desligado`, escrever o motivo na
+mesma linha — desligar item de segurança é decisão, e decisão sem motivo registrado é esquecimento.
+
+---
+
+## 12. Índice de Documentos Ativos
 
 | Assunto | Arquivo |
 |---|---|
@@ -479,7 +518,7 @@ npm run fipe:update
 
 ---
 
-## 12. Como Manter Este Documento Saudável
+## 13. Como Manter Este Documento Saudável
 
 - Atualizar a visão quando público, problema, proposta de valor ou escopo mudarem.
 - Atualizar a lista de modelos quando presets forem adicionados ou removidos.

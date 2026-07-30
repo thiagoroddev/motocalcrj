@@ -56,6 +56,11 @@ const ORCAMENTO = {
   idadeMaximaRelatorioDias: 7,
 };
 
+// Prazo da conferência da configuração de plataforma (TASK-CHORE-027). Mesmo
+// número dos riscos aceitos: 90 dias é curto o bastante para não virar carimbo
+// e longo o bastante para não virar burocracia semanal.
+const PRAZO_PLATAFORMA_DIAS = 90;
+
 const HEADERS_OBRIGATORIOS = [
   'content-security-policy',
   'strict-transport-security',
@@ -299,6 +304,70 @@ function item8Documentos() {
     : { veredito: REPROVADO, detalhe: `faltando: ${faltando.join(', ')}` };
 }
 
+/**
+ * Configuração de plataforma (TASK-CHORE-027).
+ *
+ * Branch protection e os dois toggles do Dependabot vivem no painel do GitHub e
+ * a API exige token para consultá-los — este item é o limite da regra "toda
+ * regra vira comando". O que dá para verificar por máquina é se **alguém olhou
+ * e quando**, e é só isso que este item afirma. Verificação fraca de propósito;
+ * a mensagem diz isso em voz alta para ninguém confundir com garantia.
+ */
+function item9Plataforma() {
+  const caminho = join(RAIZ, 'docs', 'contexto-projeto-ai.md');
+  if (!existsSync(caminho)) {
+    return { veredito: NAO_EXECUTADO, detalhe: 'contexto-projeto-ai.md ausente' };
+  }
+
+  const doc = readFileSync(caminho, 'utf8');
+  const secao = doc.split(/^##\s+\d+\.\s+Configuração de Plataforma/m)[1];
+  if (!secao) {
+    return {
+      veredito: REPROVADO,
+      detalhe: 'seção "Configuração de Plataforma" não encontrada no contexto-projeto-ai.md',
+    };
+  }
+  const corpo = secao.split(/^##\s/m)[0];
+
+  const data = corpo.match(/\*\*Última conferência:\*\*\s*(\d{4}-\d{2}-\d{2})/);
+  if (!data) {
+    return {
+      veredito: REPROVADO,
+      detalhe: 'registro sem "Última conferência" em formato AAAA-MM-DD',
+    };
+  }
+
+  const conferido = new Date(data[1]);
+  const dias = Math.round((Date.now() - conferido.getTime()) / 86_400_000);
+  if (dias > PRAZO_PLATAFORMA_DIAS) {
+    return {
+      veredito: REPROVADO,
+      detalhe: `conferência de ${data[1]} tem ${dias} dias (máximo ${PRAZO_PLATAFORMA_DIAS})`,
+    };
+  }
+
+  // Linhas de tabela: | item | onde | status |
+  const pendentes = [];
+  for (const linha of corpo.split('\n')) {
+    const celulas = linha.split('|').map((c) => c.trim());
+    if (celulas.length < 5 || /^-+$/.test(celulas[1]) || celulas[1] === 'Item') continue;
+    const [, item, , status] = celulas;
+    if (!/^ligado$/i.test(status)) pendentes.push(`${item} (${status})`);
+  }
+
+  if (pendentes.length > 0) {
+    return {
+      veredito: REPROVADO,
+      detalhe: `${pendentes.length} item(ns) não confirmado(s): ${pendentes.join('; ')}`,
+    };
+  }
+
+  return {
+    veredito: APROVADO,
+    detalhe: `registro de ${data[1]} (${dias} dias), todos ligados — atesta que alguém conferiu, não que o toggle esteja ativo`,
+  };
+}
+
 // ── Execução ─────────────────────────────────────────────────────────────────
 
 const SIMBOLO = { [APROVADO]: 'ok  ', [REPROVADO]: 'FALHA', [NAO_EXECUTADO]: '?   ' };
@@ -312,6 +381,7 @@ const itens = [
   ['nenhuma tarefa Crítico + IMEDIATA aberta', item6TarefasCriticas],
   ['metas de Lighthouse', item7Lighthouse],
   ['LICENSE, README e privacidade', item8Documentos],
+  ['configuração de plataforma registrada', item9Plataforma],
 ];
 
 console.info(`\nPortão de lançamento — ${URL_ALVO}\n`);

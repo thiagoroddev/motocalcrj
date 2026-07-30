@@ -1,0 +1,80 @@
+name: Portão de lançamento
+
+# Responde a UMA pergunta, com URL: **este projeto pode ir a público?**
+# (TASK-CHORE-027; portão implementado na TASK-CHORE-024.)
+#
+# Existe porque a CHORE-024 entregou o portão funcionando mas dependente de
+# alguém digitar `npm run gate:lancamento`. Ferramenta disponível não é
+# impedimento — e o veredito de publicar precisa de evidência que qualquer
+# pessoa consiga abrir, como manda a §7.1.1 da análise.
+#
+# ── Por que MANUAL e não em tag ───────────────────────────────────────────────
+# O portão mede a **produção servida**, não o código do commit. Disparar em tag
+# mediria a produção ANTERIOR, porque a Vercel ainda não terminou o deploy — o
+# run daria verde sobre o artefato errado, que é pior que não rodar.
+#
+# E o workflow não consegue confirmar sozinho que a produção já é este commit:
+# o hash dos assets difere entre ambientes de build (comprovado na
+# TASK-RNF-9.1 — `D4NilPDQ` local vs `k78uyd8M` na Vercel), então não há como
+# comparar. Resolver isso exigiria um token da Vercel, ou seja, credencial no
+# repositório para economizar um clique.
+#
+# USO: aguarde o deploy da Vercel ficar verde e então acione
+#      Actions > Portão de lançamento > Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL a medir (deixe em branco para a produção)'
+        required: false
+        default: 'https://motocustorj.vercel.app/'
+
+jobs:
+  portao:
+    name: Pode ir a público?
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # O portão precisa de dist/ para dois itens: orçamento de bundle e
+      # varredura de segredos. Sem build, ambos reportam NÃO EXECUTADO.
+      - name: Build
+        run: npm run build
+
+      # O portão CONSOME o relatório, não o gera — assim ele não carrega o
+      # Lighthouse como dependência do projeto. Aqui o `npx` resolve na hora.
+      # Se o runner não tiver Chrome, este passo falha, o portão reporta
+      # NÃO EXECUTADO e o workflow reprova: comportamento correto.
+      - name: Medir com Lighthouse
+        run: |
+          mkdir -p relatorios
+          npx -y lighthouse "${{ inputs.url }}" \
+            --output=json \
+            --output-path=relatorios/lighthouse.json \
+            --chrome-flags="--headless=new --no-sandbox" \
+            --quiet
+
+      - name: Portão de lançamento
+        run: npm run gate:lancamento -- --url "${{ inputs.url }}" | tee relatorios/portao.txt
+
+      # `always()`: o artefato do run REPROVADO é o mais útil de todos — é a
+      # evidência de por que não se pode publicar.
+      - name: Anexar evidência
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portao-lancamento
+          path: |
+            relatorios/portao.txt
+            relatorios/lighthouse.json
+          retention-days: 90
