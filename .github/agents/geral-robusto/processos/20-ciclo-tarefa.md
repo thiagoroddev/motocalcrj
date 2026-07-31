@@ -1,13 +1,14 @@
 ---
-
-description: "Ciclo de vida das tarefas: pendente, em andamento, concluída. Modos de cerimônia, regras de transição, casos especiais." modulo: "20" categoria: "processos" versao: "1.0" relacionado:
-
-- "01-nucleo.md"
-- "21-revisao-codigo.md"
-- "27-revisao-geral.md"
-- "../templates/30-task-em-andamento.md"
-- "../templates/31-task-concluida.md"
-
+description: "Ciclo de vida das tarefas: pendente, em andamento, concluída. Modos de cerimônia, regras de transição, casos especiais."
+modulo: "20"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "01-nucleo.md"
+  - "21-revisao-codigo.md"
+  - "27-revisao-geral.md"
+  - "../templates/30-task-em-andamento.md"
+  - "../templates/31-task-concluida.md"
 ---
 
 # 🔄 Ciclo de Tarefa
@@ -39,7 +40,7 @@ Cada estágio tem **uma localização única**. Tarefa nunca está em dois lugar
 
 ## 2. Modos de Cerimônia (Revisitados)
 
-Antes de entrar no ciclo, lembre dos modos definidos no [núcleo](https://claude.ai/01-nucleo.md#4-modos-de-cerim%C3%B4nia):
+Antes de entrar no ciclo, lembre dos modos definidos no [núcleo](../01-nucleo.md#4-modos-de-cerim%C3%B4nia):
 
 |Modo|Cerimônia|Onde|
 |---|---|---|
@@ -47,7 +48,7 @@ Antes de entrar no ciclo, lembre dos modos definidos no [núcleo](https://claude
 |**Standard**|Ciclo completo: pendentes → em-andamento → concluidas|Este módulo aplica|
 |**Strict**|Standard + ADR + análise de impacto antes|Standard + extras|
 
-**Este módulo descreve o ciclo Standard.** Para Light, não há ciclo - apenas o registro mínimo no commit. Para Strict, este ciclo se aplica com adições documentadas em [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) e [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md).
+**Este módulo descreve o ciclo Standard.** Para Light, não há ciclo - apenas o registro mínimo no commit. Para Strict, este ciclo se aplica com adições documentadas em [`25-analise-impacto.md`](./25-analise-impacto.md) e [`../templates/32-adr.md`](../templates/32-adr.md).
 
 ### 2.1 Exemplos Concretos
 
@@ -124,10 +125,10 @@ Tarefas com urgência **Imediata** não cabem em uma linha de tabela porque carr
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **TASK-PREFIXO-XXX**          | `TASK-` + prefixo + número. Prefixos: `RF` (req funcional), `RN` (regra negócio), `RNF` (req não-funcional), `BG` (bug), `REF` (refactor), `DOC` (documentação), `CHORE` (manutenção), `TEST` (testes). Exemplo: `TASK-RF-5.1`             |
 | **Título**                    | Frase curta descritiva. Sem ponto final                                                                                                                                                                                                    |
-| **Modo**                      | Light / Standard / Strict (ver [seção 2](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#2-modos-de-cerim%C3%B4nia-revisitados))                                                                                               |
+| **Modo**                      | Light / Standard / Strict (ver [seção 2](#2-modos-de-cerim%C3%B4nia-revisitados))                                                                                               |
 | **Valor**                     | Crítico / Importante / Desejável                                                                                                                                                                                                           |
 | **Urgência**                  | Imediata / Normal                                                                                                                                                                                                                          |
-| **Esforço-H/IA**              | Duas medidas separadas por `/`. Humano (H) e IA. Exemplo: `M/G` = médio para humano, grande para IA. Valores: P / M / G / XG. Detalhes na [seção 3.4](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#34-esfor%C3%A7o-para-ia) |
+| **Esforço-H/IA**              | Duas medidas separadas por `/`. Humano (H) e IA. Exemplo: `M/G` = médio para humano, grande para IA. Valores: P / M / G / XG. Detalhes na [seção 3.4](#34-esfor%C3%A7o-para-ia) |
 | **Dependências**              | IDs de outras tarefas que precisam ser concluídas antes. `-` se nenhuma                                                                                                                                                                    |
 | **REQ/ADR/DT**                | Referências a requisitos (RF/RN/RNF), ADRs, revisões gerais (`REV-NNN-Axx`) e dívidas técnicas (DT) relacionadas. Exemplo: `RF-2, ADR-3, REV-001-A02, DT-14`. `-` se nenhuma                                                                |
 | **Status**                    | `[ ]` pendente / `[x]` concluída (raramente aparece aqui - tarefa concluída sai do arquivo)                                                                                                                                                |
@@ -170,7 +171,7 @@ O **plano** vem depois, no estágio "Em Andamento", quando alguém vai executar.
 |Solicitação do humano|Humano ou IA registrando em nome do humano|
 |Refatoração identificada|IA ou humano|
 
-A IA **nunca** adiciona tarefa sem confirmação se ela tem origem em requisito novo (que não existia). Para requisitos novos, ver fluxo em [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md#3-tarefas-geradas-por-revis%C3%A3o).
+A IA **nunca** adiciona tarefa sem confirmação se ela tem origem em requisito novo (que não existia). Para requisitos novos, ver fluxo em [`21-revisao-codigo.md`](./21-revisao-codigo.md#3-tarefas-geradas-por-revis%C3%A3o).
 
 ### 3.7 Ordenação no Arquivo
 
@@ -187,7 +188,7 @@ Ao iniciar uma tarefa Standard, ela **sai da tabela de pendentes** (linha removi
 
 ### 4.1 Formato
 
-Template completo em [`../templates/30-task-em-andamento.md`](https://claude.ai/templates/30-task-em-andamento.md).
+Template completo em [`../templates/30-task-em-andamento.md`](../templates/30-task-em-andamento.md).
 
 Estrutura mínima:
 
@@ -277,11 +278,13 @@ Tarefa pausada por mais de 24h sem progresso **volta para pendentes**. Não fica
 
 Quando a tarefa termina, vira um arquivo próprio com todo processo registrado. Devendo também registrar a conclusão da tarefa no índice de tasks concluídas em docs/tarefas/concluidas/indice-concluidas.md com apenas uma linha para cada, exemplo:
 
+```markdown
 [TASK-PREFIXO-NUMERO] | [TITULO DESCRITIVO] | [(LINK CLICÁVEL PARA O ARQUIVO ÚNICO)] |
 
 TASK-DOM-1 | Atualização da modelagem de domínio | [[](./2026-05-10-TASK-DOM-1.md)]
 TASK-DOM-2 | Ajustes referências v6 e refistro de DT-14 | [[](./2026-05-11-TASK-DOM-2.md)]
 TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [[](./2026-05-16--20h21--TASK-REF-03.md)]
+```
 
 ### 5.1 Nome do Arquivo
 
@@ -308,17 +311,17 @@ Uma tarefa **só pode** ser marcada como concluída quando:
 
 1. **Testes passam.** Se quebrou algum, conserte ou registre por que está OK quebrado
 2. **Typecheck passa.** `npx tsc --noEmit` (ou `npm run typecheck`) verde. Vale para qualquer tarefa que toque `.ts`/`.tsx`, mesmo que só o teste mude — `tsc` enxerga `src` inteiro.
-3. **Código revisado.** Pelo menos auto-revisão usando [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) (ou `N/A` para Light)
+3. **Código revisado.** Pelo menos auto-revisão usando [`21-revisao-codigo.md`](./21-revisao-codigo.md) (ou `N/A` para Light)
 4. **Critérios de aceite cumpridos.** Aqueles definidos no plano
 5. **Documentação atualizada.** Se afeta `docs/`, atualize antes de concluir
 
 Se algum desses falha, a tarefa **continua em andamento**.
 
-**Tarefa Strict não conclui com typecheck por executar.** Se o ambiente local bloqueia (`tsc`/`build` não roda), rode o gate por outro caminho — CI, Windows nativo, outra shell — antes de fechar. Um gate `NÃO EXECUTADO` não é o mesmo que `APROVADO` e não pode sustentar a conclusão (ver [`01-nucleo.md`](https://claude.ai/01-nucleo.md#5-anti-padr%C3%B5es-cr%C3%ADticos)).
+**Tarefa Strict não conclui com typecheck por executar.** Se o ambiente local bloqueia (`tsc`/`build` não roda), rode o gate por outro caminho — CI, Windows nativo, outra shell — antes de fechar. Um gate `NÃO EXECUTADO` não é o mesmo que `APROVADO` e não pode sustentar a conclusão (ver [`01-nucleo.md`](../01-nucleo.md#5-anti-padr%C3%B5es-cr%C3%ADticos)).
 
 ### 5.3 O Que Vai no Arquivo Concluída
 
-Template completo em [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md).
+Template completo em [`../templates/31-task-concluida.md`](../templates/31-task-concluida.md).
 
 Estrutura essencial:
 
@@ -426,7 +429,7 @@ Tarefas raramente terminam isoladas. Frequentemente geram:
 |Novo requisito (descobriu necessidade)|Adicionar em `docs/requisitos/` + tarefa que implementa|
 |ADR (decisão arquitetural)|Criar em `docs/arquitetura/ADR/` + listar na concluída|
 
-Se a origem for uma revisão geral, a tarefa deve citar `REV-NNN-Axx` no campo `REQ/ADR/DT` ou nas observações, e a REV deve listar a tarefa no achado correspondente. Revisão geral só existe quando o humano pediu revisão completa do projeto; para detalhes, ver [`27-revisao-geral.md`](https://claude.ai/chat/27-revisao-geral.md).
+Se a origem for uma revisão geral, a tarefa deve citar `REV-NNN-Axx` no campo `REQ/ADR/DT` ou nas observações, e a REV deve listar a tarefa no achado correspondente. Revisão geral só existe quando o humano pediu revisão completa do projeto; para detalhes, ver [`27-revisao-geral.md`](./27-revisao-geral.md).
 
 ### 7.1 Exemplo: Tarefa Que Gera Outra
 
@@ -584,9 +587,9 @@ Se o arquivo não existe ou está incompleto, é um sinal de que o ciclo foi que
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Processo `ENTENDER → PLANEJAR → APROVAR → EXECUTAR → REGISTRAR` e modos de cerimônia
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão obrigatória ao concluir
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Análise prévia em tarefas Strict
-- [`../templates/30-task-em-andamento.md`](https://claude.ai/templates/30-task-em-andamento.md) - Template para em-andamento
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Template para concluída
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Quando tarefa gera decisão arquitetural
+- [`01-nucleo.md`](../01-nucleo.md) - Processo `ENTENDER → PLANEJAR → APROVAR → EXECUTAR → REGISTRAR` e modos de cerimônia
+- [`21-revisao-codigo.md`](./21-revisao-codigo.md) - Revisão obrigatória ao concluir
+- [`25-analise-impacto.md`](./25-analise-impacto.md) - Análise prévia em tarefas Strict
+- [`../templates/30-task-em-andamento.md`](../templates/30-task-em-andamento.md) - Template para em-andamento
+- [`../templates/31-task-concluida.md`](../templates/31-task-concluida.md) - Template para concluída
+- [`../templates/32-adr.md`](../templates/32-adr.md) - Quando tarefa gera decisão arquitetural

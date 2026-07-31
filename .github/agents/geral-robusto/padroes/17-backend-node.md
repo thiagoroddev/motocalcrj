@@ -1,12 +1,14 @@
 ---
-
-description: "Backend Node - stub mínimo. Princípios, estrutura, validação, erros, .env. A expandir quando entrar projeto backend." modulo: "17" categoria: "padroes" versao: "1.0" status: "stub" relacionado:
-
-- "10-codigo-e-convencoes.md"
-- "11-arquitetura-e-pastas.md"
-- "14-formularios-e-validacao.md"
-- "18-seguranca-privacidade.md"
-
+description: "Backend Node - stub mínimo. Princípios, estrutura, validação, erros, .env. A expandir quando entrar projeto backend."
+modulo: "17"
+categoria: "padroes"
+versao: "1.0"
+status: "stub"
+relacionado:
+  - "10-codigo-e-convencoes.md"
+  - "11-arquitetura-e-pastas.md"
+  - "14-formularios-e-validacao.md"
+  - "18-seguranca-privacidade.md"
 ---
 
 # 🖥️ Backend Node - Stub Mínimo
@@ -573,7 +575,7 @@ Esses temas serão expandidos **com base em decisões reais** quando você for u
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Convenções de código aplicáveis aqui também
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Estrutura em camadas (mesmo princípio do frontend)
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Zod no frontend (mesmo padrão aqui)
-- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) - Segurança no backend (próximo módulo)
+- [`10-codigo-e-convencoes.md`](./10-codigo-e-convencoes.md) - Convenções de código aplicáveis aqui também
+- [`11-arquitetura-e-pastas.md`](./11-arquitetura-e-pastas.md) - Estrutura em camadas (mesmo princípio do frontend)
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Zod no frontend (mesmo padrão aqui)
+- [`18-seguranca-privacidade.md`](./18-seguranca-privacidade.md) - Segurança no backend (próximo módulo)

@@ -1,13 +1,14 @@
 ---
-
-description: "Refatoração: definição estrita, code smells, técnicas comuns, SOLID em React, Regra de Três, quando parar." modulo: "22" categoria: "processos" versao: "1.0" relacionado:
-
-- "10-codigo-e-convencoes.md"
-- "11-arquitetura-e-pastas.md"
-- "12-react-e-estado.md"
-- "15-testes.md"
-- "21-revisao-codigo.md"
-
+description: "Refatoração: definição estrita, code smells, técnicas comuns, SOLID em React, Regra de Três, quando parar."
+modulo: "22"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "10-codigo-e-convencoes.md"
+  - "11-arquitetura-e-pastas.md"
+  - "12-react-e-estado.md"
+  - "15-testes.md"
+  - "21-revisao-codigo.md"
 ---
 
 # 🔧 Refatoração
@@ -477,7 +478,7 @@ Já vimos no módulo 11. SOLID dá a justificativa teórica.
 
 > **Não crie abstração até a terceira ocorrência.**
 
-Já abordada no [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md#8-regra-de-tr%C3%AAs-abstra%C3%A7%C3%B5es). Mas em refatoração, a regra opera ao contrário: você está **decidindo** se vale extrair.
+Já abordada no [módulo 10](../padroes/10-codigo-e-convencoes.md#8-regra-de-tr%C3%AAs-abstra%C3%A7%C3%B5es). Mas em refatoração, a regra opera ao contrário: você está **decidindo** se vale extrair.
 
 ### 8.1 Como Aplicar Durante Refatoração
 
@@ -645,8 +646,8 @@ Critério prático: você deveria sentir que o código está **claramente melhor
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/padroes/10-codigo-e-convencoes.md) - Regra de Três e convenções
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Para onde mover código durante refatoração
-- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrão de extract hook
-- [`15-testes.md`](https://claude.ai/padroes/15-testes.md) - Rede de segurança para refatorar
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão gera tarefas REF que vêm aqui
+- [`10-codigo-e-convencoes.md`](../padroes/10-codigo-e-convencoes.md) - Regra de Três e convenções
+- [`11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Para onde mover código durante refatoração
+- [`12-react-e-estado.md`](../padroes/12-react-e-estado.md) - Padrão de extract hook
+- [`15-testes.md`](../padroes/15-testes.md) - Rede de segurança para refatorar
+- [`21-revisao-codigo.md`](./21-revisao-codigo.md) - Revisão gera tarefas REF que vêm aqui

@@ -1,15 +1,17 @@
 ---
-
-description: "Template do README.md do projeto. Cartão de visitas para humanos. Complementa contexto-projeto-ai.md (que é para IAs)." modulo: "34" categoria: "templates" versao: "1.0" arquivo_destino: "README.md" relacionado:
-
-- "33-contexto-projeto-ai.md"
-- "26-inicializacao-projeto.md"
-
+description: "Template do README.md do projeto. Cartão de visitas para humanos. Complementa contexto-projeto-ai.md (que é para IAs)."
+modulo: "34"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "README.md"
+relacionado:
+  - "33-contexto-projeto-ai.md"
+  - "26-inicializacao-projeto.md"
 ---
 
 # 📘 Template: `README.md` do Projeto
 
-> **Arquivo destino:** `README.md` (na raiz do repositório) **Quando usar:** ao criar projeto novo ou ao executar [módulo 26](https://claude.ai/processos/26-inicializacao-projeto.md) em projeto existente. **Audiência primária:** humanos que clonam o repo e querem rodar/contribuir.
+> **Arquivo destino:** `README.md` (na raiz do repositório) **Quando usar:** ao criar projeto novo ou ao executar [módulo 26](../processos/26-inicializacao-projeto.md) em projeto existente. **Audiência primária:** humanos que clonam o repo e querem rodar/contribuir.
 
 ---
 
@@ -172,7 +174,7 @@ alugacar/
 └── .env.example        # Template de variáveis de ambiente
 ```
 
-Detalhamento completo: [`docs/arquitetura/visao-geral.md`](https://claude.ai/chat/docs/arquitetura/visao-geral.md).
+Detalhamento completo: `docs/arquitetura/visao-geral.md`.
 
 ---
 
@@ -180,20 +182,20 @@ Detalhamento completo: [`docs/arquitetura/visao-geral.md`](https://claude.ai/cha
 
 |Para|Onde|
 |---|---|
-|Visão completa do projeto|[`docs/contexto-projeto-ai.md`](https://claude.ai/chat/docs/contexto-projeto-ai.md)|
-|Requisitos do produto|[`docs/requisitos/`](https://claude.ai/chat/docs/requisitos/)|
-|Decisões arquiteturais|[`docs/arquitetura/ADR/`](https://claude.ai/chat/docs/arquitetura/ADR/)|
-|Convenções de código|[`docs/arquitetura/convencoes.md`](https://claude.ai/chat/docs/arquitetura/convencoes.md)|
-|Setup detalhado|[`docs/arquitetura/setup-inicial.md`](https://claude.ai/chat/docs/arquitetura/setup-inicial.md)|
-|Tarefas em andamento|[`docs/tarefas/em-andamento.md`](https://claude.ai/chat/docs/tarefas/em-andamento.md)|
+|Visão completa do projeto|[`docs/contexto-projeto-ai.md`](../../../../docs/contexto-projeto-ai.md)|
+|Requisitos do produto|[`docs/requisitos/`](../../../../docs/requisitos)|
+|Decisões arquiteturais|[`docs/arquitetura/ADR/`](../../../../docs/arquitetura/ADR)|
+|Convenções de código|[`docs/arquitetura/convencoes.md`](../../../../docs/arquitetura/convencoes.md)|
+|Setup detalhado|[`docs/arquitetura/setup-inicial.md`](../../../../docs/arquitetura/setup-inicial.md)|
+|Tarefas em andamento|[`docs/tarefas/em-andamento.md`](../../../../docs/tarefas/em-andamento.md)|
 
 ---
 
 ## 🤝 Contribuição
 
-1. Leia [`docs/arquitetura/convencoes.md`](https://claude.ai/chat/docs/arquitetura/convencoes.md)
+1. Leia [`docs/arquitetura/convencoes.md`](../../../../docs/arquitetura/convencoes.md)
 2. Crie branch a partir de `develop`: `git checkout -b feat/sua-feature`
-3. Siga o ciclo de tarefas em [`.agent/processos/20-ciclo-tarefa.md`](https://claude.ai/chat/.agent/processos/20-ciclo-tarefa.md)
+3. Siga o ciclo de tarefas em [`.agent/processos/20-ciclo-tarefa.md`](../processos/20-ciclo-tarefa.md)
 4. Abra PR para `develop` com referência à tarefa
 
 PRs sem tarefa rastreável ou sem testes verdes não são aceitos.
@@ -210,7 +212,7 @@ Proprietário. Uso interno apenas. Ver `LICENSE`.
 
 - Time: [link interno]
 - Tickets: [link do issue tracker]
-- Documentação completa: pasta [`docs/`](https://claude.ai/chat/docs/)
+- Documentação completa: pasta [`docs/`](../../../../docs)
 
 ````
 
@@ -278,7 +280,7 @@ Acesse `http://localhost:PORTA`. [Credenciais de teste, se aplicável]
 [árvore de pastas em alto nível]
 ```
 
-Detalhamento completo: [`docs/arquitetura/visao-geral.md`](https://claude.ai/chat/docs/arquitetura/visao-geral.md).
+Detalhamento completo: `docs/arquitetura/visao-geral.md`.
 
 ---
 
@@ -286,10 +288,10 @@ Detalhamento completo: [`docs/arquitetura/visao-geral.md`](https://claude.ai/cha
 
 |Para|Onde|
 |---|---|
-|Visão completa|[`docs/contexto-projeto-ai.md`](https://claude.ai/chat/docs/contexto-projeto-ai.md)|
-|Requisitos|[`docs/requisitos/`](https://claude.ai/chat/docs/requisitos/)|
-|Decisões arquiteturais|[`docs/arquitetura/ADR/`](https://claude.ai/chat/docs/arquitetura/ADR/)|
-|Convenções|[`docs/arquitetura/convencoes.md`](https://claude.ai/chat/docs/arquitetura/convencoes.md)|
+|Visão completa|[`docs/contexto-projeto-ai.md`](../../../../docs/contexto-projeto-ai.md)|
+|Requisitos|[`docs/requisitos/`](../../../../docs/requisitos)|
+|Decisões arquiteturais|[`docs/arquitetura/ADR/`](../../../../docs/arquitetura/ADR)|
+|Convenções|[`docs/arquitetura/convencoes.md`](../../../../docs/arquitetura/convencoes.md)|
 
 ---
 
@@ -333,7 +335,7 @@ npm run dev
 
 ## Estrutura
 
-Padrão do pacote [`.agent/`](https://claude.ai/chat/.agent/). Detalhes em [`docs/contexto-projeto-ai.md`](https://claude.ai/chat/docs/contexto-projeto-ai.md).
+Padrão do pacote [`.agent/`](../..). Detalhes em [`docs/contexto-projeto-ai.md`](../../../../docs/contexto-projeto-ai.md).
 
 ````
 
@@ -387,13 +389,13 @@ algo()
 
 ## 💖 Contribuir
 
-Aceitamos contribuições. Leia [`CONTRIBUTING.md`](https://claude.ai/chat/CONTRIBUTING.md) primeiro.
+Aceitamos contribuições. Leia `CONTRIBUTING.md` primeiro.
 
 Issues: [link] Discord/Slack: [link]
 
 ## 📜 Licença
 
-MIT - ver [`LICENSE`](https://claude.ai/chat/LICENSE).
+MIT - ver [`LICENSE`](../../../../LICENSE.md).
 
 ## 🙏 Agradecimentos
 
@@ -538,6 +540,6 @@ Só inclua perguntas que de fato aparecem. FAQ inventado é ruído.
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) - Cartão de visitas para IAs (complementa este)
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Quando criar este arquivo
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura de pastas referenciada
+- [`33-contexto-projeto-ai.md`](./33-contexto-projeto-ai.md) - Cartão de visitas para IAs (complementa este)
+- [`../processos/26-inicializacao-projeto.md`](../processos/26-inicializacao-projeto.md) - Quando criar este arquivo
+- [`../padroes/11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Estrutura de pastas referenciada

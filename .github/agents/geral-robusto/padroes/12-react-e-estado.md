@@ -1,12 +1,13 @@
 ---
-
-description: "Padrões React: estado local vs global, hooks de feature, memoização, useEffect, composição, estado global." modulo: "12" categoria: "padroes" versao: "1.0" relacionado:
-
-- "11-arquitetura-e-pastas.md"
-- "13-ui-e-design-system.md"
-- "14-formularios-e-validacao.md"
-- "15-testes.md"
-
+description: "Padrões React: estado local vs global, hooks de feature, memoização, useEffect, composição, estado global."
+modulo: "12"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "11-arquitetura-e-pastas.md"
+  - "13-ui-e-design-system.md"
+  - "14-formularios-e-validacao.md"
+  - "15-testes.md"
 ---
 
 # ⚛️ React e Estado
@@ -916,7 +917,7 @@ Irmãos coordenam via pai. Sem Context, sem estado global. **Faça isso até a d
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde os arquivos deste módulo vivem
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Como os componentes consumidos aqui são construídos
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Padrão de form com hook + Zod
-- [`15-testes.md`](https://claude.ai/chat/15-testes.md) - Como testar hooks e componentes
+- [`11-arquitetura-e-pastas.md`](./11-arquitetura-e-pastas.md) - Onde os arquivos deste módulo vivem
+- [`13-ui-e-design-system.md`](./13-ui-e-design-system.md) - Como os componentes consumidos aqui são construídos
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Padrão de form com hook + Zod
+- [`15-testes.md`](./15-testes.md) - Como testar hooks e componentes

@@ -1,17 +1,19 @@
 ---
-
-description: "Template para tarefa concluída. Arquivo imutável de registro histórico. Auto-suficiente para leitura futura." modulo: "31" categoria: "templates" versao: "1.0" arquivo_destino: "docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[AAAA-MM-DD]-[HHhMM].md" relacionado:
-
-- "30-task-em-andamento.md"
-- "20-ciclo-tarefa.md"
-- "21-revisao-codigo.md"
-- "27-revisao-geral.md"
-
+description: "Template para tarefa concluída. Arquivo imutável de registro histórico. Auto-suficiente para leitura futura."
+modulo: "31"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[AAAA-MM-DD]-[HHhMM].md"
+relacionado:
+  - "30-task-em-andamento.md"
+  - "20-ciclo-tarefa.md"
+  - "21-revisao-codigo.md"
+  - "27-revisao-geral.md"
 ---
 
 # 📝 Template: Tarefa Concluída
 
-> **Arquivo destino:** `docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[DATA]-[HORA].md` Exemplo: `docs/tarefas/concluidas/TASK-RF-5.1-2026-05-13-17h30.md` **Quando usar:** ao terminar uma tarefa Standard ou Strict, **após** passar pelos critérios da [seção 5.2 do módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md#52-crit%C3%A9rios-para-concluir). Para modo Light, pular este template - registro vai direto no commit.
+> **Arquivo destino:** `docs/tarefas/concluidas/[TASK-PREFIXO]-[NUMERO]-[DATA]-[HORA].md` Exemplo: `docs/tarefas/concluidas/TASK-RF-5.1-2026-05-13-17h30.md` **Quando usar:** ao terminar uma tarefa Standard ou Strict, **após** passar pelos critérios da [seção 5.2 do módulo 20](../processos/20-ciclo-tarefa.md#52-crit%C3%A9rios-para-concluir). Para modo Light, pular este template - registro vai direto no commit.
 
 ---
 
@@ -44,7 +46,7 @@ Se o trabalho continua, é **nova tarefa**. Esta arquivada documenta o que foi f
 9. **Registre** dívidas geradas em `docs/dominios/divida-tecnica.md`
 
 
-A ordem importa. Ver detalhes em [módulo 20, seção 5.4](https://claude.ai/processos/20-ciclo-tarefa.md#54-transi%C3%A7%C3%A3o-em-andamento--conclu%C3%ADda).
+A ordem importa. Ver detalhes em [módulo 20, seção 5.4](../processos/20-ciclo-tarefa.md#54-transi%C3%A7%C3%A3o-em-andamento--conclu%C3%ADda).
 
 ---
 
@@ -424,8 +426,8 @@ A ideia: a ADR é a **decisão estratégica**; a tarefa é a **implementação d
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`30-task-em-andamento.md`](https://claude.ai/chat/30-task-em-andamento.md) - Template do estágio anterior
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - Para tarefas que geram ADR
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Processo completo
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Como conduzir a revisão antes de concluir
-- [`../processos/27-revisao-geral.md`](https://claude.ai/processos/27-revisao-geral.md) - Origem `REV-NNN-Axx` para tarefas geradas por revisão geral
+- [`30-task-em-andamento.md`](./30-task-em-andamento.md) - Template do estágio anterior
+- [`32-adr.md`](./32-adr.md) - Para tarefas que geram ADR
+- [`../processos/20-ciclo-tarefa.md`](../processos/20-ciclo-tarefa.md) - Processo completo
+- [`../processos/21-revisao-codigo.md`](../processos/21-revisao-codigo.md) - Como conduzir a revisão antes de concluir
+- [`../processos/27-revisao-geral.md`](../processos/27-revisao-geral.md) - Origem `REV-NNN-Axx` para tarefas geradas por revisão geral

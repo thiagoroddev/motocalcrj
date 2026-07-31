@@ -1,16 +1,18 @@
 ---
-
-description: "Template do contexto-projeto-ai.md: ponto de entrada de toda IA em qualquer projeto que adote este pacote." modulo: "33" categoria: "templates" versao: "1.0" arquivo_destino: "docs/contexto-projeto-ai.md" relacionado:
-
-- "01-nucleo.md"
-- "26-inicializacao-projeto.md"
-- "11-arquitetura-e-pastas.md"
-
+description: "Template do contexto-projeto-ai.md: ponto de entrada de toda IA em qualquer projeto que adote este pacote."
+modulo: "33"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "docs/contexto-projeto-ai.md"
+relacionado:
+  - "01-nucleo.md"
+  - "26-inicializacao-projeto.md"
+  - "11-arquitetura-e-pastas.md"
 ---
 
 # 📇 Template: `contexto-projeto-ai.md`
 
-> **Arquivo destino:** `docs/contexto-projeto-ai.md` **Quando usar:** ao iniciar projeto novo OU ao executar [módulo 26 (inicialização)](https://claude.ai/processos/26-inicializacao-projeto.md) em projeto existente. Este é o **único arquivo que toda IA lê em toda interação**. Trate com cuidado proporcional.
+> **Arquivo destino:** `docs/contexto-projeto-ai.md` **Quando usar:** ao iniciar projeto novo OU ao executar [módulo 26 (inicialização)](../processos/26-inicializacao-projeto.md) em projeto existente. Este é o **único arquivo que toda IA lê em toda interação**. Trate com cuidado proporcional.
 
 ---
 
@@ -446,8 +448,8 @@ Padrão do pacote (núcleo nas 3 inegociáveis, este arquivo no resto).
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../01-nucleo.md`](https://claude.ai/01-nucleo.md) - Hierarquia de regras
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Como criar do zero em projeto existente
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura padrão linkada aqui
-- [`34-readme-projeto.md`](https://claude.ai/chat/34-readme-projeto.md) - README.md complementa (foco em humanos)
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - ADRs linkadas a partir daqui
+- [`../01-nucleo.md`](../01-nucleo.md) - Hierarquia de regras
+- [`../processos/26-inicializacao-projeto.md`](../processos/26-inicializacao-projeto.md) - Como criar do zero em projeto existente
+- [`../padroes/11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Estrutura padrão linkada aqui
+- [`34-readme-projeto.md`](./34-readme-projeto.md) - README.md complementa (foco em humanos)
+- [`32-adr.md`](./32-adr.md) - ADRs linkadas a partir daqui

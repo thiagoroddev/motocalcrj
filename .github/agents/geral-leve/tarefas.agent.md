@@ -503,9 +503,11 @@ Lista cronológica das tarefas concluídas. Cada linha aponta para o arquivo com
 
 Exemplos preenchidos ilustrativos:
 
+```markdown
 TASK-DOM-1 | Atualização da modelagem de domínio | [](./2026-05-10-TASK-DOM-1.md)
 TASK-DOM-2 | Ajustes referências v6 e refistro de DT-14 | [](./2026-05-11-TASK-DOM-2.md)
 TASK-REF-03 | Instalar shadcn/ui e criar wrappers em components/ui | [](./2026-05-16--20h21--TASK-REF-03.md)
+```
 
 ## 14. Arquivo único de tarefa concluída
 

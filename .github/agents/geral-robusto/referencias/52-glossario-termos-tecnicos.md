@@ -1,10 +1,11 @@
 ---
-
-description: "Glossário de termos técnicos usados no pacote. Formato híbrido: índice alfabético + organização por categoria." modulo: "52" categoria: "referencias" versao: "1.0" relacionado:
-
-- "50-anti-padroes.md"
-- "51-comandos.md"
-
+description: "Glossário de termos técnicos usados no pacote. Formato híbrido: índice alfabético + organização por categoria."
+modulo: "52"
+categoria: "referencias"
+versao: "1.0"
+relacionado:
+  - "50-anti-padroes.md"
+  - "51-comandos.md"
 ---
 
 # 📖 Glossário: Termos Técnicos
@@ -25,188 +26,188 @@ description: "Glossário de termos técnicos usados no pacote. Formato híbrido:
 
 ### A
 
-- [AAA (Arrange-Act-Assert)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#aaa-arrange-act-assert) - testes
-- [Acessibilidade (a11y)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#acessibilidade-a11y) - UI
-- [ADR (Architecture Decision Record)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#adr-architecture-decision-record) - arquitetura
-- [Aggregate](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#aggregate) - DDD
-- [Aggregate Root](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#aggregate-root) - DDD
-- [ARIA](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#aria-accessible-rich-internet-applications) - acessibilidade
-- [Audit (npm)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#audit-npm) - segurança
+- [AAA (Arrange-Act-Assert)](#aaa-arrange-act-assert) - testes
+- [Acessibilidade (a11y)](#acessibilidade-a11y) - UI
+- [ADR (Architecture Decision Record)](#adr-architecture-decision-record) - arquitetura
+- [Aggregate](#aggregate) - DDD
+- [Aggregate Root](#aggregate-root) - DDD
+- [ARIA](#aria-accessible-rich-internet-applications) - acessibilidade
+- [Audit (npm)](#audit-npm) - segurança
 
 ### B
 
-- [Backend Stub](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#backend-stub) - arquitetura
-- [Backlog](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#backlog) - processo
-- [Bloqueante](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#bloqueante) - revisão
-- [Bounded Context](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#bounded-context) - DDD
-- [Bundle](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#bundle) - performance
-- [Bundle splitting](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#code-splitting) - ver Code Splitting
+- [Backend Stub](#backend-stub) - arquitetura
+- [Backlog](#backlog) - processo
+- [Bloqueante](#bloqueante) - revisão
+- [Bounded Context](#bounded-context) - DDD
+- [Bundle](#bundle) - performance
+- [Bundle splitting](#code-splitting) - ver Code Splitting
 
 ### C
 
-- [Caracterização (testes de)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#testes-de-caracteriza%C3%A7%C3%A3o) - refatoração
-- [Class Variance Authority (cva)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#cva-class-variance-authority) - UI
-- [CLS (Cumulative Layout Shift)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#cls-cumulative-layout-shift) - performance
-- [cn (utility)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#cn-utility) - UI
-- [Code Smell](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#code-smell) - refatoração
-- [Code Splitting](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#code-splitting) - performance
-- [Composição (componentes)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#composi%C3%A7%C3%A3o-de-componentes) - UI
-- [Conventional Commits](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#conventional-commits) - processo
-- [Core Web Vitals](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#core-web-vitals) - performance
-- [CSP (Content Security Policy)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#csp-content-security-policy) - segurança
-- [CSRF (Cross-Site Request Forgery)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#csrf-cross-site-request-forgery) - segurança
+- [Caracterização (testes de)](#testes-de-caracteriza%C3%A7%C3%A3o) - refatoração
+- [Class Variance Authority (cva)](#cva-class-variance-authority) - UI
+- [CLS (Cumulative Layout Shift)](#cls-cumulative-layout-shift) - performance
+- [cn (utility)](#cn-utility) - UI
+- [Code Smell](#code-smell) - refatoração
+- [Code Splitting](#code-splitting) - performance
+- [Composição (componentes)](#composi%C3%A7%C3%A3o-de-componentes) - UI
+- [Conventional Commits](#conventional-commits) - processo
+- [Core Web Vitals](#core-web-vitals) - performance
+- [CSP (Content Security Policy)](#csp-content-security-policy) - segurança
+- [CSRF (Cross-Site Request Forgery)](#csrf-cross-site-request-forgery) - segurança
 
 ### D
 
-- [DDD (Domain-Driven Design)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#ddd-domain-driven-design) - arquitetura
-- [Defesa em Camadas](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#defesa-em-camadas) - segurança
-- [Dependency Inversion](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#dependency-inversion-d-de-solid) - SOLID
-- [Derivação (em React)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#deriva%C3%A7%C3%A3o) - React
-- [Design System](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#design-system) - UI
-- [Discriminated Union](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#discriminated-union) - TypeScript
-- [displayName](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#displayname) - React
-- [DOMPurify](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#dompurify) - segurança
-- [Domain Event](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#domain-event) - DDD
-- [Dividas Técnicas](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#d%C3%ADvida-t%C3%A9cnica) - processo
-- [Drift](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#drift) - documentação
+- [DDD (Domain-Driven Design)](#ddd-domain-driven-design) - arquitetura
+- [Defesa em Camadas](#defesa-em-camadas) - segurança
+- [Dependency Inversion](#dependency-inversion-d-de-solid) - SOLID
+- [Derivação (em React)](#deriva%C3%A7%C3%A3o) - React
+- [Design System](#design-system) - UI
+- [Discriminated Union](#discriminated-union) - TypeScript
+- [displayName](#displayname) - React
+- [DOMPurify](#dompurify) - segurança
+- [Domain Event](#domain-event) - DDD
+- [Dividas Técnicas](#d%C3%ADvida-t%C3%A9cnica) - processo
+- [Drift](#drift) - documentação
 
 ### E
 
-- [Engenharia Reversa](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#engenharia-reversa) - inicialização
-- [Entidade](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#entidade) - DDD
-- [Esforço-H/IA](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#esfor%C3%A7o-hia) - pacote
-- [ESLint](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#eslint) - ferramenta
-- [Extract Hook](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#extract-hook) - refatoração
+- [Engenharia Reversa](#engenharia-reversa) - inicialização
+- [Entidade](#entidade) - DDD
+- [Esforço-H/IA](#esfor%C3%A7o-hia) - pacote
+- [ESLint](#eslint) - ferramenta
+- [Extract Hook](#extract-hook) - refatoração
 
 ### F
 
-- [Feature Flag](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#feature-flag) - processo
-- [FCP (First Contentful Paint)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#fcp-first-contentful-paint) - performance
-- [FID (First Input Delay)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#fid-first-input-delay) - performance
-- [Focus Trap](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#focus-trap) - acessibilidade
-- [Focus Visible](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#focus-visible) - acessibilidade
-- [forwardRef](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#forwardref) - React
+- [Feature Flag](#feature-flag) - processo
+- [FCP (First Contentful Paint)](#fcp-first-contentful-paint) - performance
+- [FID (First Input Delay)](#fid-first-input-delay) - performance
+- [Focus Trap](#focus-trap) - acessibilidade
+- [Focus Visible](#focus-visible) - acessibilidade
+- [forwardRef](#forwardref) - React
 
 ### G
 
-- [God Component](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#god-component) - anti-padrão
-- [Gzip / Brotli](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#gzip--brotli) - performance
+- [God Component](#god-component) - anti-padrão
+- [Gzip / Brotli](#gzip--brotli) - performance
 
 ### H
 
-- [Hidratação (Hydration)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hidrata%C3%A7%C3%A3o-hydration) - React
-- [Hook (React)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hook-react) - React
-- [Hook de Feature](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hook-de-feature) - React
-- [Hook de UI](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hook-de-ui) - React
-- [Hook Utilitário](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hook-utilit%C3%A1rio) - React
-- [Hotfix](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hotfix) - processo
-- [HSTS](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#hsts-strict-transport-security) - segurança
+- [Hidratação (Hydration)](#hidrata%C3%A7%C3%A3o-hydration) - React
+- [Hook (React)](#hook-react) - React
+- [Hook de Feature](#hook-de-feature) - React
+- [Hook de UI](#hook-de-ui) - React
+- [Hook Utilitário](#hook-utilit%C3%A1rio) - React
+- [Hotfix](#hotfix) - processo
+- [HSTS](#hsts-strict-transport-security) - segurança
 
 ### I
 
-- [Imediata (urgência)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#imediata-urg%C3%AAncia) - pacote
-- [Imutabilidade](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#imutabilidade) - React
-- [Invariante](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#invariante) - DDD
-- [INP (Interaction to Next Paint)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#inp-interaction-to-next-paint) - performance
-- [Inicialização (de projeto)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#inicializa%C3%A7%C3%A3o-de-projeto) - pacote
-- [Intent Perfect](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#intent-perfect) - design
+- [Imediata (urgência)](#imediata-urg%C3%AAncia) - pacote
+- [Imutabilidade](#imutabilidade) - React
+- [Invariante](#invariante) - DDD
+- [INP (Interaction to Next Paint)](#inp-interaction-to-next-paint) - performance
+- [Inicialização (de projeto)](#inicializa%C3%A7%C3%A3o-de-projeto) - pacote
+- [Intent Perfect](#intent-perfect) - design
 
 ### J
 
-- [JWT (JSON Web Token)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#jwt-json-web-token) - segurança
+- [JWT (JSON Web Token)](#jwt-json-web-token) - segurança
 
 ### L
 
-- [Lazy Loading](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#lazy-loading) - performance
-- [LCP (Largest Contentful Paint)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#lcp-largest-contentful-paint) - performance
-- [LGPD](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#lgpd--gdpr) - privacidade
-- [Light (modo)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
-- [Linguagem Ubíqua](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#linguagem-ub%C3%ADqua) - DDD
-- [Lighthouse](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#lighthouse) - performance
+- [Lazy Loading](#lazy-loading) - performance
+- [LCP (Largest Contentful Paint)](#lcp-largest-contentful-paint) - performance
+- [LGPD](#lgpd--gdpr) - privacidade
+- [Light (modo)](#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
+- [Linguagem Ubíqua](#linguagem-ub%C3%ADqua) - DDD
+- [Lighthouse](#lighthouse) - performance
 
 ### M
 
-- [Magic Number](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#magic-number) - anti-padrão
-- [Memoização](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#memoiza%C3%A7%C3%A3o) - React
-- [Modelo Anêmico](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#modelo-an%C3%AAmico) - DDD
-- [Modos de Cerimônia](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
-- [Mock / Stub / Spy / Fake](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#mock--stub--spy--fake) - testes
+- [Magic Number](#magic-number) - anti-padrão
+- [Memoização](#memoiza%C3%A7%C3%A3o) - React
+- [Modelo Anêmico](#modelo-an%C3%AAmico) - DDD
+- [Modos de Cerimônia](#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
+- [Mock / Stub / Spy / Fake](#mock--stub--spy--fake) - testes
 
 ### N
 
-- [Núcleo (do pacote)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#n%C3%BAcleo-do-pacote) - pacote
+- [Núcleo (do pacote)](#n%C3%BAcleo-do-pacote) - pacote
 
 ### O
 
-- [OWASP](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#owasp) - segurança
-- [Otimização Prematura](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#otimiza%C3%A7%C3%A3o-prematura) - anti-padrão
+- [OWASP](#owasp) - segurança
+- [Otimização Prematura](#otimiza%C3%A7%C3%A3o-prematura) - anti-padrão
 
 ### P
 
-- [PII (Personally Identifiable Information)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#pii-personally-identifiable-information) - privacidade
-- [POUR](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#pour-perceivable-operable-understandable-robust) - acessibilidade
-- [Pixel Perfect](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#pixel-perfect) - design
-- [Prefetch / Preconnect / Preload](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#prefetch--preconnect--preload) - performance
-- [Pull Request (PR)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#pr-pull-request) - processo
+- [PII (Personally Identifiable Information)](#pii-personally-identifiable-information) - privacidade
+- [POUR](#pour-perceivable-operable-understandable-robust) - acessibilidade
+- [Pixel Perfect](#pixel-perfect) - design
+- [Prefetch / Preconnect / Preload](#prefetch--preconnect--preload) - performance
+- [Pull Request (PR)](#pr-pull-request) - processo
 
 ### R
 
-- [Race Condition](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#race-condition) - segurança
-- [React Hook Form](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#react-hook-form) - formulários
-- [Re-render](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#re-render) - React
-- [Refatoração](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#refatora%C3%A7%C3%A3o) - processo
-- [Reflow](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#reflow) - performance
-- [Regra de Três](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#regra-de-tr%C3%AAs) - convenções
-- [Resolver (Zod)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#resolver) - formulários
-- [Retrospectiva (ADR)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#adr-retrospectiva) - arquitetura
+- [Race Condition](#race-condition) - segurança
+- [React Hook Form](#react-hook-form) - formulários
+- [Re-render](#re-render) - React
+- [Refatoração](#refatora%C3%A7%C3%A3o) - processo
+- [Reflow](#reflow) - performance
+- [Regra de Três](#regra-de-tr%C3%AAs) - convenções
+- [Resolver (Zod)](#resolver) - formulários
+- [Retrospectiva (ADR)](#adr-retrospectiva) - arquitetura
 
 ### S
 
-- [Schema (Zod)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#schema-zod) - formulários
-- [Screen Reader](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#screen-reader) - acessibilidade
-- [Service (camada)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#service-camada) - arquitetura
-- [Skill / SKILL.md](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#skill--skillmd) - ferramenta
-- [SOLID](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#solid) - arquitetura
-- [Standard (modo)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
-- [Stale Closure](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#stale-closure) - React
-- [Storage Isolado](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#storage-isolado) - arquitetura
-- [Strict (modo)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
-- [Supersede (ADR)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#supersede-adr) - arquitetura
-- [Suspense](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#suspense) - React
+- [Schema (Zod)](#schema-zod) - formulários
+- [Screen Reader](#screen-reader) - acessibilidade
+- [Service (camada)](#service-camada) - arquitetura
+- [Skill / SKILL.md](#skill--skillmd) - ferramenta
+- [SOLID](#solid) - arquitetura
+- [Standard (modo)](#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
+- [Stale Closure](#stale-closure) - React
+- [Storage Isolado](#storage-isolado) - arquitetura
+- [Strict (modo)](#modos-de-cerim%C3%B4nia-light--standard--strict) - pacote
+- [Supersede (ADR)](#supersede-adr) - arquitetura
+- [Suspense](#suspense) - React
 
 ### T
 
-- [TASK-ID](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#task-id) - pacote
-- [TBT (Total Blocking Time)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#tbt-total-blocking-time) - performance
-- [Tree-shaking](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#tree-shaking) - performance
-- [TTFB (Time to First Byte)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#ttfb-time-to-first-byte) - performance
-- [TypeScript Strict](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#typescript-strict) - TypeScript
+- [TASK-ID](#task-id) - pacote
+- [TBT (Total Blocking Time)](#tbt-total-blocking-time) - performance
+- [Tree-shaking](#tree-shaking) - performance
+- [TTFB (Time to First Byte)](#ttfb-time-to-first-byte) - performance
+- [TypeScript Strict](#typescript-strict) - TypeScript
 
 ### U
 
-- [useCallback](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#usecallback) - React
-- [useEffect](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#useeffect) - React
-- [useMemo](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#usememo) - React
-- [useReducer](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#usereducer) - React
-- [useState](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#usestate) - React
+- [useCallback](#usecallback) - React
+- [useEffect](#useeffect) - React
+- [useMemo](#usememo) - React
+- [useReducer](#usereducer) - React
+- [useState](#usestate) - React
 
 ### V
 
-- [Value Object (VO)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#value-object-vo) - DDD
-- [Virtualização (de listas)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#virtualiza%C3%A7%C3%A3o-de-listas) - performance
-- [vm (view model)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#vm-view-model) - React
+- [Value Object (VO)](#value-object-vo) - DDD
+- [Virtualização (de listas)](#virtualiza%C3%A7%C3%A3o-de-listas) - performance
+- [vm (view model)](#vm-view-model) - React
 
 ### W
 
-- [WCAG](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#wcag-web-content-accessibility-guidelines) - acessibilidade
+- [WCAG](#wcag-web-content-accessibility-guidelines) - acessibilidade
 
 ### X
 
-- [XSS (Cross-Site Scripting)](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#xss-cross-site-scripting) - segurança
+- [XSS (Cross-Site Scripting)](#xss-cross-site-scripting) - segurança
 
 ### Z
 
-- [Zod](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#zod) - formulários
+- [Zod](#zod) - formulários
 
 ---
 
@@ -214,15 +215,15 @@ description: "Glossário de termos técnicos usados no pacote. Formato híbrido:
 
 ### ADR (Architecture Decision Record)
 
-Documento que registra uma **decisão arquitetural** com contexto, alternativas consideradas e consequências. Numerada sequencialmente (ADR-001, ADR-002...). Vive em `docs/arquitetura/ADR/`. **Ex:** ADR-008 documenta a escolha de paginação cursor-based. **Detalhes:** [template 32](https://claude.ai/templates/32-adr.md).
+Documento que registra uma **decisão arquitetural** com contexto, alternativas consideradas e consequências. Numerada sequencialmente (ADR-001, ADR-002...). Vive em `docs/arquitetura/ADR/`. **Ex:** ADR-008 documenta a escolha de paginação cursor-based. **Detalhes:** [template 32](../templates/32-adr.md).
 
 ### ADR Retrospectiva
 
-ADR criada **depois** da decisão já implementada - geralmente durante inicialização de projeto existente (módulo 26). Marcada com status `Aceita (retrospectiva)`. **Detalhes:** [template 32, variante 1](https://claude.ai/templates/32-adr.md#variante-1-adr-retrospectiva).
+ADR criada **depois** da decisão já implementada - geralmente durante inicialização de projeto existente (módulo 26). Marcada com status `Aceita (retrospectiva)`. **Detalhes:** [template 32, variante 1](../templates/32-adr.md#variante-1-adr-retrospectiva).
 
 ### Backend Stub
 
-Implementação **mínima** do backend (apenas endpoints essenciais, sem persistência real ou com mock). Comum em projetos em fase inicial ou aprendizado. **Detalhes:** [módulo 17](https://claude.ai/padroes/17-backend-node.md).
+Implementação **mínima** do backend (apenas endpoints essenciais, sem persistência real ou com mock). Comum em projetos em fase inicial ou aprendizado. **Detalhes:** [módulo 17](../padroes/17-backend-node.md).
 
 ### Bounded Context
 
@@ -230,23 +231,23 @@ Em DDD, **escopo** dentro do qual um modelo de domínio é válido. Termos têm 
 
 ### DDD (Domain-Driven Design)
 
-Abordagem de modelagem que coloca o **domínio do negócio** no centro do design do software. Tem aspecto estratégico (bounded contexts, ubiquitous language) e tático (entidades, value objects, aggregates). **Detalhes:** [módulo 23](https://claude.ai/processos/23-modelagem-dominio.md).
+Abordagem de modelagem que coloca o **domínio do negócio** no centro do design do software. Tem aspecto estratégico (bounded contexts, ubiquitous language) e tático (entidades, value objects, aggregates). **Detalhes:** [módulo 23](../processos/23-modelagem-dominio.md).
 
 ### Service (camada)
 
-Em `services/`, código que **isola acesso a recursos externos** (API, storage, integrações). Componentes consomem services, não acessam recursos direto. **Detalhes:** [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md).
+Em `services/`, código que **isola acesso a recursos externos** (API, storage, integrações). Componentes consomem services, não acessam recursos direto. **Detalhes:** [módulo 11](../padroes/11-arquitetura-e-pastas.md).
 
 ### SOLID
 
-Conjunto de 5 princípios de design OOP: **S**ingle Responsibility, **O**pen/Closed, **L**iskov Substitution, **I**nterface Segregation, **D**ependency Inversion. Aplicáveis em React com adaptações. **Detalhes:** [módulo 22, seção 7](https://claude.ai/processos/22-refatoracao.md).
+Conjunto de 5 princípios de design OOP: **S**ingle Responsibility, **O**pen/Closed, **L**iskov Substitution, **I**nterface Segregation, **D**ependency Inversion. Aplicáveis em React com adaptações. **Detalhes:** [módulo 22, seção 7](../processos/22-refatoracao.md).
 
 ### Storage Isolado
 
-Acesso a `localStorage`/`sessionStorage`/`IndexedDB` apenas via **serviço dedicado**, nunca direto em componentes. Permite migração de storage sem refatorar UI. **Detalhes:** [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md).
+Acesso a `localStorage`/`sessionStorage`/`IndexedDB` apenas via **serviço dedicado**, nunca direto em componentes. Permite migração de storage sem refatorar UI. **Detalhes:** [módulo 11](../padroes/11-arquitetura-e-pastas.md).
 
 ### Supersede (ADR)
 
-Quando uma ADR é substituída por outra. A antiga muda status para "Substituída por ADR-XXX" e a nova referencia a antiga em sua seção "Supersede". **Detalhes:** [template 32, variante 3](https://claude.ai/templates/32-adr.md#variante-3-adr-que-supersede-outra).
+Quando uma ADR é substituída por outra. A antiga muda status para "Substituída por ADR-XXX" e a nova referencia a antiga em sua seção "Supersede". **Detalhes:** [template 32, variante 3](../templates/32-adr.md#variante-3-adr-que-supersede-outra).
 
 ---
 
@@ -254,7 +255,7 @@ Quando uma ADR é substituída por outra. A antiga muda status para "Substituíd
 
 ### Aggregate
 
-Em DDD, **conjunto de objetos relacionados tratado como unidade**, com uma raiz (Aggregate Root) que é a porta de entrada. **Ex:** Pedido (raiz) + ItensPedido (parte do aggregate). **Detalhes:** [módulo 23, seção 4.4](https://claude.ai/processos/23-modelagem-dominio.md#44-aggregate).
+Em DDD, **conjunto de objetos relacionados tratado como unidade**, com uma raiz (Aggregate Root) que é a porta de entrada. **Ex:** Pedido (raiz) + ItensPedido (parte do aggregate). **Detalhes:** [módulo 23, seção 4.4](../processos/23-modelagem-dominio.md#44-aggregate).
 
 ### Aggregate Root
 
@@ -262,27 +263,27 @@ Entidade que serve como **porta de entrada** do aggregate. Outras entidades do a
 
 ### Domain Event
 
-**Algo significativo que aconteceu no domínio.** Nomeado no passado (`PedidoConfirmado`, não `ConfirmarPedido`). Imutável. **Detalhes:** [módulo 23, seção 4.7](https://claude.ai/processos/23-modelagem-dominio.md#47-domain-event).
+**Algo significativo que aconteceu no domínio.** Nomeado no passado (`PedidoConfirmado`, não `ConfirmarPedido`). Imutável. **Detalhes:** [módulo 23, seção 4.7](../processos/23-modelagem-dominio.md#47-domain-event).
 
 ### Entidade
 
-Em DDD, objeto com **identidade própria** que persiste ao longo do tempo. Tem `id`. Dois objetos com mesmos atributos são diferentes se têm ids diferentes. **Ex:** Pedido `id="abc"` é diferente de Pedido `id="xyz"` mesmo se os itens forem iguais. **Detalhes:** [módulo 23, seção 4.1](https://claude.ai/processos/23-modelagem-dominio.md#41-entidade).
+Em DDD, objeto com **identidade própria** que persiste ao longo do tempo. Tem `id`. Dois objetos com mesmos atributos são diferentes se têm ids diferentes. **Ex:** Pedido `id="abc"` é diferente de Pedido `id="xyz"` mesmo se os itens forem iguais. **Detalhes:** [módulo 23, seção 4.1](../processos/23-modelagem-dominio.md#41-entidade).
 
 ### Invariante
 
-**Regra que NUNCA pode ser violada**, em nenhum momento. Estado inválido deve ser impossível de criar no código. **Ex:** "Pedido tem pelo menos 1 item" - código não permite criar pedido vazio. **Detalhes:** [módulo 23, seção 4.5](https://claude.ai/processos/23-modelagem-dominio.md#45-invariante).
+**Regra que NUNCA pode ser violada**, em nenhum momento. Estado inválido deve ser impossível de criar no código. **Ex:** "Pedido tem pelo menos 1 item" - código não permite criar pedido vazio. **Detalhes:** [módulo 23, seção 4.5](../processos/23-modelagem-dominio.md#45-invariante).
 
 ### Linguagem Ubíqua
 
-Princípio de DDD: **um termo, um significado em todo lugar** - código, conversa, doc, UI. Evita tradução constante entre vocabulários paralelos. **Detalhes:** [módulo 23, seção 3](https://claude.ai/processos/23-modelagem-dominio.md#3-linguagem-ub%C3%ADqua--o-conceito-mais-importante).
+Princípio de DDD: **um termo, um significado em todo lugar** - código, conversa, doc, UI. Evita tradução constante entre vocabulários paralelos. **Detalhes:** [módulo 23, seção 3](../processos/23-modelagem-dominio.md#3-linguagem-ub%C3%ADqua--o-conceito-mais-importante).
 
 ### Modelo Anêmico
 
-**Anti-padrão** em DDD: tipos só com dados, lógica de validação espalhada em "services". Modelo Rico (oposto) coloca comportamento junto com dados. **Detalhes:** [módulo 23, seção 7](https://claude.ai/processos/23-modelagem-dominio.md#7-modelo-an%C3%AAmico-vs-rico).
+**Anti-padrão** em DDD: tipos só com dados, lógica de validação espalhada em "services". Modelo Rico (oposto) coloca comportamento junto com dados. **Detalhes:** [módulo 23, seção 7](../processos/23-modelagem-dominio.md#7-modelo-an%C3%AAmico-vs-rico).
 
 ### Value Object (VO)
 
-**Objeto definido pelo seu valor**, sem identidade. Imutável. Dois VOs com mesmos atributos são considerados iguais. **Ex:** `Endereco { rua, cep }` - dois endereços com mesmo rua/cep são o mesmo conceitualmente. **Detalhes:** [módulo 23, seção 4.2](https://claude.ai/processos/23-modelagem-dominio.md#42-value-object).
+**Objeto definido pelo seu valor**, sem identidade. Imutável. Dois VOs com mesmos atributos são considerados iguais. **Ex:** `Endereco { rua, cep }` - dois endereços com mesmo rua/cep são o mesmo conceitualmente. **Detalhes:** [módulo 23, seção 4.2](../processos/23-modelagem-dominio.md#42-value-object).
 
 ---
 
@@ -290,7 +291,7 @@ Princípio de DDD: **um termo, um significado em todo lugar** - código, convers
 
 ### Derivação
 
-Calcular valor a partir de outros estados/props **diretamente**, sem `useEffect` + `setState`. Evita re-renders extras e dessincronização. **Ex:** `const total = a + b` (derivação direta). NÃO: `const [total, setTotal] = useState(0); useEffect(() => setTotal(a + b), [a, b])`. **Detalhes:** [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
+Calcular valor a partir de outros estados/props **diretamente**, sem `useEffect` + `setState`. Evita re-renders extras e dessincronização. **Ex:** `const total = a + b` (derivação direta). NÃO: `const [total, setTotal] = useState(0); useEffect(() => setTotal(a + b), [a, b])`. **Detalhes:** [módulo 12](../padroes/12-react-e-estado.md).
 
 ### displayName
 
@@ -298,7 +299,7 @@ Propriedade de componente React (especialmente em `forwardRef`) para aparecer co
 
 ### forwardRef
 
-Função React que permite **componente receber e repassar ref** para um elemento interno. Usada em componentes que envolvem elementos focáveis. **Detalhes:** [template 35](https://claude.ai/templates/35-componente-ui.md).
+Função React que permite **componente receber e repassar ref** para um elemento interno. Usada em componentes que envolvem elementos focáveis. **Detalhes:** [template 35](../templates/35-componente-ui.md).
 
 ### Hidratação (Hydration)
 
@@ -306,11 +307,11 @@ Processo onde React **conecta DOM já renderizado pelo servidor** aos handlers d
 
 ### Hook (React)
 
-Função que permite "ganchar" em features do React (state, lifecycle, context) em componentes funcionais. Nome começa com `use`. **Detalhes:** [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
+Função que permite "ganchar" em features do React (state, lifecycle, context) em componentes funcionais. Nome começa com `use`. **Detalhes:** [módulo 12](../padroes/12-react-e-estado.md).
 
 ### Hook de Feature
 
-Hook customizado que **encapsula a lógica de uma page específica**. Conhece o domínio. Não reutilizável em outros lugares. **Ex:** `useDetalhamento(aluguelId)` para PaginaDetalheAluguel. **Detalhes:** [template 36](https://claude.ai/templates/36-hook-feature.md).
+Hook customizado que **encapsula a lógica de uma page específica**. Conhece o domínio. Não reutilizável em outros lugares. **Ex:** `useDetalhamento(aluguelId)` para PaginaDetalheAluguel. **Detalhes:** [template 36](../templates/36-hook-feature.md).
 
 ### Hook de UI
 
@@ -326,7 +327,7 @@ Não modificar dados existentes; criar nova referência. Em React, essencial par
 
 ### Memoização
 
-Cachear o resultado de cálculo ou referência para evitar recálculo desnecessário. Em React: `useMemo`, `useCallback`, `React.memo`. **Ver também:** [Otimização Prematura](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#otimiza%C3%A7%C3%A3o-prematura).
+Cachear o resultado de cálculo ou referência para evitar recálculo desnecessário. Em React: `useMemo`, `useCallback`, `React.memo`. **Ver também:** [Otimização Prematura](#otimiza%C3%A7%C3%A3o-prematura).
 
 ### Re-render
 
@@ -342,11 +343,11 @@ Componente React que **mostra fallback durante carregamento** de algo (lazy comp
 
 ### useCallback
 
-Hook que retorna **mesma referência de função** entre renders, se dependências não mudaram. Usado para evitar re-render de componentes filhos memoizados. **Cuidado:** [Otimização prematura](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#otimiza%C3%A7%C3%A3o-prematura).
+Hook que retorna **mesma referência de função** entre renders, se dependências não mudaram. Usado para evitar re-render de componentes filhos memoizados. **Cuidado:** [Otimização prematura](#otimiza%C3%A7%C3%A3o-prematura).
 
 ### useEffect
 
-Hook para **side effects** (fetch, subscription, manipulação de DOM externo). Roda após render. Lista de dependências controla quando re-roda. **Anti-padrão comum:** usar para derivar estado - ver [Derivação](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#deriva%C3%A7%C3%A3o).
+Hook para **side effects** (fetch, subscription, manipulação de DOM externo). Roda após render. Lista de dependências controla quando re-roda. **Anti-padrão comum:** usar para derivar estado - ver [Derivação](#deriva%C3%A7%C3%A3o).
 
 ### useMemo
 
@@ -370,7 +371,7 @@ Convenção: nomear o retorno de hook de feature como `vm`. Page consome via `vm
 
 ### cn (utility)
 
-Função que combina `clsx` + `tailwind-merge`. Resolve classes condicionais e conflitos entre classes Tailwind. Praticamente padrão em projetos React+Tailwind. **Detalhes:** [template 35](https://claude.ai/templates/35-componente-ui.md#utilit%C3%A1rio-cn).
+Função que combina `clsx` + `tailwind-merge`. Resolve classes condicionais e conflitos entre classes Tailwind. Praticamente padrão em projetos React+Tailwind. **Detalhes:** [template 35](../templates/35-componente-ui.md#utilit%C3%A1rio-cn).
 
 ### Composição de Componentes
 
@@ -378,11 +379,11 @@ Padrão de criar componente novo combinando componentes existentes. Em React, ge
 
 ### cva (Class Variance Authority)
 
-Biblioteca que organiza variantes de componentes (variante × tamanho × estado). Alternativa mais escalável ao padrão `clsx + Record`. **Detalhes:** [template 35, seção "Versão com cva"](https://claude.ai/templates/35-componente-ui.md).
+Biblioteca que organiza variantes de componentes (variante × tamanho × estado). Alternativa mais escalável ao padrão `clsx + Record`. **Detalhes:** [template 35, seção "Versão com cva"](../templates/35-componente-ui.md).
 
 ### Design System
 
-Conjunto de **componentes padronizados + tokens visuais** (cores, espaçamento, tipografia) que garantem consistência visual no projeto. **Detalhes:** [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
+Conjunto de **componentes padronizados + tokens visuais** (cores, espaçamento, tipografia) que garantem consistência visual no projeto. **Detalhes:** [módulo 13](../padroes/13-ui-e-design-system.md).
 
 ---
 
@@ -398,7 +399,7 @@ Função que **liga validação ao formulário**. Em react-hook-form: `useForm({
 
 ### Schema (Zod)
 
-**Descrição da forma esperada** de um dado, com validação. Schema gera tipo TypeScript via `z.infer<typeof schema>`. **Ex:** `const userSchema = z.object({ name: z.string().min(3), email: z.string().email() })`. **Detalhes:** [módulo 14](https://claude.ai/padroes/14-formularios-e-validacao.md).
+**Descrição da forma esperada** de um dado, com validação. Schema gera tipo TypeScript via `z.infer<typeof schema>`. **Ex:** `const userSchema = z.object({ name: z.string().min(3), email: z.string().email() })`. **Detalhes:** [módulo 14](../padroes/14-formularios-e-validacao.md).
 
 ### Zod
 
@@ -416,7 +417,7 @@ Padrão de estrutura de teste:
 2. **Act:** executar a ação testada
 3. **Assert:** verificar resultado
 
-Cada teste segue essa ordem visualmente. **Detalhes:** [módulo 15](https://claude.ai/padroes/15-testes.md).
+Cada teste segue essa ordem visualmente. **Detalhes:** [módulo 15](../padroes/15-testes.md).
 
 ### Mock / Stub / Spy / Fake
 
@@ -433,7 +434,7 @@ Em prática, `vi.fn()` do Vitest cobre todos os usos.
 
 ### Testes de Caracterização
 
-Testes que **capturam comportamento atual** (mesmo errado) antes de refatorar. Servem como rede de segurança: se o comportamento mudar após refactor, teste pega. **Detalhes:** [módulo 22, seção 10](https://claude.ai/processos/22-refatoracao.md).
+Testes que **capturam comportamento atual** (mesmo errado) antes de refatorar. Servem como rede de segurança: se o comportamento mudar após refactor, teste pega. **Detalhes:** [módulo 22, seção 10](../processos/22-refatoracao.md).
 
 ---
 
@@ -441,7 +442,7 @@ Testes que **capturam comportamento atual** (mesmo errado) antes de refatorar. S
 
 ### Bundle
 
-Arquivo JS final gerado pelo build. Carregado pelo navegador. Tamanho importa para LCP. **Detalhes:** [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md).
+Arquivo JS final gerado pelo build. Carregado pelo navegador. Tamanho importa para LCP. **Detalhes:** [módulo 16](../padroes/16-performance-acessibilidade.md).
 
 ### CLS (Cumulative Layout Shift)
 
@@ -519,7 +520,7 @@ Renderizar **apenas itens visíveis** de listas grandes (centenas/milhares). Bib
 
 ### Acessibilidade (a11y)
 
-Prática de construir software **utilizável por todos**, incluindo pessoas com deficiências (visual, motora, cognitiva, auditiva). "a11y" = 11 letras entre 'a' e 'y' em "accessibility". **Detalhes:** [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md).
+Prática de construir software **utilizável por todos**, incluindo pessoas com deficiências (visual, motora, cognitiva, auditiva). "a11y" = 11 letras entre 'a' e 'y' em "accessibility". **Detalhes:** [módulo 16](../padroes/16-performance-acessibilidade.md).
 
 ### ARIA (Accessible Rich Internet Applications)
 
@@ -543,7 +544,7 @@ Software que **lê o conteúdo da tela** para usuários cegos ou com baixa visã
 
 ### WCAG (Web Content Accessibility Guidelines)
 
-Padrão internacional de **acessibilidade web**. Três níveis: A (mínimo), AA (esperado em projetos profissionais), AAA (excelência). **Detalhes:** [checklist 42](https://claude.ai/checklists/42-acessibilidade.md).
+Padrão internacional de **acessibilidade web**. Três níveis: A (mínimo), AA (esperado em projetos profissionais), AAA (excelência). **Detalhes:** [checklist 42](../checklists/42-acessibilidade.md).
 
 ---
 
@@ -551,7 +552,7 @@ Padrão internacional de **acessibilidade web**. Três níveis: A (mínimo), AA 
 
 ### Audit (npm)
 
-Comando que **verifica vulnerabilidades** em dependências. `npm audit`. Aviso: `npm audit fix --force` pode quebrar coisas. **Detalhes:** [comando em 51](https://claude.ai/chat/51-comandos.md#audit-seguran%C3%A7a).
+Comando que **verifica vulnerabilidades** em dependências. `npm audit`. Aviso: `npm audit fix --force` pode quebrar coisas. **Detalhes:** [comando em 51](./51-comandos.md#audit-seguran%C3%A7a).
 
 ### CSP (Content Security Policy)
 
@@ -587,7 +588,7 @@ Organização sem fins lucrativos. Famosa pelo **OWASP Top 10**, lista das 10 vu
 
 ### PII (Personally Identifiable Information)
 
-**Dados pessoais identificáveis**: nome completo, CPF, RG, email, telefone, endereço, dados bancários, biometria, geolocalização precisa. Nunca em URL, nunca em logs públicos. **Detalhes:** [checklist 41](https://claude.ai/checklists/41-seguranca.md).
+**Dados pessoais identificáveis**: nome completo, CPF, RG, email, telefone, endereço, dados bancários, biometria, geolocalização precisa. Nunca em URL, nunca em logs públicos. **Detalhes:** [checklist 41](../checklists/41-seguranca.md).
 
 ### Race Condition
 
@@ -607,7 +608,7 @@ Lista de **tarefas pendentes** priorizadas. Em projetos com este pacote: arquivo
 
 ### Bloqueante
 
-Achado de revisão com gravidade 🔴 - **impede conclusão** da tarefa. **Detalhes:** [módulo 21, seção 6](https://claude.ai/processos/21-revisao-codigo.md).
+Achado de revisão com gravidade 🔴 - **impede conclusão** da tarefa. **Detalhes:** [módulo 21, seção 6](../processos/21-revisao-codigo.md).
 
 ### Conventional Commits
 
@@ -627,7 +628,7 @@ Mecanismo para **ativar/desativar features** sem deploy. Útil para rollback rá
 
 ### Hotfix
 
-Correção urgente em produção, **fora do fluxo normal** de tarefas. Modo "Hotfix" no template 31. **Detalhes:** [template 31, variante 3](https://claude.ai/templates/31-task-concluida.md#variante-3-hotfix).
+Correção urgente em produção, **fora do fluxo normal** de tarefas. Modo "Hotfix" no template 31. **Detalhes:** [template 31, variante 3](../templates/31-task-concluida.md#variante-3-hotfix).
 
 ### PR (Pull Request)
 
@@ -635,7 +636,7 @@ Solicitação para **mergear** mudanças de uma branch para outra (geralmente pa
 
 ### Refatoração
 
-**Melhorar estrutura do código sem mudar comportamento.** Se mudar comportamento, é redesign - não refactor. **Detalhes:** [módulo 22](https://claude.ai/processos/22-refatoracao.md).
+**Melhorar estrutura do código sem mudar comportamento.** Se mudar comportamento, é redesign - não refactor. **Detalhes:** [módulo 22](../processos/22-refatoracao.md).
 
 ---
 
@@ -643,19 +644,19 @@ Solicitação para **mergear** mudanças de uma branch para outra (geralmente pa
 
 ### Engenharia Reversa
 
-Em [módulo 26](https://claude.ai/processos/26-inicializacao-projeto.md), processo de **extrair contexto do código existente** quando o projeto não tem documentação. Princípio: código é a verdade primária.
+Em [módulo 26](../processos/26-inicializacao-projeto.md), processo de **extrair contexto do código existente** quando o projeto não tem documentação. Princípio: código é a verdade primária.
 
 ### Esforço-H/IA
 
-Campo de tarefa com **duas medidas separadas**: esforço para humano (P/M/G/XG) e esforço para IA (também P/M/G/XG). Critério de IA é diferente: por arquivos tocados, contexto, risco - não por tempo. **Ex:** `G/M` = grande para humano, médio para IA. **Detalhes:** [módulo 20, seção 3.4](https://claude.ai/processos/20-ciclo-tarefa.md#34-esfor%C3%A7o-para-ia).
+Campo de tarefa com **duas medidas separadas**: esforço para humano (P/M/G/XG) e esforço para IA (também P/M/G/XG). Critério de IA é diferente: por arquivos tocados, contexto, risco - não por tempo. **Ex:** `G/M` = grande para humano, médio para IA. **Detalhes:** [módulo 20, seção 3.4](../processos/20-ciclo-tarefa.md#34-esfor%C3%A7o-para-ia).
 
 ### Imediata (urgência)
 
-Valor de urgência de tarefa: **precisa começar agora**. Em `pendentes.md`, tarefa Imediata usa formato em **bloco**, não linha de tabela. **Detalhes:** [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md).
+Valor de urgência de tarefa: **precisa começar agora**. Em `pendentes.md`, tarefa Imediata usa formato em **bloco**, não linha de tabela. **Detalhes:** [módulo 20](../processos/20-ciclo-tarefa.md).
 
 ### Inicialização (de projeto)
 
-Processo de **criar a estrutura `docs/`** num projeto que não a tem, seja novo ou existente. Descrito em [módulo 26](https://claude.ai/processos/26-inicializacao-projeto.md).
+Processo de **criar a estrutura `docs/`** num projeto que não a tem, seja novo ou existente. Descrito em [módulo 26](../processos/26-inicializacao-projeto.md).
 
 ### Modos de Cerimônia: Light / Standard / Strict
 
@@ -667,7 +668,7 @@ Três níveis de **rigor de processo** para tarefas:
 |**Standard**|Ciclo completo - pendentes → em-andamento → concluidas|Tarefa típica|
 |**Strict**|Standard + ADR + análise de impacto|Decisão arquitetural grande|
 
-**Detalhes:** [módulo 20, seção 2](https://claude.ai/processos/20-ciclo-tarefa.md).
+**Detalhes:** [módulo 20, seção 2](../processos/20-ciclo-tarefa.md).
 
 ### Núcleo (do pacote)
 
@@ -702,7 +703,7 @@ Conjunto de flags rigorosos: `strict: true` no `tsconfig.json`. Ativa `noImplici
 
 ## 🔧 Anti-Padrões (Mais Comuns)
 
-Definições rápidas. Catálogo completo em [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md).
+Definições rápidas. Catálogo completo em [`50-anti-padroes.md`](./50-anti-padroes.md).
 
 ### God Component
 
@@ -718,11 +719,11 @@ Otimizar **sem ter medido** que há problema real. Adiciona complexidade sem gan
 
 ### Refatoração
 
-(Já definido em [Processo](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#refatora%C3%A7%C3%A3o).) **Não-anti-padrão.** Listado aqui só para diferenciar de "Otimização Prematura" - refatoração tem motivo concreto; otimização prematura não.
+(Já definido em [Processo](#refatora%C3%A7%C3%A3o).) **Não-anti-padrão.** Listado aqui só para diferenciar de "Otimização Prematura" - refatoração tem motivo concreto; otimização prematura não.
 
 ### Regra de Três
 
-Convenção: **não crie abstração antes da terceira ocorrência**. 2 duplicações: ok manter. 3+: hora de abstrair. **Detalhes:** [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md).
+Convenção: **não crie abstração antes da terceira ocorrência**. 2 duplicações: ok manter. 3+: hora de abstrair. **Detalhes:** [módulo 10](../padroes/10-codigo-e-convencoes.md).
 
 ---
 
@@ -738,7 +739,7 @@ Filosofia de implementação que mira **replicar o design milímetro a milímetr
 
 ### Intent Perfect
 
-Filosofia de implementação que mira **reproduzir a intenção do designer**, usando tokens do design system em vez de medidas exatas. Funciona melhor em diferentes contextos. **Detalhes:** [módulo 24, seção 9](https://claude.ai/processos/24-figma-para-codigo.md).
+Filosofia de implementação que mira **reproduzir a intenção do designer**, usando tokens do design system em vez de medidas exatas. Funciona melhor em diferentes contextos. **Detalhes:** [módulo 24, seção 9](../processos/24-figma-para-codigo.md).
 
 ### Skill / SKILL.md
 
@@ -766,8 +767,8 @@ Convenção de pacotes de instruções (não específico deste pacote): arquivo 
 
 ## 🔗 Referências e Módulos Relacionados
 
-- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) - Catálogo de anti-padrões
-- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) - Quick reference de comandos
-- [`53-changelog.md`](https://claude.ai/chat/53-changelog.md) - Histórico de mudanças do pacote
+- [`50-anti-padroes.md`](./50-anti-padroes.md) - Catálogo de anti-padrões
+- [`51-comandos.md`](./51-comandos.md) - Quick reference de comandos
+- [`53-changelog.md`](./53-changelog.md) - Histórico de mudanças do pacote
 - Módulos `padroes/` (10-18) - Onde os termos são definidos em profundidade
 - Módulos `processos/` (20-26) - Termos do ciclo de trabalho

@@ -1,9 +1,11 @@
 ---
-
-description: "Template para tarefa em andamento. Copie a estrutura, preencha conforme a tarefa, mantenha atualizado durante a execução." modulo: "30" categoria: "templates" versao: "1.0" arquivo_destino: "docs/tarefas/em-andamento.md" relacionado:
-
-- "20-ciclo-tarefa.md"
-
+description: "Template para tarefa em andamento. Copie a estrutura, preencha conforme a tarefa, mantenha atualizado durante a execução."
+modulo: "30"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "docs/tarefas/em-andamento.md"
+relacionado:
+  - "20-ciclo-tarefa.md"
 ---
 
 # 📝 Template: Tarefa em Andamento
@@ -19,7 +21,7 @@ description: "Template para tarefa em andamento. Copie a estrutura, preencha con
 3. **Preencha** o cabeçalho com os dados da tarefa
 4. **Atualize** a seção `## Execução` em tempo real conforme a tarefa progride
 5. **Registre bloqueios** com a estrutura indicada
-6. Ao terminar, **mova o bloco** para um arquivo próprio em `docs/tarefas/concluidas/` (ver [template 31](https://claude.ai/chat/31-task-concluida.md))
+6. Ao terminar, **mova o bloco** para um arquivo próprio em `docs/tarefas/concluidas/` (ver [template 31](./31-task-concluida.md))
 
 ---
 
@@ -234,17 +236,17 @@ Para terminar uma, **remova o bloco inteiro** (com o `---` anterior se for o cas
 
 **3. E se a tarefa não tem dependências, REQ/ADR ou observações?** Use `-` (travessão) na linha do cabeçalho. **Não remova** a linha - manter a estrutura consistente facilita leitura entre tarefas.
 
-**4. Como sei qual `Esforço-IA` colocar?** Veja [módulo 20, seção 3.4](https://claude.ai/processos/20-ciclo-tarefa.md#34-esfor%C3%A7o-para-ia). Critério rápido: P-IA = 1-2 arquivos; M-IA = 2-5; G-IA = 5-12; XG-IA = 12+ (quebrar).
+**4. Como sei qual `Esforço-IA` colocar?** Veja [módulo 20, seção 3.4](../processos/20-ciclo-tarefa.md#34-esfor%C3%A7o-para-ia). Critério rápido: P-IA = 1-2 arquivos; M-IA = 2-5; G-IA = 5-12; XG-IA = 12+ (quebrar).
 
 **5. Tarefa Imediata também usa este template?** Sim. A diferença Normal vs Imediata é **só no `pendentes.md`** (linha de tabela vs bloco). Quando vai para em-andamento, ambas usam este formato.
 
-**6. E se eu cancelar a tarefa antes de concluir?** Mova o bloco para `concluidas/` com `**Status: CANCELADA**` e documente o motivo na seção "O que NÃO foi feito". Veja [módulo 20, seção 10.4](https://claude.ai/processos/20-ciclo-tarefa.md#104-tarefa-cancelada).
+**6. E se eu cancelar a tarefa antes de concluir?** Mova o bloco para `concluidas/` com `**Status: CANCELADA**` e documente o motivo na seção "O que NÃO foi feito". Veja [módulo 20, seção 10.4](../processos/20-ciclo-tarefa.md#104-tarefa-cancelada).
 
 ---
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Processo completo do ciclo
-- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) - Template do próximo estágio
-- [`32-adr.md`](https://claude.ai/chat/32-adr.md) - Para tarefas Strict que geram ADR
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Revisão antes de concluir
+- [`../processos/20-ciclo-tarefa.md`](../processos/20-ciclo-tarefa.md) - Processo completo do ciclo
+- [`31-task-concluida.md`](./31-task-concluida.md) - Template do próximo estágio
+- [`32-adr.md`](./32-adr.md) - Para tarefas Strict que geram ADR
+- [`../processos/21-revisao-codigo.md`](../processos/21-revisao-codigo.md) - Revisão antes de concluir

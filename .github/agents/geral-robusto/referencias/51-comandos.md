@@ -1,9 +1,6 @@
 ---
-
 description: "Padrões de gestão de tarefas para agentes de IA: backlog, tarefa em andamento, conclusão, bloqueios, testes, rastreabilidade e registro histórico."
-
 applyTo: "docs/tarefas/**/*.md"
-
 ---
 ---
 
@@ -610,7 +607,7 @@ npm run build   # se quer garantir 100%
 
 ## 🔗 Referências e Módulos Relacionados
 
-- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) - Catálogo de anti-padrões
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Quando rodar testes/lint no ciclo
-- [`../processos/26-inicializacao-projeto.md`](https://claude.ai/processos/26-inicializacao-projeto.md) - Setup inicial usa estes comandos
+- [`50-anti-padroes.md`](./50-anti-padroes.md) - Catálogo de anti-padrões
+- [`52-glossario-termos-tecnicos.md`](./52-glossario-termos-tecnicos.md) - Definições
+- [`../processos/20-ciclo-tarefa.md`](../processos/20-ciclo-tarefa.md) - Quando rodar testes/lint no ciclo
+- [`../processos/26-inicializacao-projeto.md`](../processos/26-inicializacao-projeto.md) - Setup inicial usa estes comandos

@@ -492,8 +492,23 @@ mesma linha — desligar item de segurança é decisão, e decisão sem motivo r
 
 ## 12. Índice de Documentos Ativos
 
+### Pacotes de instrução do agente
+
+`.github/agents/` tem **dois** pacotes, e a precedência precisa ser explícita (registrada na
+`TASK-CHORE-023`):
+
+| Pacote | Papel | Quando vale |
+|---|---|---|
+| **`geral-leve/`** | **Vigente.** 6 arquivos `.agent.md` com `applyTo` válido, aplicados automaticamente por glob | É o que as ferramentas carregam de fato |
+| `geral-robusto/` | **Referência.** 36 módulos com o processo detalhado (ciclo de tarefa, checklists, templates) | Consulta sob demanda; o `geral-leve` é o resumo operante dele |
+
+Em conflito, **vale o `geral-leve/`** — ele é o que a ferramenta aplica. O `geral-robusto/` explica o
+porquê e detalha o método, mas nenhum mecanismo o carrega sozinho.
+
 | Assunto | Arquivo |
 |---|---|
+| **Manual de operação** (fluxo git/PR, gates, Dependabot, glossário) | **`docs/operacao.md`** |
+| Riscos de segurança aceitos | `docs/seguranca/riscos-aceitos.md` |
 | Requisitos funcionais | `docs/requisitos/funcionais.md` |
 | Requisitos não funcionais | `docs/requisitos/nao-funcionais.md` |
 | Regras de negócio | `docs/requisitos/regras-negocio.md` |

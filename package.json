@@ -12,6 +12,7 @@
     "fipe:check": "node scripts/atualizar-fipe-presets.mjs --dry-run",
     "lint": "eslint . && node scripts/check-spacing-tokens.mjs",
     "lint:fix": "eslint . --fix",
+    "lint:docs": "node scripts/check-docs.mjs",
     "check:spacing": "node scripts/check-spacing-tokens.mjs",
     "format": "prettier . --write",
     "test": "vitest run",
