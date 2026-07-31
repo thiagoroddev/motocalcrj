@@ -78,6 +78,14 @@ condicao_de_encerramento: >
   exige react-router@7.18.1 e o patch so existe em 8.3.0, entao o caminho de
   atualizacao tentaria degradar o react-router-dom para 0.0.0. A saida passa por
   subir o react-router-dom para v8.
+
+  ALTERNATIVA A CONFIRMAR ANTES DE ASSUMIR A MIGRACAO MAJOR: o proprio alerta do
+  Dependabot sugere um "overrides" no package.json fixando o react-router numa
+  versao nao vulneravel. Provavelmente inviavel - o -dom 7.18.1 exige o
+  react-router 7.18.1 exato e nao existe versao corrigida na faixa 7.x - mas
+  custa pouco confirmar, e se funcionasse encerraria este risco sem migracao.
+  Nunca aplicar "overrides" sem rodar a suite inteira: forcar versao fora do que
+  o pacote declara quebra em runtime, nao em build.
 ```
 
 ---
