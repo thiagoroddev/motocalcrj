@@ -65,10 +65,16 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
-          if (id.includes('react-dom') || id.includes('/scheduler/')) return 'vendor-react-dom';
-          if (id.includes('react-router')) return 'vendor-router';
-          if (id.includes('/zod/')) return 'vendor-zod';
+          // ORDEM IMPORTA (TASK-BG-039). Pacotes com escopo vêm primeiro porque
+          // as regras abaixo casam por SUBSTRING: `@floating-ui/react-dom`
+          // contém "react-dom" e, testado depois, caía em `vendor-react-dom`.
+          // Isso criava dependência circular entre os chunks —
+          // `@radix-ui/react-popper` importa `@floating-ui/react-dom`, que
+          // importa `@floating-ui/dom`, de volta em `vendor-radix`.
           if (id.includes('@radix-ui') || id.includes('@floating-ui')) return 'vendor-radix';
+          if (id.includes('react-router')) return 'vendor-router';
+          if (id.includes('/react-dom/') || id.includes('/scheduler/')) return 'vendor-react-dom';
+          if (id.includes('/zod/')) return 'vendor-zod';
           return 'vendor';
         },
       },

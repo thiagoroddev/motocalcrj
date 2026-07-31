@@ -124,7 +124,14 @@ export function relatarProducao(resultado) {
 }
 
 // Execução direta: `node scripts/audit-prod.mjs`
-if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
+//
+// A guarda testa `process.argv[1]` antes de usá-lo (TASK-BG-040): em contexto de
+// avaliação (`node -e`) ele é `undefined`, e o `.replace()` direto lançava
+// TypeError — quebrando qualquer ferramenta que importasse este módulo.
+const executadoDireto =
+  process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+
+if (executadoDireto) {
   const resultado = auditarProducao();
   console.info('\nAuditoria de dependências de produção\n');
   console.info(relatarProducao(resultado));
