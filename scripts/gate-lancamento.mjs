@@ -28,7 +28,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { auditarProducao, relatarProducao } from './audit-prod.mjs';
+import { auditarProducao } from './audit-prod.mjs';
 
 const RAIZ = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 
@@ -109,19 +109,50 @@ function item1Verify() {
   }
 }
 
+/**
+ * Monta o detalhe da auditoria a partir dos DADOS, nunca fatiando o relatório
+ * formatado (TASK-BG-040).
+ *
+ * A primeira versão fazia `relatarProducao(r).split('\n').slice(2, 6)`, o que
+ * funcionava só porque o relatório tinha exatamente 6 linhas. Com um risco
+ * aceito a mais, a linha "SEM cobertura" e os avisos `!!` de registro inválido
+ * saíam do recorte — e o portão exibiria um REPROVADO sem dizer o motivo.
+ *
+ * Aqui os motivos de reprovação vêm primeiro e são incondicionais: se existem,
+ * aparecem. Não há recorte que possa engoli-los.
+ */
+export function detalharAuditoria(r) {
+  const motivos = [];
+  if (r.registroAusente) {
+    motivos.push('registro de riscos aceitos NÃO ENCONTRADO');
+  }
+  if (r.problemas.length > 0) {
+    const nomes = r.problemas.map((p) => `${p.nome} (${p.severidade})`).join(', ');
+    motivos.push(`${r.problemas.length} SEM COBERTURA: ${nomes}`);
+  }
+  for (const ra of r.rasRuins) {
+    const motivo = ra.vencida ? `VENCIDO em ${ra.data_revisao}` : ra.problemas.join('; ');
+    motivos.push(`${ra.id ?? '(sem id)'} inválido: ${motivo}`);
+  }
+
+  const contexto = [
+    `${r.cobertos.length} HIGH/CRITICAL em produção cobertos por risco aceito`,
+    `${r.problemas.length} sem cobertura`,
+    `${r.emDev.length} em dev/build`,
+  ];
+  // Prazo dos riscos que cobrem algo: é o que vira reprovação no futuro.
+  for (const ra of r.entradas.filter((e) => e.cobre)) {
+    contexto.push(`${ra.id} vence em ${ra.diasRestantes} dias (saída: ${ra.tarefa_de_saida})`);
+  }
+
+  return [...motivos, ...contexto].join(' | ');
+}
+
 function item2Auditoria() {
   try {
     const r = auditarProducao();
     const reprovou = r.problemas.length > 0 || r.rasRuins.length > 0 || r.registroAusente;
-    return {
-      veredito: reprovou ? REPROVADO : APROVADO,
-      detalhe: relatarProducao(r)
-        .split('\n')
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .slice(2, 6)
-        .join(' | '),
-    };
+    return { veredito: reprovou ? REPROVADO : APROVADO, detalhe: detalharAuditoria(r) };
   } catch (erro) {
     return { veredito: NAO_EXECUTADO, detalhe: `auditoria não rodou: ${erro.message}` };
   }
@@ -369,6 +400,13 @@ function item9Plataforma() {
 }
 
 // ── Execução ─────────────────────────────────────────────────────────────────
+//
+// Só roda quando chamado direto (TASK-BG-040). Antes, a lógica ficava no topo do
+// módulo: importar o arquivo — por exemplo, para reusar `detalharAuditoria` num
+// teste — disparava o portão inteiro, com `npm run verify`, requisição de rede e
+// leitura do Lighthouse. Mesma classe de defeito da guarda do `audit-prod.mjs`.
+const executadoDireto =
+  process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 
 const SIMBOLO = { [APROVADO]: 'ok  ', [REPROVADO]: 'FALHA', [NAO_EXECUTADO]: '?   ' };
 
@@ -384,39 +422,41 @@ const itens = [
   ['configuração de plataforma registrada', item9Plataforma],
 ];
 
-console.info(`\nPortão de lançamento — ${URL_ALVO}\n`);
+if (executadoDireto) {
+  console.info(`\nPortão de lançamento — ${URL_ALVO}\n`);
 
-const resultados = [];
-for (const [nome, executar] of itens) {
-  const r = await executar();
-  resultados.push({ nome, ...r });
-  console.info(`  [${SIMBOLO[r.veredito]}] ${nome}`);
-  console.info(`           ${r.detalhe}`);
-}
-
-const reprovados = resultados.filter((r) => r.veredito === REPROVADO);
-const naoExecutados = resultados.filter((r) => r.veredito === NAO_EXECUTADO);
-const liberado = reprovados.length === 0 && naoExecutados.length === 0;
-
-console.info('');
-console.info(`  PRONTO PARA PÚBLICO? ${liberado ? 'SIM' : 'NÃO'}`);
-if (!liberado) {
-  if (reprovados.length)
-    console.info(
-      `  ${reprovados.length} reprovado(s): ${reprovados.map((r) => r.nome).join(', ')}`,
-    );
-  if (naoExecutados.length) {
-    console.info(
-      `  ${naoExecutados.length} não executado(s): ${naoExecutados.map((r) => r.nome).join(', ')}`,
-    );
-    console.info(
-      '  (gate que não rodou não é gate verde — ver docs/analise-melhorias-agente.md §7.1.1)',
-    );
+  const resultados = [];
+  for (const [nome, executar] of itens) {
+    const r = await executar();
+    resultados.push({ nome, ...r });
+    console.info(`  [${SIMBOLO[r.veredito]}] ${nome}`);
+    console.info(`           ${r.detalhe}`);
   }
-}
-console.info('');
 
-// `process.exitCode` em vez de `process.exit()`: o segundo encerra o processo
-// com handles ainda abertos e, no Windows, o Node aborta com asserção do libuv
-// devolvendo 127 — que o CI leria como erro de execução em vez do veredito.
-process.exitCode = liberado ? 0 : 1;
+  const reprovados = resultados.filter((r) => r.veredito === REPROVADO);
+  const naoExecutados = resultados.filter((r) => r.veredito === NAO_EXECUTADO);
+  const liberado = reprovados.length === 0 && naoExecutados.length === 0;
+
+  console.info('');
+  console.info(`  PRONTO PARA PÚBLICO? ${liberado ? 'SIM' : 'NÃO'}`);
+  if (!liberado) {
+    if (reprovados.length)
+      console.info(
+        `  ${reprovados.length} reprovado(s): ${reprovados.map((r) => r.nome).join(', ')}`,
+      );
+    if (naoExecutados.length) {
+      console.info(
+        `  ${naoExecutados.length} não executado(s): ${naoExecutados.map((r) => r.nome).join(', ')}`,
+      );
+      console.info(
+        '  (gate que não rodou não é gate verde — ver docs/analise-melhorias-agente.md §7.1.1)',
+      );
+    }
+  }
+  console.info('');
+
+  // `process.exitCode` em vez de `process.exit()`: o segundo encerra o processo
+  // com handles ainda abertos e, no Windows, o Node aborta com asserção do libuv
+  // devolvendo 127 — que o CI leria como erro de execução em vez do veredito.
+  process.exitCode = liberado ? 0 : 1;
+}
