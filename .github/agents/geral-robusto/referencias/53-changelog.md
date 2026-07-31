@@ -1,15 +1,26 @@
 ---
-
-description: "Changelog do pacote .agent/. Registra mudanças entre versões. Segue Keep a Changelog e SemVer adaptado." modulo: "53" categoria: "referencias" versao: "1.0" relacionado:
-
-- "00-INDICE.md"
-- "01-nucleo.md"
-
+description: "Changelog do pacote .agent/. Registra mudanças entre versões. Segue Keep a Changelog e SemVer adaptado."
+modulo: "53"
+categoria: "referencias"
+versao: "3.3"
+relacionado:
+  - "00-INDICE.md"
+  - "01-nucleo.md"
 ---
 
 # 📋 Changelog do Pacote `.agent/`
 
 > Registro de mudanças entre versões do pacote. Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer 2.0.0](https://semver.org/lang/pt-BR/) adaptado para pacote de documentação.
+
+> ⚠️ **Duas numerações para o mesmo pacote** (reconciliado na `TASK-CHORE-023`).
+> A versão corrente é a do núcleo: **3.3**. Este arquivo registrava `1.0.0` para o release de
+> **2026-05-13**, que o [`01-nucleo.md`](../01-nucleo.md#11-changelog-deste-pacote) chama de **3.0** —
+> mesmo evento, contagens diferentes (o núcleo continua de um sistema `2.0` anterior; este arquivo
+> contava a primeira liberação *deste* pacote).
+>
+> **O histórico vivo está no núcleo, §11.** As versões 3.1 (2026-06-01), 3.2 (2026-06-06) e 3.3
+> (2026-06-09) foram registradas lá e nunca chegaram aqui. Consolidar os dois changelogs num só é
+> decisão de conteúdo, fora do escopo desta correção de integridade.
 
 ---
 
@@ -40,7 +51,7 @@ Cada versão organiza mudanças em até 6 categorias (omitir as não usadas):
 
 ---
 
-## [1.0.0](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b# "Primeira liberação completa do pacote") - 2026-05-13
+## [1.0.0](# "Primeira liberação completa do pacote") - 2026-05-13
 
 Primeira liberação do pacote.
 
@@ -228,8 +239,8 @@ Quando houver versões novas, adicionar acima desta seção, no formato:
 
 ## 🔗 Outros Arquivos do Pacote
 
-- [`00-INDICE.md`](https://claude.ai/00-INDICE.md) - Mapa geral
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Regras inegociáveis
-- [`50-anti-padroes.md`](https://claude.ai/chat/50-anti-padroes.md) - Catálogo de anti-padrões
-- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) - Quick reference de comandos
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições
+- [`00-INDICE.md`](../00-INDICE.md) - Mapa geral
+- [`01-nucleo.md`](../01-nucleo.md) - Regras inegociáveis
+- [`50-anti-padroes.md`](./50-anti-padroes.md) - Catálogo de anti-padrões
+- [`51-comandos.md`](./51-comandos.md) - Quick reference de comandos
+- [`52-glossario-termos-tecnicos.md`](./52-glossario-termos-tecnicos.md) - Definições

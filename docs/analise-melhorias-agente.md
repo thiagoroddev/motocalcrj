@@ -714,6 +714,90 @@ Política restritiva não só protege: ela **mede** o que o seu bundle realmente
 
 ---
 
+### 7.7 O backlog apodrece por omissão da regra, não por esquecimento
+
+Medido neste repositório em 30/07/26: o `pendentes.md` tinha **128 linhas para descrever 6 tarefas
+abertas**. O excedente:
+
+| O que estava lá | Onde já estava registrado |
+|---|---|
+| Blockquote com tabela de **7 tarefas concluídas** e o que cada uma entregou | `concluidas/0-indice-concluidas.md` |
+| Duas notas narrando o que a `RNF-8.2` e a `RNF-9.1` fizeram | idem |
+| **57 linhas** de `**Detalhamento:**` de 3 tarefas ainda não iniciadas | ~90% duplicava documentos existentes |
+| Uma tabela quebrada (linha órfã do cabeçalho, por uma linha em branco no meio) | — |
+| Seções nomeadas por "Fase 9/10/13" | as Fases só existem em `trash-drafts-ignore/` |
+
+O módulo do ciclo especifica esse arquivo com precisão — 10 colunas, conjuntos fechados de valores,
+uma linha por tarefa, ordenação por prioridade. O arquivo real não parecia com a especificação, e
+**ninguém percebeu por dois meses**.
+
+#### Por que acontece — quatro mecanismos, nenhum deles "a IA esqueceu"
+
+1. **A regra governa a linha, não o arquivo.** §4: *"sai da tabela de pendentes (linha removida)"*. É
+   uma operação de **linha**. A prosa em volta — cabeçalho de seção, blockquote, bloco de
+   detalhamento — não é "tarefa", então nenhuma regra a reivindica. A linha sai; o comentário que só
+   existia por causa dela fica, e vira registro órfão de algo concluído.
+2. **O checklist de conclusão só ADICIONA a `pendentes.md`.** §5.4 tem 10 passos; o passo 9 é
+   *"Adicionar tarefas geradas em pendentes.md"*. **Nenhum passo remove.** O arquivo é *append-only
+   por construção*. O único "remover de pendentes" do módulo inteiro está em §10.4 — e vale só para
+   tarefa **cancelada**, que é o caso raro.
+3. **§3.5 proíbe "plano", e o que entra não parece plano.** "Pendentes é Catálogo, Não Plano" mira
+   detalhe de implementação. O que se acumula é *histórico* e *análise de risco* — passa pelo filtro,
+   porque quem escreve não acha que está escrevendo um plano.
+4. **Nada verifica.** É a tese deste documento aplicada ao próprio backlog. O schema é fechado e
+   **mecanicamente checável** — e não existe comando que o cheque. O `check-docs.mjs` valida links; o
+   formato das tarefas, ninguém.
+
+**A pressão que produz o defeito, sem eufemismo:** cada nota foi escrita ao *concluir* uma tarefa,
+para que quem lesse o backlog entendesse o contexto do que sobrava. Decisão local plausível, errada
+no agregado — quem precisa desse contexto tem o índice de concluídas. Sete notas individualmente
+pequenas, e o histórico passou a ocupar mais espaço que o backlog.
+
+Vale reter o padrão, porque ele não é sobre backlog: **regra que descreve um objeto (a linha) não
+governa o texto que orbita esse objeto.** A mesma omissão produz README que descreve uma versão
+antiga e comentário que sobrevive ao código que explicava.
+
+#### A melhoria, em três partes
+
+**(a) Transformar §3.5 de princípio em regra falsificável.** "Catálogo, não Plano" é uma metáfora;
+ninguém consegue apontar o momento em que foi violada. Trocar por:
+
+> `pendentes.md` contém **apenas tarefas abertas**. Se um `TASK-ID` citado no arquivo tem arquivo em
+> `concluidas/`, o arquivo está errado. Vale para a linha **e para tudo que só existe para
+> explicá-la**. Única exceção: citar uma concluída como **origem** de uma tarefa aberta, na coluna
+> `REQ/ADR/DT`. Descrever o que ela entregou é registro no lugar errado.
+
+**(b) Adicionar o passo que falta ao §5.4**, entre o 7 (remover de em-andamento) e o 9 (adicionar
+tarefas geradas):
+
+> **7.b — Limpar de `pendentes.md` o rastro desta tarefa:** cabeçalho de seção que ficou vazio,
+> blockquote que a comentava, bloco de detalhamento que a antecipava. *Se o texto sobrevive à saída
+> da tarefa, ele pertence a outro arquivo.*
+
+**(c) `scripts/check-tarefas.mjs` — o gate.** Sem ele, (a) e (b) são texto, que é exatamente o defeito
+que este documento inteiro descreve. Cinco checagens, todas decidíveis por script:
+
+| # | Reprova quando | Pega o caso |
+|:---:|---|---|
+| 1 | `TASK-ID` em `pendentes.md` tem arquivo em `concluidas/` | **o defeito medido acima** |
+| 2 | O mesmo `TASK-ID` aparece em dois estágios | "nada vive em dois lugares" (§1) deixa de ser promessa |
+| 3 | Linha de tabela sem as 10 colunas, ou com valor fora do conjunto fechado | `Dependências: "Todas as anteriores"` — não é lista de IDs |
+| 4 | Tarefa `Imediata` sem bloco e sem `Observações` | §3.2 é obrigatório e nunca foi conferido |
+| 5 | Linha do índice de concluídas apontando para arquivo inexistente | a outra metade do sistema |
+
+Custo real: ~1h, no mesmo molde do `check-docs.mjs` (sem dependência, função exportada + guarda de
+execução direta). Entra no `verify`, como qualquer outro gate.
+
+#### Achado de schema, de carona
+
+A coluna `REQ/ADR/DT` aceita `RF / RN / RNF / ADR / DT / REV`. O Registro de Riscos Aceitos (§11)
+criou um **sexto** tipo de referência, `RA-NNN`, e ele é a referência mais importante da tarefa que
+existe para encerrar o risco — é onde vive a análise inteira. O conjunto fechado precisa incluí-lo,
+senão a tarefa não tem onde apontar para o documento que a justifica, e o texto vaza para o corpo do
+arquivo. **Foi literalmente assim que as 57 linhas de detalhamento nasceram.**
+
+---
+
 ## 8. Roadmap de adoção
 
 Ordem escolhida por *risco removido por hora investida*. IDs seguem §4.4 do núcleo (maior número
@@ -733,6 +817,7 @@ atual + 1: CHORE 019, TEST 006, RNF 014, DOC 019).
 | 10 | Testes de aceite rastreáveis por requisito, conforme §7.5 (RF de cálculo/dinheiro/persistência → teste que cita o ID + script que reporta a diferença) | `TASK-TEST-007` | Strict | G/G | **A3 (regressão de regra de negócio)** |
 | 11 | Lighthouse CI + metas (fecha `TASK-RNF-9.1`) | `TASK-RNF-016` | Standard | M/M | Performance nunca medida |
 | 12 | Dependabot/Renovate semanal | `TASK-CHORE-026` | Light | P/P | Reincidência do item 1 |
+| 13 | `scripts/check-tarefas.mjs` + regras (a) e (b) da §7.7 | `TASK-CHORE-027` | Standard | P/M | Backlog virando registro histórico |
 
 **Os itens 1 a 3 valem mais que todos os outros somados** e cabem numa tarde: eliminam a
 vulnerabilidade real, protegem o deploy e — o mais importante — instalam a autoridade externa que faz

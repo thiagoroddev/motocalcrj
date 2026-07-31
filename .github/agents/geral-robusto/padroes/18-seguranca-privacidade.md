@@ -1,11 +1,12 @@
 ---
-
-description: "Segurança e privacidade: dados pessoais, XSS, CSP, gestão de segredos, logs seguros, cookies, validação cliente vs servidor, dependências." modulo: "18" categoria: "padroes" versao: "1.0" relacionado:
-
-- "10-codigo-e-convencoes.md"
-- "14-formularios-e-validacao.md"
-- "17-backend-node.md"
-
+description: "Segurança e privacidade: dados pessoais, XSS, CSP, gestão de segredos, logs seguros, cookies, validação cliente vs servidor, dependências."
+modulo: "18"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "10-codigo-e-convencoes.md"
+  - "14-formularios-e-validacao.md"
+  - "17-backend-node.md"
 ---
 
 # 🔒 Segurança e Privacidade
@@ -715,7 +716,7 @@ Hash é **unidirecional** - você não recupera a senha, só verifica se bate.
 - [ ] Validação de env na inicialização (Zod)
 - [ ] Sem segredos no bundle frontend (`VITE_*` é público)
 
-Detalhamento adicional em [`../checklists/41-seguranca.md`](https://claude.ai/checklists/41-seguranca.md).
+Detalhamento adicional em [`../checklists/41-seguranca.md`](../checklists/41-seguranca.md).
 
 ---
 
@@ -738,7 +739,7 @@ Detalhamento adicional em [`../checklists/41-seguranca.md`](https://claude.ai/ch
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Proibições de código (`dangerouslySetInnerHTML`, dados em URL)
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Validação no frontend que precisa repetir no servidor
-- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) - Estrutura backend onde muitas dessas práticas aplicam
-- [`../checklists/41-seguranca.md`](https://claude.ai/checklists/41-seguranca.md) - Checklist detalhado de segurança
+- [`10-codigo-e-convencoes.md`](./10-codigo-e-convencoes.md) - Proibições de código (`dangerouslySetInnerHTML`, dados em URL)
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Validação no frontend que precisa repetir no servidor
+- [`17-backend-node.md`](./17-backend-node.md) - Estrutura backend onde muitas dessas práticas aplicam
+- [`../checklists/41-seguranca.md`](../checklists/41-seguranca.md) - Checklist detalhado de segurança

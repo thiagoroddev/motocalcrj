@@ -1,9 +1,10 @@
 ---
-
-description: "Catálogo procurável de anti-padrões consolidados de todos os módulos. Cada entrada com sintoma, motivo e conserto." modulo: "50" categoria: "referencias" versao: "1.0" relacionado:
-
-- "40-revisao-rapida.md"
-
+description: "Catálogo procurável de anti-padrões consolidados de todos os módulos. Cada entrada com sintoma, motivo e conserto."
+modulo: "50"
+categoria: "referencias"
+versao: "1.0"
+relacionado:
+  - "40-revisao-rapida.md"
 ---
 
 # 🚫 Anti-Padrões: Catálogo
@@ -30,7 +31,7 @@ Cada anti-padrão tem nível de gravidade:
 
 ## 1. Código e Convenções
 
-> Detalhes do padrão correto: [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md)
+> Detalhes do padrão correto: [módulo 10](../padroes/10-codigo-e-convencoes.md)
 
 ### 🟡 Mistura de Idiomas
 
@@ -60,7 +61,7 @@ Cada anti-padrão tem nível de gravidade:
 
 ## 2. Arquitetura e Pastas
 
-> Detalhes do padrão correto: [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md)
+> Detalhes do padrão correto: [módulo 11](../padroes/11-arquitetura-e-pastas.md)
 
 ### 🟡 Componente Específico de Domínio em `components/ui/`
 
@@ -86,7 +87,7 @@ Cada anti-padrão tem nível de gravidade:
 
 ## 3. React e Estado
 
-> Detalhes do padrão correto: [módulo 12](https://claude.ai/padroes/12-react-e-estado.md)
+> Detalhes do padrão correto: [módulo 12](../padroes/12-react-e-estado.md)
 
 ### 🔴 `useEffect` Para Derivar Estado
 
@@ -143,7 +144,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 4. UI e Design System
 
-> Detalhes do padrão correto: [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md)
+> Detalhes do padrão correto: [módulo 13](../padroes/13-ui-e-design-system.md)
 
 ### 🟡 Componente UI Sem `className`
 
@@ -169,7 +170,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 5. Formulários e Validação
 
-> Detalhes do padrão correto: [módulo 14](https://claude.ai/padroes/14-formularios-e-validacao.md)
+> Detalhes do padrão correto: [módulo 14](../padroes/14-formularios-e-validacao.md)
 
 ### 🟡 Validação Manual em Vez de Zod
 
@@ -191,7 +192,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 6. Testes
 
-> Detalhes do padrão correto: [módulo 15](https://claude.ai/padroes/15-testes.md)
+> Detalhes do padrão correto: [módulo 15](../padroes/15-testes.md)
 
 ### 🟡 Testes de Implementação
 
@@ -217,7 +218,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 7. Performance e Acessibilidade
 
-> Detalhes: [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md), checklists [42](https://claude.ai/chat/42-acessibilidade.md) e [43](https://claude.ai/chat/43-performance.md)
+> Detalhes: [módulo 16](../padroes/16-performance-acessibilidade.md), checklists [42](../checklists/42-acessibilidade.md) e [43](../checklists/43-performance.md)
 
 ### 🟡 Otimização Prematura
 
@@ -247,7 +248,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 8. Backend Node
 
-> Detalhes: [módulo 17](https://claude.ai/padroes/17-backend-node.md)
+> Detalhes: [módulo 17](../padroes/17-backend-node.md)
 
 ### 🔴 Resposta Vazando Dados Sensíveis
 
@@ -265,7 +266,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 9. Segurança e Privacidade
 
-> Detalhes: [módulo 18](https://claude.ai/padroes/18-seguranca-privacidade.md), checklist [41](https://claude.ai/chat/41-seguranca.md)
+> Detalhes: [módulo 18](../padroes/18-seguranca-privacidade.md), checklist [41](../checklists/41-seguranca.md)
 
 ### 🔴 PII em URL
 
@@ -291,7 +292,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 10. Processo: Tarefas e Revisão
 
-> Detalhes: [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md), [21](https://claude.ai/processos/21-revisao-codigo.md)
+> Detalhes: [módulo 20](../processos/20-ciclo-tarefa.md), [21](../processos/21-revisao-codigo.md)
 
 ### 🟡 Pular ETAPA "PLANEJAR"
 
@@ -317,7 +318,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 11. ADRs e Análise
 
-> Detalhes: [módulo 25](https://claude.ai/processos/25-analise-impacto.md), template [32](https://claude.ai/templates/32-adr.md)
+> Detalhes: [módulo 25](../processos/25-analise-impacto.md), template [32](../templates/32-adr.md)
 
 ### 🟡 Decisão Importante Sem ADR
 
@@ -329,7 +330,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Análise de Impacto Pulada
 
-**Sintoma:** Tarefa Strict iniciada sem análise prévia das áreas afetadas. **Por que é ruim:** Descobertas no meio da implementação. Estimativa errada. **Conserto:** Análise antes do plano - mesmo "mini-análise" curta. Detalhes em [módulo 25](https://claude.ai/processos/25-analise-impacto.md).
+**Sintoma:** Tarefa Strict iniciada sem análise prévia das áreas afetadas. **Por que é ruim:** Descobertas no meio da implementação. Estimativa errada. **Conserto:** Análise antes do plano - mesmo "mini-análise" curta. Detalhes em [módulo 25](../processos/25-analise-impacto.md).
 
 ---
 
@@ -359,7 +360,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🟡 Otimismo Pós-Refatoração
 
-**Sintoma:** "Refatorei mas não testei - vai funcionar." **Por que é ruim:** Refatoração sem testes é apostar. Bugs sutis aparecem em produção. **Conserto:** Rede de segurança (testes) antes de refatorar. Detalhes em [módulo 22](https://claude.ai/processos/22-refatoracao.md).
+**Sintoma:** "Refatorei mas não testei - vai funcionar." **Por que é ruim:** Refatoração sem testes é apostar. Bugs sutis aparecem em produção. **Conserto:** Rede de segurança (testes) antes de refatorar. Detalhes em [módulo 22](../processos/22-refatoracao.md).
 
 ### 🟡 "Vou Atualizar a Doc Depois"
 
@@ -367,7 +368,7 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ### 🔴 Confirmar Antes Sempre, Mesmo Em Trivial
 
-**Sintoma:** IA pergunta confirmação antes de qualquer mudança Light. **Por que é ruim:** Frustração. Cerimônia vira ruído. **Conserto:** Confirmar apenas o que [01-nucleo.md](https://claude.ai/01-nucleo.md) considera destrutivo ou em modo Strict. Detalhes em [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md).
+**Sintoma:** IA pergunta confirmação antes de qualquer mudança Light. **Por que é ruim:** Frustração. Cerimônia vira ruído. **Conserto:** Confirmar apenas o que [01-nucleo.md](../01-nucleo.md) considera destrutivo ou em modo Strict. Detalhes em [módulo 20](../processos/20-ciclo-tarefa.md).
 
 ### 🔴 Não Confirmar Em Ação Destrutiva
 
@@ -397,8 +398,8 @@ useEffect(() => setNomeMaiusculo(nome.toUpperCase()), [nome])
 
 ## 🔗 Referências e Módulos Relacionados
 
-- [`51-comandos.md`](https://claude.ai/chat/51-comandos.md) - Quick-reference de comandos
-- [`52-glossario-termos-tecnicos.md`](https://claude.ai/chat/52-glossario-termos-tecnicos.md) - Definições
-- [`40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) - Checklist que detecta esses anti-padrões
+- [`51-comandos.md`](./51-comandos.md) - Quick-reference de comandos
+- [`52-glossario-termos-tecnicos.md`](./52-glossario-termos-tecnicos.md) - Definições
+- [`40-revisao-rapida.md`](../checklists/40-revisao-rapida.md) - Checklist que detecta esses anti-padrões
 - Módulos `padroes/` (10-18) - Padrões corretos correspondentes
 - Módulos `processos/` (20-26) - Processos que previnem esses anti-padrões

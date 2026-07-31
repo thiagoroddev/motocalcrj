@@ -1,12 +1,13 @@
 ---
-
-description: "Testes: filosofia, Vitest, AAA, cobertura mínima concreta, mocking, Testing Library, user-event, renderHook, formulários." modulo: "15" categoria: "padroes" versao: "1.0" relacionado:
-
-- "12-react-e-estado.md"
-- "13-ui-e-design-system.md"
-- "14-formularios-e-validacao.md"
-- "22-refatoracao.md"
-
+description: "Testes: filosofia, Vitest, AAA, cobertura mínima concreta, mocking, Testing Library, user-event, renderHook, formulários."
+modulo: "15"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "12-react-e-estado.md"
+  - "13-ui-e-design-system.md"
+  - "14-formularios-e-validacao.md"
+  - "22-refatoracao.md"
 ---
 
 # 🧪 Testes
@@ -843,7 +844,7 @@ npx vitest related --run
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Hooks que são testados aqui
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Componentes UI testados
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Forms testados com user-event
-- [`22-refatoracao.md`](https://claude.ai/processos/22-refatoracao.md) - Testes são rede de segurança para refatorar
+- [`12-react-e-estado.md`](./12-react-e-estado.md) - Hooks que são testados aqui
+- [`13-ui-e-design-system.md`](./13-ui-e-design-system.md) - Componentes UI testados
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Forms testados com user-event
+- [`22-refatoracao.md`](../processos/22-refatoracao.md) - Testes são rede de segurança para refatorar

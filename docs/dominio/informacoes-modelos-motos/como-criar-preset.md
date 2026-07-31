@@ -91,7 +91,7 @@ revisão da marca** (Honda ×6.000, Yamaha ×5.000) — regra detalhada em
 Yamaha, retíficas) **não** sincronizam: usam a vida direta.
 
 > Hoje isto ainda vive por modelo em
-> [`vida-util-pecas-factor-125i.md`](yamaha/factor-125i/vida-util-pecas-factor-125i.md).
+> [`vida-util-pecas-factor-125i.md`](yamaha/factor125i/vida-util-pecas-factor-125i.md).
 > Pendência: promover para um único arquivo por família (ex.: `yamaha/vida-util-yamaha-factor.md`).
 
 ### 5. Mão de obra — **por marca + tempário global**
@@ -174,7 +174,7 @@ Os `fipe-<modelo>.md` antigos são **legado** (pesquisa manual anterior ao scrip
 
 ## Estado atual e pendências de padronização
 
-- **Vida útil ainda por modelo** ([`vida-util-pecas-factor-125i.md`](yamaha/factor-125i/vida-util-pecas-factor-125i.md)) → promover a arquivo por família.
+- **Vida útil ainda por modelo** ([`vida-util-pecas-factor-125i.md`](yamaha/factor125i/vida-util-pecas-factor-125i.md)) → promover a arquivo por família.
 - **`especificacoes-factor-150`** está **sem a extensão `.md`** → renomear.
 - **Preços de peças** ainda por modelo → migrar o comum para [`pecas-yamaha-compartilhadas.md`](yamaha/pecas-yamaha-compartilhadas.md).
 - **`fipe-<modelo>.md`** são legado (script substituiu).

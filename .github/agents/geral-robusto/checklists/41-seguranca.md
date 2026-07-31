@@ -1,15 +1,16 @@
 ---
-
-description: "Checklist detalhado de segurança para frontend SPA. Versão essencial (nunca passam) + completa por categoria." modulo: "41" categoria: "checklists" versao: "1.0" relacionado:
-
-- "18-seguranca-privacidade.md"
-- "40-revisao-rapida.md"
-
+description: "Checklist detalhado de segurança para frontend SPA. Versão essencial (nunca passam) + completa por categoria."
+modulo: "41"
+categoria: "checklists"
+versao: "1.0"
+relacionado:
+  - "18-seguranca-privacidade.md"
+  - "40-revisao-rapida.md"
 ---
 
 # 🔒 Checklist: Segurança
 
-> Lista acionável de verificações de segurança para frontend SPA. Para conceitos e justificativas, ver [módulo 18](https://claude.ai/padroes/18-seguranca-privacidade.md). Este checklist é referenciado pelo [40-revisao-rapida.md](https://claude.ai/chat/40-revisao-rapida.md) quando a mudança toca área sensível.
+> Lista acionável de verificações de segurança para frontend SPA. Para conceitos e justificativas, ver [módulo 18](../padroes/18-seguranca-privacidade.md). Este checklist é referenciado pelo [40-revisao-rapida.md](./40-revisao-rapida.md) quando a mudança toca área sensível.
 
 ---
 
@@ -307,8 +308,8 @@ Em casos assim, **abrir tarefa Strict** e marcar como dependente de validação 
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master que aponta para este
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist de acessibilidade
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist de performance
-- [`../padroes/18-seguranca-privacidade.md`](https://claude.ai/padroes/18-seguranca-privacidade.md) - Conceitos e justificativas detalhadas
-- [`../padroes/14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) - Validação com Zod
+- [`40-revisao-rapida.md`](./40-revisao-rapida.md) - Checklist master que aponta para este
+- [`42-acessibilidade.md`](./42-acessibilidade.md) - Checklist de acessibilidade
+- [`43-performance.md`](./43-performance.md) - Checklist de performance
+- [`../padroes/18-seguranca-privacidade.md`](../padroes/18-seguranca-privacidade.md) - Conceitos e justificativas detalhadas
+- [`../padroes/14-formularios-e-validacao.md`](../padroes/14-formularios-e-validacao.md) - Validação com Zod

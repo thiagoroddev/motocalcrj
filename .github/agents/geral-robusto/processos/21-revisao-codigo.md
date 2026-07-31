@@ -1,12 +1,13 @@
 ---
-
-description: "Revisão de código: filosofia, quem revisa, dimensões, checklist, níveis de achados, formato padronizado, tarefas geradas." modulo: "21" categoria: "processos" versao: "1.0" relacionado:
-
-- "20-ciclo-tarefa.md"
-- "22-refatoracao.md"
-- "27-revisao-geral.md"
-- "../checklists/40-revisao-rapida.md"
-
+description: "Revisão de código: filosofia, quem revisa, dimensões, checklist, níveis de achados, formato padronizado, tarefas geradas."
+modulo: "21"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "20-ciclo-tarefa.md"
+  - "22-refatoracao.md"
+  - "27-revisao-geral.md"
+  - "../checklists/40-revisao-rapida.md"
 ---
 
 # 🔍 Revisão de Código
@@ -115,7 +116,7 @@ Nesses casos, "trivial" é miragem. Reviewer vai olhar de qualquer jeito.
 
 Revisão geral do projeto **não** é a seção `## Revisão` de uma tarefa.
 
-Use `docs/arquitetura/revisoes-gerais/REV-NNN.md` somente quando o humano pedir uma **revisão completa do projeto inteiro**. Esse fluxo vive no [`processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md) e usa o template [`../templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md).
+Use `docs/arquitetura/revisoes-gerais/REV-NNN.md` somente quando o humano pedir uma **revisão completa do projeto inteiro**. Esse fluxo vive no [`processos/27-revisao-geral.md`](./27-revisao-geral.md) e usa o template [`../templates/37-revisao-geral.md`](../templates/37-revisao-geral.md).
 
 Se a revisão é de uma tarefa, grupo local de arquivos, ADR específica, feature ou módulo isolado, registre no fluxo normal de tarefa/análise/ADR. Não crie REV.
 
@@ -127,13 +128,13 @@ Revisão não é uma lista única - é **múltiplas perspectivas** sobre o mesmo
 
 |Dimensão|O que olhar|
 |---|---|
-|**Convenções**|Idioma consistente, nomenclatura, formatação ([módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md))|
-|**Arquitetura**|Arquivo no lugar certo, camadas respeitadas ([módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md))|
+|**Convenções**|Idioma consistente, nomenclatura, formatação ([módulo 10](../padroes/10-codigo-e-convencoes.md))|
+|**Arquitetura**|Arquivo no lugar certo, camadas respeitadas ([módulo 11](../padroes/11-arquitetura-e-pastas.md))|
 |**Regras de negócio**|Invariantes documentadas são respeitadas, cálculos corretos|
-|**React/Estado**|Sem `useEffect` para derivação, keys estáveis, padrão de hooks ([módulo 12](https://claude.ai/padroes/12-react-e-estado.md))|
-|**UI/Acessibilidade**|Componentes acessíveis, sem violações WCAG críticas ([módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md), [16](https://claude.ai/padroes/16-performance-acessibilidade.md))|
-|**Segurança**|Sem exposição de dados, storage isolado, validação correta ([módulo 18](https://claude.ai/padroes/18-seguranca-privacidade.md))|
-|**Testes**|Cobertura mínima, padrão AAA, testa comportamento ([módulo 15](https://claude.ai/padroes/15-testes.md))|
+|**React/Estado**|Sem `useEffect` para derivação, keys estáveis, padrão de hooks ([módulo 12](../padroes/12-react-e-estado.md))|
+|**UI/Acessibilidade**|Componentes acessíveis, sem violações WCAG críticas ([módulo 13](../padroes/13-ui-e-design-system.md), [16](../padroes/16-performance-acessibilidade.md))|
+|**Segurança**|Sem exposição de dados, storage isolado, validação correta ([módulo 18](../padroes/18-seguranca-privacidade.md))|
+|**Testes**|Cobertura mínima, padrão AAA, testa comportamento ([módulo 15](../padroes/15-testes.md))|
 |**Legibilidade**|Outro dev (ou você em 6 meses) consegue entender?|
 
 Para revisão completa, **passe por cada uma**. Nem todas precisam ser detalhadas em todo arquivo - mas todas devem ser **consideradas**.
@@ -142,7 +143,7 @@ Para revisão completa, **passe por cada uma**. Nem todas precisam ser detalhada
 
 ## 5. Checklist Objetivo
 
-O coração da auto-revisão. Cada item tem resposta sim/não/N/A. Detalhamento completo em [`../checklists/40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md).
+O coração da auto-revisão. Cada item tem resposta sim/não/N/A. Detalhamento completo em [`../checklists/40-revisao-rapida.md`](../checklists/40-revisao-rapida.md).
 
 ### 5.1 Checklist Mínimo
 
@@ -473,9 +474,9 @@ Quando algum desses aparece, a IA finaliza a auto-revisão mas **deixa a tarefa 
 
 ## 🔗 Módulos Relacionados
 
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Revisão é etapa antes de concluir tarefa
-- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) - Tarefas REF geradas pela revisão
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Análise prévia que reduz achados de revisão
-- [`27-revisao-geral.md`](https://claude.ai/chat/27-revisao-geral.md) - Revisão completa do projeto por pedido humano, registrada em REV
-- [`../checklists/40-revisao-rapida.md`](https://claude.ai/checklists/40-revisao-rapida.md) - Checklist detalhado
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Template com seção Revisão
+- [`20-ciclo-tarefa.md`](./20-ciclo-tarefa.md) - Revisão é etapa antes de concluir tarefa
+- [`22-refatoracao.md`](./22-refatoracao.md) - Tarefas REF geradas pela revisão
+- [`25-analise-impacto.md`](./25-analise-impacto.md) - Análise prévia que reduz achados de revisão
+- [`27-revisao-geral.md`](./27-revisao-geral.md) - Revisão completa do projeto por pedido humano, registrada em REV
+- [`../checklists/40-revisao-rapida.md`](../checklists/40-revisao-rapida.md) - Checklist detalhado
+- [`../templates/31-task-concluida.md`](../templates/31-task-concluida.md) - Template com seção Revisão

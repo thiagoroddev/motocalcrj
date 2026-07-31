@@ -1,11 +1,13 @@
 ---
-
-description: "Template para Revisão Geral (REV). Registra revisão completa do projeto, somente quando solicitada pelo humano, com achados e rastreabilidade para tarefas, ADRs, requisitos e dívidas." modulo: "37" categoria: "templates" versao: "1.0" arquivo_destino: "docs/arquitetura/revisoes-gerais/REV-[NUMERO].md" relacionado:
-
-- "27-revisao-geral.md"
-- "21-revisao-codigo.md"
-- "32-ADR.md"
-
+description: "Template para Revisão Geral (REV). Registra revisão completa do projeto, somente quando solicitada pelo humano, com achados e rastreabilidade para tarefas, ADRs, requisitos e dívidas."
+modulo: "37"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "docs/arquitetura/revisoes-gerais/REV-[NUMERO].md"
+relacionado:
+  - "27-revisao-geral.md"
+  - "21-revisao-codigo.md"
+  - "32-ADR.md"
 ---
 
 # 🧾 Template: Revisão Geral (REV)
@@ -200,6 +202,6 @@ Uma REV não substitui ADR nem tarefa concluída. Ela aponta para elas.
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../processos/27-revisao-geral.md`](https://claude.ai/chat/processos/27-revisao-geral.md) - processo completo de REV
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/chat/processos/21-revisao-codigo.md) - níveis de achados e revisão de código
-- [`32-ADR.md`](https://claude.ai/chat/templates/32-ADR.md) - template para decisões arquiteturais geradas por REV
+- [`../processos/27-revisao-geral.md`](../processos/27-revisao-geral.md) - processo completo de REV
+- [`../processos/21-revisao-codigo.md`](../processos/21-revisao-codigo.md) - níveis de achados e revisão de código
+- [`32-ADR.md`](./32-adr.md) - template para decisões arquiteturais geradas por REV

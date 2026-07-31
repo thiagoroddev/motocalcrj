@@ -1,11 +1,12 @@
 ---
-
-description: "Estrutura de pastas, onde cada coisa vive, regras de camadas e decisões de organização." modulo: "11" categoria: "padroes" versao: "1.0" relacionado:
-
-- "10-codigo-e-convencoes.md"
-- "12-react-e-estado.md"
-- "17-backend-node.md"
-
+description: "Estrutura de pastas, onde cada coisa vive, regras de camadas e decisões de organização."
+modulo: "11"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "10-codigo-e-convencoes.md"
+  - "12-react-e-estado.md"
+  - "17-backend-node.md"
 ---
 
 # 🏛️ Arquitetura e Pastas
@@ -201,7 +202,7 @@ Um hook de feature contém:
 - Handlers (useCallback, ou função normal se não for passada para filho memoizado)
 - Efeitos de sincronização (useEffect) - quando inevitáveis
 
-Detalhes completos em [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md).
+Detalhes completos em [`12-react-e-estado.md`](./12-react-e-estado.md).
 
 ### 4.3 Serviços isolam efeitos colaterais
 
@@ -305,7 +306,7 @@ A versão antiga dizia "pages com menos de 60 linhas". Era rígido demais e gera
 - Tem uma função local de 10+ linhas
 - A page importa de `utils/` para fazer cálculos antes de renderizar
 
-**Quando algum desses aparecer, extraia para um hook de feature** (ver [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md)).
+**Quando algum desses aparecer, extraia para um hook de feature** (ver [`12-react-e-estado.md`](./12-react-e-estado.md)).
 
 ### 6.3 Exceção
 
@@ -462,7 +463,7 @@ A estrutura proposta é o **ponto de partida**. Projetos vivos evoluem.
 - Trocar padrão de roteamento ou estado global
 - Migrar de Vite para Next.js, ou similar
 
-Quando exigir ADR, ver [`templates/32-adr.md`](https://claude.ai/templates/32-adr.md).
+Quando exigir ADR, ver [`templates/32-adr.md`](../templates/32-adr.md).
 
 ---
 
@@ -486,8 +487,8 @@ Quando exigir ADR, ver [`templates/32-adr.md`](https://claude.ai/templates/32-ad
 
 ## 🔗 Módulos Relacionados
 
-- [`10-codigo-e-convencoes.md`](https://claude.ai/chat/10-codigo-e-convencoes.md) - Convenções de nomenclatura usadas aqui
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Como construir hooks e components dentro dessa estrutura
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Padrão dos componentes em `ui/`
-- [`17-backend-node.md`](https://claude.ai/chat/17-backend-node.md) - Estrutura equivalente para backend
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Quando mudar de estrutura
+- [`10-codigo-e-convencoes.md`](./10-codigo-e-convencoes.md) - Convenções de nomenclatura usadas aqui
+- [`12-react-e-estado.md`](./12-react-e-estado.md) - Como construir hooks e components dentro dessa estrutura
+- [`13-ui-e-design-system.md`](./13-ui-e-design-system.md) - Padrão dos componentes em `ui/`
+- [`17-backend-node.md`](./17-backend-node.md) - Estrutura equivalente para backend
+- [`../templates/32-adr.md`](../templates/32-adr.md) - Quando mudar de estrutura

@@ -1,11 +1,12 @@
 ---
-
-description: "Convenções de código: idioma, nomenclatura, proibições, formatação, imports, comentários, tratamento de erros." modulo: "10" categoria: "padroes" versao: "1.0" relacionado:
-
-- "01-nucleo.md"
-- "11-arquitetura-e-pastas.md"
-- "50-anti-padroes.md"
-
+description: "Convenções de código: idioma, nomenclatura, proibições, formatação, imports, comentários, tratamento de erros."
+modulo: "10"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "01-nucleo.md"
+  - "11-arquitetura-e-pastas.md"
+  - "50-anti-padroes.md"
 ---
 
 # 📝 Código e Convenções
@@ -653,6 +654,6 @@ chore: atualizar Vite para 5.4
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Princípios que orientam estas convenções
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde colocar cada arquivo
-- [`50-anti-padroes.md`](https://claude.ai/referencias/50-anti-padroes.md) - Catálogo completo de anti-padrões
+- [`01-nucleo.md`](../01-nucleo.md) - Princípios que orientam estas convenções
+- [`11-arquitetura-e-pastas.md`](./11-arquitetura-e-pastas.md) - Onde colocar cada arquivo
+- [`50-anti-padroes.md`](../referencias/50-anti-padroes.md) - Catálogo completo de anti-padrões

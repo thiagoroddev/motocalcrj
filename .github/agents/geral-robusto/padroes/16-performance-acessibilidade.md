@@ -1,11 +1,12 @@
 ---
-
-description: "Performance e acessibilidade: Core Web Vitals, code splitting, imagens, re-renders, WCAG, navegação por teclado, leitores de tela." modulo: "16" categoria: "padroes" versao: "1.0" relacionado:
-
-- "12-react-e-estado.md"
-- "13-ui-e-design-system.md"
-- "14-formularios-e-validacao.md"
-
+description: "Performance e acessibilidade: Core Web Vitals, code splitting, imagens, re-renders, WCAG, navegação por teclado, leitores de tela."
+modulo: "16"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "12-react-e-estado.md"
+  - "13-ui-e-design-system.md"
+  - "14-formularios-e-validacao.md"
 ---
 
 # ⚡ Performance e Acessibilidade
@@ -765,8 +766,8 @@ Usuários com baixa visão pedem alto contraste:
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - `useMemo`, `useCallback`, `useDeferredValue`
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Acessibilidade nos componentes base
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Forms acessíveis em detalhe
-- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) - Checklist completo separado
-- [`../checklists/43-performance.md`](https://claude.ai/checklists/43-performance.md) - Checklist completo separado
+- [`12-react-e-estado.md`](./12-react-e-estado.md) - `useMemo`, `useCallback`, `useDeferredValue`
+- [`13-ui-e-design-system.md`](./13-ui-e-design-system.md) - Acessibilidade nos componentes base
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Forms acessíveis em detalhe
+- [`../checklists/42-acessibilidade.md`](../checklists/42-acessibilidade.md) - Checklist completo separado
+- [`../checklists/43-performance.md`](../checklists/43-performance.md) - Checklist completo separado

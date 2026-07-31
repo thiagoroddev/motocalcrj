@@ -1,16 +1,17 @@
 ---
-
-description: "Checklist detalhado de acessibilidade (a11y) para frontend. Baseado em WCAG AA. Versão essencial + completa por área." modulo: "42" categoria: "checklists" versao: "1.0" relacionado:
-
-- "16-performance-acessibilidade.md"
-- "40-revisao-rapida.md"
-- "13-ui-e-design-system.md"
-
+description: "Checklist detalhado de acessibilidade (a11y) para frontend. Baseado em WCAG AA. Versão essencial + completa por área."
+modulo: "42"
+categoria: "checklists"
+versao: "1.0"
+relacionado:
+  - "16-performance-acessibilidade.md"
+  - "40-revisao-rapida.md"
+  - "13-ui-e-design-system.md"
 ---
 
 # ♿ Checklist: Acessibilidade
 
-> Lista acionável de verificações de a11y para frontend. Para conceitos e justificativas, ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md). Referenciado pelo [40-revisao-rapida.md](https://claude.ai/chat/40-revisao-rapida.md) quando a mudança envolve UI.
+> Lista acionável de verificações de a11y para frontend. Para conceitos e justificativas, ver [módulo 16](../padroes/16-performance-acessibilidade.md). Referenciado pelo [40-revisao-rapida.md](./40-revisao-rapida.md) quando a mudança envolve UI.
 
 ---
 
@@ -57,7 +58,7 @@ O checklist é organizado pelos 4 princípios WCAG:
 - [ ] **Todos os elementos interativos são acessíveis por teclado** (Tab navega, Enter/Espaço aciona)
 - [ ] **Foco visível** em qualquer elemento que pode receber foco (`focus-visible:ring-*` no Tailwind)
 - [ ] **Sem armadilhas de foco** (foco preso em modal sem saída, etc.)
-- [ ] **Toque mínimo 48×48px** (ou exceção documentada - ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
+- [ ] **Toque mínimo 48×48px** (ou exceção documentada - ver [módulo 16](../padroes/16-performance-acessibilidade.md))
 
 ### Understandable
 
@@ -348,7 +349,7 @@ Caso real e doloroso: design entrega tela com contraste 3.2:1 (abaixo do mínimo
     ```
     
 3. **Sugira alternativa** que mantém intenção: `text-foreground` em vez de `text-muted-foreground`, etc.
-4. **Registre na tarefa** ([módulo 24](https://claude.ai/processos/24-figma-para-codigo.md)): "Decisão Tomada: contraste ajustado por questões de a11y. Validar com designer."
+4. **Registre na tarefa** ([módulo 24](../processos/24-figma-para-codigo.md)): "Decisão Tomada: contraste ajustado por questões de a11y. Validar com designer."
 
 Design bom **prevê acessibilidade**. Se o designer reclama: tem fundamento WCAG documentado. Discussão pode levar a token novo no design system.
 
@@ -386,9 +387,9 @@ Design bom **prevê acessibilidade**. Se o designer reclama: tem fundamento WCAG
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist de segurança
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist de performance
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Conceitos detalhados
-- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Componentes UI acessíveis por design
-- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) - Como tratar a11y vinda de design
+- [`40-revisao-rapida.md`](./40-revisao-rapida.md) - Checklist master
+- [`41-seguranca.md`](./41-seguranca.md) - Checklist de segurança
+- [`43-performance.md`](./43-performance.md) - Checklist de performance
+- [`../padroes/16-performance-acessibilidade.md`](../padroes/16-performance-acessibilidade.md) - Conceitos detalhados
+- [`../padroes/13-ui-e-design-system.md`](../padroes/13-ui-e-design-system.md) - Componentes UI acessíveis por design
+- [`../processos/24-figma-para-codigo.md`](../processos/24-figma-para-codigo.md) - Como tratar a11y vinda de design

@@ -1,12 +1,13 @@
 ---
-
-description: "Formulários e validação: react-hook-form, Zod, padrão de campo acessível, validação composta, formulários multi-step." modulo: "14" categoria: "padroes" versao: "1.0" relacionado:
-
-- "12-react-e-estado.md"
-- "13-ui-e-design-system.md"
-- "15-testes.md"
-- "18-seguranca-privacidade.md"
-
+description: "Formulários e validação: react-hook-form, Zod, padrão de campo acessível, validação composta, formulários multi-step."
+modulo: "14"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "12-react-e-estado.md"
+  - "13-ui-e-design-system.md"
+  - "15-testes.md"
+  - "18-seguranca-privacidade.md"
 ---
 
 # 📝 Formulários e Validação
@@ -59,7 +60,7 @@ Alternativas existem (Formik + Yup, Final Form, Conform), mas a combinação **r
 
 Validação do cliente **melhora UX**, não **garante segurança**. Tudo que vem do cliente é não-confiável. Repita a validação no servidor (mesmo schema Zod, se possível).
 
-Detalhes de segurança em [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md).
+Detalhes de segurança em [`18-seguranca-privacidade.md`](./18-seguranca-privacidade.md).
 
 ---
 
@@ -285,7 +286,7 @@ export function FormularioLogin() {
 
 **`resolver: zodResolver(schemaLogin)`** O resolver é a ponte entre rhf e Zod. Quando o form vai validar, ele usa o schema Zod.
 
-**`mode: 'onBlur'`** Quando validar. Discutido na [seção 5](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#5-quando-validar-onblur-onchange-onsubmit).
+**`mode: 'onBlur'`** Quando validar. Discutido na [seção 5](#5-quando-validar-onblur-onchange-onsubmit).
 
 **`{...register('email')}`** A função `register` retorna `name`, `ref`, `onChange`, `onBlur`. Espalhar no input conecta o campo ao form.
 
@@ -293,7 +294,7 @@ export function FormularioLogin() {
 
 **`errors.email`** Acesso aos erros do campo. `errors.email.message` é a mensagem do Zod.
 
-**`aria-describedby` e `aria-invalid`** Associam o erro ao campo para screen readers. Cobertos em detalhe na [seção 4](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#4-padr%C3%A3o-de-campo-acess%C3%ADvel).
+**`aria-describedby` e `aria-invalid`** Associam o erro ao campo para screen readers. Cobertos em detalhe na [seção 4](#4-padr%C3%A3o-de-campo-acess%C3%ADvel).
 
 **`role="alert"`** Faz o screen reader anunciar o erro imediatamente quando aparece.
 
@@ -713,7 +714,7 @@ useEffect(() => {
 
 ## 🔗 Módulos Relacionados
 
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Hooks de feature que coordenam forms complexos
-- [`13-ui-e-design-system.md`](https://claude.ai/chat/13-ui-e-design-system.md) - Componentes UI consumidos pelos campos
-- [`15-testes.md`](https://claude.ai/chat/15-testes.md) - Como testar formulários com user-event
-- [`18-seguranca-privacidade.md`](https://claude.ai/chat/18-seguranca-privacidade.md) - Validação no servidor e dados sensíveis
+- [`12-react-e-estado.md`](./12-react-e-estado.md) - Hooks de feature que coordenam forms complexos
+- [`13-ui-e-design-system.md`](./13-ui-e-design-system.md) - Componentes UI consumidos pelos campos
+- [`15-testes.md`](./15-testes.md) - Como testar formulários com user-event
+- [`18-seguranca-privacidade.md`](./18-seguranca-privacidade.md) - Validação no servidor e dados sensíveis

@@ -1,11 +1,12 @@
 ---
-
-description: "Modelagem de domínio com DDD tático: entidade, value object, aggregate, invariante, linguagem ubíqua. Quando aplicar e como." modulo: "23" categoria: "processos" versao: "1.0" relacionado:
-
-- "11-arquitetura-e-pastas.md"
-- "14-formularios-e-validacao.md"
-- "17-backend-node.md"
-
+description: "Modelagem de domínio com DDD tático: entidade, value object, aggregate, invariante, linguagem ubíqua. Quando aplicar e como."
+modulo: "23"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "11-arquitetura-e-pastas.md"
+  - "14-formularios-e-validacao.md"
+  - "17-backend-node.md"
 ---
 
 # 🧬 Modelagem de Domínio
@@ -657,7 +658,7 @@ class Aluguel {
 function confirmar(aluguel: Aluguel): Aluguel { /* ... */ }
 ```
 
-Os dois são "ricos" - o comportamento vive próximo dos dados. A diferença é estilo, não conceito. Veja a comparação detalhada em [6.5](https://claude.ai/chat/7ad9cd8a-fc76-4046-a5d6-651d4752358b#65-compara%C3%A7%C3%A3o-quando-usar-cada-estilo).
+Os dois são "ricos" - o comportamento vive próximo dos dados. A diferença é estilo, não conceito. Veja a comparação detalhada em [6.5](#65-compara%C3%A7%C3%A3o-quando-usar-cada-estilo).
 
 ---
 
@@ -910,7 +911,7 @@ Em todos os casos, **converse com o humano antes de "consertar"**. Modelagem afe
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde a modelagem vive no projeto
-- [`14-formularios-e-validacao.md`](https://claude.ai/padroes/14-formularios-e-validacao.md) - Zod usado para validar invariantes
-- [`17-backend-node.md`](https://claude.ai/padroes/17-backend-node.md) - Domínio + repository + service no backend
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Mudanças no modelo afetam muitos arquivos
+- [`11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Onde a modelagem vive no projeto
+- [`14-formularios-e-validacao.md`](../padroes/14-formularios-e-validacao.md) - Zod usado para validar invariantes
+- [`17-backend-node.md`](../padroes/17-backend-node.md) - Domínio + repository + service no backend
+- [`25-analise-impacto.md`](./25-analise-impacto.md) - Mudanças no modelo afetam muitos arquivos

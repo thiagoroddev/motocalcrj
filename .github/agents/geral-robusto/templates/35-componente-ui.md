@@ -1,11 +1,13 @@
 ---
-
-description: "Template/scaffold para componentes UI genéricos. Cobre tipagem, forwardRef, variantes, acessibilidade e testes." modulo: "35" categoria: "templates" versao: "1.0" arquivo_destino: "src/components/ui/[NomeComponente].tsx" relacionado:
-
-- "13-ui-e-design-system.md"
-- "11-arquitetura-e-pastas.md"
-- "16-performance-acessibilidade.md"
-
+description: "Template/scaffold para componentes UI genéricos. Cobre tipagem, forwardRef, variantes, acessibilidade e testes."
+modulo: "35"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "src/components/ui/[NomeComponente].tsx"
+relacionado:
+  - "13-ui-e-design-system.md"
+  - "11-arquitetura-e-pastas.md"
+  - "16-performance-acessibilidade.md"
 ---
 
 # 🧩 Template: Componente UI Genérico
@@ -94,7 +96,7 @@ Funciona sem props extras. Usuário sobrescreve quando precisa.
 
 ### 6. Acessibilidade desde o início
 
-`aria-*`, foco visível, contraste mínimo. Detalhes em [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md).
+`aria-*`, foco visível, contraste mínimo. Detalhes em [módulo 16](../padroes/16-performance-acessibilidade.md).
 
 ### 7. Repassa props do elemento HTML
 
@@ -599,7 +601,7 @@ CampoTexto.displayName = 'CampoTexto'
 Ao criar componente UI, verifique:
 
 - [ ] **Foco visível.** `focus-visible:ring-*` em qualquer elemento interativo
-- [ ] **Alvo de toque mínimo.** 48×48px (com exceções documentadas - ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md))
+- [ ] **Alvo de toque mínimo.** 48×48px (com exceções documentadas - ver [módulo 16](../padroes/16-performance-acessibilidade.md))
 - [ ] **Contraste mínimo.** 4.5:1 para texto normal, 3:1 para texto grande
 - [ ] **Estados anunciados.** `aria-pressed`, `aria-expanded`, `aria-selected` quando aplicável
 - [ ] **Estados de erro.** `aria-invalid` + `aria-describedby` em inputs
@@ -609,7 +611,7 @@ Ao criar componente UI, verifique:
 - [ ] **Funciona com teclado.** Tab navega, Enter/Espaço aciona, Esc fecha
 - [ ] **Sem violação WCAG AA** validado com axe-core ou similar
 
-Detalhamento em [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md).
+Detalhamento em [`../checklists/42-acessibilidade.md`](../checklists/42-acessibilidade.md).
 
 ---
 
@@ -664,25 +666,25 @@ describe('Botao', () => {
 4. Estados visuais (disabled, loading, erro)
 5. Acessibilidade básica (`role`, `aria-*` corretos)
 
-Mais detalhes em [módulo 15](https://claude.ai/padroes/15-testes.md).
+Mais detalhes em [módulo 15](../padroes/15-testes.md).
 
 ---
 
 ## Mini-FAQ
 
-**1. Quando criar componente novo vs reusar?** Use o fluxo de decisão do [módulo 24, seção 4.1](https://claude.ai/processos/24-figma-para-codigo.md#41-fluxo-de-decis%C3%A3o). Resumo: já existe? variação? domínio? Só crie em `ui/` se é genuinamente reutilizável.
+**1. Quando criar componente novo vs reusar?** Use o fluxo de decisão do [módulo 24, seção 4.1](../processos/24-figma-para-codigo.md#41-fluxo-de-decis%C3%A3o). Resumo: já existe? variação? domínio? Só crie em `ui/` se é genuinamente reutilizável.
 
 **2. `interface` ou `type` para props?** Convenção do projeto vence. Sem convenção definida: `interface` para props (extensível via merge); `type` para uniões/derivados. Mas qualquer escolha consistente está OK.
 
 **3. `forwardRef` em todo componente?** Não. Só onde faz sentido (ver seção "Princípios" item 3). Em componente sem interação, `forwardRef` é ruído.
 
-**4. Onde defino as cores/tokens?** Em `tailwind.config.ts`. Componentes referenciam tokens (`bg-primary`, `text-foreground`) - nunca cores hex direto. Detalhes em [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
+**4. Onde defino as cores/tokens?** Em `tailwind.config.ts`. Componentes referenciam tokens (`bg-primary`, `text-foreground`) - nunca cores hex direto. Detalhes em [módulo 13](../padroes/13-ui-e-design-system.md).
 
 **5. Componente pode ter `useState` interno?** Sim, para estado **puramente visual** (hover, foco, expand/collapse). Não para estado de negócio. Componente controlado vs não-controlado é decisão de design - geralmente ambos via prop opcional (`value` controlado; sem `value` = não-controlado interno).
 
 **6. Como nomeio o arquivo: PascalCase ou kebab-case?** PascalCase, igual ao componente: `Botao.tsx`. Convenção quase universal no ecossistema React.
 
-**7. Devo usar shadcn/ui ou criar do zero?** shadcn/ui é uma **opção** entre outras (não recomendação forte do pacote). Se usar, mantenha consistência: ou tudo shadcn ou nada. Mistura cria inconsistência visual. Detalhes em [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
+**7. Devo usar shadcn/ui ou criar do zero?** shadcn/ui é uma **opção** entre outras (não recomendação forte do pacote). Se usar, mantenha consistência: ou tudo shadcn ou nada. Mistura cria inconsistência visual. Detalhes em [módulo 13](../padroes/13-ui-e-design-system.md).
 
 **8. E se preciso de animação?** Tailwind tem `animate-*` (spin, pulse, ping, bounce). Para animações complexas, considere Framer Motion. Mas em UI base, anime poucos elementos - sobrecarga visual e performance.
 
@@ -704,9 +706,9 @@ Mais que isso, mover para Storybook ou documentação dedicada.
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../padroes/13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Princípios de UI no projeto
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Acessibilidade detalhada
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde mora UI vs domínio
-- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) - Testes detalhados
-- [`36-hook-feature.md`](https://claude.ai/chat/36-hook-feature.md) - Template do hook que consome estes componentes
-- [`../checklists/42-acessibilidade.md`](https://claude.ai/checklists/42-acessibilidade.md) - Checklist detalhado
+- [`../padroes/13-ui-e-design-system.md`](../padroes/13-ui-e-design-system.md) - Princípios de UI no projeto
+- [`../padroes/16-performance-acessibilidade.md`](../padroes/16-performance-acessibilidade.md) - Acessibilidade detalhada
+- [`../padroes/11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Onde mora UI vs domínio
+- [`../padroes/15-testes.md`](../padroes/15-testes.md) - Testes detalhados
+- [`36-hook-feature.md`](./36-hook-feature.md) - Template do hook que consome estes componentes
+- [`../checklists/42-acessibilidade.md`](../checklists/42-acessibilidade.md) - Checklist detalhado

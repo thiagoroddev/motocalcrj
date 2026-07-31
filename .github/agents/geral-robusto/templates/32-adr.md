@@ -1,12 +1,14 @@
 ---
-
-description: "Template para Architecture Decision Record (ADR). Documenta decisões arquiteturais com contexto, alternativas e trade-offs." modulo: "32" categoria: "templates" versao: "1.0" arquivo_destino: "docs/arquitetura/ADR/ADR-[NUMERO].md" relacionado:
-
-- "25-analise-impacto.md"
-- "27-revisao-geral.md"
-- "20-ciclo-tarefa.md"
-- "31-task-concluida.md"
-
+description: "Template para Architecture Decision Record (ADR). Documenta decisões arquiteturais com contexto, alternativas e trade-offs."
+modulo: "32"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "docs/arquitetura/ADR/ADR-[NUMERO].md"
+relacionado:
+  - "25-analise-impacto.md"
+  - "27-revisao-geral.md"
+  - "20-ciclo-tarefa.md"
+  - "31-task-concluida.md"
 ---
 
 # 📜 Template: ADR (Architecture Decision Record)
@@ -433,7 +435,7 @@ Justificativa: títulos mudam (refinamentos de redação); número não. Manter 
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../processos/25-analise-impacto.md`](https://claude.ai/processos/25-analise-impacto.md) - Análise de impacto frequentemente gera ADR
-- [`../processos/20-ciclo-tarefa.md`](https://claude.ai/processos/20-ciclo-tarefa.md) - Tarefas Strict exigem ADR
-- [`31-task-concluida.md`](https://claude.ai/chat/31-task-concluida.md) - Tarefa concluída referencia ADRs geradas
-- [`33-contexto-projeto-ai.md`](https://claude.ai/chat/33-contexto-projeto-ai.md) - Contexto do projeto pode referenciar ADRs importantes
+- [`../processos/25-analise-impacto.md`](../processos/25-analise-impacto.md) - Análise de impacto frequentemente gera ADR
+- [`../processos/20-ciclo-tarefa.md`](../processos/20-ciclo-tarefa.md) - Tarefas Strict exigem ADR
+- [`31-task-concluida.md`](./31-task-concluida.md) - Tarefa concluída referencia ADRs geradas
+- [`33-contexto-projeto-ai.md`](./33-contexto-projeto-ai.md) - Contexto do projeto pode referenciar ADRs importantes

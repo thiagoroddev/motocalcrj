@@ -1,15 +1,16 @@
 ---
-
-description: "Checklist detalhado de performance. Core Web Vitals + verificações por área (React, bundle, imagens, network)." modulo: "43" categoria: "checklists" versao: "1.0" relacionado:
-
-- "16-performance-acessibilidade.md"
-- "40-revisao-rapida.md"
-
+description: "Checklist detalhado de performance. Core Web Vitals + verificações por área (React, bundle, imagens, network)."
+modulo: "43"
+categoria: "checklists"
+versao: "1.0"
+relacionado:
+  - "16-performance-acessibilidade.md"
+  - "40-revisao-rapida.md"
 ---
 
 # ⚡ Checklist: Performance
 
-> Lista acionável de verificações de performance para frontend SPA. Para conceitos e justificativas, ver [módulo 16](https://claude.ai/padroes/16-performance-acessibilidade.md). Referenciado pelo [40-revisao-rapida.md](https://claude.ai/chat/40-revisao-rapida.md) quando a mudança envolve interface ou dados.
+> Lista acionável de verificações de performance para frontend SPA. Para conceitos e justificativas, ver [módulo 16](../padroes/16-performance-acessibilidade.md). Referenciado pelo [40-revisao-rapida.md](./40-revisao-rapida.md) quando a mudança envolve interface ou dados.
 
 ---
 
@@ -404,8 +405,8 @@ Decisão arquitetural - vira ADR.
 
 ## 🔗 Checklists e Módulos Relacionados
 
-- [`40-revisao-rapida.md`](https://claude.ai/chat/40-revisao-rapida.md) - Checklist master
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist de segurança
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist de acessibilidade
-- [`../padroes/16-performance-acessibilidade.md`](https://claude.ai/padroes/16-performance-acessibilidade.md) - Conceitos detalhados
-- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrões React que afetam performance
+- [`40-revisao-rapida.md`](./40-revisao-rapida.md) - Checklist master
+- [`41-seguranca.md`](./41-seguranca.md) - Checklist de segurança
+- [`42-acessibilidade.md`](./42-acessibilidade.md) - Checklist de acessibilidade
+- [`../padroes/16-performance-acessibilidade.md`](../padroes/16-performance-acessibilidade.md) - Conceitos detalhados
+- [`../padroes/12-react-e-estado.md`](../padroes/12-react-e-estado.md) - Padrões React que afetam performance

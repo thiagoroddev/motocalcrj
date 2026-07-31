@@ -1,11 +1,13 @@
 ---
-
-description: "Template/scaffold para hook de feature. Cobre interface mínima, derivação direta, handlers, retorno e testes." modulo: "36" categoria: "templates" versao: "1.0" arquivo_destino: "src/hooks/use[NomeFeature].ts" relacionado:
-
-- "12-react-e-estado.md"
-- "11-arquitetura-e-pastas.md"
-- "15-testes.md"
-
+description: "Template/scaffold para hook de feature. Cobre interface mínima, derivação direta, handlers, retorno e testes."
+modulo: "36"
+categoria: "templates"
+versao: "1.0"
+arquivo_destino: "src/hooks/use[NomeFeature].ts"
+relacionado:
+  - "12-react-e-estado.md"
+  - "11-arquitetura-e-pastas.md"
+  - "15-testes.md"
 ---
 
 # 🪝 Template: Hook de Feature
@@ -745,7 +747,7 @@ describe('useListaProdutos', () => {
 
 **4. Quando uso `useMemo`?** Para cálculos **caros** que dependem de poucos valores. Cálculo trivial (`a + b`) não precisa. Filtrar lista de 10 itens não precisa. Filtrar lista de 10.000 itens precisa.
 
-**5. Hook pode ter `useEffect` para derivação?** Não. Derivação é cálculo direto ou `useMemo`. `useEffect` para `setState` de derivado é anti-padrão. Detalhes em [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
+**5. Hook pode ter `useEffect` para derivação?** Não. Derivação é cálculo direto ou `useMemo`. `useEffect` para `setState` de derivado é anti-padrão. Detalhes em [módulo 12](../padroes/12-react-e-estado.md).
 
 **6. E se o hook precisa de Context?** Pode consumir Context interno se for parte da feature (ex: tema, autenticação). Mas evite Context só para "evitar passar prop" - explícito é melhor.
 
@@ -761,8 +763,8 @@ describe('useListaProdutos', () => {
 
 ## 🔗 Templates e Módulos Relacionados
 
-- [`../padroes/12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrões de estado React (base deste template)
-- [`../padroes/11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde mora cada tipo de hook
-- [`../padroes/15-testes.md`](https://claude.ai/padroes/15-testes.md) - Testes detalhados, incluindo de hooks
-- [`35-componente-ui.md`](https://claude.ai/chat/35-componente-ui.md) - Template do componente UI que este hook alimenta
-- [`../processos/24-figma-para-codigo.md`](https://claude.ai/processos/24-figma-para-codigo.md) - Ordem de implementação (hook antes da page)
+- [`../padroes/12-react-e-estado.md`](../padroes/12-react-e-estado.md) - Padrões de estado React (base deste template)
+- [`../padroes/11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Onde mora cada tipo de hook
+- [`../padroes/15-testes.md`](../padroes/15-testes.md) - Testes detalhados, incluindo de hooks
+- [`35-componente-ui.md`](./35-componente-ui.md) - Template do componente UI que este hook alimenta
+- [`../processos/24-figma-para-codigo.md`](../processos/24-figma-para-codigo.md) - Ordem de implementação (hook antes da page)

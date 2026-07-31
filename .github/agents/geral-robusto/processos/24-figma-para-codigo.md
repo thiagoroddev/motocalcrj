@@ -1,12 +1,13 @@
 ---
-
-description: "Tradução de design (Figma) para código: análise visual, spec técnica, planejamento de componentes, ordem de implementação." modulo: "24" categoria: "processos" versao: "1.0" relacionado:
-
-- "11-arquitetura-e-pastas.md"
-- "12-react-e-estado.md"
-- "13-ui-e-design-system.md"
-- "20-ciclo-tarefa.md"
-
+description: "Tradução de design (Figma) para código: análise visual, spec técnica, planejamento de componentes, ordem de implementação."
+modulo: "24"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "11-arquitetura-e-pastas.md"
+  - "12-react-e-estado.md"
+  - "13-ui-e-design-system.md"
+  - "20-ciclo-tarefa.md"
 ---
 
 # 🎨 Figma para Código
@@ -590,7 +591,7 @@ Decisões tomadas durante tradução **viram histórico**:
 - **Contraste do botão "Salvar":** design tinha 3.2:1. Aumentei para 4.5:1 (WCAG AA). Tom muito próximo do original.
 ```
 
-Vai no arquivo da tarefa concluída ([módulo 20](https://claude.ai/chat/20-ciclo-tarefa.md)).
+Vai no arquivo da tarefa concluída ([módulo 20](./20-ciclo-tarefa.md)).
 
 ---
 
@@ -806,8 +807,8 @@ export function PaginaAvaliacoes() {
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Onde cada componente vai
-- [`12-react-e-estado.md`](https://claude.ai/padroes/12-react-e-estado.md) - Padrão de page limpa + hook de feature
-- [`13-ui-e-design-system.md`](https://claude.ai/padroes/13-ui-e-design-system.md) - Componentes UI vs domínio
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Spec entra no plano da tarefa
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - Para mudanças em features existentes
+- [`11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Onde cada componente vai
+- [`12-react-e-estado.md`](../padroes/12-react-e-estado.md) - Padrão de page limpa + hook de feature
+- [`13-ui-e-design-system.md`](../padroes/13-ui-e-design-system.md) - Componentes UI vs domínio
+- [`20-ciclo-tarefa.md`](./20-ciclo-tarefa.md) - Spec entra no plano da tarefa
+- [`25-analise-impacto.md`](./25-analise-impacto.md) - Para mudanças em features existentes

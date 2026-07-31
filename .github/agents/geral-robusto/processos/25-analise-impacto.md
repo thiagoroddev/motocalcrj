@@ -1,12 +1,13 @@
 ---
-
-description: "Análise de impacto: blast radius, áreas afetadas, features em risco, decisões pendentes, riscos não-mitigáveis." modulo: "25" categoria: "processos" versao: "1.0" relacionado:
-
-- "20-ciclo-tarefa.md"
-- "21-revisao-codigo.md"
-- "22-refatoracao.md"
-- "../templates/32-adr.md"
-
+description: "Análise de impacto: blast radius, áreas afetadas, features em risco, decisões pendentes, riscos não-mitigáveis."
+modulo: "25"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "20-ciclo-tarefa.md"
+  - "21-revisao-codigo.md"
+  - "22-refatoracao.md"
+  - "../templates/32-adr.md"
 ---
 
 # 📊 Análise de Impacto Arquitetural
@@ -418,7 +419,7 @@ Toda mudança não-trivial tem **algum risco que você não vai eliminar**. List
    - **Gatilho:** quando 50+ usuários reportarem campo "pendente"
 ```
 
-A dívida vai para `docs/dominios/divida-tecnica.md` ([módulo 23](https://claude.ai/chat/23-modelagem-dominio.md) e estrutura do módulo 11).
+A dívida vai para `docs/dominios/divida-tecnica.md` ([módulo 23](./23-modelagem-dominio.md) e estrutura do módulo 11).
 
 ### 7.3 Por Que Documentar é Suficiente
 
@@ -637,7 +638,7 @@ Cada sub-tarefa tem sua própria análise (menor agora) e plano.
 
 ## 🔗 Módulos Relacionados
 
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Análise faz parte de tarefas Strict
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - Revisão complementa análise
-- [`22-refatoracao.md`](https://claude.ai/chat/22-refatoracao.md) - Refatoração grande precisa de análise
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Análises grandes viram ADR
+- [`20-ciclo-tarefa.md`](./20-ciclo-tarefa.md) - Análise faz parte de tarefas Strict
+- [`21-revisao-codigo.md`](./21-revisao-codigo.md) - Revisão complementa análise
+- [`22-refatoracao.md`](./22-refatoracao.md) - Refatoração grande precisa de análise
+- [`../templates/32-adr.md`](../templates/32-adr.md) - Análises grandes viram ADR

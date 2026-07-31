@@ -1,12 +1,13 @@
 ---
-
-description: "Revisão geral: auditoria completa do projeto, somente quando solicitada pelo humano, com registro em REV, achados rastreáveis, tarefas e ADRs geradas." modulo: "27" categoria: "processos" versao: "1.0" relacionado:
-
-- "21-revisao-codigo.md"
-- "25-analise-impacto.md"
-- "../checklists/40-revisao-rapida.md"
-- "../templates/37-revisao-geral.md"
-
+description: "Revisão geral: auditoria completa do projeto, somente quando solicitada pelo humano, com registro em REV, achados rastreáveis, tarefas e ADRs geradas."
+modulo: "27"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "21-revisao-codigo.md"
+  - "25-analise-impacto.md"
+  - "../checklists/40-revisao-rapida.md"
+  - "../templates/37-revisao-geral.md"
 ---
 
 # 🔎 Revisão Geral
@@ -237,7 +238,7 @@ Se ainda há investigação em curso, status é `Em andamento` ou `Em validaçã
 
 ## 🔗 Módulos Relacionados
 
-- [`21-revisao-codigo.md`](https://claude.ai/chat/21-revisao-codigo.md) - processo de revisão de código e classificação de achados
-- [`25-analise-impacto.md`](https://claude.ai/chat/25-analise-impacto.md) - análise quando a REV revela mudança de alto impacto
-- [`../checklists/40-revisao-rapida.md`](https://claude.ai/chat/checklists/40-revisao-rapida.md) - checklist base para evidências de código
-- [`../templates/37-revisao-geral.md`](https://claude.ai/chat/templates/37-revisao-geral.md) - template do arquivo REV
+- [`21-revisao-codigo.md`](./21-revisao-codigo.md) - processo de revisão de código e classificação de achados
+- [`25-analise-impacto.md`](./25-analise-impacto.md) - análise quando a REV revela mudança de alto impacto
+- [`../checklists/40-revisao-rapida.md`](../checklists/40-revisao-rapida.md) - checklist base para evidências de código
+- [`../templates/37-revisao-geral.md`](../templates/37-revisao-geral.md) - template do arquivo REV

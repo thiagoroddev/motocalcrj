@@ -1,11 +1,12 @@
 ---
-
-description: "Componentes UI: princípios, template forwardRef, variantes cva, wrappers de bibliotecas, compound components, acessibilidade visual, tokens de design." modulo: "13" categoria: "padroes" versao: "1.0" relacionado:
-
-- "11-arquitetura-e-pastas.md"
-- "12-react-e-estado.md"
-- "16-performance-acessibilidade.md"
-
+description: "Componentes UI: princípios, template forwardRef, variantes cva, wrappers de bibliotecas, compound components, acessibilidade visual, tokens de design."
+modulo: "13"
+categoria: "padroes"
+versao: "1.0"
+relacionado:
+  - "11-arquitetura-e-pastas.md"
+  - "12-react-e-estado.md"
+  - "16-performance-acessibilidade.md"
 ---
 
 # 🎨 UI e Design System
@@ -443,7 +444,7 @@ Para casos onde **você sempre tem as mesmas partes**, prefira slots:
 
 ## 6. Acessibilidade Visual Essencial
 
-Estas são as regras **inegociáveis** para qualquer componente UI. Detalhes completos em [`16-performance-acessibilidade.md`](https://claude.ai/chat/16-performance-acessibilidade.md).
+Estas são as regras **inegociáveis** para qualquer componente UI. Detalhes completos em [`16-performance-acessibilidade.md`](./16-performance-acessibilidade.md).
 
 ### 6.1 Toque Adequado em Elementos Interativos
 
@@ -717,7 +718,7 @@ Verifique cada item:
 
 ## 🔗 Módulos Relacionados
 
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/chat/11-arquitetura-e-pastas.md) - Onde os componentes vivem
-- [`12-react-e-estado.md`](https://claude.ai/chat/12-react-e-estado.md) - Como os componentes são consumidos
-- [`14-formularios-e-validacao.md`](https://claude.ai/chat/14-formularios-e-validacao.md) - Componentes UI específicos para forms
-- [`16-performance-acessibilidade.md`](https://claude.ai/chat/16-performance-acessibilidade.md) - Acessibilidade completa e performance
+- [`11-arquitetura-e-pastas.md`](./11-arquitetura-e-pastas.md) - Onde os componentes vivem
+- [`12-react-e-estado.md`](./12-react-e-estado.md) - Como os componentes são consumidos
+- [`14-formularios-e-validacao.md`](./14-formularios-e-validacao.md) - Componentes UI específicos para forms
+- [`16-performance-acessibilidade.md`](./16-performance-acessibilidade.md) - Acessibilidade completa e performance

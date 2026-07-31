@@ -1,18 +1,19 @@
 ---
-
-description: "Checklist principal de revisão de código. Versão essencial (sempre) + completa por dimensão. Aponta para checklists especializados." modulo: "40" categoria: "checklists" versao: "1.0" relacionado:
-
-- "21-revisao-codigo.md"
-- "27-revisao-geral.md"
-- "41-seguranca.md"
-- "42-acessibilidade.md"
-- "43-performance.md"
-
+description: "Checklist principal de revisão de código. Versão essencial (sempre) + completa por dimensão. Aponta para checklists especializados."
+modulo: "40"
+categoria: "checklists"
+versao: "1.0"
+relacionado:
+  - "21-revisao-codigo.md"
+  - "27-revisao-geral.md"
+  - "41-seguranca.md"
+  - "42-acessibilidade.md"
+  - "43-performance.md"
 ---
 
 # ✅ Checklist: Revisão Rápida de Código
 
-> Lista acionável de **o que verificar** durante revisão. Para entender **como** conduzir a revisão (níveis, formato, vereditos), ver [módulo 21](https://claude.ai/processos/21-revisao-codigo.md). Este checklist é o **master**: aponta para checklists especializados em segurança, acessibilidade e performance.
+> Lista acionável de **o que verificar** durante revisão. Para entender **como** conduzir a revisão (níveis, formato, vereditos), ver [módulo 21](../processos/21-revisao-codigo.md). Este checklist é o **master**: aponta para checklists especializados em segurança, acessibilidade e performance.
 
 ---
 
@@ -39,7 +40,7 @@ Para cada item:
 - `[~]` - parcialmente cumpre / com exceção (precisa justificar)
 - `[N/A]` - não se aplica a esta mudança
 
-Itens marcados `[ ]` viram achados classificados conforme [módulo 21](https://claude.ai/processos/21-revisao-codigo.md#6-os-3-n%C3%ADveis-de-achados):
+Itens marcados `[ ]` viram achados classificados conforme [módulo 21](../processos/21-revisao-codigo.md#6-os-3-n%C3%ADveis-de-achados):
 
 - 🔴 Bloqueante (impede merge/conclusão)
 - 🟡 Importante (vira tarefa para curto prazo)
@@ -68,7 +69,7 @@ Se algum desses falha, **pare**. Não é momento de revisar - é momento de cons
 
 ### Estrutura
 
-- [ ] Arquivos foram criados nas pastas corretas conforme [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md)?
+- [ ] Arquivos foram criados nas pastas corretas conforme [módulo 11](../padroes/11-arquitetura-e-pastas.md)?
 - [ ] Componentes específicos de domínio NÃO estão em `components/ui/`?
 
 ### Comportamento
@@ -100,7 +101,7 @@ Aplique os grupos relevantes para a mudança. Nem todos se aplicam a toda revis�
 
 ### 1. Convenções e Estilo
 
-Detalhes: [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md).
+Detalhes: [módulo 10](../padroes/10-codigo-e-convencoes.md).
 
 - [ ] Idioma 100% consistente (variáveis, funções, comentários, testes)
 - [ ] Booleans com prefixo `is`/`has`/`tem`/`eh` conforme convenção do projeto
@@ -115,7 +116,7 @@ Detalhes: [módulo 10](https://claude.ai/padroes/10-codigo-e-convencoes.md).
 
 ### 2. Arquitetura e Pastas
 
-Detalhes: [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md).
+Detalhes: [módulo 11](../padroes/11-arquitetura-e-pastas.md).
 
 - [ ] Componentes em `components/ui/` são genéricos (sem conhecer domínio)
 - [ ] Componentes em `components/[domínio]/` não vivem em `ui/`
@@ -129,7 +130,7 @@ Detalhes: [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md).
 
 ### 3. React e Estado
 
-Detalhes: [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
+Detalhes: [módulo 12](../padroes/12-react-e-estado.md).
 
 - [ ] Nenhum `useEffect` para derivar estado (use `useMemo` ou cálculo direto)
 - [ ] Nenhum `useEffect` para sincronizar entre `useState` (use single source of truth)
@@ -144,7 +145,7 @@ Detalhes: [módulo 12](https://claude.ai/padroes/12-react-e-estado.md).
 
 ### 4. UI e Design System
 
-Detalhes: [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
+Detalhes: [módulo 13](../padroes/13-ui-e-design-system.md).
 
 - [ ] Componentes UI aceitam `className` como prop
 - [ ] Componentes UI usam `forwardRef` quando envolvem elemento focável/input
@@ -156,7 +157,7 @@ Detalhes: [módulo 13](https://claude.ai/padroes/13-ui-e-design-system.md).
 
 ### 5. Formulários e Validação
 
-Detalhes: [módulo 14](https://claude.ai/padroes/14-formularios-e-validacao.md).
+Detalhes: [módulo 14](../padroes/14-formularios-e-validacao.md).
 
 - [ ] Schema Zod existe para o formulário
 - [ ] Tipos derivados via `z.infer<typeof schema>` (não duplicação manual)
@@ -169,7 +170,7 @@ Detalhes: [módulo 14](https://claude.ai/padroes/14-formularios-e-validacao.md).
 
 ### 6. Testes
 
-Detalhes: [módulo 15](https://claude.ai/padroes/15-testes.md).
+Detalhes: [módulo 15](../padroes/15-testes.md).
 
 - [ ] Testes novos foram adicionados para nova funcionalidade
 - [ ] Testes existentes foram atualizados se comportamento mudou
@@ -182,7 +183,7 @@ Detalhes: [módulo 15](https://claude.ai/padroes/15-testes.md).
 
 ### 7. Performance
 
-Resumo aqui; checklist detalhado em [`43-performance.md`](https://claude.ai/chat/43-performance.md).
+Resumo aqui; checklist detalhado em [`43-performance.md`](./43-performance.md).
 
 - [ ] Sem re-renders óbvios e desnecessários
 - [ ] Imagens otimizadas (formato adequado, `loading="lazy"` quando aplica)
@@ -192,7 +193,7 @@ Resumo aqui; checklist detalhado em [`43-performance.md`](https://claude.ai/chat
 
 ### 8. Acessibilidade
 
-Resumo aqui; checklist detalhado em [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md).
+Resumo aqui; checklist detalhado em [`42-acessibilidade.md`](./42-acessibilidade.md).
 
 - [ ] Foco visível em elementos interativos (`focus-visible:ring-*`)
 - [ ] Toque mínimo respeitado (48×48px ou exceção documentada)
@@ -203,7 +204,7 @@ Resumo aqui; checklist detalhado em [`42-acessibilidade.md`](https://claude.ai/c
 
 ### 9. Segurança
 
-Resumo aqui; checklist detalhado em [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md).
+Resumo aqui; checklist detalhado em [`41-seguranca.md`](./41-seguranca.md).
 
 - [ ] PII nunca em URL ou querystring
 - [ ] Sanitização em qualquer HTML dinâmico
@@ -213,7 +214,7 @@ Resumo aqui; checklist detalhado em [`41-seguranca.md`](https://claude.ai/chat/4
 
 ### 10. Documentação
 
-Detalhes: [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md).
+Detalhes: [módulo 20](../processos/20-ciclo-tarefa.md).
 
 - [ ] Tarefa atualizada se mudou status de requisito
 - [ ] `docs/dominios/divida-tecnica.md` atualizado se gerou dívida
@@ -225,9 +226,9 @@ Detalhes: [módulo 20](https://claude.ai/processos/20-ciclo-tarefa.md).
 
 ## Reportando Resultado
 
-Após rodar o checklist em uma tarefa, transcreva achados para o formato de revisão do [módulo 21, seção 7.1](https://claude.ai/processos/21-revisao-codigo.md#71-estrutura).
+Após rodar o checklist em uma tarefa, transcreva achados para o formato de revisão do [módulo 21, seção 7.1](../processos/21-revisao-codigo.md#71-estrutura).
 
-Se, e somente se, o humano pediu revisão geral completa do projeto, transcreva os achados para `docs/arquitetura/revisoes-gerais/REV-NNN.md` usando [`../templates/37-revisao-geral.md`](https://claude.ai/templates/37-revisao-geral.md). Nesse caso, cada achado recebe ID `REV-NNN-Axx` e relaciona tarefas/ADRs geradas quando existirem.
+Se, e somente se, o humano pediu revisão geral completa do projeto, transcreva os achados para `docs/arquitetura/revisoes-gerais/REV-NNN.md` usando [`../templates/37-revisao-geral.md`](../templates/37-revisao-geral.md). Nesse caso, cada achado recebe ID `REV-NNN-Axx` e relaciona tarefas/ADRs geradas quando existirem.
 
 ```markdown
 ## Revisão
@@ -286,7 +287,7 @@ Marque `[N/A]` e, se não for óbvio, justifique:
 
 **6. A IA pode rodar este checklist sozinha?** Sim, para verificações objetivas (testes passam, há `any`, idioma consistente). Para verificações subjetivas (qualidade dos nomes, decisões de design), prefira validação humana. A IA não usa este checklist para abrir uma REV sozinha; REV só existe com pedido humano de revisão completa do projeto.
 
-**7. Item marcado `[ ]` é sempre bloqueante?** Não. Depende do item e do contexto. Item de segurança crítico `[ ]` é 🔴 Bloqueante. Item de "performance pode melhorar" `[ ]` pode ser 🟡 Importante ou 🟢 Sugestão. Use o [módulo 21](https://claude.ai/processos/21-revisao-codigo.md) para classificar.
+**7. Item marcado `[ ]` é sempre bloqueante?** Não. Depende do item e do contexto. Item de segurança crítico `[ ]` é 🔴 Bloqueante. Item de "performance pode melhorar" `[ ]` pode ser 🟡 Importante ou 🟢 Sugestão. Use o [módulo 21](../processos/21-revisao-codigo.md) para classificar.
 
 **8. E se um achado não está coberto pelo checklist?** Anote como achado mesmo assim. Checklist é guia, não exaustivo. Se o item se repete em revisões, considere adicionar ao checklist do projeto.
 
@@ -294,9 +295,9 @@ Marque `[N/A]` e, se não for óbvio, justifique:
 
 ## 🔗 Checklists Especializados e Módulos Relacionados
 
-- [`41-seguranca.md`](https://claude.ai/chat/41-seguranca.md) - Checklist detalhado de segurança
-- [`42-acessibilidade.md`](https://claude.ai/chat/42-acessibilidade.md) - Checklist detalhado de acessibilidade
-- [`43-performance.md`](https://claude.ai/chat/43-performance.md) - Checklist detalhado de performance
-- [`../processos/21-revisao-codigo.md`](https://claude.ai/processos/21-revisao-codigo.md) - Processo completo de revisão
-- [`../processos/27-revisao-geral.md`](https://claude.ai/processos/27-revisao-geral.md) - Revisão completa do projeto sob pedido humano
-- [`../templates/31-task-concluida.md`](https://claude.ai/templates/31-task-concluida.md) - Onde o resultado é registrado
+- [`41-seguranca.md`](./41-seguranca.md) - Checklist detalhado de segurança
+- [`42-acessibilidade.md`](./42-acessibilidade.md) - Checklist detalhado de acessibilidade
+- [`43-performance.md`](./43-performance.md) - Checklist detalhado de performance
+- [`../processos/21-revisao-codigo.md`](../processos/21-revisao-codigo.md) - Processo completo de revisão
+- [`../processos/27-revisao-geral.md`](../processos/27-revisao-geral.md) - Revisão completa do projeto sob pedido humano
+- [`../templates/31-task-concluida.md`](../templates/31-task-concluida.md) - Onde o resultado é registrado

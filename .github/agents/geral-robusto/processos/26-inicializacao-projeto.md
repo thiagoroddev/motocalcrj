@@ -1,12 +1,13 @@
 ---
-
-description: "Inicialização e migração de projeto: engenharia reversa, criação de contexto-projeto-ai, estrutura de docs, arquivamento." modulo: "26" categoria: "processos" versao: "1.0" relacionado:
-
-- "01-nucleo.md"
-- "11-arquitetura-e-pastas.md"
-- "../templates/33-contexto-projeto-ai.md"
-- "../templates/34-readme-projeto.md"
-
+description: "Inicialização e migração de projeto: engenharia reversa, criação de contexto-projeto-ai, estrutura de docs, arquivamento."
+modulo: "26"
+categoria: "processos"
+versao: "1.0"
+relacionado:
+  - "01-nucleo.md"
+  - "11-arquitetura-e-pastas.md"
+  - "../templates/33-contexto-projeto-ai.md"
+  - "../templates/34-readme-projeto.md"
 ---
 
 # 🚀 Inicialização de Projeto
@@ -22,7 +23,7 @@ Use este módulo quando uma das três situações for verdadeira:
 |Cenário|Sintoma|
 |---|---|
 |**A** - Projeto novo sem documentação|Não existe `docs/contexto-projeto-ai.md` nem estrutura equivalente|
-|**B** - Projeto com docs fora do padrão|Existe documentação mas não segue a estrutura do [módulo 11](https://claude.ai/padroes/11-arquitetura-e-pastas.md)|
+|**B** - Projeto com docs fora do padrão|Existe documentação mas não segue a estrutura do [módulo 11](../padroes/11-arquitetura-e-pastas.md)|
 |**C** - Projeto com docs que divergem do código|Doc antiga descreve uma coisa, código faz outra|
 
 Para todos os três, o objetivo é **chegar ao mesmo estado**: projeto com `.agent/` (este pacote) + `docs/` no padrão definido aqui.
@@ -31,7 +32,7 @@ Para todos os três, o objetivo é **chegar ao mesmo estado**: projeto com `.age
 
 - Projeto que **já tem** `docs/contexto-projeto-ai.md` no padrão deste pacote
 - Você está apenas dando manutenção em projeto bem documentado
-- Está adicionando feature isolada - use [módulo 20](https://claude.ai/chat/20-ciclo-tarefa.md)
+- Está adicionando feature isolada - use [módulo 20](./20-ciclo-tarefa.md)
 
 ---
 
@@ -208,7 +209,7 @@ Este arquivo é o **único** que toda IA que entrar no projeto vai consultar pri
 
 ### 5.2 O Que Deve Conter
 
-Conteúdo essencial (template completo no [`templates/33`](https://claude.ai/templates/33-contexto-projeto-ai.md)):
+Conteúdo essencial (template completo no [`templates/33`](../templates/33-contexto-projeto-ai.md)):
 
 ```markdown
 # Contexto do Projeto [Nome]
@@ -292,7 +293,7 @@ Com o `contexto-projeto-ai.md` aprovado, crie a estrutura completa de `docs/`.
 
 ### 6.1 Estrutura Alvo
 
-Conforme [módulo 11, seção 9](https://claude.ai/padroes/11-arquitetura-e-pastas.md#9-estrutura-padr%C3%A3o-de-docs):
+Conforme [módulo 11, seção 9](../padroes/11-arquitetura-e-pastas.md#9-estrutura-padr%C3%A3o-de-docs):
 
 ```
 docs/
@@ -635,7 +636,7 @@ Não acumule mudanças para "atualizar tudo depois". A regra:
 
 > Toda decisão que vira código também vira atualização da doc correspondente, na **mesma tarefa**.
 
-Tarefa concluída ([módulo 20](https://claude.ai/chat/20-ciclo-tarefa.md)) inclui:
+Tarefa concluída ([módulo 20](./20-ciclo-tarefa.md)) inclui:
 
 - Código novo
 - Testes novos/atualizados
@@ -831,9 +832,9 @@ Humano responde, decisões viram conteúdo definitivo. Inicialização termina.
 
 ## 🔗 Módulos Relacionados
 
-- [`01-nucleo.md`](https://claude.ai/01-nucleo.md) - Hierarquia de regras
-- [`11-arquitetura-e-pastas.md`](https://claude.ai/padroes/11-arquitetura-e-pastas.md) - Estrutura padrão de docs
-- [`20-ciclo-tarefa.md`](https://claude.ai/chat/20-ciclo-tarefa.md) - Manutenção contínua após inicialização
-- [`../templates/33-contexto-projeto-ai.md`](https://claude.ai/templates/33-contexto-projeto-ai.md) - Template do arquivo de contexto
-- [`../templates/34-readme-projeto.md`](https://claude.ai/templates/34-readme-projeto.md) - Template do README.md
-- [`../templates/32-adr.md`](https://claude.ai/templates/32-adr.md) - Template de ADR retrospectiva
+- [`01-nucleo.md`](../01-nucleo.md) - Hierarquia de regras
+- [`11-arquitetura-e-pastas.md`](../padroes/11-arquitetura-e-pastas.md) - Estrutura padrão de docs
+- [`20-ciclo-tarefa.md`](./20-ciclo-tarefa.md) - Manutenção contínua após inicialização
+- [`../templates/33-contexto-projeto-ai.md`](../templates/33-contexto-projeto-ai.md) - Template do arquivo de contexto
+- [`../templates/34-readme-projeto.md`](../templates/34-readme-projeto.md) - Template do README.md
+- [`../templates/32-adr.md`](../templates/32-adr.md) - Template de ADR retrospectiva
