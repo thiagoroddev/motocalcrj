@@ -2,8 +2,7 @@
 
 <p align="center">
   <strong>Quanto custa, de verdade, trabalhar de moto no Rio de Janeiro?</strong><br>
-  Calculadora PWA offline-first que estima o custo real de operar uma motocicleta de trabalho —
-  por km, hora, dia, semana, mês e ano.
+  Calculadora PWA offline-first que estima o custo aproximado de operar uma motocicleta popular para trabalho por app no Rio de Janeiro — por km, hora, dia, semana, mês e ano.
 </p>
 
 <p align="center">
